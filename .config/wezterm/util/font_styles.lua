@@ -1,0 +1,46 @@
+return {}
+-- Style 1
+-- font = wezterm.font("ProFontIIx Nerd Font Mono"), -- Iosevka, Hack Nerd Font Mono
+-- font_size = 14.0,
+-- line_height = 1.1,
+-- freetype_render_target = "HorizontalLcd", -- Normal, Light, HorizontalLcd - https://wezfurlong.org/wezterm/config/lua/config/freetype_render_target.html
+-- freetype_load_target = "HorizontalLcd", -- Normal, Light, Mono, HorizontalLcd - https://wezfurlong.org/wezterm/config/lua/config/freetype_load_target.html
+-- freetype_load_flags = "DEFAULT", -- DEFAULT, NO_HINTING, NO_BITMAP, FORCE_AUTOHINT, MONOCHROME, NO_AUTOHINT - https://wezfurlong.org/wezterm/config/lua/config/freetype_load_flags.html
+-- freetype_load_flags = "NO_HINTING", -- NO_DEFAULT, NO_HINTING, NO_BITMAP, FORCE_AUTOHINT, MONOCHROME, NO_AUTOHINT - https://wezfurlong.org/wezterm/config/lua/config/freetype_load_flags.html
+
+-- Style 1
+-- font = wezterm.font({
+-- 	family = "ProFontIIx Nerd Font Mono", -- Iosevka, Hack Nerd Font Mono
+-- 	weight = "Light", -- "Light",
+-- }),
+-- font_size = 13.0,
+-- line_height = 1.1,
+-- -- freetype_render_target = "HorizontalLcd", -- Normal, Light, HorizontalLcd - https://wezfurlong.org/wezterm/config/lua/config/freetype_render_target.html
+-- freetype_load_target = "HorizontalLcd", -- Normal, Light, Mono, HorizontalLcd - https://wezfurlong.org/wezterm/config/lua/config/freetype_load_target.html
+-- freetype_load_flags = "DEFAULT", -- DEFAULT, NO_HINTING, NO_BITMAP, FORCE_AUTOHINT, MONOCHROME, NO_AUTOHINT - https://wezfurlong.org/wezterm/config/lua/config/freetype_load_flags.html
+-- freetype_load_flags = "NO_HINTING", -- NO_DEFAULT, NO_HINTING, NO_BITMAP, FORCE_AUTOHINT, MONOCHROME, NO_AUTOHINT - https://wezfurlong.org/wezterm/config/lua/config/freetype_load_flags.html
+-- cell_width = 0.9,
+
+-- Style 3
+-- -- Monaspace (TODO: try them out)
+-- font = wezterm.font({
+-- 	-- Argon, Krypton, Neon, Radon, Xenon
+-- 	family = "Monaspace Argon",
+-- 	-- Bold BoldItalic ExtraBold ExtraBoldItalic ExtraLight ExtraLightItalic Italic Light LightItalic Medium MediumItalic Regular SemiBold SemiBoldItalic SemiWideBold SemiWideBoldItalic SemiWideExtraBold SemiWideExtraBoldItalic SemiWideExtraLight SemiWideExtraLightItalic SemiWideItalic SemiWideLight SemiWideLightItalic SemiWideMedium SemiWideMediumItalic SemiWideRegular SemiWideSemiBold SemiWideSemiBoldItalic WideBold WideBoldItalic WideExtraBold WideExtraBoldItalic WideExtraLight WideExtraLightItalic WideItalic WideLight WideLightItalic WideMedium WideMediumItalic WideRegular WideSemiBold WideSemiBoldItalic
+-- 	weight = "Regular", -- "Light",
+-- 	-- weight = "Light", -- "Light",
+-- 	-- no calt for no "texture healing"
+-- 	harfbuzz_features = {
+-- 		"calt",
+-- 		"liga",
+-- 		"dlig",
+-- 		"ss01",
+-- 		"ss02",
+-- 		"ss03",
+-- 		"ss04",
+-- 		"ss05",
+-- 		"ss06",
+-- 		"ss07",
+-- 		"ss08",
+-- 	},
+-- }),
