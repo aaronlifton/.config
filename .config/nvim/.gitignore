@@ -1,0 +1,52 @@
+tt.*
+.tests
+doc/tags
+debug
+.repro
+.notes
+foo.*
+*.log
+data
+node_modules/*
+.notes/
+snippets/tmp
+snippets/tmp/*
+matt/
+.swp
+TODO.md
+log
+tmp/
+tmp/*
+# Project gitignore
+.luarc.json
+ginit.vim
+neoconf.json
+plugin
+queries
+spell
+
+# Global gitignore
+# ----------------
+
+# Mac OS X
+.DS_Store
+.LSOverride
+._*
+
+# (Neo)Vim
+*~
+.netrwhist
+Session.vim
+Sessionx.vim
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+[._]*.un~
+tags
+
+# VSCode
+.history
+.vscode
+log
