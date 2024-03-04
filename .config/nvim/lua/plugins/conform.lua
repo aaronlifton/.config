@@ -1,0 +1,65 @@
+return {
+  {
+    "stevearc/conform.nvim",
+    optional = true,
+    opts = {
+      formatters_by_ft = {
+        -- These use biome
+        -- ["javascript"] = { { "prettier" } },
+        -- ["javascriptreact"] = { { "prettier" } },
+        -- ["json"] = { { "prettier" } },
+        -- ["jsonc"] = { { "prettier" } },
+        -- ["markdown"] = { { "prettier" } },
+        -- ["markdown.mdx"] = { { "prettier" } },
+        -- ["typescript"] = { { "prettier" } },
+        -- ["typescriptreact"] = { { "prettier" } },
+        ["astro"] = { { "prettier" } },
+        ["bash"] = { { "shfmt" } },
+        ["css"] = { { "prettier" } },
+        ["fish"] = { { "fish_indent" } },
+        ["go"] = { { "gofmt", "goimports", "gofumpt" } },
+        ["gohtml"] = { { "prettier" } },
+        ["goimports"] = { { "goimports" } },
+        ["graphql"] = { { "prettier" } },
+        ["handlebars"] = { { "prettier" } },
+        ["html"] = { { "prettier" } },
+        ["javascript"] = { "biome" },
+        ["javascriptreact"] = { "biome" },
+        ["json"] = { "biome" },
+        ["jsonc"] = { "biome" },
+        ["less"] = { { "prettier" } },
+        ["lua"] = { { "stylua", "luaformatter" } },
+        ["markdown"] = { { "mdformat", "prettier" } },
+        ["markdown.mdx"] = { { "markdownlint-cli2", "cbmft" } },
+        ["python"] = { { "black" } },
+        ["rust"] = { "rustfmt" },
+        ["scss"] = { { "prettier" } },
+        ["sh"] = { { "shfmt" } },
+        ["svelte"] = { { "prettier" } },
+        ["tsx"] = { { "prettier" } },
+        ["typescript"] = { "biome" },
+        ["typescriptreact"] = { "biome" },
+        ["vim"] = { { "prettier" } },
+        ["vue"] = { { "prettier" } },
+        ["yaml"] = { { "prettier" } },
+        ["zig"] = { { "zigfmt" } },
+        ["zsh"] = { { "shfmt" } },
+      },
+      -- formatters_after_save = {{}}
+      formatters = {
+        ["markdownlint-cli2"] = {
+          prepend_args = {
+            "--config",
+            vim.env.HOME .. "/.config/nvim/rules/markdownlint-cli2.jsonc",
+          },
+        },
+        cbfmt = {
+          prepend_args = {
+            "--config",
+            vim.env.HOME .. "/.config/nvim/rules/cbfmt.toml",
+          },
+        },
+      },
+    },
+  },
+}

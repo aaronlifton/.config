@@ -1,0 +1,19 @@
+return {
+  "dharmx/telescope-media.nvim",
+  enabled = false,
+  config = function()
+    require("lazyvim.util").on_load("telescope.nvim", function()
+      require("telescope").setup({
+        extensions = {
+          media = {
+            backend = "ueberzug", -- image/gif backend
+          },
+        },
+      })
+      require("telescope").load_extension("media")
+    end)
+  end,
+  keys = {
+    { "<leader>nMm", "<cmd>Telescope media<CR>", desc = "Media" },
+  },
+}

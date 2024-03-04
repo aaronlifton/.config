@@ -1,0 +1,350 @@
+-- Autocmds are automatically loaded on the VeryLazy event
+-- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
+-- Add any additional autocmds here
+-- https://www.lazyvim.org/configuration/general
+
+-- Location information about the last message printed. The format is
+-- `(did print, buffer number, line number)`.
+local last_echo = { false, -1, -1 }
+
+-- The timer used for displaying a diagnostic in the commandline.
+local echo_timer = nil
+
+-- The timer after which to display a diagnostic in the commandline.
+local echo_timeout = 250
+
+-- The highlight group to use for warning messages.
+local warning_hlgroup = "WarningMsg"
+
+-- The highlight group to use for error messages.
+local error_hlgroup = "ErrorMsg"
+
+-- If the first diagnostic line has fewer than this many characters, also add
+-- the second line to it.
+local short_line_limit = 20
+
+-- Shows the current line's diagnostics in a floating window.
+-- local function show_line_diagnostics()
+--   vim.lsp.diagnostic.show_line_diagnostics({ severity_limit = "Warning" }, vim.fn.bufnr())
+-- end
+
+-- Prints the first diagnostic for the current line.
+local function echo_diagnostic()
+  if echo_timer then
+    echo_timer:stop()
+  end
+
+  echo_timer = vim.defer_fn(function()
+    local line = vim.fn.line(".") - 1
+    local bufnr = vim.api.nvim_win_get_buf(0)
+
+    if last_echo[1] and last_echo[2] == bufnr and last_echo[3] == line then
+      return
+    end
+
+    local diags = vim.lsp.diagnostic.get_line_diagnostics(bufnr, line, { severity = vim.diagnostic.severity.WARN })
+
+    if #diags == 0 then
+      -- If we previously echo'd a message, clear it out by echoing an empty
+      -- message.
+      if last_echo[1] then
+        last_echo = { false, -1, -1 }
+
+        vim.api.nvim_command('echo ""')
+      end
+
+      return
+    end
+
+    last_echo = { true, bufnr, line }
+
+    local diag = diags[1]
+    local width = vim.api.nvim_get_option("columns") - 15
+    local lines = vim.split(diag.message, "\n")
+    local message = lines[1]
+    -- local trimmed = false
+
+    if #lines > 1 and #message <= short_line_limit then
+      message = message .. " " .. lines[2]
+    end
+
+    if width > 0 and #message >= width then
+      message = message:sub(1, width) .. "..."
+    end
+
+    local kind = "warning"
+    local hlgroup = warning_hlgroup
+
+    if diag.severity == vim.lsp.protocol.DiagnosticSeverity.Error then
+      kind = "error"
+      hlgroup = error_hlgroup
+    end
+
+    local chunks = {
+      { kind .. ": ", hlgroup },
+      { message },
+    }
+
+    vim.api.nvim_echo(chunks, false, {})
+  end, echo_timeout)
+end
+
+vim.api.nvim_create_autocmd("CursorMoved", {
+  callback = echo_diagnostic,
+})
+
+vim.api.nvim_create_autocmd("User", {
+  pattern = "TelescopePreviewerLoaded",
+  callback = function(args)
+    if args.data.filetype ~= "help" then
+      vim.wo.number = true
+    elseif args.data.bufname:match("*.csv") then
+      vim.wo.wrap = false
+    end
+  end,
+})
+
+vim.api.nvim_create_autocmd("User", {
+  pattern = "ColorScheme",
+  callback = function()
+    vim.api.nvim_set_hl(0, "LeapMatch", { guifg = "#000000", guibg = "#ffff00" })
+    if vim.g.disable_leap_secondary_labels == true then
+      local bg = vim.api.nvim_get_hl(0, { name = "LeapLabelSecondary" }).bg
+      vim.api.nvim_set_hl(0, "LeapLabelSecondary", { fg = bg, bg = bg })
+    end
+
+    -- local leap = require('leap')
+    -- require('leap').init_highlight(true)
+  end,
+})
+
+-- Debug buffers
+-- vim.api.nvim_create_autocmd("BufWinEnter", {
+--   pattern = "*",
+--   callback = function(ev)
+--     local chunks = { { "event fired" }, { vim.inspect(ev) } }
+--     vim.api.nvim_echo(chunks, false, {})
+--   end,
+-- })
+
+local baleia = require("baleia").setup({})
+vim.api.nvim_create_autocmd("BufWinEnter", {
+  pattern = "*",
+  callback = function(ev)
+    -- debug :!=vim.api.nvim_buf_get_option(vim.api.nvim_get_current_buf(), "filetype")
+    -- debug :!=vim.api.nvim_buf_get_option(vim.fn.bufnr("$"), "filetype")
+    -- debug :!=vim.api.nvim_win_get_config(vim.fn.bufwinid(ev.buf)).zindex
+    -- local bufnr = vim.api.nvim_get_current_buf()
+    local bufnr = vim.fn.bufnr()
+    local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
+    local buftype = vim.api.nvim_buf_get_option(vim.fn.bufnr(), "buftype")
+    local bufname = vim.api.nvim_buf_get_name(ev.buf)
+    if buftype ~= "nofile" then
+      return
+    end
+    if bufname == "lazyterm" or filetype == "neotree" or bufname == "NvimTree" then
+      return
+    end
+
+    local winid = vim.fn.bufwinid(ev.buf)
+    if vim.api.nvim_win_get_config(winid).zindex then
+      -- local chunks = { { "event fired" }, { vim.inspect(ev) } }
+      -- vim.api.nvim_echo(chunks, false, {})
+
+      baleia.automatically(vim.fn.bufnr())
+      -- baleia.automatically(vim.fn.bufnr(ev.buf))
+      -- baleia.once(vim.fn.bufnr(ev.buf))
+    end
+  end,
+})
+
+-- no folding if buffer is bigger then 1 mb
+-- TODO: need to used other then `opt` that is not correct here
+-- vim.api.nvim_create_autocmd("BufReadPre", {
+--   group = "disable_folding",
+--   callback = function(ev)
+--     local ok, size = pcall(vim.fn.getfsize, vim.api.nvim_buf_get_name(vim.fn.bufnr()))
+--     if not ok or size > 1024 * 1024 then
+--       -- fallback to default values
+--       vim.opt.foldmethod = "manual"
+--       vim.opt.foldexpr = "0"
+--       vim.opt.foldlevel = 0
+--       vim.opt.foldtext = "foldtext()"
+--     else
+--       vim.opt.foldmethod = "expr"
+--       vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+--       vim.opt.foldlevel = 99
+--       vim.opt.foldtext = "v:lua.vim.treesitter.foldtext()"
+--     end
+--   end,
+-- })
+
+local function augroup(name)
+  return vim.api.nvim_create_augroup("lazyvim_" .. name, { clear = true })
+end
+
+local ac = vim.api.nvim_create_autocmd
+local ag = vim.api.nvim_create_augroup
+
+-- Disable diagnostics in a .env file
+ac("BufRead", {
+  pattern = ".env",
+  callback = function()
+    vim.diagnostic.disable(0)
+  end,
+})
+
+-- -- Fix telescope entering on insert mode
+-- ac("WinLeave", {
+--   callback = function()
+--     if vim.bo.ft == "TelescopePrompt" and vim.fn.mode() == "i" then
+--       vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "i", false)
+--     end
+--   end,
+-- })
+--
+local auto_close_filetype = {
+  "lazy",
+  "mason",
+  "lspinfo",
+  "toggleterm",
+  "null-ls-info",
+  "TelescopePrompt",
+  "notify",
+}
+
+-- -- Auto close window when leaving
+-- ac("BufLeave", {
+--   group = ag("lazyvim_auto_close_win", { clear = true }),
+--   callback = function(event)
+--     local ft = vim.api.nvim_buf_get_option(event.buf, "filetype")
+
+--     if vim.fn.index(auto_close_filetype, ft) ~= -1 then
+--       local winids = vim.fn.win_findbuf(event.buf)
+--       if not winids then return end
+--       for _, win in pairs(winids) do
+--         vim.api.nvim_win_close(win, true)
+--       end
+--     end
+--   end,
+-- })
+
+-- close some filetypes with <esc>, in addition to <q>
+vim.api.nvim_create_autocmd("FileType", {
+  group = augroup("close_with_esc"),
+  pattern = {
+    "PlenaryTestPopup",
+    "help",
+    "lspinfo",
+    "man",
+    "notify",
+    "qf",
+    "query",
+    "spectre_panel",
+    "startuptime",
+    "tsplayground",
+    "neotest-output",
+    "checkhealth",
+    "neotest-summary",
+    "neotest-output-panel",
+  },
+  callback = function(event)
+    vim.bo[event.buf].buflisted = false
+    vim.keymap.set("n", "<esc>", "<cmd>close<cr>", { buffer = event.buf, silent = true })
+  end,
+})
+
+-- close additional filetypes with <q>
+vim.api.nvim_create_autocmd("FileType", {
+  group = augroup("close_with_q"),
+  pattern = {
+    "PlenaryTestPopup",
+    "help",
+    "lspinfo",
+    "man",
+    "notify",
+    "qf",
+    "query",
+    "spectre_panel",
+    "startuptime",
+    "tsplayground",
+    "neotest-output",
+    "checkhealth",
+    "neotest-summary",
+    "neotest-output-panel",
+    "toggleterm", -- "floaterm",
+    -- "lir",
+    "lsp-installer",
+    "DressingSelect",
+    -- "Jaq",
+  },
+  callback = function(event)
+    vim.bo[event.buf].buflisted = false
+    vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = event.buf, silent = true })
+  end,
+})
+
+-- Delete number column on terminals
+-- ac("TermOpen", {
+--   callback = function()
+--     vim.cmd("setlocal listchars=nonumber norelativenumber")
+--   end,
+-- })
+
+-- Disable next line comments
+ac("BufEnter", {
+  callback = function()
+    vim.cmd("set formatoptions-=cro")
+    vim.cmd("setlocal formatoptions-=cro")
+  end,
+})
+
+-- Disable eslint on node_modules
+ac({ "BufNewFile", "BufRead" }, {
+  group = ag("DisableEslintOnNodeModules", { clear = true }),
+  pattern = { "**/node_modules/**", "node_modules", "/node_modules/*" },
+  callback = function()
+    vim.diagnostic.disable(0)
+  end,
+})
+
+-- Use the more sane snippet session leave logic. Copied from:
+-- https://github.com/L3MON4D3/LuaSnip/issues/258#issuecomment-1429989436
+if not vim.g.native_snippets_enabled then
+  ac("ModeChanged", {
+    pattern = "*",
+    callback = function()
+      if
+        ((vim.v.event.old_mode == "s" and vim.v.event.new_mode == "n") or vim.v.event.old_mode == "i")
+        and require("luasnip").session.current_nodes[vim.api.nvim_get_current_buf()]
+        and not require("luasnip").session.jump_active
+      then
+        require("luasnip").unlink_current()
+      end
+    end,
+  })
+end
+
+-- Create a dir when saving a file if it doesn't exist
+ac("BufWritePre", {
+  group = ag("auto_create_dir", { clear = true }),
+  callback = function(args)
+    if args.match:match("^%w%w+://") then
+      return
+    end
+    local file = vim.loop.fs_realpath(args.match) or args.match
+    vim.fn.mkdir(vim.fn.fnamemodify(file, ":p:h"), "p")
+  end,
+})
+
+-- folke
+-- create directories when needed, when saving a file
+-- vim.api.nvim_create_autocmd("BufWritePre", {
+--   group = vim.api.nvim_create_augroup("better_backup", { clear = true }),
+--   callback = function(event)
+--     local file = vim.loop.fs_realpath(event.match) or event.match
+--     local backup = vim.fn.fnamemodify(file, ":p:~:h")
+--     backup = backup:gsub("[/\\]", "%%")
+--     vim.go.backupext = backup
+--   end,
+-- })

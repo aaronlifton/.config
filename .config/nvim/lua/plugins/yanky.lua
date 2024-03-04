@@ -1,0 +1,65 @@
+return {}
+
+-- return {
+--   {
+--     name = "yanky",
+--     -- opts = {
+--     --   ring = {
+--     --     history_length = 100,
+--     --     storage = "shada",
+--     --     storage_path = vim.fn.stdpath("data") .. "/databases/yanky.db", -- Only for sqlite storage
+--     --     sync_with_numbered_registers = true,
+--     --     cancel_event = "update",
+--     --     ignore_registers = { "_" },
+--     --     update_register_on_cycle = false,
+--     --   },
+--     -- },
+--     keys = {
+--       -- { "<leader>y", false },
+--       -- {
+--       --   "<leader>y",
+--       --   function()
+--       --     require("yanky").yank()
+--       --   end,
+--       -- },
+--       -- {
+--       --   "<leader>Y",
+--       --   function()
+--       --     require("yanky").put({ register = true })
+--       --   end,
+--       -- },
+--       -- ? motion = char, line, v, block
+--       -- {
+--       --   "<leader>gy",
+--       --   function()
+--       --     require("yanky").yank({ motion = "char" })
+--       --   end,
+--       -- },
+--       -- {
+--       --   "<leader>p",
+--       --   function()
+--       --     require("yanky").put({ after = true })
+--       --   end,
+--       -- },
+--       -- {
+--       --   "<leader>P",
+--       --   function()
+--       --     require("yanky").put({ after = true, register = true })
+--       --   end,
+--       -- },
+--       -- {
+--       --   "<leader>gp",
+--       --   function()
+--       --     require("yanky").put({ after = true, count = vim.v.count })
+--       --   end,
+--       -- },
+--       -- {
+--       --   "<leader>gP",
+--       --   function()
+--       --     require("yanky").put({ after = true, register = true, count = vim.v.count })
+--       --   end,
+--       -- },
+--       -- { "<leader>gy", function() require("yanky").yank({ motion = "v" }) end },
+--     },
+--   },
+-- }

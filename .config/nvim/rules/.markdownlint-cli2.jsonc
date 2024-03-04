@@ -1,0 +1,13 @@
+globs: ["**.md"]
+ignores: ["node_modules/**", "public","README.md"]
+config:
+  line-length: 80
+  no-inline-html: false
+  emphasis-style:
+    style: asterisk
+  no-duplicate-heading: false
+  no-blanks-blockquote: false
+  first-line-heading: false
+  github-admonition: true
+  no-alt-text: false
+

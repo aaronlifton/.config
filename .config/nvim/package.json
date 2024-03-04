@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "markdownlint": "^0.31.1"
+  },
+  "dependencies": {
+    "astro-expressive-code": "^0.32.4"
+  }
+}
