@@ -1,5 +1,4 @@
 local prefix = "<leader>G"
-return {}
 
 return {
   {

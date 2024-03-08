@@ -1,4 +1,3 @@
-
 -- selene: allow(global_usage)
 
 local M = {}
@@ -27,8 +26,10 @@ function M._dump(value, opts)
       M._dump(value, opts)
     end)
   end
-  opts.loc = vim.fn.fnamemodify(opts.loc, ":~:.")
-  local msg = vim.inspect(value)
+  local mod_name = vim.fn.fnamemodify(opts.loc, ":~:.")
+  if mod_name then
+    opts.loc = mod_name
+  end
   if opts.bt then
     msg = msg .. "\n" .. debug.traceback("", 2)
   end
@@ -49,7 +50,7 @@ end
 function M.dump(...)
   local value = { ... }
   if vim.tbl_isempty(value) then
-    value = nil
+    value = {} -- nil
   else
     value = vim.tbl_islist(value) and vim.tbl_count(value) <= 1 and value[1] or value
   end
@@ -59,7 +60,7 @@ end
 function M.bt(...)
   local value = { ... }
   if vim.tbl_isempty(value) then
-    value = nil
+    value = {} -- nil
   else
     value = vim.tbl_islist(value) and vim.tbl_count(value) <= 1 and value[1] or value
   end

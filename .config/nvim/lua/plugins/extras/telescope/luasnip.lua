@@ -1,5 +1,6 @@
 return {
   "benfowler/telescope-luasnip.nvim",
+  enabled = not vim.g.native_snippets_enabled,
   dependencies = {
     "L3MON4D3/LuaSnip",
   },

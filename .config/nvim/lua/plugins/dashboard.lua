@@ -36,10 +36,10 @@ return {
       return opts
     end,
     keys = {
-      { "<leader>fD", "<cmd>Dash<cr>", desc = "Dashboard" },
+      { "<leader>fd", "<cmd>Dash<cr>", desc = "Dashboard" },
     },
     config = function(_, opts)
       require("dashboard").setup(opts)
-    end
-  }
+    end,
+  },
 }

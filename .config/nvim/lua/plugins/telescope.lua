@@ -21,7 +21,7 @@ local function get_telescope_targets(prompt_bufnr)
   local wininfo = vim.fn.getwininfo(pick.results_win)
 
   local first =
-      math.max(scroller.top(pick.sorting_strategy, pick.max_results, pick.manager:num_results()), wininfo[1].topline - 1)
+    math.max(scroller.top(pick.sorting_strategy, pick.max_results, pick.manager:num_results()), wininfo[1].topline - 1)
   local last = wininfo[1].botline - 1
 
   local targets = {}
@@ -154,10 +154,28 @@ local function yank_preview_buffer(prompt_bufnr)
   -- local prompt_bufnr = vim.api.nvim_get_current_buf()
   local actions_state = require("telescope.actions.state")
   local action_utils = require("telescope.actions.utils")
-  local current_picker = actions_state.get_current_picker(prompt_bufnr)
-  local preview_bufnr = actions_state.get_current_preview_buffer(current_picker.previewer)
+  local preview_win = telescope_state.get_status(prompt_bufnr).preview_win
+  local preview_buf = action_utils.get_current_buffer_data(preview_win)
+  -- local current_picker = actions_state.get_current_picker(prompt_bufnr)
+  -- local preview_bufnr = actions_state.get_current_preview_buffer(current_picker.previewer)
   local lines = vim.api.nvim_buf_get_lines(preview_bufnr, 0, -1, false)
   vim.fn.setreg("0", lines)
+end
+
+local function send_to_qflist(prompt_bufnr)
+  -- local actions_state = require("telescope.actions.state")
+  -- local action_utils = require("telescope.actions.utils")
+  -- local picker = actions_state.get_current_picker(prompt_bufnr)
+  -- local preview_buf = action_utils.get_current_buffer_data(picker.previewer)
+  -- local lines = vim.api.nvim_buf_get_lines(preview_buf, 0, -1, false)
+  local action_state = require("telescope.actions.state")
+  local action_utils = require("telescope.actions.utils")
+  local current_picker = action_state.get_current_picker(prompt_bufnr)
+  local results = {}
+  action_utils.map_entries(prompt_bufnr, function(entry, index, row)
+    results[row] = entry.value
+  end)
+  vim.fn.setqflist({}, "a", { title = "Preview", lines = results })
 end
 
 return {
@@ -167,8 +185,7 @@ return {
   },
   {
     "nvim-telescope/telescope-fzf-native.nvim",
-    build =
-    "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build",
+    build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build",
   },
   {
     "nvim-telescope/telescope.nvim",
@@ -199,7 +216,11 @@ return {
         end,
         desc = "Find Plugin File",
       },
-      { "<leader>sA",  Util.telescope("treesitter"),                                            desc = "Treesitter Symbols" },
+      {
+        "<leader>sA",
+        Util.telescope("treesitter"),
+        desc = "Treesitter Symbols",
+      },
       {
         "<leader>ssa",
         Util.telescope("lsp_document_symbols", {
@@ -220,17 +241,17 @@ return {
         }),
         desc = "All",
       },
-      { "<leader>ssc", Util.telescope("lsp_document_symbols", { symbols = { "Class" } }),       desc = "Class" },
-      { "<leader>ssf", Util.telescope("lsp_document_symbols", { symbols = { "Function" } }),    desc = "Function" },
-      { "<leader>ssm", Util.telescope("lsp_document_symbols", { symbols = { "Method" } }),      desc = "Method" },
+      { "<leader>ssc", Util.telescope("lsp_document_symbols", { symbols = { "Class" } }), desc = "Class" },
+      { "<leader>ssf", Util.telescope("lsp_document_symbols", { symbols = { "Function" } }), desc = "Function" },
+      { "<leader>ssm", Util.telescope("lsp_document_symbols", { symbols = { "Method" } }), desc = "Method" },
       { "<leader>ssC", Util.telescope("lsp_document_symbols", { symbols = { "Constructor" } }), desc = "Constructor" },
-      { "<leader>sse", Util.telescope("lsp_document_symbols", { symbols = { "Enum" } }),        desc = "Enum" },
-      { "<leader>ssi", Util.telescope("lsp_document_symbols", { symbols = { "Interface" } }),   desc = "Interface" },
-      { "<leader>ssM", Util.telescope("lsp_document_symbols", { symbols = { "Module" } }),      desc = "Module" },
-      { "<leader>sss", Util.telescope("lsp_document_symbols", { symbols = { "Struct" } }),      desc = "Struct" },
-      { "<leader>sst", Util.telescope("lsp_document_symbols", { symbols = { "Trait" } }),       desc = "Trait" },
-      { "<leader>ssF", Util.telescope("lsp_document_symbols", { symbols = { "Field" } }),       desc = "Field" },
-      { "<leader>ssp", Util.telescope("lsp_document_symbols", { symbols = { "Property" } }),    desc = "Property" },
+      { "<leader>sse", Util.telescope("lsp_document_symbols", { symbols = { "Enum" } }), desc = "Enum" },
+      { "<leader>ssi", Util.telescope("lsp_document_symbols", { symbols = { "Interface" } }), desc = "Interface" },
+      { "<leader>ssM", Util.telescope("lsp_document_symbols", { symbols = { "Module" } }), desc = "Module" },
+      { "<leader>sss", Util.telescope("lsp_document_symbols", { symbols = { "Struct" } }), desc = "Struct" },
+      { "<leader>sst", Util.telescope("lsp_document_symbols", { symbols = { "Trait" } }), desc = "Trait" },
+      { "<leader>ssF", Util.telescope("lsp_document_symbols", { symbols = { "Field" } }), desc = "Field" },
+      { "<leader>ssp", Util.telescope("lsp_document_symbols", { symbols = { "Property" } }), desc = "Property" },
       {
         "<leader>ssv",
         Util.telescope("lsp_document_symbols", { symbols = { "Variable", "Parameter" } }),
@@ -361,7 +382,7 @@ return {
             "yarn.lock",
             "*.git/*",
             "*/tmp/*",
-            "*/*.bk"
+            "*/*.bk",
           },
           pickers = {
             find_files = {

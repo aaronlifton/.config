@@ -2,9 +2,20 @@ local wezterm = require("wezterm")
 local fonts = require("util/fonts")
 local color_util = require("util/colorscheme")
 local vim_settings = require("util/vim")
+-- local exec_domains = require("util/exec_domains")
+local mux = wezterm.mux
 
--- wezterm.on("gui-startup", function(cmd) -- set startup Window position
+-- wezterm.on("gui-startup", function(cmd) -- set startup window position
 -- 	local tab, pane, window = wezterm.mux.spawn_window(cmd or { position = { x = 0, y = 0 }, width = 90, height = 80 })
+-- end)
+wezterm.on("gui-startup", function()
+	local tab, pane, window = wezterm.mux.spawn_window({})
+	window:gui_window():maximize()
+end)
+-- wezterm.on('gui-startup', function(window)
+-- 	local tab, pane, window = mux.spawn_window(cmd or {})
+-- 	local gui_window = window:gui_window();
+-- 	gui_window:perform_action(wezterm.action.togglefullscreen, pane)
 -- end)
 
 local config = {}
@@ -98,7 +109,7 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
 		{ Text = get_current_working_dir(tab) },
 	})
 
-	local title = string.format(" %s ~ %s  ", get_process(tab), cwd)
+	local title = string.format(" %s ~ %s ~ %s", get_process(tab), cwd, tab.tab_index)
 
 	if has_unseen_output then
 		return {
@@ -138,6 +149,7 @@ wezterm.on("update-right-status", function(window, pane)
 	}))
 end)
 
+-- config.exec_domains = exec_domains
 config.colors = {
 	-- colors = { background = "#0c0e14" },
 	background = background,
@@ -195,8 +207,8 @@ config.command_palette_fg_color = "#82aaff" --'white', --rgba(0.75, 0.75, 0.75, 
 config.command_palette_bg_color = "#191b28"
 config.leader = { key = "a", mods = "CTRL", timeout_milliseconds = 1000 }
 config.send_composed_key_when_left_alt_is_pressed = false
-config.send_composed_key_when_right_alt_is_pressed = false -- https://www.leonerd.org.uk/hacks/fixterms/
--- config.enable_csi_u_key_encoding = true
+config.send_composed_key_when_right_alt_is_pressed = true
+-- config.enable_csi_u_key_encoding = true https://www.leonerd.org.uk/hacks/fixterms/
 
 keys = {
 	-- Make Option-Left equivalent to Alt-b which many line editors interpret as backward-word
@@ -380,6 +392,55 @@ keys = {
 	},
 	{ key = "M", mods = "CTRL|SHIFT", action = wezterm.action.SpawnWindow },
 	{ key = "N", mods = "CTRL|SHIFT", action = wezterm.action.DisableDefaultAssignment },
+	-- Move fullscreen asssignment, so that codeium+copilot can be completed with M-Enter in neovim
+	{ key = "Enter", mods = "ALT", action = wezterm.action.DisableDefaultAssignment },
+	{
+		key = "f",
+		mods = "CTRL|CMD",
+		action = wezterm.action_callback(function(window)
+			-- window:gui_window():toggle_fullscreen()
+			window:toggle_fullscreen()
+		end),
+	},
+	-- Toggle maximization
+	{
+		key = "m",
+		mods = "CTRL|CMD",
+		action = wezterm.action_callback(function(window)
+			local screen = wezterm.gui.screens().active
+			local dim = window:get_dimensions()
+			local dock_height = 80
+			local is_fake_full_screen = dim.pixel_width ==  screen.width and dim.pixel_height >= screen.height - dock_height
+			-- maximize
+			if window:get_dimensions().is_full_screen == true or is_fake_full_screen then
+				-- move window down
+				window.set_inner_size(80, 20)
+			else
+				window:maximize()
+			end
+		end),
+	},
+	{
+		key = "5",
+		mods = "CTRL",
+		action = wezterm.action_callback(function(window)
+			window:mux_window():spawn_tab({
+				cwd = "~/Code/astro/fullstack-dev-blog",
+			})
+		end)
+	},
+	{
+		key = "6",
+		mods = "CTRL|CMD",
+		action = wezterm.action_callback(function(window)
+			wezterm.exec_domain('myname', function(cmd)
+				return cmd
+			end)
+		end)
+	},
+	-- Prompt for a name to use for a new workspace and switch to it.
+	-- See https://wezfurlong.org/wezterm/config/lua/keyassignment/SwitchToWorkspace.html#prompting-for-the-workspace-name
+	-- { key = "w", mods = "ALT", action = a.ShowLauncherArgs({ flags = "FUZZY|WORKSPACES" }) },
 	{
 		key = "N",
 		mods = "CTRL|SHIFT",
@@ -399,7 +460,7 @@ keys = {
 	},
 	{
 		key = "w",
-		mods = "ALT",
+		mods = "ALT|CTRL",
 		action = a.ShowLauncherArgs({ flags = "FUZZY|WORKSPACES" }),
 	},
 	-- https://wezfurlong.org/wezterm/config/lua/keyassignment/SwitchToWorkspace.html#prompting-for-the-workspace-name

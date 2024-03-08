@@ -13,6 +13,9 @@ See:
   :h :trust
 --]]
 local filepath = vim.fn.fnamemodify(".lazy.lua", ":p")
+if not filepath then
+  return
+end
 local file = vim.secure.read(filepath)
 if not file then
   return {}

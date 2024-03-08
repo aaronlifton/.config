@@ -11,10 +11,10 @@ local source_action = function(name)
 end
 
 local inlayHints = {
-  includeInlayParameterNameHints = "all",                       -- "literal"
+  includeInlayParameterNameHints = "all", -- "literal"
   includeInlayParameterNameHintsWhenArgumentMatchesName = true, -- false
   includeInlayFunctionParameterTypeHints = true,
-  includeInlayVariableTypeHints = true,                         -- false
+  includeInlayVariableTypeHints = true, -- false
   includeInlayVariableTypeHintsWhenTypeMatchesName = true,
   includeInlayPropertyDeclarationTypeHints = true,
   includeInlayFunctionLikeReturnTypeHints = true,

@@ -5,7 +5,7 @@ return {
     cmd = { "SnipRun", "SnipInfo", "SnipLive", "SnipClose", "SnipReset", "SnipReplMemoryClean" },
     opts = {
       selected_interpreters = {}, --# use those instead of the default for the current filetype
-      repl_enable = { "javascript", "typescript" }, --# enable REPL-like behavior for the given interpreters
+      repl_enable = { "javascript", "typescript", "lua" }, --# enable REPL-like behavior for the given interpreters
       repl_disable = {}, --# disable REPL-like behavior for the given interpreters
 
       interpreter_options = {
@@ -51,10 +51,10 @@ return {
       { "<leader>cur", "<cmd>SnipRun<cr>", desc = "Run" },
       { "<F6>", "<cmd>SnipRun<cr>", desc = "Run" },
       { "<leader>cur", function() require("sniprun").run("v") end, mode = { "v" }, desc = "Run" },
-      { "<F6>", function() require("sniprun").run("v") end, mode = { "v" }, desc = "Run" },
+      { "<F6>",        function() require("sniprun").run("v") end, mode = { "v" }, desc = "Run" },
       { "<leader>cui", function() require("sniprun").info() end, desc = "Info" },
       { "<leader>cuR", function() require("sniprun").reset() end, desc = "Reset" },
-      { "<S-F6>", function() require("sniprun").reset() end, desc = "Reset" },
+      { "<S-F6>",      function() require("sniprun").reset() end, desc = "Reset" },
       { "<leader>cul", function() require("sniprun.live_mode").toggle() end, desc = "Live" },
     },
   },

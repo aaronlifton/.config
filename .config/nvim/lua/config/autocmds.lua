@@ -59,7 +59,7 @@ local function echo_diagnostic()
     last_echo = { true, bufnr, line }
 
     local diag = diags[1]
-    local width = vim.api.nvim_get_option("columns") - 15
+    local width = vim.api.nvim_get_option_value("columns") - 15
     local lines = vim.split(diag.message, "\n")
     local message = lines[1]
     -- local trimmed = false
@@ -107,6 +107,7 @@ vim.api.nvim_create_autocmd("User", {
 vim.api.nvim_create_autocmd("User", {
   pattern = "ColorScheme",
   callback = function()
+    vim.api.nvim_echo({ { vim.api.nvim_buf_get_name(0), "none" } }, false, {})
     vim.api.nvim_set_hl(0, "LeapMatch", { guifg = "#000000", guibg = "#ffff00" })
     if vim.g.disable_leap_secondary_labels == true then
       local bg = vim.api.nvim_get_hl(0, { name = "LeapLabelSecondary" }).bg
@@ -127,6 +128,16 @@ vim.api.nvim_create_autocmd("User", {
 --   end,
 -- })
 
+local no_diagnostics_buffers = {
+  "lazyterm",
+  "floaterm",
+  "toggleterm",
+  "neotree",
+  "NvimTree",
+  "Trouble",
+  "floatinghelp",
+}
+
 local baleia = require("baleia").setup({})
 vim.api.nvim_create_autocmd("BufWinEnter", {
   pattern = "*",
@@ -136,8 +147,8 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
     -- debug :!=vim.api.nvim_win_get_config(vim.fn.bufwinid(ev.buf)).zindex
     -- local bufnr = vim.api.nvim_get_current_buf()
     local bufnr = vim.fn.bufnr()
-    local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype")
-    local buftype = vim.api.nvim_buf_get_option(vim.fn.bufnr(), "buftype")
+    local filetype = vim.api.nvim_get_option_value("filetype", { buf = bufnr })
+    local buftype = vim.api.nvim_get_option_value("buftype", { buf = vim.fn.bufnr() })
     local bufname = vim.api.nvim_buf_get_name(ev.buf)
     if buftype ~= "nofile" then
       return
@@ -195,59 +206,65 @@ ac("BufRead", {
 })
 
 -- -- Fix telescope entering on insert mode
--- ac("WinLeave", {
---   callback = function()
---     if vim.bo.ft == "TelescopePrompt" and vim.fn.mode() == "i" then
---       vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "i", false)
---     end
---   end,
--- })
+ac("WinLeave", {
+  callback = function()
+    if vim.bo.ft == "TelescopePrompt" and vim.fn.mode() == "i" then
+      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "i", false)
+    end
+  end,
+})
 --
 local auto_close_filetype = {
   "lazy",
-  "mason",
   "lspinfo",
   "toggleterm",
   "null-ls-info",
-  "TelescopePrompt",
+  -- "TelescopePrompt",
   "notify",
 }
 
--- -- Auto close window when leaving
--- ac("BufLeave", {
---   group = ag("lazyvim_auto_close_win", { clear = true }),
---   callback = function(event)
---     local ft = vim.api.nvim_buf_get_option(event.buf, "filetype")
+-- Auto close window when leaving
+ac("BufLeave", {
+  group = ag("lazyvim_auto_close_win", { clear = true }),
+  callback = function(event)
+    local ft = vim.api.nvim_buf_get_option(event.buf, "filetype")
 
---     if vim.fn.index(auto_close_filetype, ft) ~= -1 then
---       local winids = vim.fn.win_findbuf(event.buf)
---       if not winids then return end
---       for _, win in pairs(winids) do
---         vim.api.nvim_win_close(win, true)
---       end
---     end
---   end,
--- })
+    if vim.fn.index(auto_close_filetype, ft) ~= -1 then
+      local winids = vim.fn.win_findbuf(event.buf)
+      if not winids then
+        return
+      end
+      for _, win in pairs(winids) do
+        vim.api.nvim_win_close(win, true)
+      end
+    end
+  end,
+})
 
+local to_close_with_esc_or_q = {
+  "PlenaryTestPopup",
+  "help",
+  "lspinfo",
+  "man",
+  "notify",
+  "qf",
+  "query",
+  "spectre_panel",
+  "startuptime",
+  "tsplayground",
+  "neotest-output",
+  "checkhealth",
+  "neotest-summary",
+  "neotest-output-panel",
+  "toggleterm",
+  "floaterm",
+  "lsp-installer",
+  "DressingSelect",
+}
 -- close some filetypes with <esc>, in addition to <q>
 vim.api.nvim_create_autocmd("FileType", {
   group = augroup("close_with_esc"),
-  pattern = {
-    "PlenaryTestPopup",
-    "help",
-    "lspinfo",
-    "man",
-    "notify",
-    "qf",
-    "query",
-    "spectre_panel",
-    "startuptime",
-    "tsplayground",
-    "neotest-output",
-    "checkhealth",
-    "neotest-summary",
-    "neotest-output-panel",
-  },
+  pattern = to_close_with_esc_or_q,
   callback = function(event)
     vim.bo[event.buf].buflisted = false
     vim.keymap.set("n", "<esc>", "<cmd>close<cr>", { buffer = event.buf, silent = true })
@@ -257,27 +274,7 @@ vim.api.nvim_create_autocmd("FileType", {
 -- close additional filetypes with <q>
 vim.api.nvim_create_autocmd("FileType", {
   group = augroup("close_with_q"),
-  pattern = {
-    "PlenaryTestPopup",
-    "help",
-    "lspinfo",
-    "man",
-    "notify",
-    "qf",
-    "query",
-    "spectre_panel",
-    "startuptime",
-    "tsplayground",
-    "neotest-output",
-    "checkhealth",
-    "neotest-summary",
-    "neotest-output-panel",
-    "toggleterm", -- "floaterm",
-    -- "lir",
-    "lsp-installer",
-    "DressingSelect",
-    -- "Jaq",
-  },
+  pattern = to_close_with_esc_or_q,
   callback = function(event)
     vim.bo[event.buf].buflisted = false
     vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = event.buf, silent = true })

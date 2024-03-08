@@ -2,7 +2,8 @@ return {
   {
     "danymat/neogen",
     opts = {
-      snippet_engine = "luasnip",
+      -- TODO: Investigate if having luasnip is worth it
+      -- snippet_engine = "luasnip",
       enabled = true,
     },
     -- stylua: ignore

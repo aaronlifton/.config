@@ -23,16 +23,20 @@ return {
     event = "InsertEnter",
     opts = {
       suggestion = {
-        enabled = false,
+        -- enabled = false,
         -- auto_trigger = false,
-        -- keymap = {
-        --   -- accept = "<M-CR>",
-        --   accept_line = "<M-l>",
-        --   accept_word = "<M-k>",
-        --   next = "<M-]>",
-        --   prev = "<M-[>",
-        --   dismiss = "<M-c>",
-        -- },
+        enabled = true,
+        auto_trigger = true,
+        -- MattFTW
+        keymap = {
+          -- accept = "<M-CR>",
+          accept = "<A-CR>",
+          accept_line = "<A-l>",
+          accept_word = "<A-k>",
+          next = "<A-]>",
+          prev = "<A-[>",
+          dismiss = "<A-c>",
+        },
       },
       panel = { enabled = false },
       filetypes = {
@@ -76,6 +80,13 @@ return {
       },
       keys = {
         { "<leader>cI", "<cmd>Copilot toggle<cr>", desc = "Toggle IA" },
+        {
+          ",c",
+          function()
+            require("copilot.panel").open({ "bottom", 0.25 })
+          end,
+          desc = "Toggle Copilot Panel",
+        },
       },
     },
   },

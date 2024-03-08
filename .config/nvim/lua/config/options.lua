@@ -18,6 +18,7 @@ vim.opt.sps = "file:/Users/aaron/.config/nvim/spell/sugg,best"
 -- use a file for spell suggestions
 vim.opt.spellfile = "/Users/aaron/.config/nvim/spell/en.utf-8.add"
 vim.cmd("set spell syntax=off")
+vim.cmd("set nospell")
 
 vim.opt.mouse = "a"
 vim.opt.clipboard:append({ "unnamed", "unnamedplus" })
@@ -64,6 +65,8 @@ vim.g["denops#deno"] = "/Users/aaron/.deno/bin/deno"
 vim.g.native_snippets_enabled = true
 vim.g.pairs_plugin = "mini.pairs"
 vim.g.outline_plugin = "symbols-outline.nvim"
+vim.g.gui_font_face = "Hack Nerd Font Mono"
+vim.g.gui_font_size = 18
 
 -- Disable some repl providers
 for _, provider in ipairs({ "perl", "python3" }) do
@@ -106,5 +109,7 @@ vim.commentstring = ""
 -- require("mini.starter").open()
 
 vim.g.root_spec = { "lsp", { ".git", "lua" }, "cwd" }
-vim.g.autoformat = true     -- globally
-vim.b.autoformat = true     -- buffer-local
+vim.g.autoformat = true -- globally
+vim.b.autoformat = true -- buffer-local
+
+vim.lsp.inlay_hint.enable(0, false)

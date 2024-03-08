@@ -47,18 +47,30 @@ util.set_user_var("IS_NVIM", true)
 
 -- change word with <c-c>
 vim.keymap.set("n", "<C-c>", "<cmd>normal! ciw<cr>a")
+map("n", "<A-S-j>", "cw<C-r>0<ESC>", { desc = "Change word under cursor with register 0" })
 
 -- better up/down
 map({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 map({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 
 -- Move Lines
+-- map("n", "Ì", "<A-h>", symbol_key_opts)
+-- map("n", "Ï", "<A-j>", symbol_key_opts)
+-- map("n", "È", "<A-k>", symbol_key_opts)
+-- map("n", "¬", "<A-l>", symbol_key_opts)
 map("n", "<A-j>", "<cmd>m .+1<cr>==", { desc = "Move down" })
 map("n", "<A-k>", "<cmd>m .-2<cr>==", { desc = "Move up" })
--- map("i", "<A-j>", "<esc><cy md>m .+1<cr>==gi", { desc = "Move down" })
--- map("i", "<A-k>", "<esc><cmd>m .-2<cr>==gi", { desc = "Move up" })
--- map("v", "<A-j>", ":m '>+1<cr>gv=gv", { desc = "Move down" })
--- map("v", "<A-k>", ":m '<-2<cr>gv=gv", { desc = "Move up" })
+map("i", "<A-j>", "<esc><cy md>m .+1<cr>==gi", { desc = "Move down" })
+map("i", "<A-k>", "<esc><cmd>m .-2<cr>==gi", { desc = "Move up" })
+map("v", "<A-j>", ":m '>+1<cr>gv=gv", { desc = "Move down" })
+map("v", "<A-k>", ":m '<-2<cr>gv=gv", { desc = "Move up" })
+
+map("n", "<M-j>", "<cmd>m .+1<cr>==", { desc = "Move down" })
+map("n", "<M-k>", "<cmd>m .-2<cr>==", { desc = "Move up" })
+map("i", "<M-j>", "<esc><cy md>m .+1<cr>==gi", { desc = "Move down" })
+map("i", "<M-k>", "<esc><cmd>m .-2<cr>==gi", { desc = "Move up" })
+map("v", "<M-j>", ":m '>+1<cr>gv=gv", { desc = "Move down" })
+map("v", "<M-k>", ":m '<-2<cr>gv=gv", { desc = "Move up" })
 
 -- buffers
 if lazy_util.has("bufferline.nvim") then
@@ -109,7 +121,7 @@ map("i", ".", ".<c-g>u")
 map("i", ";", ";<c-g>u")
 
 -- save file
-map({ "i", "v", "n", "s" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save file" })
+map({ "i", "v", "n", "s" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save file", remap = true })
 
 -- better indenting
 map("v", "<", "<gv")
@@ -126,8 +138,8 @@ map("x", "<leader>/", "<esc><cmd>lua require('Comment.api').toggle.linewise(vim.
 map("v", "p", '"_dP', opts)
 
 -- Move to beginning/end of line
-map("n", "<a-l>", "$", { desc = "Last character of Line" })
-map("n", "<a-h>", "_", { desc = "First character of Line" })
+map("n", "<A-l>", "$", { desc = "LAST CHARACTER OF LINE" })
+map("n", "<A-h>", "_", { desc = "First character of Line" })
 
 -- -- U for redo
 -- map("n", "U", "<C-r>", { desc = "Redo" })
@@ -177,9 +189,13 @@ end
 -- Keyboard remap for Mac fr
 local symbol_key_opts = { desc = "which_key_ignore" }
 
+-- if not vim.g.neovide then
+-- map("n", "<M-j>", "<A-j>", symbol_key_opts)
+-- map("n", "<M-k>", "<A-k>", symbol_key_opts)
+map("n", "k", "<A-k>", symbol_key_opts)
 map("n", "æ", "<A-a>", symbol_key_opts)
 map("n", "Â", "<A-z>", symbol_key_opts)
-map("n", "ê", "<A-e>", symbol_key_opts)
+-- map("n", "ê", "<A-e>", symbol_key_opts)
 map("n", "®", "<A-r>", symbol_key_opts)
 map("n", "†", "<A-t>", symbol_key_opts)
 map("n", "Ú", "<A-y>", symbol_key_opts)
@@ -192,10 +208,6 @@ map("n", "Ò", "<A-s>", symbol_key_opts)
 map("n", "∂", "<A-d>", symbol_key_opts)
 map("n", "ƒ", "<A-f>", symbol_key_opts)
 map("n", "ﬁ", "<A-g>", symbol_key_opts)
-map("n", "Ì", "<A-h>", symbol_key_opts)
-map("n", "Ï", "<A-j>", symbol_key_opts)
-map("n", "È", "<A-k>", symbol_key_opts)
-map("n", "¬", "<A-l>", symbol_key_opts)
 map("n", "µ", "<A-m>", symbol_key_opts)
 map("n", "‹", "<A-w>", symbol_key_opts)
 map("n", "≈", "<A-x>", symbol_key_opts)
@@ -230,6 +242,7 @@ map("n", "√", "<S-A-v>", symbol_key_opts)
 map("n", "∫", "<S-A-b>", symbol_key_opts)
 map("n", "ı", "<S-A-n>", symbol_key_opts)
 -- END Keyboard remap for Mac fr
+-- end
 
 -- local symbol_keys = {
 --   "æ",
@@ -290,25 +303,20 @@ map("n", "ı", "<S-A-n>", symbol_key_opts)
 -- end
 
 -- Telescope
-map("n", "<leader>ff", ":Telescope find_files<CR>", opts)
-map("n", "<leader>ft", ":Telescope live_grep<CR>", opts)
-map("n", "<leader>fp", ":Telescope projects<CR>", opts)
-map("n", "<leader>fb", ":Telescope buffers<CR>", opts)
-map("n", "<leader>fk", ":Telescope keymaps<CR>", opts)
 
-local MiniExtra = require("mini.extra")
+-- local MiniExtra = require("mini.extra")
 -- map("n", "<leader>ft", function()
 --   MiniExtra.pickers.git_files()
 -- end, opts)
-map("n", "<leader>fm", function()
-  MiniExtra.pickers.git_files({ scope = "modified" })
-end, opts)
-map("n", "<leader>fu", function()
-  MiniExtra.pickers.git_files({ scope = "untracked" })
-end, opts)
-map("n", "<leader>fd", function()
-  MiniExtra.pickers.diagnostic()
-end, opts)
+-- map("n", "<leader>fm", function()
+--   MiniExtra.pickers.git_files({ scope = "modified" })
+-- end, opts)
+-- map("n", "<leader>fu", function()
+--   MiniExtra.pickers.git_files({ scope = "untracked" })
+-- end, opts)
+-- map("n", "<leader>fd", function()
+--   MiniExtra.pickers.diagnostic()
+-- end, opts)
 
 -- require("telescope").load_extension("project")
 -- map("n", "<leader>fw", ":lua  require('telescope').extensions.project.project({})", { noremap = true, silent = true })
@@ -325,7 +333,9 @@ local conceallevel = vim.o.conceallevel > 0 and vim.o.conceallevel or 3
 map("n", "<leader>uc", function() lazy_util.toggle("conceallevel", false, { 0, conceallevel }) end,
   { desc = "Toggle Conceal" })
 if vim.lsp.inlay_hint then
-  map("n", "<leader>uh", function() vim.lsp.inlay_hint(0, nil) end, { desc = "Toggle Inlay Hints" })
+  map("n", "<leader>uh", function()
+    vim.lsp.inlay_hint.enable(0, not vim.lsp.inlay_hint.is_enabled())
+  end, { desc = "Toggle Inlay Hints" })
 end
 
 -- lazygit
@@ -392,9 +402,6 @@ map("n", "<leader><tab>[", "<cmd>tabprevious<cr>", { desc = "Previous Tab" })
 map("n", "<leader><tab>-", "<cmd>tabonly<cr>", { desc = "Close Other Tabs" })
 
 -- custom
---
-map("n", "<C-j>", "cw<C-r>0<ESC>", { desc = "Change word under cursor with register 0" })
-
 map('n', '<leader>fo', ':!open ' .. vim.fn.expand('%:p:h') .. '<cr>', { noremap = true, silent = true })
 map('n', '<leader>wk', '<cmd>WhichKey<cr>', { noremap = true, silent = true })
 -- WhichKey = require('which-key')
@@ -423,10 +430,6 @@ map("n", "<leader>gl", K.open_url, { noremap = true, silent = true })
 map("v", "<leader>gl", K.v_open_url, { noremap = true, silent = true })
 -- map('gx', [[:execute '!open ' . shellescape(expand('<cfile>'), 1)<CR>]]})
 
--- Copilot
-map('n', ',c', function() require("copilot.panel").open({ "bottom", 0.25 }) end,
-  { noremap = true, desc = "Pick a window" })
-
 map('n', '<leader>uS', function() K.toggle_vim_g_variable('enable_leap_lightspeed_mode') end, { noremap = true })
 --
 -- vim.keymap.set("x", "<leader>re", ":Refactor extract ")
@@ -444,7 +447,6 @@ map('n', '<leader>uS', function() K.toggle_vim_g_variable('enable_leap_lightspee
 
 map('n', '<leader>rx', function() K.clear_all_registers() end, { noremap = true, desc = "Clear all registers" })
 
-map("n", "<space>m", "<cmd>Telescope macros<cr>", { desc = "Telescope Macros" })
 
 map(
   'n',
@@ -455,7 +457,8 @@ map(
         vim.api.nvim_buf_get_name(vim.fn.bufnr()),
         'none'
       },
-      false
+      false,
+      {}
     )
   end,
   { noremap = true, desc = "Show current buffer name" }
@@ -477,6 +480,23 @@ local function spell_reload()
   vim.cmd(":mkspell! %")
 end
 map("n", "zR", spell_reload, { noremap = true, silent = true })
+-- go to other bracket with treesitter
+map("n", "mm",
+  function() 
+    local ts_utils = require("nvim-treesitter.ts_utils")
+    local node = ts_utils.get_node_at_cursor()
+    if node then
+      ts_utils.get_next_node(node, true, true)
+    end
+  end,
+  { noremap = true, silent = true}
+)
+map({ "n", "v", "s", "i" }, "<D-s>", "<cmd>w<cr>", { noremap = true })
+map({ "n", "v", "s", "i" }, "<D-v>", "<cmd>norm gpa<cr>", { noremap = true })
+
+-- go to help for selection
+
+map("n", "<leader>h", "<cmd>:help <cword><cr>", { noremap = true })
 --
 --
 --
@@ -560,32 +580,22 @@ wk.register({
     d = {
       S = { "<cmd>lua require('osv').launch({port=8086})<cr>", "Start OSV (port 8086)" },
     },
+    f = {
+      f = { ":Telescope find_files<CR>", { silent = true, desc = "files" }},
+      t = { ":Telescope live_grep<CR>", { silent = true, desc = "grep (root dir" }},
+      p = { ":Telescope projects<CR>", { silent = true, desc = "projects" }},
+      b = { ":Telescope buffers<CR>", { silent = true, desc = "buffers" }},
+      k = { ":Telescope keymaps<CR>", { silent = true, desc = "keymaps" }},
+      m = { "<cmd>Telescope macros<cr>", { silent = true, desc = "Telescope Macros" }},
+      o = { ":!open .. vim.fn.expand('%:p:h') .. <cr>", "Reveal in finder" }
+    },
+    l = {
+      l = { "<cmd>Lazy<cr>", "Lazy", { noremap = true } },
+      e = { "<cmd>LazyExtras<cr>", "LazyExtras", { noremap = true } },
+    },
     n = {
-      t = { "<cmd>NoiceTelescope<cr>", "Noice", { noremap = true } },
-      n = { "<cmd>Telescope notify<cr>", "Telescope notify" },
-      b = { "<cmd>Telescope buffers<cr>", "Buffers" },
-      B = { "<cmd>Telescope bookmarks list<cr>", "Bookmarks" },
-      c = { "<cmd>Telescope commands<cr>", "Commands" },
-      C = { "<cmd>Telescope command_history<cr>", "command history" },
-      e = { "<cmd>NoiceErrors<cr>" },
-      f = { "<cmd>Telescope file_browser<cr>", "file browser" },
-      g = { "<cmd>Telescope git_status<cr>", "Git Status" },
-      G = { "<cmd>Telescope git_commits<cr>", "Git Commits" },
-      h = { "<cmd>Telescope help_tags<cr>", "Help Tags" },
-      j = { "<cmd>Telescope jump_list<cr>", "Jump List" },
-      l = { "<cmd>Telescope current_buffer_fuzzy_find<cr>", "Current Buffer Fuzzy Find" },
-      m = { "<cmd>Telescope macros<cr>", "Macros" },
-      M = {
-        name = "Mark/Msg/Man",
-        a = { "<cmd>Telescope marks<cr>", "Marks" },
-        e = { "<cmd>Telescope messages<cr>", "Messages" },
-        p = { "<cmd>Telescope man_pages<cr>", "Man Pages" },
-      },
-      r = { "<cmd>Telescope registers<cr>", "Registers" },
-      -- s = { "<cmd>Telescope spell_suggest<cr>", "Spell Suggest"},
-      S = { "<cmd>Telescope session<cr>", "Session" },
-      T = { "<cmd>Telescope treesitter<cr>", "Treesitter" },
-      y = { "<cmd>Telescope yank_history<cr>" }
+          e = { "<cmd>NoiceErrors<cr>", "Noice Errors" },
+          t = { "<cmd>NoiceTelescope<cr>", "Noice", { noremap = true } },
     },
     g = {
       s = { "<cmd>lua search_google()<CR>", "Search Google" },
@@ -593,14 +603,30 @@ wk.register({
       -- s = { "<cmd>Telescope lsp_document_symbols<cr>", "Go to symbol" },
       -- s = { "<cmd>Telescope lsp_workspace_symbols<cr>", "Go to workspace symbol" },
     },
-    f = {
-      o = { ":!open .. vim.fn.expand('%:p:h') .. <cr>", "Reveal in finder" }
-    },
     u = {
       -- d = { LazyMod.toggle.diagnostics, "Toggle Diagnostics*" },
       S = { function() K.toggle_vim_g_variable("enable_leap_lightspeed_mode") end, "Enable leap lightspeed mode" },
       q = { "<Cmd>Trouble<cr>", "Show Trouble" },
     },
+    s = {
+          n = { "<cmd>Telescope notify<cr>", "Telescope notify" },
+          -- b = { "<cmd>Telescope buffers<cr>", "Buffers" },
+          B = { "<cmd>Telescope bookmarks list<cr>", "Bookmarks" },
+          -- c = { "<cmd>Telescope commands<cr>", "Commands" },
+          -- C = { "<cmd>Telescope command_history<cr>", "command history" },
+          f = { "<cmd>Telescope file_browser<cr>", "file browser" },
+          -- g = { "<cmd>Telescope git_status<cr>", "Git Status" },
+          -- G = { "<cmd>Telescope git_commits<cr>", "Git Commits" },
+          -- h = { "<cmd>Telescope help_tags<cr>", "Help Tags" },
+          l = { "<cmd>Telescope current_buffer_fuzzy_find<cr>", "Current Buffer Fuzzy Find" },
+          -- m = { "<cmd>Telescope macros<cr>", "Macros" },
+          k = { "<cmd>Telescope marks<cr>", "mar[k]s" },
+          M = { "<cmd>Telescope man_pages<cr>", "Man Pages" },
+          r = { "<cmd>Telescope registers<cr>", "Registers" },
+          -- s = { "<cmd>Telescope spell_suggest<cr>", "Spell Suggest"},
+          t = { "<cmd>Telescope treesitter<cr>", "Treesitter" },
+          -- y = { "<cmd>Telescope yank_history<cr>" }
+        },
     k = {
       --   r = {
       --     x = { clear_all_registers, "Clear all registers" },
@@ -635,12 +661,18 @@ wk.register({
     --   },
     -- },
     w = {
-      h = { K.switch_to_highest_window, "Switch to highest window" },
+      H = { K.switch_to_highest_window, "Switch to highest window" },
       q = { K.close_all_floating_windows, "Close all floating windows" },
     },
     z = {
       x = {
-        function() vim.api.nvim_echo({ vim.api.nvim_buf_get_name(vim.fn.bufnr()), 'none' }, false) end,
+        function()
+          vim.api.nvim_echo(
+            {{ vim.api.nvim_buf_get_name(vim.fn.bufnr()), 'none' }},
+            false,
+            {}
+          )
+        end,
         "Show current buffer name"
       },
     },

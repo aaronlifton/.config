@@ -1,0 +1,236 @@
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Inserts a blank line between shell prompts
+add_newline = true
+
+format = """
+$directory\
+$nodejs\
+$git_branch\
+$git_status\
+$git_state\
+\n$character\
+"""
+
+command_timeout = 1500
+
+[battery]
+disabled = true
+full_symbol = ""
+charging_symbol = ""
+discharging_symbol = ""
+
+[[battery.display]]
+threshold = 30
+style = "bold red"
+
+[character]
+# symbol = "➜"
+# error_symbol = "[✖](bold red) "
+# https://github.com/mikeduminy/dotfiles/blob/4ce0675531bde99c2d17b2bb8beb4c94084e6924/starship/starship.toml
+success_symbol = '[❯](bold green)'
+error_symbol = '[❯](bold red)'
+vimcmd_symbol = '[❮](bold green)'
+vimcmd_replace_one_symbol = '[❮](bold purple)'
+vimcmd_replace_symbol = '[❮](bold purple)'
+vimcmd_visual_symbol = '[❮](bold yellow)'
+
+[cmd_duration]
+min_time = 10_000                    # Show command duration over 10,000 milliseconds (=10 sec)
+format = " took [$duration]($style)"
+
+[directory]
+read_only = " 󰌾"
+truncation_length = 5
+format = "[$path]($style)[$lock_symbol]($lock_style) "
+
+[git_branch]
+format = " [$symbol$branch]($style) "
+symbol = " "
+style = "bold yellow"
+
+[git_commit]
+commit_hash_length = 8
+style = "bold white"
+
+[git_state]
+format = '[\($state( $progress_current of $progress_total)\)]($style) '
+
+[git_status]
+conflicted = " "
+ahead = " ${count}"
+behind = " ×${count}"
+diverged = "󰓁 ×${ahead_count} 🐢 ×${behind_count}"
+untracked = " ×${count}"
+# stashed = " "
+stashed = ''
+modified = " ×${count}"
+staged = " ×${count}"
+renamed = " ×${count}"
+deleted = "﫧 ×${count}"
+style = "bright-white"
+format = "$all_status$ahead_behind"
+
+[hostname]
+ssh_only = false
+format = "<[$hostname]($style)>"
+ssh_symbol = " "
+trim_at = "-"
+style = "bold dimmed white"
+disabled = true
+
+[julia]
+symbol = " "                         # symbol = "ஃ "
+format = "[$symbol$version]($style) "
+style = "bold green"
+
+
+[memory_usage]
+threshold = 70
+style = "bold dimmed white"
+format = "$symbol[${ram}( | ${swap})]($style) "
+disabled = false
+
+[package]
+symbol = "󰏗 "
+disabled = true
+
+[python]
+symbol = " "
+format = "[$symbol$version]($style) "
+style = "bold green"
+
+[rust]
+symbol = " "
+format = "[$symbol$version]($style) "
+style = "bold green"
+
+[time]
+time_format = "%T"
+format = " $time($style) "
+style = "bright-white"
+disabled = false
+
+[username]
+style_user = "bold dimmed blue"
+show_always = false
+
+[nodejs]
+symbol = " "
+# format = "via [ $version](bold green) "
+# symbol = ' '
+style = 'bold green'
+version_format = 'v${major}.${minor}'
+format = '[$symbol\[$version\]]($style) '
+detect_extensions = ['js', 'ts', 'jsx', 'tsx', 'mjs', 'cjs']
+
+[aws]
+symbol = "  "
+
+[buf]
+symbol = " "
+
+[c]
+symbol = " "
+
+[conda]
+symbol = " "
+
+[dart]
+symbol = " "
+
+[docker_context]
+symbol = " "
+
+[elixir]
+symbol = " "
+
+[elm]
+symbol = " "
+
+[fossil_branch]
+symbol = " "
+
+[golang]
+symbol = " "
+
+[guix_shell]
+symbol = " "
+
+[haskell]
+symbol = " "
+
+[haxe]
+symbol = " "
+
+[hg_branch]
+symbol = " "
+
+[java]
+symbol = " "
+
+[lua]
+symbol = " "
+
+[meson]
+symbol = "󰔷 "
+
+[nim]
+symbol = "󰆥 "
+
+[nix_shell]
+symbol = " "
+
+[os.symbols]
+Alpaquita = " "
+Alpine = " "
+Amazon = " "
+Android = " "
+Arch = " "
+Artix = " "
+CentOS = " "
+Debian = " "
+DragonFly = " "
+Emscripten = " "
+EndeavourOS = " "
+Fedora = " "
+FreeBSD = " "
+Garuda = "󰛓 "
+Gentoo = " "
+HardenedBSD = "󰞌 "
+Illumos = "󰈸 "
+Linux = " "
+Mabox = " "
+Macos = " "
+Manjaro = " "
+Mariner = " "
+MidnightBSD = " "
+Mint = " "
+NetBSD = " "
+NixOS = " "
+OpenBSD = "󰈺 "
+openSUSE = " "
+OracleLinux = "󰌷 "
+Pop = " "
+Raspbian = " "
+Redhat = " "
+RedHatEnterprise = " "
+Redox = "󰀘 "
+Solus = "󰠳 "
+SUSE = " "
+Ubuntu = " "
+Unknown = " "
+Windows = "󰍲 "
+
+[pijul_channel]
+symbol = " "
+
+[rlang]
+symbol = "󰟔 "
+
+[ruby]
+symbol = " "
+
+[scala]
+symbol = " "

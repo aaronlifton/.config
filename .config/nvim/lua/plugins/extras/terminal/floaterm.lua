@@ -9,6 +9,7 @@ return {
       -- { "<leader>gG", "<cmd>FloatermNew --name=lazygitbuffer --opener=edit --titleposition=center --height=0.85 --width=0.85 --cwd=<buffer> lazygit<CR>", desc = "Lazygit (cwd)" },
       { "<leader>cen", "<cmd>FloatermNew --name=node --opener=edit --titleposition=center --wintype=split --height=0.35 node<CR>",                            desc = "Node" },
       { "<leader>cep", "<cmd>FloatermNew --name=python --opener=edit --titleposition=center --wintype=split --height=0.35 python<CR>",                        desc = "Python" },
+      { "<leader>cel", "<cmd>FloatermNew --name=python --opener=edit --titleposition=center --wintype=split --height=0.35 lua<CR>",                           desc = "Lua" },
       { "<S-Right>",   "<Esc><Esc><cmd>FloatermNext<CR>",                                                                                                     mode = { "t" },              desc = "Next Terminal" },
       { "<S-Left>",    "<Esc><Esc><cmd>FloatermPrev<CR>",                                                                                                     mode = { "t" },              desc = "Prev Terminal" },
       { "<A-Right>",   "<Esc><Esc><cmd>FloatermLast<CR>",                                                                                                     mode = { "t" },              desc = "Last Terminal" },

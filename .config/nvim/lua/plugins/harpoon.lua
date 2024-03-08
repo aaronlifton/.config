@@ -16,8 +16,8 @@ table.insert(keys,
 table.insert(keys, { "<leader>hf", "<cmd>Telescope harpoon marks<CR>", desc = "Files (Telescope)" })
 table.insert(keys, { "<leader>hc", function() require("harpoon"):list():clear() end, desc = "Clear all Files" })
 
-table.insert(keys, { "<A-[>", function() require("harpoon"):list():prev() end, desc = "Harpoon->Prev" })
-table.insert(keys, { "<A-]>", function() require("harpoon"):list():next() end, desc = "Harpoon->Next" })
+table.insert(keys, { "<C-A-[>", function() require("harpoon"):list():prev() end, desc = "Harpoon->Prev" })
+table.insert(keys, { "<C-A-]>", function() require("harpoon"):list():next() end, desc = "Harpoon->Next" })
 
 -- idea: <C-S-P>
 table.insert(keys, { "<C-A-h>", function() require("harpoon"):list():prev() end, desc = "Harpoon->Prev" })
