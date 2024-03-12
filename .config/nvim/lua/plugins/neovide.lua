@@ -2,6 +2,8 @@ if not vim.g.neovide then
   return {}
 end
 
+-- vim.g.gui_font_face = "FiraCode Nerd Font"
+-- vim.g.gui_font_face = "MesloLGLDZ Nerd Font Mono"
 RefreshGuiFont = function()
   vim.opt.guifont = string.format("%s:h%s", vim.g.gui_font_face, vim.g.gui_font_size)
 end
@@ -14,7 +16,7 @@ end
 -- Keymaps
 local opts = { noremap = true, silent = true }
 
-vim.keymap.set({ "n", "i" }, "<C-+>", function()
+vim.keymap.set({ "n", "i" }, "<C-S-+>", function()
   ResizeGuiFont(1)
 end, opts)
 vim.keymap.set({ "n", "i" }, "<C-->", function()
@@ -36,13 +38,14 @@ vim.g.neovide_cursor_antialiasing = false
 
 vim.g.neovide_cursor_vfx_mode = "pixiedust" -- railgun, torpedo, pixiedust, sonicboom, ripple, wireframe
 vim.g.neovide_hide_mouse_when_typing = true
-vim.g.neovide_cursor_vfx_opacity = 190.0
+vim.g.neovide_cursor_vfx_opacity = 195.0
 -- vim.g.neovide_cursor_vfx_particle_density = 7.0
 -- vim.g.neovide_cursor_vfx_particle_speed = 10.0
 -- vim.g.neovide_cursor_vfx_particle_phase = 1.5 -- railgun
 -- vim.g.neovide_cursor_vfx_particle_curl = 1.0 -- railgun
 
 vim.o.guifont = "Hack Nerd Font Mono:h15"
+-- vim.o.guifont = "Berkely Mono Trial Regular:h15"
 
 vim.opt.winblend = 20
 vim.g.neovide_refresh_rate = 75

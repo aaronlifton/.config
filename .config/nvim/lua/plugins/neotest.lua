@@ -1,7 +1,6 @@
 return {
   {
     "nvim-neotest/neotest",
-    -- lazy = false,
     dependencies = {
       "olimorris/neotest-rspec",
       "marilari88/neotest-vitest",

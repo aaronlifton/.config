@@ -1,4 +1,4 @@
-if vim.g.outline_plugin == "symbols-outline.nvim" then
+if vim.g.outline_plugin == "outline.nvim" then
   return {
     {
       "folke/edgy.nvim",
@@ -10,7 +10,17 @@ if vim.g.outline_plugin == "symbols-outline.nvim" then
             for _, win in ipairs(windows) do
               local buf = vim.api.nvim_win_get_buf(win)
               local name = vim.api.nvim_buf_get_name(buf)
+              -- set current buf
               vim.cmd("echo '" .. name .. "'")
+              local subname
+              if name:find("edgy") == 1 then
+                subname = name.match(name, "^edgy://(%w+)")
+              end
+
+              if subname == "Outline" then
+                vim.api.nvim_set_current_win(win)
+                vim.cmd("buffer " .. buf)
+              end
             end
           end,
           desc = "Outline",

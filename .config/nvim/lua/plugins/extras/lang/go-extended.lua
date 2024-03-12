@@ -1,4 +1,5 @@
 local lsp_util = require("util.lsp")
+-- TODO: https://github.com/ngalaiko/tree-sitter-go-template
 
 return {
   { import = "lazyvim.plugins.extras.lang.go" },
@@ -48,5 +49,5 @@ return {
     config = function()
       require("gotests").setup()
     end,
-  }
+  },
 }

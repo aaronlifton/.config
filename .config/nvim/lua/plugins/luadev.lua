@@ -5,6 +5,10 @@ return {
     config = function(_, opts)
       require("luapad").setup(opts)
     end,
+    keys = {
+      { "<leader>Lp", "<cmd>Luapad<cr>", desc = "Luapad" },
+      { "<leader>Lr", "<cmd>Luarun<cr>", desc = "Luarun" },
+    },
   },
   -- {
   --   "ii14/neorepl.nvim",

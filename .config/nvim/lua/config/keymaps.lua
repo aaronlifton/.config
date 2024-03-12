@@ -45,19 +45,11 @@ end
 
 util.set_user_var("IS_NVIM", true)
 
--- change word with <c-c>
-vim.keymap.set("n", "<C-c>", "<cmd>normal! ciw<cr>a")
-map("n", "<A-S-j>", "cw<C-r>0<ESC>", { desc = "Change word under cursor with register 0" })
-
 -- better up/down
 map({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 map({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 
 -- Move Lines
--- map("n", "Ì", "<A-h>", symbol_key_opts)
--- map("n", "Ï", "<A-j>", symbol_key_opts)
--- map("n", "È", "<A-k>", symbol_key_opts)
--- map("n", "¬", "<A-l>", symbol_key_opts)
 map("n", "<A-j>", "<cmd>m .+1<cr>==", { desc = "Move down" })
 map("n", "<A-k>", "<cmd>m .-2<cr>==", { desc = "Move up" })
 map("i", "<A-j>", "<esc><cy md>m .+1<cr>==gi", { desc = "Move down" })
@@ -131,25 +123,34 @@ map("n", "<", "<<", { desc = "Deindent" })
 map("n", ">", ">>", { desc = "Indent" })
 
 -- Comment
-map("n", "<leader>/", "<cmd>lua require('Comment.api').toggle.linewise.current()<CR>", opts)
+map("n", "<leader>\\", "<cmd>lua require('Comment.api').toggle.linewise.current()<CR>", opts)
 map("x", "<leader>/", "<esc><cmd>lua require('Comment.api').toggle.linewise(vim.fn.visualmode())<CR>", opts)
+map("x", "<leader>H", function()
+  vim.cmd("help " .. vim.fn.expand("<cword>"))
+end, { noremap = true })
+
+-- CMD keys
+map({ "n", "v", "s", "i" }, "<D-s>", "<cmd>w<cr>", { noremap = true })
+map({ "n", "v", "s", "i" }, "<D-v>", "<cmd>norm gpa<cr>", { noremap = true })
+map({ "i", "t" }, "<D-v>", '<C-r>"', { desc = "Paste on insert mode" })
+
+-- change word with <c-c
+vim.keymap.set("n", "<C-c>", "<cmd>normal! ciw;startinsert<cr>")
+map("n", "<M-S-j>", "cw<C-r>0<ESC>", { desc = "Change word under cursor with register 0" })
 
 -- Better paste
-map("v", "p", '"_dP', opts)
-
--- Move to beginning/end of line
-map("n", "<A-l>", "$", { desc = "LAST CHARACTER OF LINE" })
-map("n", "<A-h>", "_", { desc = "First character of Line" })
-
--- -- U for redo
--- map("n", "U", "<C-r>", { desc = "Redo" })
--- -- Paste options
--- map("i", "<C-v>", '<C-r>"', { desc = "Paste on insert mode" })
+-- map("v", "p", '"_dP', opts)
+-- Paste options
 map("v", "p", '"_dP', { desc = "Paste without overwriting" })
 
+-- Move to beginning/end of line
+map("n", "<M-l>", "$", { desc = "LAST CHARACTER OF LINE" })
+map("n", "<M-h>", "_", { desc = "First character of Line" })
+-- set current buf
+
 -- Delete and change without yanking
-map({ "n", "x" }, "<A-d>", '"_d', { desc = "Delete without yanking" })
-map({ "n", "x" }, "<A-c>", '"_c', { desc = "Change without yanking" })
+map({ "n", "x" }, "<M-d>", '"_d', { desc = "Delete without yanking" })
+map({ "n", "x" }, "<M-c>", '"_c', { desc = "Change without yanking" })
 
 -- Deleting without yanking empty line
 map("n", "dd", function()
@@ -190,12 +191,13 @@ end
 local symbol_key_opts = { desc = "which_key_ignore" }
 
 -- if not vim.g.neovide then
--- map("n", "<M-j>", "<A-j>", symbol_key_opts)
--- map("n", "<M-k>", "<A-k>", symbol_key_opts)
-map("n", "k", "<A-k>", symbol_key_opts)
+map("n", "Ì", "<A-h>", symbol_key_opts)
+map("n", "Ï", "<A-j>", symbol_key_opts)
+map("n", "È", "<A-k>", symbol_key_opts)
+map("n", "¬", "<A-l>", symbol_key_opts)
 map("n", "æ", "<A-a>", symbol_key_opts)
-map("n", "Â", "<A-z>", symbol_key_opts)
 -- map("n", "ê", "<A-e>", symbol_key_opts)
+map("n", "Â", "<A-z>", symbol_key_opts)
 map("n", "®", "<A-r>", symbol_key_opts)
 map("n", "†", "<A-t>", symbol_key_opts)
 map("n", "Ú", "<A-y>", symbol_key_opts)
@@ -321,9 +323,6 @@ map("n", "ı", "<S-A-n>", symbol_key_opts)
 -- require("telescope").load_extension("project")
 -- map("n", "<leader>fw", ":lua  require('telescope').extensions.project.project({})", { noremap = true, silent = true })
 
--- Git
-map("n", "<leader>gg", "<cmd>lua _LAZYGIT_TOGGLE()<CR>", opts)
-
 -- stylua: ignore start
 
 -- toggle options
@@ -337,13 +336,6 @@ if vim.lsp.inlay_hint then
     vim.lsp.inlay_hint.enable(0, not vim.lsp.inlay_hint.is_enabled())
   end, { desc = "Toggle Inlay Hints" })
 end
-
--- lazygit
-map("n", "<leader>gg",
-  function() lazy_util.terminal.open({ "lazygit" }, { cwd = lazy_util.root.get(), esc_esc = false, ctrl_hjkl = false }) end,
-  { desc = "Lazygit (root dir)" })
-map("n", "<leader>gG", function() lazy_util.terminal.open({ "lazygit" }, { esc_esc = false, ctrl_hjkl = false }) end,
-  { desc = "Lazygit (cwd)" })
 
 -- highlights under cursor
 if vim.fn.has("nvim-0.9.0") == 1 then
@@ -425,9 +417,8 @@ map("n", "dM", function() vim.cmd("delmarks a-z0-9") end, { noremap = true })
 
 -- Web search & URL handling
 map("v", "<leader>gs", K.search_google, { noremap = true, silent = true })
-map("n", "<leader>gl", K.open_url, { noremap = true, silent = true })
-
-map("v", "<leader>gl", K.v_open_url, { noremap = true, silent = true })
+map("n", "<leader>gu", K.open_url, { noremap = true, silent = true })
+map("v", "<leader>gu", K.v_open_url, { noremap = true, silent = true })
 -- map('gx', [[:execute '!open ' . shellescape(expand('<cfile>'), 1)<CR>]]})
 
 map('n', '<leader>uS', function() K.toggle_vim_g_variable('enable_leap_lightspeed_mode') end, { noremap = true })
@@ -446,7 +437,6 @@ map('n', '<leader>uS', function() K.toggle_vim_g_variable('enable_leap_lightspee
 --
 
 map('n', '<leader>rx', function() K.clear_all_registers() end, { noremap = true, desc = "Clear all registers" })
-
 
 map(
   'n',
@@ -491,12 +481,33 @@ map("n", "mm",
   end,
   { noremap = true, silent = true}
 )
-map({ "n", "v", "s", "i" }, "<D-s>", "<cmd>w<cr>", { noremap = true })
-map({ "n", "v", "s", "i" }, "<D-v>", "<cmd>norm gpa<cr>", { noremap = true })
 
 -- go to help for selection
 
-map("n", "<leader>h", "<cmd>:help <cword><cr>", { noremap = true })
+
+map("n", "<leader>cif", "<cmd>LazyFormatInfo<cr>", { desc = "Formatting" })
+map("n", "<leader>cic", "<cmd>ConformInfo<cr>", { desc = "Conform" })
+local linters = function()
+  local linters_attached = require("lint").linters_by_ft[vim.bo.filetype]
+  local buf_linters = {}
+
+  if not linters_attached then
+    vim.notify("No linters attached", vim.log.levels.WARN, { title = "Linter" })
+    return
+  end
+
+  for _, linter in pairs(linters_attached) do
+    table.insert(buf_linters, linter)
+  end
+
+  local unique_client_names = table.concat(buf_linters, ", ")
+  local linters = string.format("%s", unique_client_names)
+
+  vim.notify(linters, vim.log.levels.INFO, { title = "Linter" })
+end
+map("n", "<leader>ciL", linters, { desc = "Lint" })
+map("n", "<leader>cir", "<cmd>LazyRoot<cr>", { desc = "Root" })
+
 --
 --
 --
@@ -511,6 +522,7 @@ map("n", "<leader>h", "<cmd>:help <cword><cr>", { noremap = true })
 --
 ------------------------------------------------------------
 
+local T = require("config.user.telescope_custom_finders")
 local current = 2
 -- WhichKey setup
 -- local LazyMod = require("config.user.lazy_mods")
@@ -570,6 +582,12 @@ wk.register({
         c = { K.copy_to_pbcopy, "Copy to clipboard", { noremap = true, silent = true } },
         p = {
           function()
+            vim.api.nvim_call_function("setreg", { "+", vim.fn.expand("%:p") })
+          end,
+          "Copy absolute file path to clipboard"
+        },
+        P = {
+          function()
             vim.api.nvim_call_function("setreg", { "+", vim.fn.fnamemodify(vim.fn.expand("%"), ":.") })
           end,
           "Copy file path to clipboard"
@@ -587,7 +605,14 @@ wk.register({
       b = { ":Telescope buffers<CR>", { silent = true, desc = "buffers" }},
       k = { ":Telescope keymaps<CR>", { silent = true, desc = "keymaps" }},
       m = { "<cmd>Telescope macros<cr>", { silent = true, desc = "Telescope Macros" }},
-      o = { ":!open .. vim.fn.expand('%:p:h') .. <cr>", "Reveal in finder" }
+      o = { ":!open .. vim.fn.expand('%:p:h') .. <cr>", "Reveal in finder" },
+      l = {
+        name = "Lazyvim",
+        f = { function() T.find_lazyvim_files() end, "Find lazyvim files" },
+        g = { function() T.grep_lazyvim_files() end, "Grep lazyvim files" },
+        c = { function() T.view_lazyvim_changelog() end, "Changelog" },
+        p = { function() T.find_project_files() end, "Find project files" },
+      }
     },
     l = {
       l = { "<cmd>Lazy<cr>", "Lazy", { noremap = true } },
@@ -609,23 +634,10 @@ wk.register({
       q = { "<Cmd>Trouble<cr>", "Show Trouble" },
     },
     s = {
-          n = { "<cmd>Telescope notify<cr>", "Telescope notify" },
-          -- b = { "<cmd>Telescope buffers<cr>", "Buffers" },
           B = { "<cmd>Telescope bookmarks list<cr>", "Bookmarks" },
-          -- c = { "<cmd>Telescope commands<cr>", "Commands" },
-          -- C = { "<cmd>Telescope command_history<cr>", "command history" },
-          f = { "<cmd>Telescope file_browser<cr>", "file browser" },
-          -- g = { "<cmd>Telescope git_status<cr>", "Git Status" },
-          -- G = { "<cmd>Telescope git_commits<cr>", "Git Commits" },
-          -- h = { "<cmd>Telescope help_tags<cr>", "Help Tags" },
-          l = { "<cmd>Telescope current_buffer_fuzzy_find<cr>", "Current Buffer Fuzzy Find" },
-          -- m = { "<cmd>Telescope macros<cr>", "Macros" },
-          k = { "<cmd>Telescope marks<cr>", "mar[k]s" },
-          M = { "<cmd>Telescope man_pages<cr>", "Man Pages" },
-          r = { "<cmd>Telescope registers<cr>", "Registers" },
-          -- s = { "<cmd>Telescope spell_suggest<cr>", "Spell Suggest"},
-          t = { "<cmd>Telescope treesitter<cr>", "Treesitter" },
-          -- y = { "<cmd>Telescope yank_history<cr>" }
+          n = { "<cmd>Telescope notify<cr>", "Telescope notify" },
+          t = { "<cmd>Telescope todo<cr>", "Todo" },
+          x = { "<cmd>lua require('sg.extensions.telescope').fuzzy_search_results()<CR>", "SG live grep" }
         },
     k = {
       --   r = {

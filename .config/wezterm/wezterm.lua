@@ -3,13 +3,51 @@ local fonts = require("util/fonts")
 local color_util = require("util/colorscheme")
 local vim_settings = require("util/vim")
 -- local exec_domains = require("util/exec_domains")
+local weather = require("util/weather")
 local mux = wezterm.mux
+local actions = wezterm.action
+local home = wezterm.home_dir
+
+local function separator()
+	return { Text = "    " }
+end
+
+local function get_date()
+	return fonts.fa_clock_o .. "  " .. wezterm.strftime("%A, %-d %B  %I:%M %p  ")
+end
 
 -- wezterm.on("gui-startup", function(cmd) -- set startup window position
 -- 	local tab, pane, window = wezterm.mux.spawn_window(cmd or { position = { x = 0, y = 0 }, width = 90, height = 80 })
 -- end)
 wezterm.on("gui-startup", function()
-	local tab, pane, window = wezterm.mux.spawn_window({})
+	-- local tab, pane, window = wezterm.mux.spawn_window({})
+	-- window:gui_window():maximize()
+
+	-- Default pane
+	local home_tab, home_pane, window = mux.spawn_window({
+		workspace = "default",
+		cwd = home .. "/.config",
+	})
+	window:gui_window():maximize()
+	home_pane:send_text("nvim ~/.config/nvim")
+	home_tab:set_title("~/.config/nvim")
+
+	-- Repos#1 pane
+	local repos_tab, repos_pane = window:spawn_tab({
+		cwd = home .. "/Code",
+	})
+	repos_tab:set_title("Code")
+
+	-- Newsboat
+	local news_tab, news_pane = window:spawn_tab({
+		cwd = home,
+	})
+	news_pane:send_text("newsboat\n")
+	news_tab:set_title("news")
+
+	window:gui_window():perform_action(actions.ActivateTab(0), home_pane)
+
+	window:gui_window():perform_action(actions.ActivateTab(0), home_pane)
 	window:gui_window():maximize()
 end)
 -- wezterm.on('gui-startup', function(window)
@@ -36,8 +74,8 @@ smart_splits.apply_to_config(config, {
 	-- modifier keys to combine with direction_keys
 	modifiers = {
 		move = "CTRL", -- modifier to use for pane movement, e.g. CTRL+h to move left
-		-- resize = "META", -- modifier to use for pane resize, e.g. META+h to resize to the left
-		resize = "ALT", -- modifier to use for pane resize, e.g. META+h to resize to the left
+		resize = "META", -- modifier to use for pane resize, e.g. META+h to resize to the left
+		-- resize = "ALT", -- modifier to use for pane resize, e.g. META+h to resize to the left
 	},
 })
 
@@ -123,7 +161,6 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
 	}
 end)
 
-local background = "#0a0a00"
 wezterm.on("update-right-status", function(window, pane)
 	local status = ""
 	local max_args = 3
@@ -146,40 +183,58 @@ wezterm.on("update-right-status", function(window, pane)
 		{ Text = status },
 		{ Foreground = { Color = "#808080" } },
 		{ Text = time },
+		{ Background = { Color = colors.background } },
+		{ Foreground = { Color = colors.ansi[4] } },
+		{ Text = string.format("%s", weather.conditions()) },
+		{ Background = { Color = colors.background } },
+		{ Foreground = { Color = colors.ansi[5] } },
+		{ Text = get_date() },
 	}))
 end)
 
--- config.exec_domains = exec_domains
-config.colors = {
-	-- colors = { background = "#0c0e14" },
-	background = background,
-	cursor_bg = "#a9a1e1",
-	cursor_fg = background,
-	cursor_border = "#fb4934",
-	selection_fg = background,
-	selection_bg = "#fb4934",
+local doomone = color_util.doomone
+local bg = doomone.background
+local fg = doomone.foreground
+local colors = {
+	background = bg,
+	cursor_bg = doomone.ansi[5],
+	-- cursor_bg = doomone.cursor_bg,
+
+	cursor_fg = doomone.cursor_fg,
+
+	cursor_border = doomone.cursor_bg,
+	-- cursor_border = "#fb4934",
+
+	selection_fg = doomone.selection_fg,
+
+	selection_bg = doomone.selection_bg,
+	-- selection_bg = "#fb4934",
 	tab_bar = {
-		background = background,
-		inactive_tab_edge = "rgba(28, 28, 28, 0.9)",
+		background = bg,
+		inactive_tab_edge = "rgba(29, 28, 28, 0.9)",
 		active_tab = {
-			bg_color = background,
-			fg_color = "#c0c0c0",
-		},
-		inactive_tab = {
-			bg_color = background,
+			bg_color = "#1a1a28",
 			fg_color = "#808080",
 		},
+		inactive_tab = {
+			bg_color = bg, -- "#282c34"
+			fg_color = "#c0c0c0",
+		},
 		inactive_tab_hover = {
-			bg_color = background,
+			bg_color = bg,
 			fg_color = "#808080",
 		},
 	},
 	scrollbar_thumb = "white",
 }
+config.colors = colors
 
--- config.color_scheme = color_util.get_colorscheme(wezterm.gui.get_appearance()),
-config.color_scheme = "Catppuccin Mocha"
+-- Color scheme
+-- config.color_scheme = color_util.colorscheme(wezterm.gui.get_appearance())
+-- config.color_scheme = "Catppuccin Mocha"
 config.color_scheme_dirs = { "/Users/aaron/.config/wezterm/colors" }
+
+-- Font
 config.font_size = 15.0
 config.line_height = 1.1
 -- config.cell_width = 0.9
@@ -188,27 +243,68 @@ config.freetype_load_target = "Normal" -- Normal, Light, Mono, HorizontalLcd - h
 config.freetype_load_flags = "DEFAULT" -- DEFAULT, NO_HINTING, NO_BITMAP, FORCE_AUTOHINT, MONOCHROME, NO_AUTOHINT - https://wezfurlong.org/wezterm/config/lua/config/freetype_load_flags.html
 config.font = wezterm.font("Hack Nerd Font Mono")
 -- config.font = wezterm.font("ProFontIIx Nerd Font Mono")
-config.debug_key_events = true
-config.automatically_reload_config = true
-config.window_frame = {}
-config.window_padding = { left = 10, right = 10, top = 10, bottom = 10 }
-config.use_fancy_tab_bar = true
-config.hide_tab_bar_if_only_one_tab = true
-config.window_decorations = "RESIZE"
-config.max_fps = 120
+
 config.front_end = "WebGpu" -- OpenGL, Software, WebGpu
+-- config.window_frame = {}
+config.inactive_pane_hsb = {
+	saturation = 0.8,
+	brightness = 0.5,
+}
+config.window_frame = {
+	font_size = 13.0,
+	active_titlebar_bg = colors.background,
+}
+config.window_padding = { left = 10, right = 10, top = 10, bottom = 10 }
+config.window_decorations = "RESIZE"
 config.enable_scroll_bar = true
 config.min_scroll_bar_height = "2cell"
 config.window_background_opacity = 0.999
 config.window_close_confirmation = "NeverPrompt"
+config.use_fancy_tab_bar = true
+config.hide_tab_bar_if_only_one_tab = true
+config.max_fps = 120
 config.quick_select_alphabet = "arstqwfpzxcvneioluymdhgjbk"
+-- Comman palette
 config.command_palette_font_size = 16.0
 config.command_palette_fg_color = "#82aaff" --'white', --rgba(0.75, 0.75, 0.75, 0.8)',
 config.command_palette_bg_color = "#191b28"
+
+-- Keys
 config.leader = { key = "a", mods = "CTRL", timeout_milliseconds = 1000 }
 config.send_composed_key_when_left_alt_is_pressed = false
 config.send_composed_key_when_right_alt_is_pressed = true
+config.debug_key_events = true
+config.automatically_reload_config = true
 -- config.enable_csi_u_key_encoding = true https://www.leonerd.org.uk/hacks/fixterms/
+
+-- config.exec_domains = exec_domains
+config.hyperlink_rules = {
+	-- Linkify things that look like URLs
+	-- This is actually the default if you don't specify any hyperlink_rules
+	{
+		regex = "\\b\\w+://(?:[\\w.-]+)\\.[a-z]{2,15}\\S*\\b",
+		format = "$0",
+	},
+
+	-- match the URL with a PORT
+	-- such 'http://localhost:3000/index.html'
+	{
+		regex = "\\b\\w+://(?:[\\w.-]+):\\d+\\S*\\b",
+		format = "$0",
+	},
+
+	-- linkify email addresses
+	{
+		regex = "\\b\\w+@[\\w-]+(\\.[\\w-]+)+\\b",
+		format = "mailto:$0",
+	},
+
+	-- file:// URI
+	{
+		regex = "\\bfile://\\S*\\b",
+		format = "$0",
+	},
+}
 
 keys = {
 	-- Make Option-Left equivalent to Alt-b which many line editors interpret as backward-word
@@ -410,7 +506,8 @@ keys = {
 			local screen = wezterm.gui.screens().active
 			local dim = window:get_dimensions()
 			local dock_height = 80
-			local is_fake_full_screen = dim.pixel_width ==  screen.width and dim.pixel_height >= screen.height - dock_height
+			local is_fake_full_screen = dim.pixel_width == screen.width
+				and dim.pixel_height >= screen.height - dock_height
 			-- maximize
 			if window:get_dimensions().is_full_screen == true or is_fake_full_screen then
 				-- move window down
@@ -427,16 +524,16 @@ keys = {
 			window:mux_window():spawn_tab({
 				cwd = "~/Code/astro/fullstack-dev-blog",
 			})
-		end)
+		end),
 	},
 	{
 		key = "6",
 		mods = "CTRL|CMD",
 		action = wezterm.action_callback(function(window)
-			wezterm.exec_domain('myname', function(cmd)
+			wezterm.exec_domain("myname", function(cmd)
 				return cmd
 			end)
-		end)
+		end),
 	},
 	-- Prompt for a name to use for a new workspace and switch to it.
 	-- See https://wezfurlong.org/wezterm/config/lua/keyassignment/SwitchToWorkspace.html#prompting-for-the-workspace-name

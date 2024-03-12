@@ -1,0 +1,69 @@
+{
+  "faker.internet.username": {
+    "prefix": "faker.internet.username",
+    "body": ["Faker::Internet.username(specifier: ${1:1..10})"],
+    "description": "Faker username"
+  },
+  "faker.internet.email": {
+    "prefix": "faker.internet.email",
+    "body": ["Faker::Internet.email(domain: '${1:optional_domain}')"],
+    "description": "Faker email"
+  },
+  "faker.internet.password": {
+    "prefix": "faker.internet.password",
+    "body": [
+      "Faker::Internet.password(min_length: ${1:min_length}, max_length: ${2:max_length}, mix_case: ${3:true|false}, special_characters: ${4:true|false})"
+    ],
+    "description": "Faker password"
+  },
+  "faker.internet.uuid": {
+    "prefix": "faker.internet.uuid",
+    "body": ["Faker::Internet.uuid"],
+    "description": "Faker uuid"
+  },
+  "faker.lorem.word": {
+    "prefix": "faker.lorem.word",
+    "body": ["Faker::Lorem.word"],
+    "description": "Faker word"
+  },
+  "faker.lorem.sentence": {
+    "prefix": "faker.lorem.sentence",
+    "body": ["Faker::Lorem.sentence"],
+    "description": "Faker sentence"
+  },
+  "faker.lorem.paragraph": {
+    "prefix": "faker.lorem.paragraph",
+    "body": ["Faker::Lorem.paragraph"],
+    "description": "Faker paragraph"
+  },
+  "faker.lorem.question": {
+    "prefix": "faker.lorem.question",
+    "body": ["Faker::Lorem.question"],
+    "description": "Faker question"
+  },
+  "faker.name.name": {
+    "prefix": "faker.name.name",
+    "body": ["Faker::Name.name"],
+    "description": "Faker name"
+  },
+  "faker.name.first_name": {
+    "prefix": "faker.name.first_name",
+    "body": ["Faker::Name.first_name"],
+    "description": "Faker first name"
+  },
+  "faker.name.last_name": {
+    "prefix": "faker.name.last_name",
+    "body": ["Faker::Name.last_name"],
+    "description": "Faker last name"
+  },
+  "faker.string.random": {
+    "prefix": "faker.string.random",
+    "body": ["Faker::String.random(length: ${1: 12})"],
+    "description": "Faker random string"
+  },
+  "faker.quote.yoda": {
+    "prefix": "faker.quote.yoda",
+    "body": ["Faker::Quote.yoda"],
+    "description": "Faker quote from Yoda :)"
+  }
+}

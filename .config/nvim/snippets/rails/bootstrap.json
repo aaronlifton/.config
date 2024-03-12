@@ -1,0 +1,47 @@
+{
+  "bs.d-flex": {
+    "prefix": "bs.d-flex",
+    "body": ["d-flex"],
+    "description": "Add Bootstrap d-flex"
+  },
+  "bs.m-auto": {
+    "prefix": "bs.m-auto",
+    "body": ["m-auto"],
+    "description": "Add Bootstrap auto margin"
+  },
+  "bs.form-control": {
+    "prefix": "bs.form-control",
+    "body": ["form-control"],
+    "description": "Add Bootstrap form control"
+  },
+  "bs.justify-content-between": {
+    "prefix": "bs.justify-content-between",
+    "body": ["justify-content-between"],
+    "description": "Add Bootstrap justify content between"
+  },
+  "bs.align-items-center": {
+    "prefix": "bs.align-items-center",
+    "body": ["align-items-center"],
+    "description": "Add Bootstrap align items center"
+  },
+  "bs.text": {
+    "prefix": "bs.text",
+    "body": ["text-${1:primary|secondary|light|dark|white|black}"],
+    "description": "Add Bootstrap text color"
+  },
+  "bs.rounded": {
+    "prefix": "bs.rounded",
+    "body": ["rounded-${1:1|2|3|4}"],
+    "description": "Add Bootstrap rounded"
+  },
+  "bs.bg": {
+    "prefix": "bs.bg",
+    "body": ["bg-${1:primary|secondary|light|dark|black}"],
+    "description": "Add Bootstrap background colour"
+  },
+  "bs.btn": {
+    "prefix": "bs.btn",
+    "body": ["btn btn-${1:primary|secondary|...}"],
+    "description": "Add Bootstrap button"
+  }
+}

@@ -2,7 +2,7 @@ local wezterm = require("wezterm")
 local M = {}
 
 local function is_vim(pane)
-	local is_vim_env = pane:get_user_vars().IS_NVIM == "true"
+	is_vim_env = pane:get_user_vars().IS_NVIM == "true"
 	if is_vim_env == true then
 		return true
 	end

@@ -48,6 +48,7 @@ return {
   },
   {
     "Grazfather/leaplines.nvim",
+    enabled = false,
     dependencies = "ggandor/leap.nvim",
     keys = {
       -- Sample mappings only

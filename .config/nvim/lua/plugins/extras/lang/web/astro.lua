@@ -12,7 +12,7 @@ local source_action = function()
       filename = filename,
       lnum = linenr,
       col = colnr,
-      text = text
+      text = text,
     })
   end
   vim.fn.setqflist(errors)
@@ -49,13 +49,13 @@ return {
       "astro",
     },
   },
-  {
-    "folke/which-key.nvim",
-    opts = {
-      defaults = {
-        ["<leader>xa"] = { name = " database" },
-      },
-    },
-  },
-  { "virchau13/tree-sitter-astro" }
+  { "virchau13/tree-sitter-astro" },
+  -- {
+  --   "folke/which-key.nvim",
+  --   opts = {
+  --     defaults = {
+  --       ["<leader>xa"] = { name = " database" },
+  --     },
+  --   },
+  -- },
 }

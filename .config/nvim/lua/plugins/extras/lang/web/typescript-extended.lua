@@ -34,6 +34,15 @@ local function denoConfigExists()
   return false
 end
 
+local function angularConfigExists()
+  local config = "app.config.server.ts"
+  local root = require("lazyvim.util.root").get()
+  if vim.fn.filereadable(root .. "/app/src/" .. config) == 1 then
+    return true
+  end
+  return false
+end
+
 return {
   { import = "lazyvim.plugins.extras.lang.typescript" },
   { import = "lazyvim.plugins.extras.lang.json" },
@@ -86,6 +95,16 @@ return {
         tsserver = function(_, opts)
           -- Disable tsserver if denols is present
           return denoConfigExists()
+        end,
+        denols = function(_, opts)
+          -- Disable denols if tsserver is present
+          -- was reversed
+          return not denoConfigExists()
+        end,
+        angularls = function(_, opts)
+          opts.root_dir = require("lspconfig.util").root_pattern("angular.json", "project.json")
+          -- Disable angularls if app.config.server.ts is present
+          return not angularConfigExists()
         end,
       },
     },

@@ -1,0 +1,228 @@
+{
+  "first": {
+    "prefix": ".first",
+    "body": [
+      ".first(${1:number_of_records})"
+    ],
+    "description": "If just the very first one, omit the number_of_records"
+  },
+  "last": {
+    "prefix": ".last",
+    "body": [
+      ".last(${1:number_of_records})"
+    ],
+    "description": "If just the very last one, omit the number_of_records"
+  },
+  "order": {
+    "prefix": ".order",
+    "body": [
+      ".order(${1:attribute}: :asc, ${2:second_optional_attribute}: :desc)"
+    ]
+  },
+  "select": {
+    "prefix": ".select",
+    "body": [
+      ".select(:${1:attribute}, :${2:second_optional_attribute})"
+    ],
+    "description": "To select only a subset of fields from the result set, you can specify the subset via the select method."
+  },
+  "limit": {
+    "prefix": ".limit",
+    "body": [
+      ".limit(${1:number})"
+    ],
+    "description": "You can use limit to specify the number of records to be retrieved"
+  },
+  "find": {
+    "prefix": ".find",
+    "body": [
+      ".find(${1:id}, order: :${2:asc})"
+    ],
+    "description": "Find by id"
+  },
+  "find_by_attribute": {
+    "prefix": ".find_by",
+    "body": [
+      ".find_by(${1:name}: ${3:params[:${2:${1:name}}]})$0"
+    ],
+    "description": "Find by attribute"
+  },
+  "where query": {
+    "prefix": ".where",
+    "body": [
+      ".where(${1:attribute}: ${2:expected})$0"
+    ],
+    "description": "Insert where query"
+  },
+  "where string": {
+    "prefix": ".where",
+    "body": [
+      ".where('${1:attribute} LIKE ?', '%#{${2:expected}}%')$0"
+    ],
+    "description": "Insert where query mathing a string"
+  },
+  "where first or create": {
+    "prefix": ".where",
+    "body": [
+      ".where(${2:property}: ${3:value}).first_or_create!"
+    ],
+    "description": "Where query that returns the first founded record or create a new one"
+  },
+  "update_attribute": {
+    "prefix": ".update_attribute",
+    "body": [
+      ".update_attribute :${1:attribute}, '${2:new value}'"
+    ],
+    "description": "Update a single attribute"
+  },
+  "update_attributes": {
+    "prefix": ".update_attributes",
+    "body": [
+      ".update_attributes(",
+      "  ${1:attribute}: '${2:value1}',",
+      "  ${3:attribute_2}: '${4:value2}'",
+      ")"
+    ],
+    "description": "Update multiple attributes"
+  },
+  "has_many": {
+    "prefix": "has_many",
+    "body": [
+      "has_many :${1:model}, dependent: :destroy"
+    ],
+    "description": "Add has_many association"
+  },
+  "has_one": {
+    "prefix": "has_one",
+    "body": [
+      "has_one :${1:model}"
+    ],
+    "description": "Add has_one association"
+  },
+  "belongs_to": {
+    "prefix": "belongs_to",
+    "body": [
+      "belongs_to :${1:category}${2:, dependent: ${3::destroy}}"
+    ],
+    "description": "Add belongs_to association"
+  },
+  "belongs_to_polymorphic": {
+    "prefix": "belongs_to_polymorphic",
+    "body": [
+      "belongs_to :${1:category}, polymorphic: true"
+    ],
+    "description": "Add belongs_to_polymorphic association"
+  },
+  "has_and_belongs_to_many": {
+    "prefix": "has_and_belongs_to_many",
+    "body": [
+      "has_and_belongs_to_many :${1:categories}, join_table: '${2:categories_products}'$3"
+    ],
+    "description": "Add has_and_belongs_to_many association"
+  },
+  "has_many_through": {
+    "prefix": "has_many_through",
+    "body": [
+      "has_many :${1:model}, through: :${2:model}"
+    ],
+    "description": "Add has_many association thought another model"
+  },
+  "has_secure_password": {
+    "prefix": "has_secure_password",
+    "body": [
+      "has_secure_password"
+    ],
+    "description": "Add has_secure_password to use on a model with password_digest attribute"
+  },
+  "validates_presence_of": {
+    "prefix": "validates_presence_of",
+    "body": [
+      "validates_presence_of :${1:attribute}, on: :create, message: '${2:message}'"
+    ],
+    "description": "Validates presence of attribute"
+  },
+  "validates_length_of": {
+    "prefix": "validates_length_of",
+    "body": [
+      "validates_length_of :${1:attribute}, within: 5..10, on: :create, message: '${2:message}'"
+    ],
+    "description": "Validates length of attribute"
+  },
+  "validates_length": {
+    "prefix": "validates_length",
+    "body": [
+      "validates :${1:attribute}, length: { minimum: ${2:minimum}, maximum: ${3:maximum} }"
+    ],
+    "description": "This helper validates the length of the attributes' values. It provides a variety of options, so you can specify length constraints in different ways. See https://guides.rubyonrails.org/active_record_validations.html#length"
+  },
+  "validates_numericality": {
+    "prefix": "validates_numericality",
+    "body": [
+      "validates :${1:attribute}, numericality: { only_integer: ${2:true} }"
+    ],
+    "description": "This helper validates that your attributes have only numeric values. By default, it will match an optional sign followed by an integer or floating point number. To specify that only integer numbers are allowed, set :only_integer to true. See https://guides.rubyonrails.org/active_record_validations.html#numericality"
+  },
+  "validates_uniqueness_of": {
+    "prefix": "validates_uniqueness_of",
+    "body": [
+      "validates_uniqueness_of :${1:attribute}, on: :create"
+    ],
+    "description": "Validates uniqueness of attribute"
+  },
+  "validates_presence": {
+    "prefix": "validates_presence",
+    "body": [
+      "validates :${1:attribute}, presence: true"
+    ],
+    "description": "Validates attribute. See https://guides.rubyonrails.org/active_record_validations.html"
+  },
+  "validates_confirmation": {
+    "prefix": "validates_confirmation",
+    "body": [
+      "validates :${1:attribute}, confirmation: true"
+    ],
+    "description": "You should use this helper when you have two text fields that should receive exactly the same content. For example, you may want to confirm an email address or a password. This validation creates a virtual attribute whose name is the name of the field that has to be confirmed with '_confirmation' appended. See https://guides.rubyonrails.org/active_record_validations.html#confirmation"
+  },
+  "validates_comparison": {
+    "prefix": "validates_comparison",
+    "body": [
+      "validates :${1:attribute}, comparison: { greater_than: ${2:value} }"
+    ],
+    "description": "This check will validate a comparison between any two comparable values. The validator requires a compare option be supplied. Each option accepts a value, proc, or symbol. Any class that includes Comparable can be compared. See https://guides.rubyonrails.org/active_record_validations.html#comparison"
+  },
+  "validates_exclusion": {
+    "prefix": "validates_exclusion",
+    "body": [
+      "validates :${1:attribute}, exclusion: { in: %w(www us ca jp), message: '%{value} is reserved.' }"
+    ],
+    "description": "This helper validates that the attributes' values are not included in a given set. In fact, this set can be any enumerable object. See https://guides.rubyonrails.org/active_record_validations.html#exclusion"
+  },
+  "validates_inclusion": {
+    "prefix": "validates_inclusion",
+    "body": [
+      "validates :${1:attribute}, inclusion: { in: %w(www us ca jp), message: '%{value} is not valid.' }"
+    ],
+    "description": "This helper validates that the attributes' values are included in a given set. In fact, this set can be any enumerable object. The inclusion helper has an option :in that receives the set of values that will be accepted. The :in option has an alias called :within that you can use for the same purpose, if you'd like to. The previous example uses the :message option to show how you can include the attribute's value. See https://guides.rubyonrails.org/active_record_validations.html#inclusion"
+  },
+  "validates_format": {
+    "prefix": "validates_format",
+    "body": [
+      "validates :${1:attribute}, format: { with: '${2:condition_value}', message: 'only allows something' }"
+    ],
+    "description": "This helper validates the attributes' values by testing whether they match a given regular expression, which is specified using the :with option. See https://guides.rubyonrails.org/active_record_validations.html#format"
+  },
+  "scope where": {
+    "prefix": "scope",
+    "body": [
+      "scope :${1:name}, -> { where(${2:attribute}: ${3:value}) }"
+    ],
+    "description": "Define a model scope"
+  },
+  "enum": {
+    "prefix": "enum",
+    "body": [
+      "enum :${1:name}, [:${2:enum1}, :${3:enum2}]"
+    ],
+    "description": "Define a enum"
+  }
+}

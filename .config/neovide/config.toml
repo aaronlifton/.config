@@ -1,0 +1,15 @@
+# vsync = true
+# maximized = false
+# srgb = true
+# idle = false
+# no-multigrid = true
+# frame = "full"
+wsl = false
+no-multigrid = false
+vsync = true
+maximized = false
+srgb = false
+idle = true
+neovim_bin = "/Users/aaron/.local/share/bob/nvim-bin/nvim"
+frame = "full"
+title-hidden = true

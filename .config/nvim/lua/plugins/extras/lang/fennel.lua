@@ -5,7 +5,8 @@ return {
       servers = {},
     },
     config = function(_, opts)
-      require("lspconfig").fennel_lsp.setup(opts)
+      local lspconfig = require("lspconfig")
+      lspconfig.fennel_lsp.setup(opts)
       require("lspconfig.configs").fennel_language_server = {
         default_config = {
           -- replace it with true path

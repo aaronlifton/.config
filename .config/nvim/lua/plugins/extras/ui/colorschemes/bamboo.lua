@@ -1,4 +1,5 @@
 return {
   "ribru17/bamboo.nvim",
-  name = "bamboo"
+  name = "bamboo",
+  lazy = false,
 }

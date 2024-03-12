@@ -4,7 +4,6 @@ return {
     event = "VimEnter",
     opts = function(_, opts)
       vim.api.nvim_create_autocmd("TabNewEntered", { command = "Dashboard" })
-
       local logo = [[
                                              
       ████ ██████           █████      ██
@@ -41,5 +40,13 @@ return {
     config = function(_, opts)
       require("dashboard").setup(opts)
     end,
+  },
+  {
+    "folke/which-key.nvim",
+    opts = {
+      defaults = {
+        ["<leader>fd"] = { name = "Dashboard" },
+      },
+    },
   },
 }

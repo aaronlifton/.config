@@ -1,0 +1,82 @@
+"==============================| Highlights |=================================="
+" "
+# query:<name of feed>:<filter expression> [<tag> ...]
+#"query:Youtube:unread = \"yes\" and tags # \"Youtube\""
+#"query:Reddit:unread = \"yes\" and tags # \"Reddit\""
+#"query:Podcasts:unread = \"yes\" and tags # \"Podcasts\""
+#"query:All unread:unread = \"yes\""
+#"query:Starred:flags # \"s\""
+" "
+"===============================| Feeds |======================================="
+" "
+"=[ News ]="
+" "
+https://www.theguardian.com/uk/rss "News" "~The Guardian" #the_guardian
+https://www.buxtonadvertiser.co.uk/news/rss "News" "~Buxton Advertiser" #buxton_advertiser
+https://feeds.feedburner.com/obs-ultimas "News" "~Observador" #observador
+http://feeds.feedburner.com/PublicoRSS "News" "~Publico" #publico
+" "
+"=[ Tech ]="
+" "
+https://feeds.feedburner.com/TechCrunch "Technology" "~TechCrunch" #tech_crunch
+http://www.recode.net/rss/index.xml "Technology" "~Recode" #recode
+http://feeds.feedburner.com/Makeuseof "Technology" "~Make Use Of" #make_use_of
+http://www.cnet.com/rss/news "Technology" "~CNET" #cnet
+http://www.theverge.com/rss/frontpage "Technology" "~The Verge" #the_verge
+http://feeds.howtogeek.com/HowToGeek "Technology" "~How-to Geek" #how_to_geek
+https://www.linuxinsider.com/perl/syndication/rssfull.pl "Technology" "~Linux Insider" #linux_insider
+" "
+"=[ Apple ]="
+" "
+http://www.macworld.com/index.rss "Apple" "~Mac World" #mac_world
+http://appleinsider.com/rss/news/ "Apple" "~Apple Insider" #apple_insider
+" "
+"=[ Coding ]="
+" "
+https://weblog.rubyonrails.org/feed/atom.xml "Ruby" "Ruby on Rails Blog" #ruby_on_rails_blog
+http://www.rubyflow.com/rss "Ruby" "~Ruby Flow" #ruby_flow
+https://blog.jetbrains.com/ruby/feed "Ruby" "~Ruby Mine Blog" #ruby_mine_blog
+http://rubyland.news/feed.rss "Ruby" "~Ruby Land" #ruby_land
+https://www.rubytapas.com/feed/ "Ruby" "~Ruby Tapas" #ruby_tapas
+https://medium.freecodecamp.org/feed "Coding" "~Freecodecamp" #freecodecamp
+https://cprss.s3.amazonaws.com/javascriptweekly.com.xml "JavaScript" "~JavaScript Weekly" #javascript_weekly
+https://frontendfront.com/feed/stories "Frontend" "~Frontend Front" #frontend_front
+" "
+"=[ Vim/Neovim ]="
+" "
+https://this-week-in-neovim.org/rss "Vim" "~This week in Neovim" #this-week-in-neovim
+" "
+"=[ Podcasts ]="
+" "
+http://vidroazul.libsyn.com/rss "Podcasts" "~Vidro Azul" #vidro_azul
+https://feeds.simplecast.com/7y1CbAbN "Podcasts" "~Maintainable" #maintainable
+https://feeds.transistor.fm/remote-ruby "Podcasts" "~Remote Coding" #remote_ruby
+https://rss.simplecast.com/podcasts/279/rss "Podcasts" "~Full Stack Radio" #full_stack_radio"
+https://feeds.5by5.tv/rubyonrails "Podcasts" "~5by5" #5by5
+https://changelog.com/jsparty/feed "Podcasts" "~Changelog" #changelog
+" "
+"=[ Reddit ]="
+" "
+https://www.reddit.com/r/commandline.rss "Reddit" "~Command Line" #command_line
+https://www.reddit.com/r/vim.rss "Reddit" "~Vim" #vim
+https://www.reddit.com/r/neovim.rss "Reddit" "~Neovim" #neovim
+https://www.reddit.com/r/unixporn.rss "Reddit" "~Unixporn" #unixporn
+https://www.reddit.com/r/ableton.rss "Reddit" "~Ableton" #ableton
+" "
+"=[ Youtube ]="
+" "
+https://www.youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA "Youtube" "~Luke Smith" #lukesmith
+https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ "Youtube" "~Marques Brownlee" #marques_brownlee
+https://www.youtube.com/feeds/videos.xml?channel_id=UCG36u-k09zdIPQh5EEdVgTA "Youtube" "~Mahogany" #mahogany
+https://www.youtube.com/feeds/videos.xml?channel_id=UCIQmhQxCvLHRr3Beku77tww "Youtube" "~GoRails" #go_rails
+https://www.youtube.com/feeds/videos.xml?channel_id=UCS97tchJDq17Qms3cux8wcA "Youtube" "~Chrisatmachine" #chrisatmachine
+https://www.youtube.com/feeds/videos.xml?channel_id=UCVls1GmFKf6WlTraIb_IaJg "Youtube" "~DistroTube" #distroTube
+https://www.youtube.com/feeds/videos.xml?channel_id=UCWFKCr40YwOZQx8FHU_ZqqQ "Youtube" "~Jerry Rig Everything" #jerry_rig_everything
+https://www.youtube.com/feeds/videos.xml?channel_id=UCj34AOIMl_k1fF7hcBkD_dw "Youtube" "~Everything Apple Pro" #everything_apple_pro
+https://www.youtube.com/feeds/videos.xml?channel_id=UCkf4VIqu3Acnfzuk3kRIFwA "Youtube" "~Gotbletu" #gotbletu
+https://www.youtube.com/feeds/videos.xml?channel_id=UCld68syR8Wi-GY_n4CaoJGA "Youtube" "~Brodie Robertson" #brodie_robertson
+https://www.youtube.com/feeds/videos.xml?channel_id=UCxJaNyXCQw0mghY0hA1wA9w "Youtube" "~Drifting Coding" #drifting_ruby
+https://www.youtube.com/feeds/videos.xml?channel_id=UC8ENHE5xdFSwx71u3fDH5Xw "Youtube" "~Primeagen" #primeagen
+https://www.youtube.com/feeds/videos.xml?channel_id=UCd3dNckv1Za2coSaHGHl5aA "Youtube" "~TJ DeVries"
+https://www.youtube.com/feeds/videos.xml?channel_id=UCx0irbDsRLjMvEXaW56cqlQ "Youtube" "~Chords Of Orion"
+https://www.youtube.com/feeds/videos.xml?channel_id=UCFU7a7OMYfcpjtIpu2j47_Q "Youtube" "~DevOnDuty"

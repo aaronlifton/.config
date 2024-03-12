@@ -1,31 +1,4 @@
 local nvim_0_10 = vim.fn.has("nvim-0.10")
-local tailwind_filetypes = {
-  "astro",
-  "svelte",
-  "vue",
-  "html",
-  "css",
-  "scss",
-  "less",
-  "styl",
-  "javascript",
-  "typescript",
-  "javascriptreact",
-  "javascript.jsx",
-  "typescriptreact",
-  "typescript.tsx",
-  "jsx",
-  "tsx",
-  "slim",
-  "ex",
-  "exs",
-  "heex",
-  "gotmpl",
-  "templ",
-  "rust",
-  "rs",
-}
-
 return {
   { "folke/neodev.nvim", before = "neovim/nvim-lspconfig" },
   {
@@ -36,9 +9,7 @@ return {
         solargraph = {},
         zls = {},
         astro = {},
-        tailwindcss = {
-          filetypes_include = tailwind_filetypes,
-        },
+        tailwindcss = {},
         lua_ls = {
           settings = {
             Lua = {
@@ -67,8 +38,16 @@ return {
             },
           },
         },
-        emmet_ls = {
-          filetypes = tailwind_filetypes,
+        standardrb = {},
+        yamlls = {
+          settings = {
+            yaml = {
+              validate = true,
+              schemaStore = {
+                enable = true,
+              },
+            },
+          },
         },
         -- tsserver = {
         --   -- root_dir = function(...)

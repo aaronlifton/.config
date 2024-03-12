@@ -57,14 +57,19 @@ vim.opt.splitkeep = "screen"
 
 vim.api.nvim_set_hl(0, "LeapBackdrop", { link = "Comment" })
 
+-- Defaults
+-- vim.g.mapleader = " "
+-- vim.g.maplocalleader = "\\"
+
 vim.g.material_style = "darker"
 vim.g.disable_leap_secondary_labels = false
 vim.g.enable_leap_lightspeed_mode = false
 vim.g.astro_typescript = "enable"
 vim.g["denops#deno"] = "/Users/aaron/.deno/bin/deno"
 vim.g.native_snippets_enabled = true
+vim.g.multiplexer = "wez" -- tmux
 vim.g.pairs_plugin = "mini.pairs"
-vim.g.outline_plugin = "symbols-outline.nvim"
+vim.g.outline_plugin = "outline.nvim"
 vim.g.gui_font_face = "Hack Nerd Font Mono"
 vim.g.gui_font_size = 18
 

@@ -8,22 +8,24 @@ return {
       require("mini.extra").setup()
       require("mini.pick").setup()
       require("mini.colors").setup()
-      local starter = require("mini.starter")
-      starter.setup({
-        evaluate_single = true,
-        items = {
-          starter.sections.builtin_actions(),
-          starter.sections.recent_files(10, false),
-          starter.sections.recent_files(10, true),
-          -- Use this if you set up 'mini.sessions'
-          starter.sections.sessions(5, true),
-        },
-        content_hooks = {
-          starter.gen_hook.adding_bullet(),
-          starter.gen_hook.indexing("all", { "Builtin actions" }),
-          starter.gen_hook.padding(3, 2),
-        },
-      })
+      require("mini.bracketed").setup()
+
+      -- local starter = require("mini.starter")
+      -- starter.setup({
+      --   evaluate_single = true,
+      --   items = {
+      --     starter.sections.builtin_actions(),
+      --     starter.sections.recent_files(10, false),
+      --     starter.sections.recent_files(10, true),
+      --     -- Use this if you set up 'mini.sessions'
+      --     starter.sections.sessions(5, true),
+      --   },
+      --   content_hooks = {
+      --     starter.gen_hook.adding_bullet(),
+      --     starter.gen_hook.indexing("all", { "Builtin actions" }),
+      --     starter.gen_hook.padding(3, 2),
+      --   },
+      -- })
     end,
     -- -- Configuration similar to 'glepnir/dashboard-nvim':
     -- local starter = require('mini.starter')
@@ -201,18 +203,18 @@ return {
     -- }
     -- )
     keys = {
-      {
-        "<C-s>",
-        function(item)
-          if vim.fn.filereadable(item) == 0 then
-            return
-          end
-          vim.api.nvim_win_call(MiniPick.get_picker_state().windows.main, function()
-            vim.cmd("vsplit " .. item)
-          end)
-          return true
-        end,
-      },
+      -- {
+      --   "<C-s>",
+      --   function(item)
+      --     if vim.fn.filereadable(item) == 0 then
+      --       return
+      --     end
+      --     vim.api.nvim_win_call(MiniPick.get_picker_state().windows.main, function()
+      --       vim.cmd("vsplit " .. item)
+      --     end)
+      --     return true
+      --   end,
+      -- },
       -- { "H", "<cmd>lua require('mini.move').goto_line_left()<cr>" },
       {
         "<leader>Pb",

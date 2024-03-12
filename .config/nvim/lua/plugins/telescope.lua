@@ -204,7 +204,7 @@ return {
           telescope.load_extension("bookmarks")
           telescope.load_extension("possession")
           telescope.load_extension("yank_history")
-          telescope.load_extension("harpoon")
+          -- telescope.load_extension("harpoon")
         end)
       end,
     },

@@ -7,13 +7,36 @@ if vim.g.native_snippets_enabled then
     },
     {
       "nvim-cmp",
-      opts = {
-        snippet = {
-          expand = function(args)
-            vim.snippet.expand(args.body)
-          end,
-        },
-      },
+      opts = function(_, opts)
+        local cmp = require("cmp")
+        return vim.tbl_deep_extend("force", opts, {
+          snippet = {
+            expand = function(args)
+              vim.snippet.expand(args.body)
+            end,
+          },
+          mapping = cmp.mapping.preset.insert({
+            ["<C-g>"] = cmp.mapping.confirm({ select = true }),
+          }),
+        })
+        --     ["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+        --     ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+        --     ["<C-f>"] = cmp.mapping.scroll_docs(4),
+        --     ["<C-Space>"] = cmp.mapping.complete(),
+        --     ["<C-e>"] = cmp.mapping.abort(),
+        --     ["<CR>"] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+        --     ["<S-CR>"] = cmp.mapping.confirm({
+        --       behavior = cmp.ConfirmBehavior.Replace,
+        --       select = true,
+        --     }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+        --     ["<C-CR>"] = function(fallback)
+        --       cmp.abort()
+        --       fallback()
+        --     end,
+        --   })
+        -- end,
+      end,
+      -- },
       keys = {
         {
           "<Tab>",
@@ -64,7 +87,7 @@ else
       "L3MON4D3/LuaSnip",
       build = (not jit.os:find("Windows"))
           and "echo 'NOTE: jsregexp is optional, so not a big deal if it fails to build'; make install_jsregexp"
-          or nil,
+        or nil,
       dependencies = {
         "rafamadriz/friendly-snippets",
         config = function()
@@ -93,7 +116,7 @@ else
         local luasnip = require("luasnip")
         local cmp = require("cmp")
         local lspkind = require("lspkind")
-        local cmp_window = require "cmp.config.window"
+        local cmp_window = require("cmp.config.window")
 
         return {
           mapping = cmp.mapping.preset.insert({
@@ -115,19 +138,19 @@ else
             -- end,
             -- ["<C-k>"] = cmp.mapping(cmp.mapping.select_prev_item(), { "i", "c" }),
             -- ["<C-j>"] = cmp.mapping(cmp.mapping.select_next_item(), { "i", "c" }),
-            ["<Down>"] = cmp.mapping(cmp.mapping.select_next_item { behavior = SelectBehavior.Select }, { "i" }),
-            ["<Up>"] = cmp.mapping(cmp.mapping.select_prev_item { behavior = SelectBehavior.Select }, { "i" }),
+            ["<Down>"] = cmp.mapping(cmp.mapping.select_next_item({ behavior = SelectBehavior.Select }), { "i" }),
+            ["<Up>"] = cmp.mapping(cmp.mapping.select_prev_item({ behavior = SelectBehavior.Select }), { "i" }),
             ["<C-d>"] = cmp.mapping.scroll_docs(-4),
-            ["<C-y>"] = cmp.mapping {
-              i = cmp.mapping.confirm { behavior = ConfirmBehavior.Replace, select = false },
+            ["<C-y>"] = cmp.mapping({
+              i = cmp.mapping.confirm({ behavior = ConfirmBehavior.Replace, select = false }),
               c = function(fallback)
                 if cmp.visible() then
-                  cmp.confirm { behavior = ConfirmBehavior.Replace, select = false }
+                  cmp.confirm({ behavior = ConfirmBehavior.Replace, select = false })
                 else
                   fallback()
                 end
               end,
-            },
+            }),
             ["<Tab>"] = cmp.mapping(function(fallback)
               if cmp.visible() then
                 cmp.select_next_item()
@@ -219,7 +242,7 @@ else
           --   })
           -- }
         }
-      end
+      end,
       -- lspkind.cmp_format({
       --   with_text = false,
       --   before = function(entry, vim_item)

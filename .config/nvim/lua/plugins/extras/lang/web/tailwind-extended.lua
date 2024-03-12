@@ -1,3 +1,30 @@
+local tailwind_filetypes = {
+  "astro",
+  "svelte",
+  "vue",
+  "html",
+  "css",
+  "scss",
+  "less",
+  "styl",
+  "javascript",
+  "typescript",
+  "javascriptreact",
+  "javascript.jsx",
+  "typescriptreact",
+  "typescript.tsx",
+  "jsx",
+  "tsx",
+  "slim",
+  "ex",
+  "exs",
+  "heex",
+  "gotmpl",
+  "templ",
+  "rust",
+  "rs",
+}
+
 return {
   { import = "lazyvim.plugins.extras.lang.tailwind" },
   {
@@ -19,6 +46,19 @@ return {
     optional = true,
     ensure_installed = {
       "tailwindcss",
+    },
+  },
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        tailwindcss = {
+          filetypes_include = tailwind_filetypes,
+        },
+        emmet_ls = {
+          filetypes = tailwind_filetypes,
+        },
+      },
     },
   },
 }

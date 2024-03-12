@@ -1,0 +1,122 @@
+{
+  "erb.link_to": {
+    "prefix": "erb.link_to",
+    "body": ["<%= link_to '${1:text}', ${2:router_path} %>"],
+    "description": "Add Rails link tag"
+  },
+  "erb.button_to": {
+    "prefix": "erb.button_to",
+    "body": [
+      "<%= button_to '${1:text}', ${2:router_path}, method: :${3:delete|get|post|patch} %>"
+    ],
+    "description": "Add Rails button tag"
+  },
+  "erb.form_tag": {
+    "prefix": "erb.form_tag",
+    "body": [
+      "<%= form_tag ${1:router_path}, remote: true do %>${2:content}<% end %>"
+    ],
+    "description": "Add Rails form tag"
+  },
+  "erb.form_for": {
+    "prefix": "erb.form_for",
+    "body": ["<%= form_for @${1:model_object} do |f| %>${2:content}<% end %>"],
+    "description": "Add Rails form for a specific model object"
+  },
+  "erb.label_tag": {
+    "prefix": "erb.label_tag",
+    "body": ["<%= label_tag ${1:text} %>"],
+    "description": "Add Rails label tag"
+  },
+  "erb.label": {
+    "prefix": "erb.label",
+    "body": ["<%= f.label :${1:model property} %>"],
+    "description": "Add Rails label to use on a form_for"
+  },
+  "erb.text_field_tag": {
+    "prefix": "erb.text_field_tag",
+    "body": [
+      "<%= text_field_tag :${1:attribute}, nil, placeholder: '${2:placeholder_text}' %>"
+    ],
+    "description": "Add Rails text field tag"
+  },
+  "erb.text_field": {
+    "prefix": "erb.text_field",
+    "body": [
+      "<%= f.text_field :${1:model_property}, placeholder: '${2:placeholder_text}' %>"
+    ],
+    "description": "Add Rails text field to use on a form_for"
+  },
+  "erb.password_field_tag": {
+    "prefix": "erb.password_field_tag",
+    "body": [
+      "<%= password_field_tag :${1:attribute}, nil, placeholder: '${2:placeholder_text}' %>"
+    ],
+    "description": "Add Rails password field tag"
+  },
+  "erb.password_field": {
+    "prefix": "erb.password_field",
+    "body": [
+      "<%= f.password_field :${1:mode_property}, placeholder: '${2:placeholder_text}' %>"
+    ],
+    "description": "Add Rails password field to use on a form_for"
+  },
+  "erb.submit_tag": {
+    "prefix": "erb.submit_tag",
+    "body": ["<%= submit_tag '${1:text}' %>"],
+    "description": "Add Rails submit tag"
+  },
+  "erb.submit": {
+    "prefix": "erb.submit",
+    "body": ["<%= f.submit '${1:text}' %>"],
+    "description": "Add Rails submit to use on a form_for"
+  },
+  "erb.turbostream.prepend": {
+    "prefix": "erb.turbostream.prepend",
+    "body": [
+      "<%= turbo_stream.prepend '${1:name}' do %>\n  ${2:something}\n<% end %>"
+    ],
+    "description": "Add turbostream prepend"
+  },
+  "erb.turbostream.remove": {
+    "prefix": "erb.turbostream.remove",
+    "body": ["<%= turbo_stream.remove '${1:name}' %>"],
+    "description": "Add turbostream remove"
+  },
+  "erb.turbostream.broadcast.from": {
+    "prefix": "erb.turbostream.broadcast.from",
+    "body": ["<%= turbo_stream.from '${1:name}' %>"],
+    "description": "Add turbostream broadcast from channel"
+  },
+  "erb.turbo.frame_tag": {
+    "prefix": "erb.turbo.frame_tag",
+    "body": [
+      "<%= turbo_frame_tag '${1:name}' do %>\n  ${2:something}\n<% end %>"
+    ],
+    "description": "Add turbo frame tag"
+  },
+  "erb.render": {
+    "prefix": "erb.render",
+    "body": ["<%= render '${1:name}', ${2:variable}: ${3:object}"],
+    "description": "render partial with params"
+  },
+  "erb.each": {
+    "prefix": "erb.each",
+    "body": [
+      "<% ${1:object}.each do |variable| %>\n  ${2:something}\n<% end %>"
+    ],
+    "description": "snippet for each loop"
+  },
+  "erb.turbo_confirm": {
+    "prefix": "erb.turbo_confirm",
+    "body": ["data: {turbo_confirm: '${1:message}'}"],
+    "description": "Add turbo confirm"
+  },
+  "erb.stimulus.data": {
+    "prefix": "erb.stimulus_data",
+    "body": [
+      "data: { controller: '${1:stimulus-controller}', action: 'turbo:submit-end->post-reset#reset' })"
+    ],
+    "description": "Add stimulus data to an eruby from"
+  }
+}

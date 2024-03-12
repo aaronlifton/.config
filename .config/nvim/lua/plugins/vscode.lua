@@ -29,7 +29,7 @@ local extra_enabled = {
   "mini.align",
   -- "nvim-recorder",
   -- "comment-box.nvim",
-  -- "text-case.nvim",
+  "text-case.nvim",
   "wildfire.nvim",
   "nvim-various-textobjs",
   -- "vim-carbon-now-sh",
@@ -37,8 +37,8 @@ local extra_enabled = {
   "ts-node-action",
 }
 
--- Config.options.checker.enabled = false
--- Config.options.change_detection.enabled = false
+Config.options.checker.enabled = false
+Config.options.change_detection.enabled = false
 Config.options.defaults.cond = function(plugin)
   return vim.tbl_contains(extra_enabled, plugin.name) or plugin.vscode
 end
@@ -60,6 +60,9 @@ end
 vim.api.nvim_create_autocmd("User", {
   pattern = "LazyVimKeymaps",
   callback = function()
+    -- map("n", "<leader><space>", "<cmd>Find<cr>")
+    -- map("n", "<leader>/", [[<cmd>call VSCodeNotify('workbench.action.findInFiles')<cr>]])
+    -- map("n", "<leader>ss", [[<cmd>call VSCodeNotify('workbench.action.gotoSymbol')<cr>]])
     -- view problems
     map("n", "<leader>xx", vscode_action("workbench.actions.view.problems"))
     -- open file explorer
@@ -180,8 +183,8 @@ return {
     "ggandor/leap.nvim",
     enabled = true,
     keys = {
-      { "p",  mode = { "n", "x", "o" }, desc = "Leap forward to" },
-      { "p",  mode = { "n", "x", "o" }, desc = "Leap backward to" },
+      { "p", mode = { "n", "x", "o" }, desc = "Leap forward to" },
+      { "p", mode = { "n", "x", "o" }, desc = "Leap backward to" },
       { "gp", mode = { "n", "x", "o" }, desc = "Leap from windows" },
     },
   },

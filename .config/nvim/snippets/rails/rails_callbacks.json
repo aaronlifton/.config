@@ -1,0 +1,72 @@
+{
+  "after_create": {
+    "prefix": "after_create",
+    "body": [
+      "after_create :${1:method_name}, ${2:if: :${3:conditional_method}}"
+    ],
+    "description": "Registers a callback to be called after a record is created. See ActiveRecord::Callbacks for more information"
+  },
+  "after_destroy": {
+    "prefix": "after_destroy",
+    "body": [
+      "after_destroy :${1:method_name}, ${2:if: :${3:conditional_method}}"
+    ],
+    "description": "Registers a callback to be called after a record is destroyed. See ActiveRecord::Callbacks for more information"
+  },
+  "after_save": {
+    "prefix": "after_save",
+    "body": [
+      "after_save :${1:method_name}, ${2:if: :${3:conditional_method}}"
+    ],
+    "description": "Registers a callback to be called after a record is saved. See ActiveRecord::Callbacks for more information"
+  },
+  "after_update": {
+    "prefix": "after_update",
+    "body": [
+      "after_update :${1:method_name}, ${2:if: :${3:conditional_method}}"
+    ],
+    "description": "Registers a callback to be called after a record is updated. See ActiveRecord::Callbacks for more information"
+  },
+  "after_validation": {
+    "prefix": "after_validation",
+    "body": [
+      "after_validation :${1:method_name}, ${2:if: :${3:conditional_method}}"
+    ],
+    "description": "Defines a callback that will get called right after validation."
+  },
+  "before_create": {
+    "prefix": "before_create",
+    "body": [
+      "before_create :${1:method_name}, ${2:if: :${3:conditional_method}}"
+    ],
+    "description": "Registers a callback to be called before a record is created. See ActiveRecord::Callbacks for more information"
+  },
+  "before_destroy": {
+    "prefix": "before_destroy",
+    "body": [
+      "before_destroy :${1:method_name}, ${2:if: :${3:conditional_method}}"
+    ],
+    "description": "Registers a callback to be called before a record is destroyed. See ActiveRecord::Callbacks for more information"
+  },
+  "before_save": {
+    "prefix": "before_save",
+    "body": [
+      "before_save :${1:method_name}, ${2:if: :${3:conditional_method}}"
+    ],
+    "description": "Registers a callback to be called before a record is saved. See ActiveRecord::Callbacks for more information"
+  },
+  "before_update": {
+    "prefix": "before_update",
+    "body": [
+      "before_update :${1:method_name}, ${2:if: :${3:conditional_method}}"
+    ],
+    "description": "Registers a callback to be called before a record is updated. See ActiveRecord::Callbacks for more information"
+  },
+  "before_validation": {
+    "prefix": "before_validation",
+    "body": [
+      "before_validation :${1:method_name}, ${2:if: :${3:conditional_method}}"
+    ],
+    "description": "Defines a callback that will get called right before validation."
+  }
+}

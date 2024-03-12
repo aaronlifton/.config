@@ -12,6 +12,7 @@ end
 
 return {
   "Tyler-Barham/floating-help.nvim",
+  enabled = false,
   config = function()
     require("floating-help").setup(
       -- Defaults

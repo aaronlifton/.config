@@ -11,14 +11,14 @@ return {
     -- local colors = require("material.colors")
     require("material").setup({
       contrast = {
-        terminal = true,                   -- Enable contrast for the built-in terminal
+        terminal = true, -- Enable contrast for the built-in terminal
         --   sidebars = false, -- Enable contrast for sidebar-like windows ( for example Nvim-Tree )
-        floating_windows = false,          -- Enable contrast for floating windows
-        cursor_line = false,               -- Enable darker background for the cursor line
+        floating_windows = false, -- Enable contrast for floating windows
+        cursor_line = false, -- Enable darker background for the cursor line
         -- non_current_windows = true, -- Enable contrasted background for non-current windows
         filetypes = { "markdown", "mdx" }, -- Specify which filetypes get the contrasted (darker) background
       },
-      styles = {                           -- Give comments style such as bold, italic, underline etc.
+      styles = { -- Give comments style such as bold, italic, underline etc.
         --   comments = { [[ italic = true ]] },
         --   strings = { [[ bold = true ]] },
         comments = { italic = true },
@@ -94,10 +94,17 @@ return {
         -- Normal = { bg = "#000000" },
         -- SignColumn = { fg = "#0F111A", bg = "#000000" }, --colors.editor.bg }
         -- DiffAdd = { fg = "#0F111A", bg = "#000000" },
+        GitSignsAdd = { fg = "#cbe699" }, --colors.editor.bg }
+        GitSignsAddNr = { fg = "#cbe699" }, --colors.editor.bg }
+        GitSignsAddLn = { fg = "#cbe699" }, --colors.editor.bg }
+        GitSignsAddUntracked = { fg = "#cbe699" }, --colors.editor.bg }
+        GitSignsAddUntrackedNr = { fg = "#cbe699" }, --colors.editor.bg }
+        GitSignsAddUntrackedLn = { fg = "#cbe699" }, --colors.editor.bg }
       },
       -- /END
     })
 
+    vim.cmd("colorscheme material")
     -- setup mini.pick
     require("config/highlights")
   end,

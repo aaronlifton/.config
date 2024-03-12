@@ -49,6 +49,10 @@
       {
         "language": "lua",
         "path": "./projects/nvim.json"
+      },
+      {
+        "language": "ruby",
+        "path": "./languages/ruby.json"
       }
     ]
   }

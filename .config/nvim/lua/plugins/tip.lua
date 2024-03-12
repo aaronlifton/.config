@@ -1,7 +1,7 @@
 return {
   "TobinPalmer/Tip.nvim",
   event = "VimEnter",
-  enabled = true,
+  enabled = false,
   init = function()
     -- Default config
     --- @type Tip.config

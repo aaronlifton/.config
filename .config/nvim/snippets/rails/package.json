@@ -1,0 +1,47 @@
+{
+  "name": "custom-snippets",
+  "contributes": {
+    "snippets": [
+      {
+        "language": "ruby",
+        "path": "./rails.json"
+      },
+      {
+        "language": "ruby",
+        "path": "./rails_callbacks.json"
+      },
+      {
+        "language": "ruby",
+        "path": "./rails_controller.json"
+      },
+      {
+        "language": "ruby",
+        "path": "./rails_logger.json"
+      },
+      {
+        "language": "ruby",
+        "path": "./rails_models.json"
+      },
+      {
+        "language": "ruby",
+        "path": "./rspec.json"
+      },
+      {
+        "language": "ruby",
+        "path": "./faker.json"
+      },
+      {
+        "language": "eruby",
+        "path": "./eruby.json"
+      },
+      {
+        "language": "eruby",
+        "path": "./bootstrap.json"
+      },
+      {
+        "language": "html",
+        "path": "./bootstrap.json"
+      }
+    ]
+  }
+}

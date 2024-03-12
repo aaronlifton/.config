@@ -1,0 +1,30 @@
+{
+  "rails.logger.info": {
+    "prefix": "logger",
+    "body": [
+      "logger.info { '${1:message}' }"
+    ],
+    "description": "Logs an info message"
+  },
+  "rails.logger.error": {
+    "prefix": "logger",
+    "body": [
+      "logger.error { '${1:message}' }"
+    ],
+    "description": "Logs an error message"
+  },
+  "rails.logger.warn": {
+    "prefix": "logger",
+    "body": [
+      "logger.warner { '${1:message}' }"
+    ],
+    "description": "Logs a warning message"
+  },
+  "rails.logger.debug": {
+    "prefix": "logger",
+    "body": [
+      "logger.debug { '${1:message}' }"
+    ],
+    "description": "Logs a debug message"
+  }
+}
