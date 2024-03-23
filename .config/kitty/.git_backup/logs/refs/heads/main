@@ -1,0 +1,7 @@
+0000000000000000000000000000000000000000 cd07423f7130b3edc80b93fd4fd03de325880323 Aaron Lifton <aaronlifton@gmail.com> 1696754987 -0400	clone: from https://github.com/ttys3/my-kitty-config.git
+cd07423f7130b3edc80b93fd4fd03de325880323 b13f0f67c908b97a7d7903eb36591f4aa57c4707 Aaron Lifton <aaronlifton@gmail.com> 1708664403 -0500	commit: update
+b13f0f67c908b97a7d7903eb36591f4aa57c4707 c585a29a45caaaf2a4bbb36895b3f4e83c0c34d7 Aaron Lifton <aaronlifton@gmail.com> 1708664600 -0500	commit: add themes submodule
+c585a29a45caaaf2a4bbb36895b3f4e83c0c34d7 364f67b6e01b6a3e6a8e457f108c77197adce83c Aaron Lifton <aaronlifton@gmail.com> 1708664735 -0500	commit: update themes
+364f67b6e01b6a3e6a8e457f108c77197adce83c 1788e396ba2c4413e40ea99ef09b14e33a408761 Aaron Lifton <aaronlifton@gmail.com> 1708695135 -0500	commit: delete .DS_Store
+1788e396ba2c4413e40ea99ef09b14e33a408761 251bd39a1f3c47c46e3d308f1a9e05ae9fe7a5e8 Aaron Lifton <aaronlifton@gmail.com> 1711190704 -0400	commit: progress
+251bd39a1f3c47c46e3d308f1a9e05ae9fe7a5e8 45782148a57a03e30934a14648369910e694f164 Aaron Lifton <aaronlifton@gmail.com> 1711190713 -0400	commit: massive progress
