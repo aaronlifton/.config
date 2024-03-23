@@ -13,9 +13,60 @@ local get_runtime_dir = function()
   return vim.fn.stdpath("config")
 end
 
+local lvim_dir = vim.fn.expand("~/.local/share/lunarvim/lvim")
+local doom_dir = vim.fn.expand("~/.config/doom-nvim")
+local astrovim_dir = vim.fn.expand("~/.config/astrovim")
+local ftw_dir = vim.fn.expand("~/Code/dotfiles/Matt-FTW-dotfiles/.config/nvim")
+local nyoom_dir = vim.fn.expand("~/.config/nyoom.nvim")
+local niocalbanese_dir = vim.fn.expand("~/Code/dotfiles/nicoalbanese/.config/nvim")
+local inspiration_dirs = {
+  doom = doom_dir,
+  lvim = lvim_dir,
+  astrovim = astrovim_dir,
+  ftw = ftw_dir,
+  nyoom = nyoom_dir,
+  nicoalbanese = niocalbanese_dir,
+}
+
+local inspiration_dirs_list = {}
+for name, dir in pairs(inspiration_dirs) do
+  table.insert(inspiration_dirs_list, dir)
+end
+
+function M.grep_config_files(opts)
+  local dir = get_runtime_dir()
+  local theme_opts = themes.get_ivy({
+    sorting_strategy = "ascending",
+    layout_strategy = "bottom_pane",
+    prompt_prefix = ">> ",
+    prompt_title = "~ Search My Config ~",
+    cwd = dir,
+    search_dirs = { dir },
+  })
+  opts = vim.tbl_deep_extend("force", theme_opts, opts)
+  builtin.live_grep(opts)
+end
+
+function M.find_config_files(opts)
+  local dir = get_runtime_dir()
+  opts = opts or {}
+  local base_dir = get_lazyvim_base_dir()
+  -- get parent foler
+  local theme_opts = themes.get_ivy({
+    sorting_strategy = "ascending",
+    layout_strategy = "bottom_pane",
+    prompt_prefix = ">> ",
+    prompt_title = "~ Search My Config (Files) ~",
+    cwd = dir,
+    search_dirs = { dir },
+  })
+  opts = vim.tbl_deep_extend("force", theme_opts, opts)
+  builtin.find_files(opts)
+end
+
 function M.find_lazyvim_plugins(opts)
   opts = opts or {}
-  local base_dir =  get_lazyvim_base_dir()
+  local base_dir = get_lazyvim_base_dir()
   -- get parent foler
   local parent_dir = vim.fn.fnamemodify(base_dir, ":h")
   local theme_opts = themes.get_ivy({
@@ -28,6 +79,33 @@ function M.find_lazyvim_plugins(opts)
   })
   opts = vim.tbl_deep_extend("force", theme_opts, opts)
   builtin.find_files(opts)
+end
+
+function M.grep_dir(name, opts)
+  local theme_opts = themes.get_ivy({
+    sorting_strategy = "ascending",
+    layout_strategy = "bottom_pane",
+    prompt_prefix = ">> ",
+    prompt_title = "~ Search " .. name .. " Config ~",
+    cwd = inspiration_dirs[name],
+    search_dirs = { inspiration_dirs[name] },
+  })
+  opts = vim.tbl_deep_extend("force", theme_opts, opts)
+  builtin.live_grep(opts)
+end
+
+function M.grep_inspiration_files(opts)
+  local dir = get_runtime_dir()
+  local theme_opts = themes.get_ivy({
+    sorting_strategy = "ascending",
+    layout_strategy = "bottom_pane",
+    prompt_prefix = ">> ",
+    prompt_title = "~ Search Inspiration Configs (Lunar, Doom, FTW) ~",
+    cwd = dir,
+    search_dirs = inspiration_dirs_list,
+  })
+  opts = vim.tbl_deep_extend("force", theme_opts, opts)
+  builtin.live_grep(opts)
 end
 
 function M.find_lazyvim_files(opts)

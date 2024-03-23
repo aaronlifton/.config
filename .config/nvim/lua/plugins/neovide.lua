@@ -42,13 +42,14 @@ vim.g.neovide_cursor_vfx_opacity = 195.0
 -- vim.g.neovide_cursor_vfx_particle_density = 7.0
 -- vim.g.neovide_cursor_vfx_particle_speed = 10.0
 -- vim.g.neovide_cursor_vfx_particle_phase = 1.5 -- railgun
--- vim.g.neovide_cursor_vfx_particle_curl = 1.0 -- railgun
+-- vim.g.neovide_cursor_vfx_particle_cur7l = 1.0 -- railgun
 
 vim.o.guifont = "Hack Nerd Font Mono:h15"
--- vim.o.guifont = "Berkely Mono Trial Regular:h15"
+-- vim.o.guifont = "Berkeley Mono Trial:h16"
+vim.o.guifont = "GeistMono Nerd Font Mono:h16"
 
 vim.opt.winblend = 20
-vim.g.neovide_refresh_rate = 75
+-- vim.g.neovide_refresh_rate = 75
 vim.g.neovide_show_border = true
 vim.g.neovide_remember_window_size = true
 vim.g.neovide_scroll_animation_length = 0.2

@@ -438,16 +438,18 @@ ac("FileType", {
 
 ac("FileType", {
   pattern = "help",
-  callback = function()
-    vim.b[buf].minianimate_disable = true
+  callback = function(event)
+    vim.b[event.buf].minianimate_disable = true
     vim.opt_local.textwidth = 80
   end,
 })
 
 ac("FileType", {
   pattern = { ".ts", ".tsx", ".js", ".jsx" },
-  callback = function()
-    vim.lsp.inlay_hint.enable(0, false)
+  callback = function(event)
+    -- vim.lsp.inlay_hint.is_enabled()
+    vim.lsp.inlay_hint.enable(event.buf, false)
+    vim.cmd("echo 'hello'")
   end,
 })
 
@@ -499,7 +501,7 @@ ac("BufWritePre", {
     if args.match:match("^%w%w+://") then
       return
     end
-    local file = vim.loop.fs_realpath(args.match) or args.match
+    local file = vim.uv.fs_realpath(args.match) or args.match
     vim.fn.mkdir(vim.fn.fnamemodify(file, ":p:h"), "p")
   end,
 })
@@ -515,3 +517,98 @@ ac("BufWritePre", {
 --     vim.go.backupext = backup
 --   end,
 -- })
+
+-- NOTE: Originally tried to put this in FileType event autocmd but it is apparently too early for `set modifiable` to take effect
+-- vim.api.nvim_create_autocmd("BufWinEnter", {
+--   group = vim.api.nvim_create_augroup("quickfix", { clear = true }),
+--   desc = "Allow updating quickfix window",
+--   pattern = "quickfix",
+--   callback = function(ctx)
+--     vim.bo.modifiable = true
+--     -- :vimgrep's quickfix window display format now includes start and end column (in vim and nvim) so adding 2nd format to match that
+--     vim.bo.errorformat = "%f|%l col %c| %m,%f|%l col %c-%k| %m"
+--     vim.keymap.set(
+--       "n",
+--       "<C-s>",
+--       '<Cmd>cgetbuffer|set nomodified|echo "quickfix/location list updated"<CR>',
+--       { buffer = true, desc = "Update quickfix/location list with changes made in quickfix window" }
+--     )
+--   end,
+-- })
+
+vim.api.nvim_create_autocmd("User", {
+  pattern = "MiniFilesWindowOpen",
+  callback = function(args)
+    local win_id = args.data.win_id
+
+    -- Customize window-local settings
+    -- vim.wo[win_id].winblend = 50
+    vim.api.nvim_win_set_config(win_id, { border = "double" })
+  end,
+})
+
+local show_dotfiles = true
+
+local filter_show = function(fs_entry)
+  return true
+end
+
+local filter_hide = function(fs_entry)
+  return not vim.startswith(fs_entry.name, ".")
+end
+
+local toggle_dotfiles = function()
+  show_dotfiles = not show_dotfiles
+  local new_filter = show_dotfiles and filter_show or filter_hide
+  MiniFiles.refresh({ content = { filter = new_filter } })
+end
+
+vim.api.nvim_create_autocmd("User", {
+  pattern = "MiniFilesBufferCreate",
+  callback = function(args)
+    local buf_id = args.data.buf_id
+    -- Tweak left-hand side of mapping to your liking
+    vim.keymap.set("n", "g.", toggle_dotfiles, { buffer = buf_id })
+  end,
+})
+
+local map_split = function(buf_id, lhs, direction)
+  local rhs = function()
+    -- Make new window and set it as target
+    local new_target_window
+    vim.api.nvim_win_call(MiniFiles.get_target_window(), function()
+      vim.cmd(direction .. " split")
+      new_target_window = vim.api.nvim_get_current_win()
+    end)
+
+    MiniFiles.set_target_window(new_target_window)
+  end
+
+  -- Adding `desc` will result into `show_help` entries
+  local desc = "Split " .. direction
+  vim.keymap.set("n", lhs, rhs, { buffer = buf_id, desc = desc })
+end
+
+vim.api.nvim_create_autocmd("User", {
+  pattern = "MiniFilesBufferCreate",
+  callback = function(args)
+    local buf_id = args.data.buf_id
+    -- Tweak keys to your liking
+    map_split(buf_id, "gs", "belowright horizontal")
+    map_split(buf_id, "gv", "belowright vertical")
+  end,
+})
+
+local files_set_cwd = function(path)
+  -- Works only if cursor is on the valid file system entry
+  local cur_entry_path = MiniFiles.get_fs_entry().path
+  local cur_directory = vim.fs.dirname(cur_entry_path)
+  vim.fn.chdir(cur_directory)
+end
+
+vim.api.nvim_create_autocmd("User", {
+  pattern = "MiniFilesBufferCreate",
+  callback = function(args)
+    vim.keymap.set("n", "g~", files_set_cwd, { buffer = args.data.buf_id })
+  end,
+})

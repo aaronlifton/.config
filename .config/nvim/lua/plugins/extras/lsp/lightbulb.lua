@@ -18,7 +18,7 @@ return {
         function()
           vim.cmd("echo 'hello'")
           local bufnr = vim.api.nvim_get_current_buf()
-          local status_text = require("nvim-lightbulb").get_status_text(0)
+          local status_text = require("nvim-lightbulb").get_status_text(bufnr)
           vim.cmd("echo " .. status_text)
         end,
         desc = "Lightbulb - status text",

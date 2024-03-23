@@ -190,13 +190,14 @@ end
 -- Keyboard remap for Mac fr
 local symbol_key_opts = { desc = "which_key_ignore" }
 
+-- For alacritty
 -- if not vim.g.neovide then
 map("n", "Ì", "<A-h>", symbol_key_opts)
 map("n", "Ï", "<A-j>", symbol_key_opts)
 map("n", "È", "<A-k>", symbol_key_opts)
 map("n", "¬", "<A-l>", symbol_key_opts)
 map("n", "æ", "<A-a>", symbol_key_opts)
--- map("n", "ê", "<A-e>", symbol_key_opts)
+map("n", "ê", "<A-e>", symbol_key_opts)
 map("n", "Â", "<A-z>", symbol_key_opts)
 map("n", "®", "<A-r>", symbol_key_opts)
 map("n", "†", "<A-t>", symbol_key_opts)
@@ -307,8 +308,8 @@ map("n", "ı", "<S-A-n>", symbol_key_opts)
 -- Telescope
 
 -- local MiniExtra = require("mini.extra")
--- map("n", "<leader>ft", function()
---   MiniExtra.pickers.git_files()
+-- map("n", "<leader>e", function()
+--   local mini = MiniExtra.pickers.git_files()
 -- end, opts)
 -- map("n", "<leader>fm", function()
 --   MiniExtra.pickers.git_files({ scope = "modified" })
@@ -472,19 +473,20 @@ end
 map("n", "zR", spell_reload, { noremap = true, silent = true })
 -- go to other bracket with treesitter
 map("n", "mm",
-  function() 
+  function()
     local ts_utils = require("nvim-treesitter.ts_utils")
     local node = ts_utils.get_node_at_cursor()
     if node then
       ts_utils.get_next_node(node, true, true)
     end
   end,
-  { noremap = true, silent = true}
+  { noremap = true, silent = true }
 )
 
 -- go to help for selection
 
 
+-- LSP Info / Lint
 map("n", "<leader>cif", "<cmd>LazyFormatInfo<cr>", { desc = "Formatting" })
 map("n", "<leader>cic", "<cmd>ConformInfo<cr>", { desc = "Conform" })
 local linters = function()
@@ -560,22 +562,22 @@ wk.register({
     --   r = { "<cmd>OGPTRun roxygen_edit<CR>", "Roxygen Edit", mode = { "n", "v" } },
     --   l = { "<cmd>OGPTRun code_readability_analysis<CR>", "Code Readability Analysis", mode = { "n", "v" } },
     -- },
-    C = {
-      name = "ChatGPT",
-      e = { "<cmd>ChatGPTEditWithInstructions<CR>", "Edit code with instructions", mode = { "n", "v" } },
-      c = { "<cmd>ChatGPTEditWithInstructions<CR>", "Edit code with instructions", mode = { "n", "v" } },
-      g = { "<cmd>ChatGPTRun grammar_correction<CR>", "Grammar Correction", mode = { "n", "v" } },
-      t = { "<cmd>ChatGPTRun translate<CR>", "Translate", mode = { "n", "v" } },
-      k = { "<cmd>ChatGPTRun keywords<CR>", "Keywords", mode = { "n", "v" } },
-      d = { "<cmd>ChatGPTRun docstring<CR>", "Docstring", mode = { "n", "v" } },
-      a = { "<cmd>ChatGPTRun add_tests<CR>", "Add Tests", mode = { "n", "v" } },
-      o = { "<cmd>ChatGPTRun optimize_code<CR>", "Optimize Code", mode = { "n", "v" } },
-      s = { "<cmd>ChatGPTRun summarize<CR>", "Summarize", mode = { "n", "v" } },
-      f = { "<cmd>ChatGPTRun fix_bugs<CR>", "Fix Bugs", mode = { "n", "v" } },
-      x = { "<cmd>ChatGPTRun explain_code<CR>", "Explain Code", mode = { "n", "v" } },
-      r = { "<cmd>ChatGPTRun roxygen_edit<CR>", "Roxygen Edit", mode = { "n", "v" } },
-      l = { "<cmd>ChatGPTRun code_readability_analysis<CR>", "Code Readability Analysis", mode = { "n", "v" } },
-    },
+    -- C = {
+    --   name = "ChatGPT",
+    --   e = { "<cmd>ChatGPTEditWithInstructions<CR>", "Edit code with instructions", mode = { "n", "v" } },
+    --   c = { "<cmd>ChatGPTEditWithInstructions<CR>", "Edit code with instructions", mode = { "n", "v" } },
+    --   g = { "<cmd>ChatGPTRun grammar_correction<CR>", "Grammar Correction", mode = { "n", "v" } },
+    --   t = { "<cmd>ChatGPTRun translate<CR>", "Translate", mode = { "n", "v" } },
+    --   k = { "<cmd>ChatGPTRun keywords<CR>", "Keywords", mode = { "n", "v" } },
+    --   d = { "<cmd>ChatGPTRun docstring<CR>", "Docstring", mode = { "n", "v" } },
+    --   a = { "<cmd>ChatGPTRun add_tests<CR>", "Add Tests", mode = { "n", "v" } },
+    --   o = { "<cmd>ChatGPTRun optimize_code<CR>", "Optimize Code", mode = { "n", "v" } },
+    --   s = { "<cmd>ChatGPTRun summarize<CR>", "Summarize", mode = { "n", "v" } },
+    --   f = { "<cmd>ChatGPTRun fix_bugs<CR>", "Fix Bugs", mode = { "n", "v" } },
+    --   x = { "<cmd>ChatGPTRun explain_code<CR>", "Explain Code", mode = { "n", "v" } },
+    --   r = { "<cmd>ChatGPTRun roxygen_edit<CR>", "Roxygen Edit", mode = { "n", "v" } },
+    --   l = { "<cmd>ChatGPTRun code_readability_analysis<CR>", "Code Readability Analysis", mode = { "n", "v" } },
+    -- },
     c = {
       c = {
         name = "Copy/Reload",
@@ -599,19 +601,31 @@ wk.register({
       S = { "<cmd>lua require('osv').launch({port=8086})<cr>", "Start OSV (port 8086)" },
     },
     f = {
-      f = { ":Telescope find_files<CR>", { silent = true, desc = "files" }},
-      t = { ":Telescope live_grep<CR>", { silent = true, desc = "grep (root dir" }},
-      p = { ":Telescope projects<CR>", { silent = true, desc = "projects" }},
-      b = { ":Telescope buffers<CR>", { silent = true, desc = "buffers" }},
-      k = { ":Telescope keymaps<CR>", { silent = true, desc = "keymaps" }},
-      m = { "<cmd>Telescope macros<cr>", { silent = true, desc = "Telescope Macros" }},
+      f = { ":Telescope find_files<CR>", { silent = true, desc = "Files" } },
+      t = { ":Telescope live_grep<CR>", { silent = true, desc = "Grep (root dir" } },
+      p = { ":Telescope projects<CR>", { silent = true, desc = "Projects" } },
+      b = { ":Telescope buffers<CR>", { silent = true, desc = "Buffers" } },
+      k = { ":Telescope keymaps<CR>", { silent = true, desc = "Keymaps" } },
+      m = { ":Telescope macros<CR>", { silent = true, desc = "Macros" } },
       o = { ":!open .. vim.fn.expand('%:p:h') .. <cr>", "Reveal in finder" },
       l = {
-        name = "Lazyvim",
-        f = { function() T.find_lazyvim_files() end, "Find lazyvim files" },
+        name = "Terminals/Lazyvim",
+        l = { function() T.find_lazyvim_files() end, "Find lazyvim files" },
         g = { function() T.grep_lazyvim_files() end, "Grep lazyvim files" },
         c = { function() T.view_lazyvim_changelog() end, "Changelog" },
         p = { function() T.find_project_files() end, "Find project files" },
+        m = { function() T.grep_config_files({}) end, "Grep [m]y config files" },
+        M = { function() T.find_config_files({}) end, "Find [M]y config files" },
+        i = {
+          name = "Inspiration",
+          i    = { function() T.grep_inspiration_files({}) end, "Grep Lunarvim files" },
+          l    = { function() T.grep_dir("lvim", {}) end, "Grep Lunarvim files" },
+          d    = { function() T.grep_dir("doom", {}) end, "Grep Doomnvim files" },
+          a    = { function() T.grep_dir("astrovim", {}) end, "Grep Astrovim files" },
+          f    = { function() T.grep_dir("ftw", {}) end, "Grep FTW files" },
+          n    = { function() T.grep_dir("nyoom", {}) end, "Grep Nyoom files" },
+          N    = { function() T.grep_dir("nicoalbanese", {}) end, "Grep nicoalbanese files" },
+        }
       }
     },
     l = {
@@ -619,8 +633,8 @@ wk.register({
       e = { "<cmd>LazyExtras<cr>", "LazyExtras", { noremap = true } },
     },
     n = {
-          e = { "<cmd>NoiceErrors<cr>", "Noice Errors" },
-          t = { "<cmd>NoiceTelescope<cr>", "Noice", { noremap = true } },
+      e = { "<cmd>NoiceErrors<cr>", "Noice Errors" },
+      t = { "<cmd>NoiceTelescope<cr>", "Noice", { noremap = true } },
     },
     g = {
       s = { "<cmd>lua search_google()<CR>", "Search Google" },
@@ -634,11 +648,11 @@ wk.register({
       q = { "<Cmd>Trouble<cr>", "Show Trouble" },
     },
     s = {
-          B = { "<cmd>Telescope bookmarks list<cr>", "Bookmarks" },
-          n = { "<cmd>Telescope notify<cr>", "Telescope notify" },
-          t = { "<cmd>Telescope todo<cr>", "Todo" },
-          x = { "<cmd>lua require('sg.extensions.telescope').fuzzy_search_results()<CR>", "SG live grep" }
-        },
+      B = { "<cmd>Telescope bookmarks list<cr>", "Bookmarks" },
+      n = { "<cmd>Telescope notify<cr>", "Telescope notify" },
+      t = { "<cmd>Telescope todo<cr>", "Todo" },
+      x = { "<cmd>lua require('sg.extensions.telescope').fuzzy_search_results()<CR>", "SG live grep" }
+    },
     k = {
       --   r = {
       --     x = { clear_all_registers, "Clear all registers" },
@@ -676,11 +690,14 @@ wk.register({
       H = { K.switch_to_highest_window, "Switch to highest window" },
       q = { K.close_all_floating_windows, "Close all floating windows" },
     },
+    x = {
+      c = { function() vim.fn.setqflist({}) end, "Clear Quickfix" }
+    },
     z = {
       x = {
         function()
           vim.api.nvim_echo(
-            {{ vim.api.nvim_buf_get_name(vim.fn.bufnr()), 'none' }},
+            { { vim.api.nvim_buf_get_name(vim.fn.bufnr()), 'none' } },
             false,
             {}
           )

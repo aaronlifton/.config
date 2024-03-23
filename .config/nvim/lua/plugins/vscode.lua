@@ -30,10 +30,10 @@ local extra_enabled = {
   -- "nvim-recorder",
   -- "comment-box.nvim",
   "text-case.nvim",
-  "wildfire.nvim",
+  -- "wildfire.nvim",
   "nvim-various-textobjs",
   -- "vim-carbon-now-sh",
-  "highlight-undo.nvim",
+  -- "highlight-undo.nvim",
   "ts-node-action",
 }
 
@@ -183,9 +183,12 @@ return {
     "ggandor/leap.nvim",
     enabled = true,
     keys = {
-      { "p", mode = { "n", "x", "o" }, desc = "Leap forward to" },
-      { "p", mode = { "n", "x", "o" }, desc = "Leap backward to" },
-      { "gp", mode = { "n", "x", "o" }, desc = "Leap from windows" },
+      -- { "p", mode = { "n", "x", "o" }, desc = "Leap forward to" },
+      -- { "p", mode = { "n", "x", "o" }, desc = "Leap backward to" },
+      -- s "gp", mode = { "n", "x", "o" }, desc = "Leap from windows" },
+      { "s", mode = { "n", "x", "o" }, desc = "Leap forward to" },
+      { "s", mode = { "n", "x", "o" }, desc = "Leap backward to" },
+      { "sp", mode = { "n", "x", "o" }, desc = "Leap from windows" },
     },
   },
 

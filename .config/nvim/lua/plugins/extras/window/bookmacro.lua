@@ -1,7 +1,6 @@
 return {
   {
     "bignos/bookmacro",
-    enabled = false,
     dependencies = { "nvim-lua/plenary.nvim" },
     init = function()
       require("bookmacro").setup()

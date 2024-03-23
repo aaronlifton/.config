@@ -6,7 +6,7 @@ return {
     keys = {
       {
         "<leader>cp",
-        ft = "markdown",
+        ft = { "markdown", "markdown.mfx", "mdx" },
         function()
           local peek = require("peek")
           if peek.is_open() then

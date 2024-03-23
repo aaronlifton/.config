@@ -6,7 +6,7 @@ return {
     event = "VeryLazy",
     opts = function(_, opts)
       -- disable sliding edgy windos
-      opts.resize.enable = true
+      opts.resize.enable = false
     end,
   },
 }

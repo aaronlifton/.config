@@ -1,5 +1,6 @@
 local wezterm = require("wezterm")
 local fonts = require("util/fonts")
+local font_style = require("util/font_style")
 local color_util = require("util/colorscheme")
 local vim_settings = require("util/vim")
 -- local exec_domains = require("util/exec_domains")
@@ -234,29 +235,20 @@ config.colors = colors
 -- config.color_scheme = "Catppuccin Mocha"
 config.color_scheme_dirs = { "/Users/aaron/.config/wezterm/colors" }
 
--- Font
-config.font_size = 15.0
-config.line_height = 1.1
--- config.cell_width = 0.9
-config.freetype_render_target = "Normal" -- Normal, Light, HorizontalLcd - https://wezfurlong.org/wezterm/config/lua/config/freetype_render_target.html
-config.freetype_load_target = "Normal" -- Normal, Light, Mono, HorizontalLcd - https://wezfurlong.org/wezterm/config/lua/config/freetype_load_target.html
-config.freetype_load_flags = "DEFAULT" -- DEFAULT, NO_HINTING, NO_BITMAP, FORCE_AUTOHINT, MONOCHROME, NO_AUTOHINT - https://wezfurlong.org/wezterm/config/lua/config/freetype_load_flags.html
-config.font = wezterm.font("Hack Nerd Font Mono")
--- config.font = wezterm.font("ProFontIIx Nerd Font Mono")
-
+font_style.set_config(config, "Geist")
 config.front_end = "WebGpu" -- OpenGL, Software, WebGpu
--- config.window_frame = {}
 config.inactive_pane_hsb = {
 	saturation = 0.8,
 	brightness = 0.5,
 }
+-- config.window_frame = {}
 config.window_frame = {
 	font_size = 13.0,
 	active_titlebar_bg = colors.background,
 }
 config.window_padding = { left = 10, right = 10, top = 10, bottom = 10 }
 config.window_decorations = "RESIZE"
-config.enable_scroll_bar = true
+config.enable_scroll_bar = false
 config.min_scroll_bar_height = "2cell"
 config.window_background_opacity = 0.999
 config.window_close_confirmation = "NeverPrompt"

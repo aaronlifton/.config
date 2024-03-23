@@ -67,7 +67,7 @@ rules = [
   { mime = "application/x-7z-compressed", use = "archive" },
   { mime = "application/x-rar", use = "archive" },
 
-  { mime = "*", use = "fallback" },
+  { mime = "*", use = "text" },
 ]
 
 [tasks]

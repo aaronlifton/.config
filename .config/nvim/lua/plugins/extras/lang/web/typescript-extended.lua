@@ -174,4 +174,12 @@ return {
       "typescript",
     },
   },
+  {
+    "folke/which-key.nvim",
+    opts = {
+      defaults = {
+        ["<leader>2t"] = { name = "JS Commands" },
+      },
+    },
+  },
 }

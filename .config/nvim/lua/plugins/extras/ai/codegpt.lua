@@ -58,13 +58,18 @@ return {
         ["tests"] = {
           language_instructions = {
             ruby = ror_prompt .. " Use the RSpec framework.",
+            -- typescript = "Use Jest framework.",
+            -- javascript = "Use Jest framework.",
+            typescript = "Use the Vitest framework.",
+            javascript = "Use the Vitest framework.",
           },
         },
         ["doc"] = {
           language_instructions = {
             ruby = "Use RDoc format.",
+            typescript = "Use JSDoc format.",
+            javascript = "Use JSDoc format.",
           },
-
           -- Overrides the max tokens to be 1024
           max_tokens = 1024,
         },
@@ -72,6 +77,8 @@ return {
           -- Overrides the system message template
           language_instructions = {
             ruby = ror_prompt,
+            typescript = "Use the latest version of Typescript and React. Avoid the use of global state, and the any type.",
+            javascript = "Use the latest features of Javascript and the latest version of React. Avoid the use of global state, and the any type.",
           },
 
           -- Overrides the user message template
@@ -85,10 +92,10 @@ return {
     "nvim-lualine/lualine.nvim",
     optional = true,
     after = "CodeGPT.nvim",
-    opts = function(_, opts)
-      local codegpt = require("codegpt")
-      table.insert(opts.sections.lualine_x, 2, { codegpt.get_status, "encoding", "fileformat" })
-    end,
+    -- opts = function(_, opts)
+    --   local codegpt = require("codegpt")
+    --   table.insert(opts.sections.lualine_x, 2, { codegpt.get_status, "encoding", "fileformat" })
+    -- end,
   },
   {
     "folke/which-key.nvim",

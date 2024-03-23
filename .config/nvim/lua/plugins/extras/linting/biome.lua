@@ -28,7 +28,7 @@ return {
         ["javascriptreact"] = { "biome" },
       })
 
-      opts.formatters = {
+      lsp_util.add_formatter_settings(opts, {
         biome = {
           condition = function(self, ctx)
             return vim.fs.find({ "biome.json" }, { path = ctx.filename, upward = true })[1]
@@ -39,7 +39,7 @@ return {
             return not vim.fs.find({ "biome.json" }, { path = ctx.filename, upward = true })[1]
           end,
         },
-      }
+      })
 
       return opts
     end,

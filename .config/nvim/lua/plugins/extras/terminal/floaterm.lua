@@ -48,7 +48,7 @@ return {
     opts = {
       defaults = {
         ["<leader>ce"] = { name = "r[e]pl" },
-        ["<leader>fl"] = { name = "terminals" },
+        -- ["<leader>fl"] = { name = "terminals" },
       },
     },
   },
