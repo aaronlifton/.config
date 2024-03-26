@@ -1,6 +1,45 @@
 # See https://github.com/crate-ci/typos/blob/master/docs/reference.md to configure typos
+default.extend-ignore-re = [
+  "\\\\u\\{[0-9A-Za-z]*\\}",
+  "[Nn]oice",
+  '<leader>[a-z]{2}',
+  "~=\\S+",
+  "\"BaR\"",
+  "\"xFoObar\"",
+  "\"FoO\"",
+  'Error[a-z]+',
+]
 [default.extend-words]
+nvim = "nvim"
+noice = "noice"
+ue = "ue"
 enew = "enew"
 fo = "fo"
+prev = "prev"
+prepend = "prepend"
+prepended = "prepended"
+goes = "goes"
+Preact = "Preact"
+inovice = "invoice"
+Noice = "Noice"
+Lifton = "Lifton"
+struct = "struct"
+pids = "pids"
 [files]
-extend-exclude = ["LICENSE"]
+extend-exclude = [
+  ".typos.toml",
+  "LICENSE",
+  "*.ts",
+  "*.tsx",
+  "packages",
+  "examples",
+  "*.js",
+  "*.json",
+  "*.svg",
+  ".git*",
+  ".lua*",
+  ".sty*",
+  ".go",
+  ".rs",
+]
+ignore-files = true

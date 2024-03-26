@@ -46,14 +46,23 @@ vim.opt.startofline = true
 -- vim.opt.foldexpr = "0"
 -- vim.opt.foldlevel = 0
 -- vim.opt.foldtext = "foldtext()"
---
+
 vim.opt.swapfile = false
-vim.opt.backspace = { "eol", "start", "indent" }
+
 -- views can only be fully collapsed with the global statusline
 vim.opt.laststatus = 3
 -- Default splitting will cause your main splits to jump when opening an edgebar.
 -- To prevent this, set `splitkeep` to either `screen` or `topline`.
 vim.opt.splitkeep = "screen"
+
+-- Minimal setup
+-- vim.opt.showcmd = false
+-- vim.opt.laststatus = 0
+-- vim.opt.cmdheight = 0
+
+-- Backspacing and indentation when wrapping
+vim.opt.backspace = { "eol", "start", "indent" }
+vim.opt.breakindent = true
 
 vim.api.nvim_set_hl(0, "LeapBackdrop", { link = "Comment" })
 
@@ -66,12 +75,14 @@ vim.g.disable_leap_secondary_labels = false
 vim.g.enable_leap_lightspeed_mode = false
 vim.g.astro_typescript = "enable"
 vim.g["denops#deno"] = "/Users/aaron/.deno/bin/deno"
-vim.g.native_snippets_enabled = true
+vim.g.native_snippets_enabled = false
 vim.g.multiplexer = "wez" -- tmux
 vim.g.pairs_plugin = "mini.pairs"
 vim.g.outline_plugin = "outline.nvim"
+vim.g.replace_typescript_ls = false
 vim.g.gui_font_face = "Hack Nerd Font Mono"
 vim.g.gui_font_size = 18
+vim.g.editorconfig = true
 
 -- Disable some repl providers
 for _, provider in ipairs({ "perl", "python3" }) do
@@ -113,8 +124,29 @@ vim.commentstring = ""
 
 -- require("mini.starter").open()
 
-vim.g.root_spec = { "lsp", { ".git", "lua" }, "cwd" }
+vim.g.root_spec = {
+  "lsp",
+  { ".git", "lua", ".obsidian", "package.json", "Makefile", "go.mod", "cargo.toml", "pyproject.toml", "src" },
+  "cwd",
+}
 vim.g.autoformat = true -- globally
 vim.b.autoformat = true -- buffer-local
 
-vim.lsp.inlay_hint.enable(0, false)
+vim.g.is_original_codelens_refresh = true
+-- vim.lsp.inlay_hint.enable(0, false)
+-- Fix inlay-hint auto-re-enabling bug
+-- LazyVim.toggle.inlay_hints = function(buffer, enabled)
+--   return false
+-- end
+-- function M.inlay_hints(buf, value)
+--   local ih = vim.lsp.buf.inlay_hint or vim.lsp.inlay_hint
+--   if type(ih) == "function" then
+--     ih(buf, value)
+--   elseif type(ih) == "table" and ih.enable then
+--     if value == nil then
+--       value = not ih.is_enabled(buf)
+--     end
+--     ih.enable(buf, value)
+--   end
+-- end
+--

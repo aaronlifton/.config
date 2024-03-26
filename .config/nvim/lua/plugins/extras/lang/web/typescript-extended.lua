@@ -1,3 +1,17 @@
+local ts_server_activated = true -- Change this variable to false if you want to use typescript-tools instead of lspconfig tsserver implementation
+local ft = { "typescript", "typescriptreact", "javascript", "javascriptreact" }
+
+local inlayHints = {
+  includeInlayParameterNameHints = "all",
+  includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+  includeInlayFunctionParameterTypeHints = true,
+  includeInlayVariableTypeHints = true,
+  includeInlayVariableTypeHintsWhenTypeMatchesName = true,
+  includeInlayPropertyDeclarationTypeHints = true,
+  includeInlayFunctionLikeReturnTypeHints = true,
+  includeInlayEnumMemberValueHints = true,
+}
+
 local source_action = function(name)
   return function()
     vim.lsp.buf.code_action({
@@ -10,42 +24,9 @@ local source_action = function(name)
   end
 end
 
-local inlayHints = {
-  includeInlayParameterNameHints = "all", -- "literal"
-  includeInlayParameterNameHintsWhenArgumentMatchesName = true, -- false
-  includeInlayFunctionParameterTypeHints = true,
-  includeInlayVariableTypeHints = true, -- false
-  includeInlayVariableTypeHintsWhenTypeMatchesName = true,
-  includeInlayPropertyDeclarationTypeHints = true,
-  includeInlayFunctionLikeReturnTypeHints = true,
-  includeInlayEnumMemberValueHints = true,
-}
-
-local function denoConfigExists()
-  local configs = { "deno.json", "deno.jsonc" }
-  local root = require("lazyvim.util.root").get()
-
-  for _, config in ipairs(configs) do
-    if vim.fn.filereadable(root .. "/" .. config) == 1 then
-      return true
-    end
-  end
-
-  return false
-end
-
-local function angularConfigExists()
-  local config = "app.config.server.ts"
-  local root = require("lazyvim.util.root").get()
-  if vim.fn.filereadable(root .. "/app/src/" .. config) == 1 then
-    return true
-  end
-  return false
-end
-
 return {
   { import = "lazyvim.plugins.extras.lang.typescript" },
-  { import = "lazyvim.plugins.extras.lang.json" },
+  { import = "plugins.extras.lang.json-extended" },
   {
     "williamboman/mason.nvim",
     opts = function(_, opts)
@@ -58,6 +39,7 @@ return {
     opts = {
       servers = {
         tsserver = {
+          enabled = ts_server_activated,
           init_options = {
             preferences = {
               disableSuggestions = true,
@@ -66,9 +48,23 @@ return {
           settings = {
             typescript = {
               inlayHints = inlayHints,
+              implementationsCodeLens = {
+                enabled = true,
+              },
+              referencesCodeLens = {
+                enabled = true,
+                showOnAllFunctions = true,
+              },
             },
             javascript = {
               inlayHints = inlayHints,
+              implementationsCodeLens = {
+                enabled = true,
+              },
+              referencesCodeLens = {
+                enabled = true,
+                showOnAllFunctions = true,
+              },
             },
           },
           keys = {
@@ -91,22 +87,43 @@ return {
         },
         denols = {},
       },
-      setup = {
-        tsserver = function(_, opts)
-          -- Disable tsserver if denols is present
-          return denoConfigExists()
-        end,
-        denols = function(_, opts)
-          -- Disable denols if tsserver is present
-          -- was reversed
-          return not denoConfigExists()
-        end,
-        angularls = function(_, opts)
-          opts.root_dir = require("lspconfig.util").root_pattern("angular.json", "project.json")
-          -- Disable angularls if app.config.server.ts is present
-          return not angularConfigExists()
-        end,
+    },
+  },
+  {
+    "pmizio/typescript-tools.nvim",
+    dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+    enabled = not ts_server_activated,
+    ft = ft,
+    opts = {
+      cmd = { "typescript-language-server", "--stdio" },
+      settings = {
+        code_lens = "all",
+        expose_as_code_action = "all",
+        tsserver_plugins = {
+          "@styled/typescript-styled-plugin",
+        },
+        tsserver_file_preferences = {
+          completions = {
+            completeFunctionCalls = true,
+          },
+          init_options = {
+            preferences = {
+              disableSuggestions = true,
+            },
+          },
+          includeInlayParameterNameHints = "all",
+          includeInlayEnumMemberValueHints = true,
+          includeInlayFunctionLikeReturnTypeHints = true,
+          includeInlayFunctionParameterTypeHints = true,
+          includeInlayPropertyDeclarationTypeHints = true,
+          includeInlayVariableTypeHints = true,
+        },
       },
+    },
+    keys = {
+      { "<leader>cO", ft = ft, "<cmd>TSToolsOrganizeImports<cr>", desc = "Organize Imports" },
+      { "<leader>cR", ft = ft, "<cmd>TSToolsRemoveUnusedImports<cr>", desc = "Remove Unused Imports" },
+      { "<leader>cM", ft = ft, "<cmd>TSToolsAddMissingImports<cr>", desc = "Add Missing Imports" },
     },
   },
   {
@@ -121,17 +138,45 @@ return {
   {
     "dmmulroy/tsc.nvim",
     opts = {
+      auto_start_watch_mode = false,
+      use_trouble_qflist = true,
       flags = {
-        watch = true,
+        watch = false,
       },
     },
     keys = {
       { "<leader>ct", ft = { "typescript", "typescriptreact" }, "<cmd>TSC<cr>", desc = "Type Check" },
+      { "<leader>xy", ft = { "typescript", "typescriptreact" }, "<cmd>TSCOpen<cr>", desc = "Type Check Quickfix" },
     },
     ft = {
       "typescript",
       "typescriptreact",
     },
+    cmd = {
+      "TSC",
+      "TSCOpen",
+      "TSCClose",
+    },
+  },
+  {
+    "dmmulroy/ts-error-translator.nvim",
+    ft = { "typescript", "typescriptreact" },
+    dependencies = {
+      "neovim/nvim-lspconfig",
+      opts = {
+        servers = {
+          tsserver = {
+            handlers = {
+              ["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
+                require("ts-error-translator").translate_diagnostics(err, result, ctx, config)
+                vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
+              end,
+            },
+          },
+        },
+      },
+    },
+    opts = {},
   },
   {
     "nvim-neotest/neotest",
@@ -172,14 +217,6 @@ return {
     ensure_installed = {
       "react",
       "typescript",
-    },
-  },
-  {
-    "folke/which-key.nvim",
-    opts = {
-      defaults = {
-        ["<leader>2t"] = { name = "JS Commands" },
-      },
     },
   },
 }

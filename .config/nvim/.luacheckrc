@@ -2,6 +2,7 @@
 globals = {
   "vim",
   "bit",
+  "LazyVim",
 }
 
 -- Rerun tests only if their modification time changed

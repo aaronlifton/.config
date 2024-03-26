@@ -3,5 +3,5 @@ return {
   dependencies = { "nvim-treesitter" },
   opts = {},
   --stylua: ignore
-  keys = { { "<C-S-j>", "<cmd>NodeAction<cr>", desc = "Node action" } },
+  keys = { { "T", "<cmd>NodeAction<cr>", desc = "Node action" } },
 }

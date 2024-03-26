@@ -34,7 +34,7 @@ return {
   end,
   -- stylua: ignore
   keys = {
-    { "<leader>b", "<cmd>Telescope bookmarks list<cr>",                   desc = "Bookmarks" },
+    { "<leader>fB", "<cmd>Telescope bookmarks list<cr>",                   desc = "Bookmarks" },
     { "mm",        function() require("bookmarks").bookmark_toggle() end, desc = "Toggle Bookmark" },
     { "ml",        function() require("bookmarks").bookmark_ann() end,    desc = "Add/Edit Current Line" },
     { "mc",        function() require("bookmarks").bookmark_clean() end,  desc = "Clear All Bookmarks" },

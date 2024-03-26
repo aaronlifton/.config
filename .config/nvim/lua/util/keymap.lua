@@ -66,6 +66,9 @@ end
 
 function M.find_and_replace_within_lines()
   local num_lines = tonumber(vim.fn.input("Number of lines to search: "))
+  if not num_lines or num_lines <= 0 then
+    return
+  end
   local search_str = vim.fn.input("Search for:")
   local replace_str = vim.fn.input("Replace with:")
   local command = string.format([[:.,.+%ds/%s/%s/g<CR>]], num_lines, search_str, replace_str)

@@ -1,3 +1,5 @@
+local Util = require("lazyvim.util")
+Util.toggle.inlay_hints(nil, false)
 -- Automatically end a self-closing tag when pressing /
 vim.keymap.set("i", "/", function()
   local node = vim.treesitter.get_node()

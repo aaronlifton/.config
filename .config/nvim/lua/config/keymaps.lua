@@ -11,38 +11,66 @@ local K = util.keymap
 local map = K.map
 local opts = { silent = true }
 local wk = require("which-key")
+local o = vim.opt
 wk.setup()
 
 require("config.keymaps.base")
 require("config.keymaps.windows")
 
-local nav = {
-  h = "Left",
-  j = "Down",
-  k = "Up",
-  l = "Right",
-}
+--- Monkey-patch codelens refresh, which happens to also trigger inlay hints visibility
+local original_codelens_refresh = vim.lsp.codelens.refresh
+local toggle_codelens_original = function()
+  if vim.g.is_original_codelens_refresh then
+    vim.cmd("echo 'patching codelens refresh'")
+    ---@diagnostic disable-next-line:duplicate-set-field,redefined-local
+    vim.lsp.codelens.refresh = function(opts)
+      vim.cmd("echo 'disabling inlay hints from overridden codelens refresh'")
+      original_codelens_refresh(opts)
 
-local function navigate(dir)
-  return function()
-    local win = vim.api.nvim_get_current_win()
-    vim.cmd.wincmd(dir)
-    local pane = vim.env.WEZTERM_PANE
-    if pane and win == vim.api.nvim_get_current_win() then
-      local pane_dir = nav[dir]
-      vim.system({ "wezterm", "cli", "activate-pane-direction", pane_dir }, { text = true }, function(p)
-        if p.code ~= 0 then
-          vim.notify(
-            "Failed to move to pane " .. pane_dir .. "\n" .. p.stderr,
-            vim.log.levels.ERROR,
-            { title = "Wezterm" }
-          )
-        end
-      end)
+      LazyVim.toggle.inlay_hints(nil, false)
     end
+    vim.g.is_original_codelens_refresh = false
+    vim.lsp.codelens.refresh()
+  else
+    vim.cmd("echo 'restoring original codelens refresh'")
+    vim.lsp.codelens.refresh = original_codelens_refresh
+    vim.g.is_original_codelens_refresh = true
+    vim.lsp.codelens.refresh()
   end
 end
+map("n", "<leader>_l", toggle_codelens_original, { noremap = true, silent = true })
+-- map("n", "<leader>uh", toggle_codelens_original, { noremap = true, silent = true })
+toggle_codelens_original()
 
+-- Disabling since using kitty now
+-- Handle wezterm navigation
+-- local nav = {
+--   h = "Left",
+--   j = "Down",
+--   k = "Up",
+--   l = "Right",
+-- }
+--
+-- local function navigate(dir)
+--   return function()
+--     local win = vim.api.nvim_get_current_win()
+--     vim.cmd.wincmd(dir)
+--     local pane = vim.env.WEZTERM_PANE
+--     if pane and win == vim.api.nvim_get_current_win() then
+--       local pane_dir = nav[dir]
+--       vim.system({ "wezterm", "cli", "activate-pane-direction", pane_dir }, { text = true }, function(p)
+--         if p.code ~= 0 then
+--           vim.notify(
+--             "Failed to move to pane " .. pane_dir .. "\n" .. p.stderr,
+--             vim.log.levels.ERROR,
+--             { title = "Wezterm" }
+--           )
+--         end
+--       end)
+--     end
+--   end
+-- end
+--
 util.set_user_var("IS_NVIM", true)
 
 -- better up/down
@@ -64,43 +92,58 @@ map("i", "<M-k>", "<esc><cmd>m .-2<cr>==gi", { desc = "Move up" })
 map("v", "<M-j>", ":m '>+1<cr>gv=gv", { desc = "Move down" })
 map("v", "<M-k>", ":m '<-2<cr>gv=gv", { desc = "Move up" })
 
--- buffers
-if lazy_util.has("bufferline.nvim") then
-  map("n", "<S-h>", "<cmd>BufferLineCyclePrev<cr>", { desc = "Prev buffer" })
-  map("n", "<S-l>", "<cmd>BufferLineCycleNext<cr>", { desc = "Next buffer" })
-  map("n", "[b", "<cmd>BufferLineCyclePrev<cr>", { desc = "Prev buffer" })
-  map("n", "]b", "<cmd>BufferLineCycleNext<cr>", { desc = "Next buffer" })
-else
-  map("n", "<S-h>", "<cmd>bprevious<cr>", { desc = "Prev buffer" })
-  map("n", "<S-l>", "<cmd>bnext<cr>", { desc = "Next buffer" })
-  map("n", "[b", "<cmd>bprevious<cr>", { desc = "Prev buffer" })
-  map("n", "]b", "<cmd>bnext<cr>", { desc = "Next buffer" })
-end
-map("n", "<leader>bb", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
-map("n", "<leader>`", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
-
--- Quit
--- Close current buffer
+-- Buffers
+map("n", "<leader>bf", "<cmd>bfirst<cr>", { desc = "First Buffer" })
+map("n", "<leader>ba", "<cmd>blast<cr>", { desc = "Last Buffer" })
 map("n", "<S-q>", "<cmd>bdelete!<CR>", { silent = true })
--- Close buffers
-map("n", "<leader>qq", "<cmd>qa<cr>", { desc = "Quit all" })
 
--- Clear search with <esc>
-map({ "i", "n" }, "<esc>", "<cmd>noh<cr><esc>", { desc = "Escape and clear hlsearch" })
+-- Center the screen automatically
+map("n", "n", "nzzzv")
+map("n", "N", "Nzzzv")
 
--- Clear search, diff update and redraw
--- taken from runtime/lua/_editor.lua
-map(
-  "n",
-  "<leader>ur",
-  "<Cmd>nohlsearch<Bar>diffupdate<Bar>normal! <C-L><CR>",
-  { desc = "Redraw / clear hlsearch / diff update" }
-)
+-- Toggle statusline
+map("n", "<leader>uS", function()
+  if o.laststatus:get() == 0 then
+    o.laststatus = 3
+  else
+    o.laststatus = 0
+  end
+end, { desc = "Toggle Statusline" })
+
+-- Toggle tabline
+map("n", "<leader>u<tab>", function()
+  if o.showtabline:get() == 0 then
+    o.showtabline = 2
+  else
+    o.showtabline = 0
+  end
+end, { desc = "Toggle Tabline" })
+
+-- Cursor navigation on insert mode
+map("i", "<M-h>", "<left>", { desc = "Move cursor left" })
+map("i", "<M-l>", "<right>", { desc = "Move cursor left" })
+map("i", "<M-j>", "<down>", { desc = "Move cursor left" })
+map("i", "<M-k>", "<up>", { desc = "Move cursor left" })
+
+-- End of the word backwards
+map("n", "E", "ge")
+
+-- Increment/decrement
+map("n", "+", "<C-a>")
+map("n", "-", "<C-x>")
+
+-- Tabs
+map("n", "]<tab>", "<cmd>tabnext<cr>", { desc = "Next Tab" })
+map("n", "[<tab>", "<cmd>tabprevious<cr>", { desc = "Previous Tab" })
+map("n", "<tab>", "<cmd>tabnext<cr>", { desc = "Next Tab" })
+map("n", "<s-tab>", "<cmd>tabprevious<cr>", { desc = "Previous Tab" })
+for i = 1, 9 do
+  map("n", "<leader><tab>" .. i, "<cmd>tabn " .. i .. "<cr>", { desc = "Tab " .. i })
+end
 
 map({ "n", "x" }, "gw", "*N", { desc = "Search word under cursor" })
 
--- https://github.com/mhinz/vim-galore#saner-behavior-of-n-and-n
-map("n", "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next search result" })
+-- https://github.com/mhinz/vim-galore#saner-behavior-of-n-and-n map("n", "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next search result" })
 map("x", "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next search result" })
 map("o", "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next search result" })
 map("n", "N", "'nN'[v:searchforward]", { expr = true, desc = "Prev search result" })
@@ -115,10 +158,7 @@ map("i", ";", ";<c-g>u")
 -- save file
 map({ "i", "v", "n", "s" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save file", remap = true })
 
--- better indenting
-map("v", "<", "<gv")
-map("v", ">", ">gv")
--- Identation
+-- Indentation
 map("n", "<", "<<", { desc = "Deindent" })
 map("n", ">", ">>", { desc = "Indent" })
 
@@ -132,19 +172,30 @@ end, { noremap = true })
 -- CMD keys
 map({ "n", "v", "s", "i" }, "<D-s>", "<cmd>w<cr>", { noremap = true })
 map({ "n", "v", "s", "i" }, "<D-v>", "<cmd>norm gpa<cr>", { noremap = true })
-map({ "i", "t" }, "<D-v>", '<C-r>"', { desc = "Paste on insert mode" })
 
 -- change word with <c-c
-vim.keymap.set("n", "<C-c>", "<cmd>normal! ciw;startinsert<cr>")
-map("n", "<M-S-j>", "cw<C-r>0<ESC>", { desc = "Change word under cursor with register 0" })
+-- vim.keymap.set("n", "<C-c>", "<cmd>normal! ciw;<cr>")
+-- map("n", "<M-S-j>", "cw<C-r>0<ESC>", { desc = "Change word under cursor with register 0" })
 
--- Better paste
--- map("v", "p", '"_dP', opts)
+-- Copy whole text to clipboard
+map("n", "<C-c>", ":%y+<CR>", { desc = "Copy whole text to clipboard", silent = true })
+
+-- Motion
+map("c", "<C-a>", "<C-b>", { desc = "Start Of Line" })
+map("i", "<C-a>", "<Home>", { desc = "Start Of Line" })
+map("i", "<C-e>", "<End>", { desc = "End Of Line" })
+
+-- Select all text
+map("n", "<D-a>", "gg<S-V>G", { desc = "Select all text", silent = true, noremap = true })
+map("n", "<D-E>", ":Neotree reveal_force_cwd", { desc = "Reveal neotree", silent = true, noremap = true })
+map("n", "<D-O>", ":Telescope find_files", { desc = "Telescope find files", silent = true, noremap = true })
+
 -- Paste options
+map({ "i", "t" }, "<D-v>", '<C-r>"', { desc = "Paste on insert mode" })
 map("v", "p", '"_dP', { desc = "Paste without overwriting" })
 
 -- Move to beginning/end of line
-map("n", "<M-l>", "$", { desc = "LAST CHARACTER OF LINE" })
+map("n", "<M-l>", "$", { desc = "LAST CHARACTER OF LINE", noremap = true })
 map("n", "<M-h>", "_", { desc = "First character of Line" })
 -- set current buf
 
@@ -173,181 +224,24 @@ map("x", "#", [[y?\V<C-R>=escape(@", '?\')<CR><CR>]])
 -- Press jk fast to enter
 map("i", "jk", "<ESC>", opts)
 
--- lazy
-map("n", "<leader>l", "<cmd>Lazy<cr>", { desc = "Lazy" })
-
--- new file
-map("n", "<leader>fn", "<cmd>enew<cr>", { desc = "New File" })
-
-map("n", "<leader>xl", "<cmd>lopen<cr>", { desc = "Location List" })
-map("n", "<leader>xq", "<cmd>copen<cr>", { desc = "Quickfix List" })
-
-if not lazy_util.has("trouble.nvim") then
-  map("n", "[q", vim.cmd.cprev, { desc = "Previous quickfix" })
-  map("n", "]q", vim.cmd.cnext, { desc = "Next quickfix" })
-end
-
--- Keyboard remap for Mac fr
-local symbol_key_opts = { desc = "which_key_ignore" }
-
--- For alacritty
--- if not vim.g.neovide then
-map("n", "Ì", "<A-h>", symbol_key_opts)
-map("n", "Ï", "<A-j>", symbol_key_opts)
-map("n", "È", "<A-k>", symbol_key_opts)
-map("n", "¬", "<A-l>", symbol_key_opts)
-map("n", "æ", "<A-a>", symbol_key_opts)
-map("n", "ê", "<A-e>", symbol_key_opts)
-map("n", "Â", "<A-z>", symbol_key_opts)
-map("n", "®", "<A-r>", symbol_key_opts)
-map("n", "†", "<A-t>", symbol_key_opts)
-map("n", "Ú", "<A-y>", symbol_key_opts)
-map("n", "º", "<A-u>", symbol_key_opts)
-map("n", "î", "<A-i>", symbol_key_opts)
-map("n", "œ", "<A-o>", symbol_key_opts)
-map("n", "π", "<A-p>", symbol_key_opts)
-map("n", "‡", "<A-q>", symbol_key_opts)
-map("n", "Ò", "<A-s>", symbol_key_opts)
-map("n", "∂", "<A-d>", symbol_key_opts)
-map("n", "ƒ", "<A-f>", symbol_key_opts)
-map("n", "ﬁ", "<A-g>", symbol_key_opts)
-map("n", "µ", "<A-m>", symbol_key_opts)
-map("n", "‹", "<A-w>", symbol_key_opts)
-map("n", "≈", "<A-x>", symbol_key_opts)
-map("n", "©", "<A-c>", symbol_key_opts)
-map("n", "◊", "<A-v>", symbol_key_opts)
-map("n", "ß", "<A-b>", symbol_key_opts)
--- map("n", "~", "<A-n>") -- don't want to remap this one
-map("n", "Æ", "<S-A-a>", symbol_key_opts)
-map("n", "Å", "<S-A-z>", symbol_key_opts)
-map("n", "Ê", "<S-A-e>", symbol_key_opts)
-map("n", "‚", "<S-A-r>", symbol_key_opts)
-map("n", "™", "<S-A-t>", symbol_key_opts)
-map("n", "ª", "<S-A-u>", symbol_key_opts)
-map("n", "ï", "<S-A-i>", symbol_key_opts)
-map("n", "Œ", "<S-A-o>", symbol_key_opts)
-map("n", "∏", "<S-A-p>", symbol_key_opts)
-map("n", "Ÿ", "<S-A-y>", symbol_key_opts)
-map("n", "Ω", "<S-A-q>", symbol_key_opts)
-map("n", "∑", "<S-A-s>", symbol_key_opts)
-map("n", "∆", "<S-A-d>", symbol_key_opts)
-map("n", "·", "<S-A-f>", symbol_key_opts)
-map("n", "ﬂ", "<S-A-g>", symbol_key_opts)
-map("n", "Î", "<S-A-h>", symbol_key_opts)
-map("n", "Í", "<S-A-j>", symbol_key_opts)
-map("n", "Ë", "<S-A-k>", symbol_key_opts)
--- map("n", "|", "<S-A-l>") -- make conflicts I think cause it's a coditional key
-map("n", "Ó", "<S-A-m>", symbol_key_opts)
-map("n", "›", "<S-A-w>", symbol_key_opts)
-map("n", "⁄", "<S-A-x>", symbol_key_opts)
-map("n", "¢", "<S-A-c>", symbol_key_opts)
-map("n", "√", "<S-A-v>", symbol_key_opts)
-map("n", "∫", "<S-A-b>", symbol_key_opts)
-map("n", "ı", "<S-A-n>", symbol_key_opts)
--- END Keyboard remap for Mac fr
--- end
-
--- local symbol_keys = {
---   "æ",
---   "Â",
---   "ê",
---   "®",
---   "†",
---   "Ú",
---   "º",
---   "î",
---   "œ",
---   "π",
---   "‡",
---   "Ò",
---   "∂",
---   "ƒ",
---   "ﬁ",
---   "Ì",
---   "Ï",
---   "È",
---   "¬",
---   "µ",
---   "‹",
---   "≈",
---   "©",
---   "◊",
---   "ß",
---   "Æ",
---   "Å",
---   "Ê",
---   "‚",
---   "™",
---   "ª",
---   "ï",
---   "Œ",
---   "∏",
---   "Ÿ",
---   "Ω",
---   "∑",
---   "∆",
---   "·",
---   "ﬂ",
---   "Î",
---   "Í",
---   "Ë",
---   "Ó",
---   "›",
---   "⁄",
---   "¢",
---   "√",
---   "∫",
---   "ı",
--- }
-
--- for _, key in ipairs(symbol_keys) do
---   map("n", "<A-" .. key .. ">", "<cmd>WhichKey '<A-" .. key .. ">'<cr>", { desc = "which_key_ignore" })
---   map("n", "<S-A-" .. key .. ">", "<cmd>WhichKey '<S-A-" .. key .. ">'<cr>", { desc = "which_key_ignore" })
--- end
-
--- Telescope
-
--- local MiniExtra = require("mini.extra")
--- map("n", "<leader>e", function()
---   local mini = MiniExtra.pickers.git_files()
--- end, opts)
--- map("n", "<leader>fm", function()
---   MiniExtra.pickers.git_files({ scope = "modified" })
--- end, opts)
--- map("n", "<leader>fu", function()
---   MiniExtra.pickers.git_files({ scope = "untracked" })
--- end, opts)
--- map("n", "<leader>fd", function()
---   MiniExtra.pickers.diagnostic()
--- end, opts)
-
--- require("telescope").load_extension("project")
--- map("n", "<leader>fw", ":lua  require('telescope').extensions.project.project({})", { noremap = true, silent = true })
-
--- stylua: ignore start
-
 -- toggle options
-map("n", "<leader>lf", "<cmd>lua vim.lsp.buf.format{ async = true }<cr>", opts)
-map("n", "<leader>uf", require("lazyvim.util").format.toggle, { desc = "Toggle format on Save" })
-local conceallevel = vim.o.conceallevel > 0 and vim.o.conceallevel or 3
-map("n", "<leader>uc", function() lazy_util.toggle("conceallevel", false, { 0, conceallevel }) end,
-  { desc = "Toggle Conceal" })
-if vim.lsp.inlay_hint then
-  map("n", "<leader>uh", function()
-    vim.lsp.inlay_hint.enable(0, not vim.lsp.inlay_hint.is_enabled())
-  end, { desc = "Toggle Inlay Hints" })
-end
+-- map("n", "<leader>lf", "<cmd>lua vim.lsp.buf.format{ async = true }<cr>", opts)
 
--- highlights under cursor
-if vim.fn.has("nvim-0.9.0") == 1 then
-  map("n", "<leader>ui", vim.show_pos, { desc = "Inspect Pos" })
-end
--- floating terminal
-local lazyterm = function() lazy_util.terminal.open(nil, { cwd = lazy_util.root.get() }) end
-map("n", "<leader>fR", lazyterm, { desc = "Terminal (root dir)" })
-map("n", "<leader>fT", function() lazy_util.terminal.open() end, { desc = "Terminal (cwd)" })
+-- Dashboard
+map("n", "<leader>fd", function()
+  if LazyVim.has("alpha-nvim") then
+    require("alpha").start(true)
+  elseif LazyVim.has("dashboard-nvim") then
+    vim.cmd("Dashboard")
+  end
+end, { desc = "Dashboard" })
+
+-- lazy terminal
+-- local lazyterm = function()
+--   lazy_util.terminal.open(nil, { cwd = lazy_util.root.get() })
+-- end
+-- map("n", "<leader>fR", lazyterm, { desc = "Terminal (root dir)" }) -- was ft
 -- map("n", "<ce/>", lazyterm, { desc = "Terminal (root dir)" })
-map("n", "<c-_>", lazyterm, { desc = "which_key_ignore" })
 
 -- Resize window using <ctrl> arrow keys
 map("n", "<C-Up>", "<cmd>resize +2<cr>", { desc = "Increase window height" })
@@ -355,66 +249,32 @@ map("n", "<C-Down>", "<cmd>resize -2<cr>", { desc = "Decrease window height" })
 map("n", "<C-Left>", "<cmd>vertical resize -2<cr>", { desc = "Decrease window width" })
 map("n", "<C-Right>", "<cmd>vertical resize +2<cr>", { desc = "Increase window width" })
 
--- Move to window using the <ctrl> hjkl keys
--- map("n", "<C-h>", "<C-w>h", { desc = "Go to left window", remap = true })
--- map("n", "<C-j>", "<C-w>j", { desc = "Go to lower window", remap = true })
--- map("n", "<C-k>", "<C-w>k", { desc = "Go to upper window", remap = true })
--- map("n", "<C-l>", "<C-w>l", { desc = "Go to right window", remap = true })
-
--- Terminal Mappings
--- Disabled while plugins are lazy loaded
--- map('n', '<C-h>', '<Cmd>NvimTmuxNavigateLeft<CR>', { noremap = true, desc = "Go to left window", silent = true })
--- map('n', '<C-j>', '<Cmd>NvimTmuxNavigateDown<CR>', { noremap = true, desc = "Go to lower window", silent = true })
--- map('n', '<C-k>', '<Cmd>NvimTmuxNavigateUp<CR>', { noremap = true, desc = "Go to upper window", silent = true })
--- map('n', '<C-l>', '<Cmd>NvimTmuxNavigateRight<CR>', { noremap = true, desc = "Go to right window", silent = true })
--- map('n', '<C-\\>', '<Cmd>NvimTmuxNavigateLastActive<CR>', { silent = true })
--- map('n', '<C-Space>', '<Cmd>NvimTmuxNavigateNext<CR>', { silent = true })
-
--- map("t", "<C-h>", "<cmd>wincmd h<cr>", { desc = "Go to left window" })
--- map("t", "<C-j>", "<cmd>wincmd j<cr>", { desc = "Go to lower window" })
--- map("t", "<C-k>", "<cmd>wincmd k<cr>", { desc = "Go to upper window" })
--- map("t", "<C-l>", "<cmd>wincmd l<cr>", { desc = "Go to right window" })
-map("t", "<C-/>", "<cmd>close<cr>", { desc = "Hide Terminal" })
-map("t", "<c-_>", "<cmd>close<cr>", { desc = "which_key_ignore" })
-
--- windows
-map("n", "<leader>ww", "<C-W>p", { desc = "Other window", remap = true })
-map("n", "<leader>wd", "<C-W>c", { desc = "Delete window", remap = true })
-map("n", "<leader>w-", "<C-W>s", { desc = "Split window below", remap = true })
-map("n", "<leader>w|", "<C-W>v", { desc = "Split window right", remap = true })
-map("n", "<leader>-", "<C-W>s", { desc = "Split window below", remap = true })
-map("n", "<leader>|", "<C-W>v", { desc = "Split window right", remap = true })
-
 -- tabs
-map("n", "<leader><tab>l", "<cmd>tablast<cr>", { desc = "Last Tab" })
-map("n", "<leader><tab>f", "<cmd>tabfirst<cr>", { desc = "First Tab" })
-map("n", "<leader><tab><tab>", "<cmd>tabnew<cr>", { desc = "New Tab" })
-map("n", "<leader><tab>]", "<cmd>tabnext<cr>", { desc = "Next Tab" })
-map("n", "<leader><tab>d", "<cmd>tabclose<cr>", { desc = "Close Tab" })
-map("n", "<leader><tab>[", "<cmd>tabprevious<cr>", { desc = "Previous Tab" })
 map("n", "<leader><tab>-", "<cmd>tabonly<cr>", { desc = "Close Other Tabs" })
 
 -- custom
-map('n', '<leader>fo', ':!open ' .. vim.fn.expand('%:p:h') .. '<cr>', { noremap = true, silent = true })
-map('n', '<leader>wk', '<cmd>WhichKey<cr>', { noremap = true, silent = true })
--- WhichKey = require('which-key')
-map('n', '<leader>wK', ':lua WhichKey<cr>', { noremap = true, silent = true })
+map("n", "<leader>fo", ":!open " .. vim.fn.expand("%:p:h") .. "<cr>", { noremap = true, silent = true })
+map("n", "<leader>wk", "<cmd>WhichKey<cr>", { noremap = true, silent = true })
+-- map('n', '<leader>wK', ':lua WhichKey<cr>', { noremap = true, silent = true })
 
 -- require("luasnip.loaders.from_lua").lazy_load()
 -- set keybinds for both INSERT and VISUAL.
-map("i", "<C-n>", "<plug>luasnip-next-choice", {})
-map("s", "<C-n>", "<plug>luasnip-next-choice", {})
-map("i", "<C-p>", "<plug>luasnip-prev-choice", {})
-map("s", "<C-p>", "<plug>luasnip-prev-choice", {})
+if not vim.g.native_snippets_enabled then
+  map("i", "<C-n>", "<plug>luasnip-next-choice", {})
+  map("s", "<C-n>", "<plug>luasnip-next-choice", {})
+  map("i", "<C-p>", "<plug>luasnip-prev-choice", {})
+  map("s", "<C-p>", "<plug>luasnip-prev-choice", {})
+end
 
-map('n', '<leader>r', K.find_and_replace, { noremap = true, silent = true })
-map('n', '<leader>rl', K.find_and_replace_within_lines, { silent = true })
+map("n", "<leader>rw", K.find_and_replace, { noremap = true, silent = true })
+map("n", "<leader>rl", K.find_and_replace_within_lines, { silent = true })
 
-
-map('n', '<leader>cr', ':lua vim.cmd("source ~/.config/nvim/init.lua")<CR>', { noremap = true })
+-- map('n', '<leader>LR', ':lua vim.cmd("source ~/.config/nvim/init.lua")<CR>', { noremap = true })
 
 map("n", "dm", K.delete_mark, { noremap = true })
-map("n", "dM", function() vim.cmd("delmarks a-z0-9") end, { noremap = true })
+map("n", "dM", function()
+  vim.cmd("delmarks a-z0-9")
+end, { noremap = true })
 
 -- Web search & URL handling
 map("v", "<leader>gs", K.search_google, { noremap = true, silent = true })
@@ -422,38 +282,17 @@ map("n", "<leader>gu", K.open_url, { noremap = true, silent = true })
 map("v", "<leader>gu", K.v_open_url, { noremap = true, silent = true })
 -- map('gx', [[:execute '!open ' . shellescape(expand('<cfile>'), 1)<CR>]]})
 
-map('n', '<leader>uS', function() K.toggle_vim_g_variable('enable_leap_lightspeed_mode') end, { noremap = true })
---
--- vim.keymap.set("x", "<leader>re", ":Refactor extract ")
--- vim.keymap.set("x", "<leader>rf", ":Refactor extract_to_file ")
---
--- vim.keymap.set("x", "<leader>rv", ":Refactor extract_var ")
---
--- vim.keymap.set({ "n", "x" }, "<leader>ri", ":Refactor inline_var")
---
--- vim.keymap.set( "n", "<leader>rI", ":Refactor inline_func")
---
--- vim.keymap.set("n", "<leader>rb", ":Refactor extract_block")
--- vim.keymap.set("n", "<leader>rbf", ":Refactor extract_block_to_file")
---
+map("n", "<leader>uS", function()
+  K.toggle_vim_g_variable("enable_leap_lightspeed_mode")
+end, { noremap = true })
 
-map('n', '<leader>rx', function() K.clear_all_registers() end, { noremap = true, desc = "Clear all registers" })
+map("n", "<leader>rx", function()
+  K.clear_all_registers()
+end, { noremap = true, desc = "Clear all registers" })
 
-map(
-  'n',
-  'leader>zx',
-  function()
-    vim.api.nvim_echo(
-      {
-        vim.api.nvim_buf_get_name(vim.fn.bufnr()),
-        'none'
-      },
-      false,
-      {}
-    )
-  end,
-  { noremap = true, desc = "Show current buffer name" }
-)
+map("n", "<leader>_b", function()
+  vim.api.nvim_echo({ { vim.api.nvim_buf_get_name(vim.fn.bufnr()), "none" } }, false, {})
+end, { noremap = true, desc = "Show current buffer name" })
 -- vim.api.nvim_echo({{vim.api.nvim_buf_get_name(vim.fn.bufnr()), "none"}},false, {})
 -- vim.api.nvim_echo({{table.concat(msg, linesep), "ErrorMsg"}}, true, {})
 
@@ -462,29 +301,25 @@ map("v", "<C-e>", "$", { noremap = true })
 map("v", "<Tab>", "$", { noremap = true })
 map("v", "<S>", "^", { noremap = true })
 
--- write a method that calls the user method rendermarkdown and returns the result
-map("n", "<leader>bm", function() K.render_markdown() end, { noremap = true })
+map("n", "<leader>bm", function()
+  K.render_markdown()
+end, { noremap = true })
 
 local function spell_reload()
-  -- vim.cmd("set nospell")
-  -- vim.cmd("mkspell ~/.config/nvim/spell/sugg")
   vim.cmd(":mkspell! %")
 end
 map("n", "zR", spell_reload, { noremap = true, silent = true })
+
 -- go to other bracket with treesitter
-map("n", "mm",
-  function()
-    local ts_utils = require("nvim-treesitter.ts_utils")
-    local node = ts_utils.get_node_at_cursor()
-    if node then
-      ts_utils.get_next_node(node, true, true)
-    end
-  end,
-  { noremap = true, silent = true }
-)
+map("n", "m]", function()
+  local ts_utils = require("nvim-treesitter.ts_utils")
+  local node = ts_utils.get_node_at_cursor()
+  if node then
+    ts_utils.get_next_node(node, true, true)
+  end
+end, { noremap = true, silent = true })
 
 -- go to help for selection
-
 
 -- LSP Info / Lint
 map("n", "<leader>cif", "<cmd>LazyFormatInfo<cr>", { desc = "Formatting" })
@@ -510,18 +345,6 @@ end
 map("n", "<leader>ciL", linters, { desc = "Lint" })
 map("n", "<leader>cir", "<cmd>LazyRoot<cr>", { desc = "Root" })
 
---
---
---
---
---
---
---
---
---
---
---
---
 ------------------------------------------------------------
 
 local T = require("config.user.telescope_custom_finders")
@@ -539,7 +362,7 @@ wk.register({
     --   },
     r = {
       s = { K.find_and_replace, "Find and Replace", mode = "v" },
-      r = { "<Esc><cmd>lua require('telescope').extensions.refactoring.refactors()<CR>", "Select refactor..." }
+      r = { "<Esc><cmd>lua require('telescope').extensions.refactoring.refactors()<CR>", "Select refactor..." },
     },
     b = {
       -- a = { function() require("harpoon"):list():append() end, "Harpoon->Append" },
@@ -586,16 +409,30 @@ wk.register({
           function()
             vim.api.nvim_call_function("setreg", { "+", vim.fn.expand("%:p") })
           end,
-          "Copy absolute file path to clipboard"
+          "Copy absolute file path to clipboard",
         },
         P = {
           function()
             vim.api.nvim_call_function("setreg", { "+", vim.fn.fnamemodify(vim.fn.expand("%"), ":.") })
           end,
-          "Copy file path to clipboard"
+          "Copy file path to clipboard",
         },
         r = { "<cmd>lua vim.cmd('source ~/.config/nvim/init.lua')<CR>", "Reload config" },
-      }
+      },
+      d = {
+        "<leader>cd",
+        function()
+          vim.cmd("echo 'here'")
+          vim.diagnostic.open_float({ source = true })
+        end,
+        { desc = "Line Diagnostics" },
+      },
+      q = {
+        function()
+          vim.schedule(vim.diagnostic.open_float({ source = true }))
+        end,
+        "Show line diagnostics",
+      },
     },
     d = {
       S = { "<cmd>lua require('osv').launch({port=8086})<cr>", "Start OSV (port 8086)" },
@@ -610,23 +447,100 @@ wk.register({
       o = { ":!open .. vim.fn.expand('%:p:h') .. <cr>", "Reveal in finder" },
       l = {
         name = "Terminals/Lazyvim",
-        l = { function() T.find_lazyvim_files() end, "Find lazyvim files" },
-        g = { function() T.grep_lazyvim_files() end, "Grep lazyvim files" },
-        c = { function() T.view_lazyvim_changelog() end, "Changelog" },
-        p = { function() T.find_project_files() end, "Find project files" },
-        m = { function() T.grep_config_files({}) end, "Grep [m]y config files" },
-        M = { function() T.find_config_files({}) end, "Find [M]y config files" },
+        l = {
+          function()
+            T.find_lazyvim_files()
+          end,
+          "Find lazyvim files",
+        },
+        g = {
+          function()
+            T.grep_lazyvim_files()
+          end,
+          "Grep lazyvim files",
+        },
+        c = {
+          function()
+            T.view_lazyvim_changelog()
+          end,
+          "Changelog",
+        },
+        p = {
+          function()
+            T.find_project_files()
+          end,
+          "Find project files",
+        },
+        m = {
+          function()
+            T.grep_config_files({})
+          end,
+          "Grep [m]y config files",
+        },
+        M = {
+          function()
+            T.find_config_files({})
+          end,
+          "Find [M]y config files",
+        },
         i = {
           name = "Inspiration",
-          i    = { function() T.grep_inspiration_files({}) end, "Grep Lunarvim files" },
-          l    = { function() T.grep_dir("lvim", {}) end, "Grep Lunarvim files" },
-          d    = { function() T.grep_dir("doom", {}) end, "Grep Doomnvim files" },
-          a    = { function() T.grep_dir("astrovim", {}) end, "Grep Astrovim files" },
-          f    = { function() T.grep_dir("ftw", {}) end, "Grep FTW files" },
-          n    = { function() T.grep_dir("nyoom", {}) end, "Grep Nyoom files" },
-          N    = { function() T.grep_dir("nicoalbanese", {}) end, "Grep nicoalbanese files" },
-        }
-      }
+          i = {
+            function()
+              T.grep_inspiration_files({})
+            end,
+            "Grep Lunarvim files",
+          },
+          l = {
+            function()
+              T.grep_dir("lvim", {})
+            end,
+            "Grep Lunarvim files",
+          },
+          d = {
+            function()
+              T.grep_dir("doom", {})
+            end,
+            "Grep Doomnvim files",
+          },
+          a = {
+            function()
+              T.grep_dir("astrovim", {})
+            end,
+            "Grep Astrovim files",
+          },
+          f = {
+            function()
+              T.grep_dir("ftw", {})
+            end,
+            "Grep FTW files",
+          },
+          n = {
+            function()
+              T.grep_dir("nyoom", {})
+            end,
+            "Grep Nyoom files",
+          },
+          N = {
+            function()
+              T.grep_dir("nicoalbanese", {})
+            end,
+            "Grep nicoalbanese files",
+          },
+          m = {
+            function()
+              T.grep_dir("modern", {})
+            end,
+            "Grep modern-neovim files",
+          },
+          p = {
+            function()
+              T.grep_dir("pde", {})
+            end,
+            "Grep neovim-pde files",
+          },
+        },
+      },
     },
     l = {
       l = { "<cmd>Lazy<cr>", "Lazy", { noremap = true } },
@@ -644,14 +558,19 @@ wk.register({
     },
     u = {
       -- d = { LazyMod.toggle.diagnostics, "Toggle Diagnostics*" },
-      S = { function() K.toggle_vim_g_variable("enable_leap_lightspeed_mode") end, "Enable leap lightspeed mode" },
+      S = {
+        function()
+          K.toggle_vim_g_variable("enable_leap_lightspeed_mode")
+        end,
+        "Enable leap lightspeed mode",
+      },
       q = { "<Cmd>Trouble<cr>", "Show Trouble" },
     },
     s = {
       B = { "<cmd>Telescope bookmarks list<cr>", "Bookmarks" },
       n = { "<cmd>Telescope notify<cr>", "Telescope notify" },
       t = { "<cmd>Telescope todo<cr>", "Todo" },
-      x = { "<cmd>lua require('sg.extensions.telescope').fuzzy_search_results()<CR>", "SG live grep" }
+      x = { "<cmd>lua require('sg.extensions.telescope').fuzzy_search_results()<CR>", "SG live grep" },
     },
     k = {
       --   r = {
@@ -691,18 +610,11 @@ wk.register({
       q = { K.close_all_floating_windows, "Close all floating windows" },
     },
     x = {
-      c = { function() vim.fn.setqflist({}) end, "Clear Quickfix" }
-    },
-    z = {
-      x = {
+      c = {
         function()
-          vim.api.nvim_echo(
-            { { vim.api.nvim_buf_get_name(vim.fn.bufnr()), 'none' } },
-            false,
-            {}
-          )
+          vim.fn.setqflist({})
         end,
-        "Show current buffer name"
+        "Clear Quickfix",
       },
     },
   },

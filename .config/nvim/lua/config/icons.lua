@@ -79,6 +79,9 @@ local icons = {
     Operator = "",
     TypeParameter = "",
   },
+  ui = {
+    BookMark = "",
+  },
 }
 
 return icons

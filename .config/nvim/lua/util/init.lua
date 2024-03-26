@@ -2,6 +2,8 @@ local keymap = require("util.keymap")
 local lsp = require("util.lsp")
 local window = require("util.window")
 
+-- set command to restore codelns refresh
+
 -- selene: allow(global_usage)
 _G.profile = function(cmd, times, flush)
   times = times or 100
@@ -16,9 +18,9 @@ _G.profile = function(cmd, times, flush)
 end
 
 local M = {
- keymap = keymap,
- lsp = lsp,
- window = window,
+  keymap = keymap,
+  lsp = lsp,
+  window = window,
 }
 
 function M.exists(fname)

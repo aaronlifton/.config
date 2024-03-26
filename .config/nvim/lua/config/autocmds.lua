@@ -42,7 +42,7 @@ local function echo_diagnostic()
       return
     end
 
-    local diags = vim.lsp.diagnostic.get_line_diagnostics(bufnr, line, { severity = vim.diagnostic.severity.WARN })
+    local diags = vim.diagnostic.get()
 
     if #diags == 0 then
       -- If we previously echo'd a message, clear it out by echoing an empty
@@ -94,6 +94,14 @@ end
 
 vim.api.nvim_create_autocmd("CursorMoved", {
   callback = echo_diagnostic,
+})
+-- -- show line diagnostics
+vim.api.nvim_create_autocmd("CursorHold", {
+  callback = function()
+    if require("plugins.lsp.utils").show_diagnostics() then
+      vim.schedule(vim.diagnostic.open_float(0, { source = "always" }))
+    end
+  end,
 })
 
 vim.api.nvim_create_autocmd("User", {
@@ -173,28 +181,6 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
   end,
 })
 
--- no folding if buffer is bigger then 1 mb
--- TODO: need to used other then `opt` that is not correct here
-
--- vim.api.nvim_create_autocmd("BufReadPre", {
---   group = "disable_folding",
---   callback = function(ev)
---     local ok, size = pcall(vim.fn.getfsize, vim.api.nvim_buf_get_name(vim.fn.bufnr()))
---     if not ok or size > 1024 * 1024 then
---       -- fallback to default values
---       vim.opt.foldmethod = "manual"
---       vim.opt.foldexpr = "0"
---       vim.opt.foldlevel = 0
---       vim.opt.foldtext = "foldtext()"
---     else
---       vim.opt.foldmethod = "expr"
---       vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
---       vim.opt.foldlevel = 99
---       vim.opt.foldtext = "v:lua.vim.treesitter.foldtext()"
---     end
---   end,
--- })
-
 local function augroup(name)
   return vim.api.nvim_create_augroup("lazyvim_" .. name, { clear = true })
 end
@@ -202,7 +188,7 @@ end
 local ac = vim.api.nvim_create_autocmd
 local ag = vim.api.nvim_create_augroup
 
--- Disable diagnostics in a .env file
+-- Disable diagnostics in a .env and help file
 ac("BufRead", {
   pattern = { ".env", "help" },
   callback = function()
@@ -210,17 +196,9 @@ ac("BufRead", {
   end,
 })
 
--- -- Fix telescope entering on insert mode
-ac("WinLeave", {
-  callback = function()
-    if vim.bo.ft == "TelescopePrompt" and vim.fn.mode() == "i" then
-      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "i", false)
-    end
-  end,
-})
---
 local auto_close_filetype = {
   "lazy",
+  -- "mason"
   "lspinfo",
   "toggleterm",
   -- "null-ls-info",
@@ -246,52 +224,25 @@ ac("BufLeave", {
   end,
 })
 
-local to_close_with_esc_or_q = {
-  "PlenaryTestPopup",
-  "help",
-  "lspinfo",
-  "man",
-  "notify",
-  "qf",
-  "query",
-  "spectre_panel",
-  "startuptime",
-  "tsplayground",
-  "neotest-output",
-  "checkhealth",
-  "neotest-summary",
-  "neotest-output-panel",
-  "toggleterm",
-  -- "floaterm",
-  "lsp-installer",
-  "DressingSelect",
-}
--- close some filetypes with <esc>, in addition to <q>
+-- Disable leader and localleader for some filetypes
 ac("FileType", {
-  group = augroup("close_with_esc"),
-  pattern = to_close_with_esc_or_q,
+  group = ag("lazyvim_unbind_leader_key", { clear = true }),
+  pattern = {
+    "lazy",
+    "mason",
+    "lspinfo",
+    "toggleterm",
+    -- "null-ls-info",
+    "neo-tree-popup",
+    "TelescopePrompt",
+    "notify",
+    "floaterm",
+  },
   callback = function(event)
-    vim.bo[event.buf].buflisted = false
-    vim.keymap.set("n", "<esc>", "<cmd>close<cr>", { buffer = event.buf, silent = true })
+    vim.keymap.set("n", "<leader>", "<nop>", { buffer = event.buf, desc = "" })
+    vim.keymap.set("n", "<localleader>", "<nop>", { buffer = event.buf, desc = "" })
   end,
 })
-
--- close additional filetypes with <q>
-ac("FileType", {
-  group = augroup("close_with_q"),
-  pattern = to_close_with_esc_or_q,
-  callback = function(event)
-    vim.bo[event.buf].buflisted = false
-    vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = event.buf, silent = true })
-  end,
-})
-
--- Delete number column on terminals
--- ac("TermOpen", {
---   callback = function()
---     vim.cmd("setlocal listchars=nonumber norelativenumber")
---   end,
--- })
 
 -- Disable next line comments
 ac("BufEnter", {
@@ -310,91 +261,14 @@ ac({ "BufNewFile", "BufRead" }, {
   end,
 })
 
--- Use the more sane snippet session leave logic. Copied from:
--- https://github.com/L3MON4D3/LuaSnip/issues/258#issuecomment-1429989436
-if not vim.g.native_snippets_enabled then
-  ac("ModeChanged", {
-    pattern = "*",
-    callback = function()
-      if
-        ((vim.v.event.old_mode == "s" and vim.v.event.new_mode == "n") or vim.v.event.old_mode == "i")
-        and require("luasnip").session.current_nodes[vim.api.nvim_get_current_buf()]
-        and not require("luasnip").session.jump_active
-      then
-        require("luasnip").unlink_current()
-      end
-    end,
-  })
-end
-
-local uv = vim.uv
--- Create a dir when saving a file if it doesn't exist
-ac("BufWritePre", {
-  group = ag("auto_create_dir", { clear = true }),
-  callback = function(args)
-    if args.match:match("^%w%w+://") then
-      return
-    end
-    local file = uv.fs_realpath(args.match) or args.match
-    vim.fn.mkdir(vim.fn.fnamemodify(file, ":p:h"), "p")
-  end,
-})
-
--- folke
--- create directories when needed, when saving a file
--- vim.api.nvim_create_autocmd("BufWritePre", {
---   group = vim.api.nvim_create_augroup("better_backup", { clear = true }),
---   callback = function(event)
---     local file = vim.loop.fs_realpath(event.match) or event.match
---     local backup = vim.fn.fnamemodify(file, ":p:~:h")
---     backup = backup:gsub("[/\\]", "%%")
---     vim.go.backupext = backup
+-- -- Fix telescope entering on insert mode
+-- ac("WinLeave", {
+--   callback = function()
+--     if vim.bo.ft == "TelescopePrompt" and vim.fn.mode() == "i" then
+--       vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "i", false)
+--     end
 --   end,
 -- })
-ac("FileType", {
-  pattern = "help",
-  callback = function(args)
-    local buf = args.buf
-    vim.b[buf].minianimate_disable = true
-    vim.opt_local.textwidth = 80
-  end,
-})
-
--- -- Fix telescope entering on insert mode
-ac("WinLeave", {
-  callback = function()
-    if vim.bo.ft == "TelescopePrompt" and vim.fn.mode() == "i" then
-      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "i", false)
-    end
-  end,
-})
---
-local auto_close_filetype = {
-  "lazy",
-  "lspinfo",
-  "toggleterm",
-  -- "null-ls-info",
-  -- "TelescopePrompt",
-  "notify",
-}
-
--- Auto close window when leaving
-ac("BufLeave", {
-  group = ag("lazyvim_auto_close_win", { clear = true }),
-  callback = function(event)
-    local ft = vim.api.nvim_buf_get_option(event.buf, "filetype")
-
-    if vim.fn.index(auto_close_filetype, ft) ~= -1 then
-      local winids = vim.fn.win_findbuf(event.buf)
-      if not winids then
-        return
-      end
-      for _, win in pairs(winids) do
-        vim.api.nvim_win_close(win, true)
-      end
-    end
-  end,
-})
 
 local to_close_with_esc_or_q = {
   "PlenaryTestPopup",
@@ -415,6 +289,7 @@ local to_close_with_esc_or_q = {
   "floaterm",
   "lsp-installer",
   "DressingSelect",
+  "mini.files",
 }
 -- close some filetypes with <esc>, in addition to <q>
 ac("FileType", {
@@ -444,27 +319,11 @@ ac("FileType", {
   end,
 })
 
-ac("FileType", {
-  pattern = { ".ts", ".tsx", ".js", ".jsx" },
-  callback = function(event)
-    -- vim.lsp.inlay_hint.is_enabled()
-    vim.lsp.inlay_hint.enable(event.buf, false)
-    vim.cmd("echo 'hello'")
-  end,
-})
-
 -- Delete number column on terminals
--- ac("TermOpen", {
---   callback = function()
---     vim.cmd("setlocal listchars=nonumber norelativenumber")
---   end,
--- })
-
--- Disable next line comments
-ac("BufEnter", {
+ac("TermOpen", {
   callback = function()
-    vim.cmd("set formatoptions-=cro")
-    vim.cmd("setlocal formatoptions-=cro")
+    vim.cmd("setlocal listchars= nonumber norelativenumber")
+    vim.cmd("setlocal nospell")
   end,
 })
 
@@ -479,20 +338,46 @@ ac({ "BufNewFile", "BufRead" }, {
 
 -- Use the more sane snippet session leave logic. Copied from:
 -- https://github.com/L3MON4D3/LuaSnip/issues/258#issuecomment-1429989436
-if not vim.g.native_snippets_enabled then
+local has_luasnip = pcall(require, "luasnip")
+if not vim.g.native_snippets_enabled and has_luasnip then
   ac("ModeChanged", {
     pattern = "*",
     callback = function()
-      if
-        ((vim.v.event.old_mode == "s" and vim.v.event.new_mode == "n") or vim.v.event.old_mode == "i")
-        and require("luasnip").session.current_nodes[vim.api.nvim_get_current_buf()]
-        and not require("luasnip").session.jump_active
-      then
-        require("luasnip").unlink_current()
+      if not vim.g.vscode then
+        if
+          ((vim.v.event.old_mode == "s" and vim.v.event.new_mode == "n") or vim.v.event.old_mode == "i")
+          and require("luasnip").session.current_nodes[vim.api.nvim_get_current_buf()]
+          and not require("luasnip").session.jump_active
+        then
+          require("luasnip").unlink_current()
+        end
       end
     end,
   })
 end
+
+local numbertoggle = ag("numbertoggle", { clear = true })
+-- Toggle between relative/absolute line numbers
+ac({ "BufEnter", "FocusGained", "InsertLeave", "CmdlineLeave", "WinEnter" }, {
+  pattern = "*",
+  group = numbertoggle,
+  callback = function()
+    if vim.o.nu and vim.api.nvim_get_mode().mode ~= "i" then
+      vim.opt.relativenumber = true
+    end
+  end,
+})
+
+ac({ "BufLeave", "FocusLost", "InsertEnter", "CmdlineEnter", "WinLeave" }, {
+  pattern = "*",
+  group = numbertoggle,
+  callback = function()
+    if vim.o.nu then
+      vim.opt.relativenumber = false
+      vim.cmd.redraw()
+    end
+  end,
+})
 
 -- Create a dir when saving a file if it doesn't exist
 ac("BufWritePre", {
@@ -506,109 +391,83 @@ ac("BufWritePre", {
   end,
 })
 
--- folke
--- create directories when needed, when saving a file
--- vim.api.nvim_create_autocmd("BufWritePre", {
---   group = vim.api.nvim_create_augroup("better_backup", { clear = true }),
---   callback = function(event)
---     local file = vim.loop.fs_realpath(event.match) or event.match
---     local backup = vim.fn.fnamemodify(file, ":p:~:h")
---     backup = backup:gsub("[/\\]", "%%")
---     vim.go.backupext = backup
+-- - - - - - - - - - - - - - - - - - - - -
+-- Begin MiniFiles setup
+-- vim.api.nvim_create_autocmd("User", {
+--   pattern = "MiniFilesWindowOpen",
+--   callback = function(args)
+--     local win_id = args.data.win_id
+--
+--     -- Customize window-local settings
+--     -- vim.wo[win_id].winblend = 50
+--     vim.api.nvim_win_set_config(win_id, { border = "double" })
+--   end,
+-- })
+--
+-- local show_dotfiles = true
+--
+-- local filter_show = function(fs_entry)
+--   return true
+-- end
+--
+-- local filter_hide = function(fs_entry)
+--   return not vim.startswith(fs_entry.name, ".")
+-- end
+--
+-- local toggle_dotfiles = function()
+--   show_dotfiles = not show_dotfiles
+--   local new_filter = show_dotfiles and filter_show or filter_hide
+--   MiniFiles.refresh({ content = { filter = new_filter } })
+-- end
+--
+-- vim.api.nvim_create_autocmd("User", {
+--   pattern = "MiniFilesBufferCreate",
+--   callback = function(args)
+--     local buf_id = args.data.buf_id
+--     -- Tweak left-hand side of mapping to your liking
+--     vim.keymap.set("n", "g.", toggle_dotfiles, { buffer = buf_id })
+--   end,
+-- })
+--
+-- local map_split = function(buf_id, lhs, direction)
+--   local rhs = function()
+--     -- Make new window and set it as target
+--     local new_target_window
+--     vim.api.nvim_win_call(MiniFiles.get_target_window(), function()
+--       vim.cmd(direction .. " split")
+--       new_target_window = vim.api.nvim_get_current_win()
+--     end)
+--
+--     MiniFiles.set_target_window(new_target_window)
+--   end
+--
+--   -- Adding `desc` will result into `show_help` entries
+--   local desc = "Split " .. direction
+--   vim.keymap.set("n", lhs, rhs, { buffer = buf_id, desc = desc })
+-- end
+--
+-- vim.api.nvim_create_autocmd("User", {
+--   pattern = "MiniFilesBufferCreate",
+--   callback = function(args)
+--     local buf_id = args.data.buf_id
+--     -- Tweak keys to your liking
+--     map_split(buf_id, "gs", "belowright horizontal")
+--     map_split(buf_id, "gv", "belowright vertical")
+--   end,
+-- })
+--
+-- local files_set_cwd = function(path)
+--   -- Works only if cursor is on the valid file system entry
+--   local cur_entry_path = MiniFiles.get_fs_entry().path
+--   local cur_directory = vim.fs.dirname(cur_entry_path)
+--   vim.fn.chdir(cur_directory)
+-- end
+--
+-- vim.api.nvim_create_autocmd("User", {
+--   pattern = "MiniFilesBufferCreate",
+--   callback = function(args)
+--     vim.keymap.set("n", "g~", files_set_cwd, { buffer = args.data.buf_id })
 --   end,
 -- })
 
--- NOTE: Originally tried to put this in FileType event autocmd but it is apparently too early for `set modifiable` to take effect
--- vim.api.nvim_create_autocmd("BufWinEnter", {
---   group = vim.api.nvim_create_augroup("quickfix", { clear = true }),
---   desc = "Allow updating quickfix window",
---   pattern = "quickfix",
---   callback = function(ctx)
---     vim.bo.modifiable = true
---     -- :vimgrep's quickfix window display format now includes start and end column (in vim and nvim) so adding 2nd format to match that
---     vim.bo.errorformat = "%f|%l col %c| %m,%f|%l col %c-%k| %m"
---     vim.keymap.set(
---       "n",
---       "<C-s>",
---       '<Cmd>cgetbuffer|set nomodified|echo "quickfix/location list updated"<CR>',
---       { buffer = true, desc = "Update quickfix/location list with changes made in quickfix window" }
---     )
---   end,
--- })
-
-vim.api.nvim_create_autocmd("User", {
-  pattern = "MiniFilesWindowOpen",
-  callback = function(args)
-    local win_id = args.data.win_id
-
-    -- Customize window-local settings
-    -- vim.wo[win_id].winblend = 50
-    vim.api.nvim_win_set_config(win_id, { border = "double" })
-  end,
-})
-
-local show_dotfiles = true
-
-local filter_show = function(fs_entry)
-  return true
-end
-
-local filter_hide = function(fs_entry)
-  return not vim.startswith(fs_entry.name, ".")
-end
-
-local toggle_dotfiles = function()
-  show_dotfiles = not show_dotfiles
-  local new_filter = show_dotfiles and filter_show or filter_hide
-  MiniFiles.refresh({ content = { filter = new_filter } })
-end
-
-vim.api.nvim_create_autocmd("User", {
-  pattern = "MiniFilesBufferCreate",
-  callback = function(args)
-    local buf_id = args.data.buf_id
-    -- Tweak left-hand side of mapping to your liking
-    vim.keymap.set("n", "g.", toggle_dotfiles, { buffer = buf_id })
-  end,
-})
-
-local map_split = function(buf_id, lhs, direction)
-  local rhs = function()
-    -- Make new window and set it as target
-    local new_target_window
-    vim.api.nvim_win_call(MiniFiles.get_target_window(), function()
-      vim.cmd(direction .. " split")
-      new_target_window = vim.api.nvim_get_current_win()
-    end)
-
-    MiniFiles.set_target_window(new_target_window)
-  end
-
-  -- Adding `desc` will result into `show_help` entries
-  local desc = "Split " .. direction
-  vim.keymap.set("n", lhs, rhs, { buffer = buf_id, desc = desc })
-end
-
-vim.api.nvim_create_autocmd("User", {
-  pattern = "MiniFilesBufferCreate",
-  callback = function(args)
-    local buf_id = args.data.buf_id
-    -- Tweak keys to your liking
-    map_split(buf_id, "gs", "belowright horizontal")
-    map_split(buf_id, "gv", "belowright vertical")
-  end,
-})
-
-local files_set_cwd = function(path)
-  -- Works only if cursor is on the valid file system entry
-  local cur_entry_path = MiniFiles.get_fs_entry().path
-  local cur_directory = vim.fs.dirname(cur_entry_path)
-  vim.fn.chdir(cur_directory)
-end
-
-vim.api.nvim_create_autocmd("User", {
-  pattern = "MiniFilesBufferCreate",
-  callback = function(args)
-    vim.keymap.set("n", "g~", files_set_cwd, { buffer = args.data.buf_id })
-  end,
-})
+-- End MiniFiles setup

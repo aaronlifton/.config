@@ -1,17 +1,50 @@
+-- LSP Server to use for Python.
+-- Set to "basedpyright" to use basedpyright instead of pyright.
+vim.g.lazyvim_python_lsp = "basedpyright"
+
 return {
   { import = "lazyvim.plugins.extras.lang.python" },
-  {
-    "stevearc/conform.nvim",
-    opts = function(_, opts)
-      opts.formatters_by_ft.python = opts.formatters_by_ft.python or {}
-      table.insert(opts.formatters_by_ft.python, "ruff_format")
-      return opts
-    end,
-  },
+  { import = "lazyvim.plugins.extras.lang.python-semshi" },
   {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
+        ---@type lspconfig.options.basedpyright
+        basedpyright = {
+          settings = {
+            basedpyright = {
+              analysis = {
+                diagnosticSeverityOverrides = {
+                  reportUnusedCallResult = "information",
+                  reportUnusedExpression = "information",
+                  reportUnknownMemberType = "none",
+                  reportUnknownLambdaType = "none",
+                  reportUnknownParameterType = "none",
+                  reportMissingParameterType = "none",
+                  reportUnknownVariableType = "none",
+                  reportUnknownArgumentType = "none",
+                  reportAny = "none",
+                },
+              },
+            },
+          },
+        },
+        ---@type lspconfig.options.pyright
+        pyright = {
+          settings = {
+            verboseOutput = true,
+            autoImportCompletion = true,
+            python = {
+              analysis = {
+                typeCheckingMode = "strict",
+                autoSearchPaths = true,
+                useLibraryCodeForTypes = true,
+                diagnosticMode = "openFilesOnly",
+                indexing = true,
+              },
+            },
+          },
+        },
         ruff_lsp = {
           handlers = {
             ["textDocument/publishDiagnostics"] = function() end,

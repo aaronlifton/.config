@@ -42,9 +42,9 @@ return {
         "trouble",
         "which-key",
         -- Available plugins:
-        -- "dashboard",
+        "dashboard",
         -- "eyeliner",
-        -- "fidget",
+        "fidget",
         -- "flash",
         "gitsigns",
         "harpoon",
@@ -100,6 +100,21 @@ return {
         GitSignsAddUntracked = { fg = "#cbe699" }, --colors.editor.bg }
         GitSignsAddUntrackedNr = { fg = "#cbe699" }, --colors.editor.bg }
         GitSignsAddUntrackedLn = { fg = "#cbe699" }, --colors.editor.bg }
+        -- Dropbar
+        -- DropBarMenuCurrentContext = { link = "PmenuSel" },
+        -- DropBarMenuHoverEntry = { link = "Visual" },
+        -- DropBarMenuHoverIcon = { reverse = true },
+        -- DropBarMenuHoverSymbol = { bold = true },
+        -- DropBarMenuNormalFloat = { link = "NormalFloat" },
+        PmenuSbar = { link = "NormalNC" },
+        PmenuThumb = { bg = "#cbe699" },
+        -- DropBarMenuSbar = { link = "PmenuThumb" }, --{ guibg = "#323232" }, --- { link = "PmenuSbar" } ,
+        -- DropBarMenuThumb = { link = "PmenuThumb" }, -- "#b0bec5"
+        -- #07080d
+        DropBarMenuSbar = { link = "NormalNC" },
+        DropBarMenuThumb = { link = "NormalNC" },
+        DropBarFzfMatch = { link = "NormalNC" },
+        DropBarIconKindScope = { link = "NormalNC" },
       },
       -- /END
     })

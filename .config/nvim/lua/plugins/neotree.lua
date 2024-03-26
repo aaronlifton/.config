@@ -1,11 +1,11 @@
-local sort_func = function(a, b)
-  -- create a sort function that lists Ruby on Rails in the folloing order:
-  if a.type == b.type then
-    return a.path < b.path
-  else
-    return a.type < b.type
-  end
-end
+-- local sort_func = function(a, b)
+--   -- create a sort function that lists Ruby on Rails in the following order:
+--   if a.type == b.type then
+--     return a.path < b.path
+--   else
+--     return a.type < b.type
+--   end
+-- end
 
 return {
   "nvim-neo-tree/neo-tree.nvim",
@@ -13,7 +13,22 @@ return {
   -- enabled = false,
   opts = function(_, opts)
     opts.open_files_do_not_replace_types = opts.open_files_do_not_replace_types
-      or { "terminal", "Trouble", "qf", "Outline", "trouble", "Arrow" }
+      or {
+        "terminal",
+        "Trouble",
+        "qf",
+        "Outline",
+        "trouble",
+        "Arrow",
+        "dap-repl",
+        "dap-float",
+        "dapui_scopes",
+        "dapui_console",
+        "dapui_hover",
+        "dapui_breakpoints",
+        "dapui_stacks",
+        "dapui_watches",
+      }
     table.insert(opts.open_files_do_not_replace_types, "edgy")
     vim.tbl_deep_extend("force", opts, {
       auto_clean_after_session_restore = true,

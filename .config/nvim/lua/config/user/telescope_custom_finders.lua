@@ -19,6 +19,8 @@ local astrovim_dir = vim.fn.expand("~/.config/astrovim")
 local ftw_dir = vim.fn.expand("~/Code/dotfiles/Matt-FTW-dotfiles/.config/nvim")
 local nyoom_dir = vim.fn.expand("~/.config/nyoom.nvim")
 local niocalbanese_dir = vim.fn.expand("~/Code/dotfiles/nicoalbanese/.config/nvim")
+local modern_nvim_dir = vim.fn.expand("~/Code/dotfiles/modern-neovim")
+local nvim_pde_dir = vim.fn.expand("~/Code/dotfiles/nvim-pde")
 local inspiration_dirs = {
   doom = doom_dir,
   lvim = lvim_dir,
@@ -26,6 +28,8 @@ local inspiration_dirs = {
   ftw = ftw_dir,
   nyoom = nyoom_dir,
   nicoalbanese = niocalbanese_dir,
+  modern = modern_nvim_dir,
+  pde = nvim_pde_dir,
 }
 
 local inspiration_dirs_list = {}

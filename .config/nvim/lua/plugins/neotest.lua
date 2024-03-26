@@ -4,13 +4,21 @@ return {
     dependencies = {
       "olimorris/neotest-rspec",
       "marilari88/neotest-vitest",
+      "stevearc/overseer.nvim",
     },
-    config = function()
-      require("neotest").setup({
-        adapters = {
-          require("neotest-vitest"),
-        },
-      })
+    opts = {
+      consumers = {
+        overseer = require("neotest.consumers.overseer"),
+      },
+      overseer = {
+        enabled = true,
+        force_default = true,
+      },
+    },
+    config = function(opts)
+      opts.adapters = opts.adapters or {}
+      table.insert(opts.adapters, require("neotest-vitest"))
+      require("neotest").setup(opts)
     end,
   },
 }

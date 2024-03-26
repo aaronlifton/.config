@@ -14,6 +14,16 @@ return {
     opts = {
       servers = {
         emmet_language_server = {},
+        emmet_ls = {
+          init_options = {
+            html = {
+              options = {
+                -- For possible options, see: https://github.com/emmetio/emmet/blob/master/src/config.ts#L79-L267
+                ["bem.enabled"] = true,
+              },
+            },
+          },
+        },
         html = {},
         cssmodules_ls = {},
         cssls = {
@@ -60,5 +70,5 @@ return {
       "sass",
     },
   },
-  { 'ChiliConSql/neovim-stylus' }
+  { "ChiliConSql/neovim-stylus" },
 }

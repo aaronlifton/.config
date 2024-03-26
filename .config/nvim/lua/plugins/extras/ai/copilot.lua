@@ -27,17 +27,13 @@ return {
         -- auto_trigger = false,
         enabled = true,
         auto_trigger = true,
-        -- MattFTW
         keymap = {
-          -- accept = "<M-CR>",
-          accept = "<A-CR>",
-          -- accept_line = "<A-l>",
-          -- accept_word = "<A-k>",
+          accept = "<M-CR>",
           accept_line = "<M-l>",
           accept_word = "<M-k>",
-          next = "<A-]>",
-          prev = "<A-[>",
-          dismiss = "<A-c>",
+          next = "<M-]>",
+          prev = "<M-[>",
+          dismiss = "<M-c>",
         },
       },
       panel = { enabled = false },
@@ -119,7 +115,8 @@ return {
     opts = {},
     config = function(_, opts)
       local has_words_before = function()
-        if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then
+        -- if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then
+        if vim.api.nvim_get_option_value("buftype", { buf = 0 }) == "prompt" then
           return false
         end
         local line, col = unpack(vim.api.nvim_win_get_cursor(0))

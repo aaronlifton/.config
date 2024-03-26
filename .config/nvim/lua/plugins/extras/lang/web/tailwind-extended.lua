@@ -27,6 +27,7 @@ local tailwind_filetypes = {
 
 return {
   { import = "lazyvim.plugins.extras.lang.tailwind" },
+  { import = "plugins.extras.ui.inline-fold" },
   {
     "williamboman/mason.nvim",
     opts = function(_, opts)

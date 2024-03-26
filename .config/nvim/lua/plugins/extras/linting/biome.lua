@@ -26,6 +26,9 @@ return {
         ["typescript"] = { "biome" },
         ["typescriptreact"] = { "biome" },
         ["javascriptreact"] = { "biome" },
+        ["astro"] = { "biome" },
+        ["svelte"] = { "biome" },
+        ["vue"] = { "biome" },
       })
 
       lsp_util.add_formatter_settings(opts, {

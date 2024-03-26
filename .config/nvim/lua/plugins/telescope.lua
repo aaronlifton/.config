@@ -388,6 +388,30 @@ return {
             find_files = {
               hidden = false,
             },
+            buffers = {
+              layout_config = {
+                prompt_position = "top",
+                height = 0.5,
+                width = 0.6,
+              },
+              sorting_strategy = "ascending",
+              mappings = {
+                i = {
+                  ["<c-r>"] = require("telescope.actions").delete_buffer,
+                },
+              },
+            },
+            extensions = {
+              fzf = {
+                fuzzy = true,
+                override_generic_sorter = true,
+                override_file_sorter = true,
+                case_mode = "smart_case",
+              },
+              ["ui-select"] = {
+                require("telescope.themes").get_dropdown({}),
+              },
+            },
           },
           extensions = {
             fzf = {

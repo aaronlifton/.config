@@ -9,8 +9,13 @@ return {
   {
     "mfussenegger/nvim-lint",
     opts = function(_, opts)
-      opts.linters_by_ft["*"] = opts.linters_by_ft["*"] or {}
-      table.insert(opts.linters_by_ft["*"], "typos")
+      -- opts.linters_by_ft["*"] = opts.linters_by_ft["*"] or {}
+      -- table.insert(opts.linters_by_ft["*"], "typos")
+      local fts = { "markdown", "mdx", "markdown.mdx", "text", "txt" }
+      for _, ft in ipairs(fts) do
+        opts.linters_by_ft[ft] = opts.linters_by_ft[ft] or {}
+        table.insert(opts.linters_by_ft[ft], "typos")
+      end
       return opts
     end,
   },
