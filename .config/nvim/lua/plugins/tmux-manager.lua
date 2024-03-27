@@ -1,6 +1,7 @@
 return {
   {
     "otavioschwanck/tmux-awesome-manager.nvim",
+    enabled = false,
     event = "VeryLazy",
     config = function()
       require("tmux-awesome-manager").setup({
@@ -12,6 +13,7 @@ return {
   },
   {
     "nvim-lualine/lualine.nvim",
+    enabled = false,
     opts = function(_, opts)
       local function tma()
         return require("tmux-awesome-manager.src.integrations.status").open_terms()

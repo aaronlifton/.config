@@ -1,28 +1,28 @@
 if vim.env.VSCODE then
-	vim.g.vscode = true
+  vim.g.vscode = true
 end
 
 -- vim.loader = false
 if vim.loader then
-	vim.loader.enable()
+  vim.loader.enable()
 end
 
 _G.dd = function(...)
-	require("util.debug").dump(...)
+  require("util.debug").dump(...)
 end
 _G.bt = function(...)
-	require("util.debug").bt(...)
+  require("util.debug").bt(...)
 end
 
 _G.put = function(...)
-	local objects = {}
-	for i = 1, select("#", ...) do
-		local v = select(i, ...)
-		table.insert(objects, vim.inspect(v))
-	end
+  local objects = {}
+  for i = 1, select("#", ...) do
+    local v = select(i, ...)
+    table.insert(objects, vim.inspect(v))
+  end
 
-	print(table.concat(objects, "\n"))
-	return ...
+  print(table.concat(objects, "\n"))
+  return ...
 end
 
 -- vim.print = _G.dd
@@ -43,10 +43,10 @@ _G.lv = require("lazyvim.util")
 -- require("util.dashboard").setup()
 
 vim.api.nvim_create_autocmd("User", {
-	pattern = "VeryLazy",
-	callback = function()
-		require("util").version()
-	end,
+  pattern = "VeryLazy",
+  callback = function()
+    require("util").version()
+  end,
 })
 --
 -- local function reload()

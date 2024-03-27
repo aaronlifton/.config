@@ -1,11 +1,11 @@
 {
   "extras": [
-    "lazyvim.plugins.extras.coding.yanky",
     "lazyvim.plugins.extras.dap.core",
+    "lazyvim.plugins.extras.test.core",
+    "lazyvim.plugins.extras.coding.yanky",
     "lazyvim.plugins.extras.dap.nlua",
     "lazyvim.plugins.extras.editor.leap",
     "lazyvim.plugins.extras.editor.mini-files",
-    "lazyvim.plugins.extras.editor.outline",
     "lazyvim.plugins.extras.lang.ansible",
     "lazyvim.plugins.extras.lang.docker",
     "lazyvim.plugins.extras.lang.elixir",
@@ -18,7 +18,6 @@
     "lazyvim.plugins.extras.lang.terraform",
     "lazyvim.plugins.extras.lang.tex",
     "lazyvim.plugins.extras.lang.yaml",
-    "lazyvim.plugins.extras.test.core",
     "lazyvim.plugins.extras.ui.alpha",
     "lazyvim.plugins.extras.ui.edgy",
     "lazyvim.plugins.extras.util.dot",
@@ -70,6 +69,7 @@
     "plugins.extras.lang.bash",
     "plugins.extras.lang.docker-extended",
     "plugins.extras.lang.elixir",
+    "plugins.extras.lang.fennel",
     "plugins.extras.lang.git",
     "plugins.extras.lang.go-extended",
     "plugins.extras.lang.lua",
@@ -172,10 +172,11 @@
     "plugins.extras.util.scrollEOF",
     "plugins.extras.window.window-picker",
     "plugins.extras.window.windows",
-    "plugins.extras.window.winshift"
+    "plugins.extras.window.winshift",
+    "lazyvim.plugins.extras.editor.outline"
   ],
   "news": {
-    "NEWS.md": "2123"
+    "NEWS.md": "2850"
   },
   "version": 3
 }

@@ -12,6 +12,8 @@ return {
       opts.open.enable = false
       opts.close = opts.close or {}
       opts.close.enable = false
+      -- echo opts
+      -- vim.api.nvim_echo({ { vim.inspect(opts), "Normal" } }, true, {})
     end,
   },
 }

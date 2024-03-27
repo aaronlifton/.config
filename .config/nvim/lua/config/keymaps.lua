@@ -5,10 +5,10 @@
 
 -- Default keymaps
 local util = require("util")
-local lazy_util = require("lazyvim.util")
-local K = util.keymap
+local k = util.keymap
+local w = util.window
 -- local Wez = require("config.keymaps.wezterm")
-local map = K.map
+local map = k.map
 local opts = { silent = true }
 local wk = require("which-key")
 local o = vim.opt
@@ -101,7 +101,24 @@ map("n", "<S-q>", "<cmd>bdelete!<CR>", { silent = true })
 map("n", "n", "nzzzv")
 map("n", "N", "Nzzzv")
 
--- Toggle statusline
+-- map("n", "n", function()
+--   local bt = vim.bo.buftype
+--   if bt == "nofile" then
+--     vim.cmd("normal nzzzv")
+--   else
+--     vim.cmd("normal n")
+--   end
+-- end, { noremap = true })
+-- map("n", "N", function()
+--   local bt = vim.bo.buftype
+--   if bt == "nofile" then
+--     vim.cmd("normal Nzzzv")
+--   else
+--     vim.cmd("normal N")
+--   end
+-- end, { noremap = true })
+--
+-- Toggle statuslingkgkgkllle
 map("n", "<leader>uS", function()
   if o.laststatus:get() == 0 then
     o.laststatus = 3
@@ -238,7 +255,7 @@ end, { desc = "Dashboard" })
 
 -- lazy terminal
 -- local lazyterm = function()
---   lazy_util.terminal.open(nil, { cwd = lazy_util.root.get() })
+
 -- end
 -- map("n", "<leader>fR", lazyterm, { desc = "Terminal (root dir)" }) -- was ft
 -- map("n", "<ce/>", lazyterm, { desc = "Terminal (root dir)" })
@@ -266,28 +283,36 @@ if not vim.g.native_snippets_enabled then
   map("s", "<C-p>", "<plug>luasnip-prev-choice", {})
 end
 
-map("n", "<leader>rw", K.find_and_replace, { noremap = true, silent = true })
-map("n", "<leader>rl", K.find_and_replace_within_lines, { silent = true })
+map("n", "<leader>rw", util.editor.find_and_replace, { noremap = true, silent = true })
+map("n", "<leader>rl", util.editor.find_and_replace_within_lines, { silent = true })
 
 -- map('n', '<leader>LR', ':lua vim.cmd("source ~/.config/nvim/init.lua")<CR>', { noremap = true })
+local function delete_mark()
+  local err, mark = pcall(function()
+    vim.cmd("echo 'Enter mark to delete: '")
+    return string.char(vim.fn.getchar())
+  end)
+  if not err or not mark then return end
+  vim.cmd(":delmark " .. mark)
+end
 
-map("n", "dm", K.delete_mark, { noremap = true })
+map("n", "dm", delete_mark, { noremap = true })
 map("n", "dM", function()
   vim.cmd("delmarks a-z0-9")
 end, { noremap = true })
 
 -- Web search & URL handling
-map("v", "<leader>gs", K.search_google, { noremap = true, silent = true })
-map("n", "<leader>gu", K.open_url, { noremap = true, silent = true })
-map("v", "<leader>gu", K.v_open_url, { noremap = true, silent = true })
+map("v", "<leader>gs", util.search_google, { noremap = true, silent = true })
+map("n", "<leader>gu", util.open_url, { noremap = true, silent = true })
+map("v", "<leader>gu", util.v_open_url, { noremap = true, silent = true })
 -- map('gx', [[:execute '!open ' . shellescape(expand('<cfile>'), 1)<CR>]]})
 
 map("n", "<leader>uS", function()
-  K.toggle_vim_g_variable("enable_leap_lightspeed_mode")
+  util.toggle_vim_g_variable("enable_leap_lightspeed_mode")
 end, { noremap = true })
 
 map("n", "<leader>rx", function()
-  K.clear_all_registers()
+  util.clear_all_registers()
 end, { noremap = true, desc = "Clear all registers" })
 
 map("n", "<leader>_b", function()
@@ -302,7 +327,7 @@ map("v", "<Tab>", "$", { noremap = true })
 map("v", "<S>", "^", { noremap = true })
 
 map("n", "<leader>bm", function()
-  K.render_markdown()
+  w.render_markdown()
 end, { noremap = true })
 
 local function spell_reload()
@@ -314,9 +339,7 @@ map("n", "zR", spell_reload, { noremap = true, silent = true })
 map("n", "m]", function()
   local ts_utils = require("nvim-treesitter.ts_utils")
   local node = ts_utils.get_node_at_cursor()
-  if node then
-    ts_utils.get_next_node(node, true, true)
-  end
+  if node then ts_utils.get_next_node(node, true, true) end
 end, { noremap = true, silent = true })
 
 -- go to help for selection
@@ -361,12 +384,12 @@ wk.register({
     --     o = { "<cmd>AerialOpen<cr>", "Open" },
     --   },
     r = {
-      s = { K.find_and_replace, "Find and Replace", mode = "v" },
+      s = { util.editor.find_and_replace, "Find and Replace", mode = "v" },
       r = { "<Esc><cmd>lua require('telescope').extensions.refactoring.refactors()<CR>", "Select refactor..." },
     },
     b = {
       -- a = { function() require("harpoon"):list():append() end, "Harpoon->Append" },
-      c = { K.baleia_colorize, "Colorize" },
+      c = { util.editor.baleia_colorize, "Colorize" },
     },
     -- C = {
     --   name = "OGPT",
@@ -404,7 +427,7 @@ wk.register({
     c = {
       c = {
         name = "Copy/Reload",
-        c = { K.copy_to_pbcopy, "Copy to clipboard", { noremap = true, silent = true } },
+        c = { util.copy_to_pbcopy, "Copy to clipboard", { noremap = true, silent = true } },
         p = {
           function()
             vim.api.nvim_call_function("setreg", { "+", vim.fn.expand("%:p") })
@@ -420,18 +443,21 @@ wk.register({
         r = { "<cmd>lua vim.cmd('source ~/.config/nvim/init.lua')<CR>", "Reload config" },
       },
       d = {
-        "<leader>cd",
         function()
           vim.cmd("echo 'here'")
-          vim.diagnostic.open_float({ source = true })
+          vim.schedule(function()
+            vim.diagnostic.open_float({ source = true })
+          end)
         end,
-        { desc = "Line Diagnostics" },
+        "Line Diagnostics",
       },
       q = {
         function()
-          vim.schedule(vim.diagnostic.open_float({ source = true }))
+          vim.schedule(function()
+            vim.diagnostic.open_float({ source = true })
+          end)
         end,
-        "Show line diagnostics",
+        "Line diagnostics (source)",
       },
     },
     d = {
@@ -447,29 +473,39 @@ wk.register({
       o = { ":!open .. vim.fn.expand('%:p:h') .. <cr>", "Reveal in finder" },
       l = {
         name = "Terminals/Lazyvim",
-        l = {
-          function()
-            T.find_lazyvim_files()
-          end,
-          "Find lazyvim files",
-        },
-        g = {
-          function()
-            T.grep_lazyvim_files()
-          end,
-          "Grep lazyvim files",
-        },
         c = {
           function()
             T.view_lazyvim_changelog()
           end,
           "Changelog",
         },
-        p = {
+        -- f = {
+        --   "<cmd>FloatermNew --name=floatroot --opener=edit --titleposition=center --height=0.85 --width=0.85 --cwd=<root><cr>",
+        --   "Floating (root dir)",
+        -- },
+        -- F = {
+        --   "<cmd>FloatermNew --name=floatbuffer --opener=edit --titleposition=center --height=0.85 --width=0.85 --cwd=<buffer><cr>",
+        --   "Floating (cwd)",
+        -- },
+        -- s = {
+        --   "<cmd>FloatermNew --name=splitroot --opener=edit --titleposition=center --height=0.35 --wintype=split --cwd=<root><cr>",
+        --   "Split (root dir)",
+        -- },
+        -- S = {
+        --   "<cmd>FloatermNew --name=splitbuffer --opener=edit --titleposition=center --height=0.35 --wintype=split --cwd=<buffer><cr>",
+        --   "Split (cwd)",
+        -- },
+        g = {
           function()
-            T.find_project_files()
+            T.grep_lazyvim_files()
           end,
-          "Find project files",
+          "Grep lazyvim files",
+        },
+        l = {
+          function()
+            T.find_lazyvim_files()
+          end,
+          "Find lazyvim files",
         },
         m = {
           function()
@@ -482,6 +518,12 @@ wk.register({
             T.find_config_files({})
           end,
           "Find [M]y config files",
+        },
+        p = {
+          function()
+            T.find_project_files()
+          end,
+          "Find project files",
         },
         i = {
           name = "Inspiration",
@@ -539,6 +581,12 @@ wk.register({
             end,
             "Grep neovim-pde files",
           },
+          F = {
+            function()
+              T.grep_dir("folke", {})
+            end,
+            "Grep folke files",
+          },
         },
       },
     },
@@ -560,7 +608,7 @@ wk.register({
       -- d = { LazyMod.toggle.diagnostics, "Toggle Diagnostics*" },
       S = {
         function()
-          K.toggle_vim_g_variable("enable_leap_lightspeed_mode")
+          util.toggle_vim_g_variable("enable_leap_lightspeed_mode")
         end,
         "Enable leap lightspeed mode",
       },
@@ -577,7 +625,7 @@ wk.register({
       --     x = { clear_all_registers, "Clear all registers" },
       --   },
       k = {
-        X = { K.clear_all_registers, "Clear all registers" },
+        X = { util.clear_all_registers, "Clear all registers" },
       },
     },
     -- p = {
@@ -606,8 +654,8 @@ wk.register({
     --   },
     -- },
     w = {
-      H = { K.switch_to_highest_window, "Switch to highest window" },
-      q = { K.close_all_floating_windows, "Close all floating windows" },
+      H = { w.switch_to_highest_window, "Switch to highest window" },
+      q = { w.close_all_floating_windows, "Close all floating windows" },
     },
     x = {
       c = {

@@ -1,4 +1,3 @@
-
 local QuickScratch = {}
 ---@tag quick-scratch-config
 local Config = {
@@ -10,7 +9,7 @@ local Config = {
 }
 
 --- Open scratch file
----@param config 
+---@param config
 function Scratch(config)
   config = Config:new(config)
 
@@ -26,12 +25,13 @@ QuickScratch.setup = function(config)
 end
 --- Set config
 
----@param opts 
+---@param opts
 ---@return Config
 function Config:new(opts)
   opts = opts or {}
   self.__index = self
   vim.tbl_extend("force", self, opts)
+  -- vim.tbl_deep_extend("force", config, opts or {})
   return setmetatable({ config = opts }, self)
 end
 -- make sure this file is loaded only once
@@ -42,9 +42,8 @@ end
 vim.g.loaded_scratch = 1
 require("nvim-lightbulb").get_status_text(vim.api.nvim_get_current_buf())
 
-
-
-local function open_scratch_file(ext = default_ext)
+local function open_scratch_file(ext)
+  ext = ext or default_ext
   -- get list  of files in scratch dir
   local files = vim.fn.readdir(config.scratch_dir)
   -- generate next filename starting with 1
@@ -71,9 +70,7 @@ local function open_scratch_file(ext = default_ext)
   return scratch_file
 end
 
-local function save_scratch_file()
-  vim.cmd("w")
-end
+local function save_scratch_file() vim.cmd("w") end
 
 local commands = {
   open_default = open_scratch_file,
@@ -81,21 +78,19 @@ local commands = {
     -- get user input for ext
     local ext = vim.fn.input("Extension: ")
     open_scratch_file(ext)
-  end
+  end,
   save = save_scratch_file,
 }
 
 local keys = {
-    { "<leader>sc", commands.open_default, desc = "Open default scratch file" },
+  { "<leader>sc", commands.open_default, desc = "Open default scratch file" },
 
-    { "<leader>sC", commands.open, desc = "Open scratch file" },
-    { "<leader>ss", commands.save, desc = "Save scratch file" },
-  }
+  { "<leader>sC", commands.open, desc = "Open scratch file" },
+  { "<leader>ss", commands.save, desc = "Save scratch file" },
+}
 
 return {
-  setup = function(opts)
-    config = vim.tbl_deep_extend("force", config, opts or {})
-  end,
+  setup = function(opts) QuickScratch.setup(opts) end,
   commands = commands,
-  keys =  keys
+  keys = keys,
 }

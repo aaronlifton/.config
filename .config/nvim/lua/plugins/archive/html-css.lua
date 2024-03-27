@@ -70,5 +70,8 @@ return {
       "sass",
     },
   },
-  { "ChiliConSql/neovim-stylus" },
+  {
+    "ChiliConSql/neovim-stylus",
+    enabled = false,
+  },
 }

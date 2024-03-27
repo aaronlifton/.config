@@ -1,6 +1,8 @@
-local keymap = require("util.keymap")
-local lsp = require("util.lsp")
-local window = require("util.window")
+local keymap_util = require("util.keymap")
+local lsp_util = require("util.lsp")
+local editor_util = require("util.editor")
+local window_util = require("util.window")
+local diagnostics_util = require("util.diagnostics")
 
 -- set command to restore codelns refresh
 
@@ -9,18 +11,18 @@ _G.profile = function(cmd, times, flush)
   times = times or 100
   local start = vim.loop.hrtime()
   for _ = 1, times, 1 do
-    if flush then
-      jit.flush(cmd, true)
-    end
+    if flush then jit.flush(cmd, true) end
     cmd()
   end
   print(((vim.loop.hrtime() - start) / 1e6 / times) .. "ms")
 end
 
 local M = {
-  keymap = keymap,
-  lsp = lsp,
-  window = window,
+  keymap = keymap_util,
+  lsp = lsp_util,
+  editor = editor_util,
+  window = window_util,
+  diagnostics = diagnostics_util,
 }
 
 function M.exists(fname)
@@ -37,9 +39,7 @@ function M.clipman()
   local file = M.fqn("~/.local/share/clipman.json")
   if M.exists(file) then
     local f = io.open(file)
-    if not f then
-      return
-    end
+    if not f then return end
     local data = f:read("*a")
     f:close()
 
@@ -55,9 +55,7 @@ function M.clipman()
         vim.ui.select(items, {
           prompt = "Clipman",
         }, function(choice)
-          if choice then
-            vim.api.nvim_paste(choice, true, 1)
-          end
+          if choice then vim.api.nvim_paste(choice, true, 1) end
         end)
       else
         vim.notify(("failed to load clipman from %s"):format(file), vim.log.levels.ERROR)
@@ -106,16 +104,18 @@ function M.runlua()
     error = function(msg, level)
       local buf, row = get_source()
       diagnostics[#diagnostics + 1] = { lnum = row, col = 0, message = msg or "error" }
+      if buf == nil then return end
+
       vim.diagnostic.set(ns, buf, diagnostics)
       global.error(msg, level)
     end,
     print = function(...)
       local buf, row = get_source()
+      if buf == nil then return end
+
       local str = table.concat(
         vim.tbl_map(function(o)
-          if type(o) == "table" then
-            return vim.inspect(o)
-          end
+          if type(o) == "table" then return vim.inspect(o) end
           return tostring(o)
         end, { ... }),
         " "
@@ -141,9 +141,7 @@ function M.cowboy()
     local timer = assert(vim.loop.new_timer())
     local map = key
     vim.keymap.set("n", key, function()
-      if vim.v.count > 0 then
-        count = 0
-      end
+      if vim.v.count > 0 then count = 0 end
       if count >= 10 and vim.bo.buftype ~= "nofile" then
         ok, id = pcall(vim.notify, "Hold it Cowboy!", vim.log.levels.WARN, {
           icon = "🤠",
@@ -221,6 +219,53 @@ end
 
 function M.set_user_var(key, value)
   io.write(string.format("\027]1337;SetUserVar=%s=%s\a", key, M.base64(value)))
+end
+
+function M.toggle_vim_g_variable(b)
+  if vim.g[b] == 1 then
+    vim.g[b] = 0
+  else
+    vim.g[b] = 1
+  end
+  -- vim.g.enable_leap_lightspeed_mode = not vim.g.enable_leap_lightspeed_mode
+end
+
+function M.clear_all_registers()
+  for i = 0, 25 do
+    vim.fn.setreg(string.char(i + 97), "")
+  end
+end
+
+-- Set this check up for nvim-cmp tab mapping
+function M.copy_to_pbcopy()
+  local selected_text = vim.fn.getreg("*")
+  vim.fn.system(string.format("echo '%s' | pbcopy", selected_text))
+end
+
+function M.lazyterm()
+  LazyVim.terminal.open(nil, { cwd = LazyVim.root.get() })
+end
+
+-- Web search & URL handling
+function M.search_google()
+  -- Get the selected text
+  local selected_text = vim.fn.getreg("*")
+
+  -- Construct the Google search URL
+  local search_url = "https://www.google.com/search?q=" .. vim.fn.escape(selected_text, " ")
+
+  -- Open the URL in the default browser
+  vim.fn.jobstart({ "open", search_url })
+end
+
+function M.open_url()
+  local text_under_cursor = vim.fn.expand("<cword>")
+  vim.fn.jobstart({ "open", text_under_cursor })
+end
+
+function M.v_open_url()
+  local selected_text = vim.fn.getreg("*")
+  vim.fn.jobstart({ "open", selected_text })
 end
 
 return M

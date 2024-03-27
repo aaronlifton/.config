@@ -8,61 +8,62 @@ local Util = require("lazyvim.util")
 -- vim.api.nvim_set_option("spell", true)
 
 local opt = vim.opt
+local o = vim.opt
 
 -- Optimizations on startup
 vim.loader.enable()
 
-vim.opt.spelllang = "en_us"
-vim.opt.spell = false
-vim.opt.sps = "file:/Users/aaron/.config/nvim/spell/sugg,best"
+o.spelllang = "en_us"
+o.spell = false
+o.sps = "file:/Users/aaron/.config/nvim/spell/sugg,best"
 -- use a file for spell suggestions
-vim.opt.spellfile = "/Users/aaron/.config/nvim/spell/en.utf-8.add"
+o.spellfile = "/Users/aaron/.config/nvim/spell/en.utf-8.add"
 vim.cmd("set spell syntax=off")
 vim.cmd("set nospell")
 
-vim.opt.mouse = "a"
-vim.opt.clipboard:append({ "unnamed", "unnamedplus" })
--- vim.opt.termgui_colors = 256
-vim.opt.background = "dark"
-vim.opt.textwidth = 80
+o.mouse = "a"
+o.clipboard:append({ "unnamed", "unnamedplus" })
+-- o.termgui_colors = 256
+o.background = "dark"
+o.textwidth = 80
 
 -- opt.foldtext = "v:lua.custom_fold_text()"
 -- -- foldtext is now ufo
--- vim.opt.foldtext = "v:lua.require'lazyvim.util'.ui.foldtext()"
-vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
--- vim.opt.foldenable = false
-vim.opt.startofline = true
+-- o.foldtext = "v:lua.require'lazyvim.util'.ui.foldtext()"
+o.foldmethod = "expr"
+o.foldexpr = "nvim_treesitter#foldexpr()"
+-- o.foldenable = false
+o.startofline = true
 
 -- Make Vim open and close folded text as needed because I can't be bothered to
 -- do so myself and wouldn't use text folding at all if it wasn't automatic.
--- vim.opt.foldmethod = "marker"
--- vim.opt.foldopen = "all, insert"
--- vim.opt.foldclose = "all"
--- vim.opt.foldenable = false
+-- o.foldmethod = "marker"
+-- o.foldopen = "all, insert"
+-- o.foldclose = "all"
+-- o.foldenable = false
 
 -- This works
--- vim.opt.foldmethod = "manual"
--- vim.opt.foldexpr = "0"
--- vim.opt.foldlevel = 0
--- vim.opt.foldtext = "foldtext()"
+-- o.foldmethod = "manual"
+-- o.foldexpr = "0"
+-- o.foldlevel = 0
+-- o.foldtext = "foldtext()"
 
-vim.opt.swapfile = false
+o.swapfile = false
 
 -- views can only be fully collapsed with the global statusline
-vim.opt.laststatus = 3
+o.laststatus = 3
 -- Default splitting will cause your main splits to jump when opening an edgebar.
 -- To prevent this, set `splitkeep` to either `screen` or `topline`.
-vim.opt.splitkeep = "screen"
+o.splitkeep = "screen"
 
 -- Minimal setup
--- vim.opt.showcmd = false
--- vim.opt.laststatus = 0
--- vim.opt.cmdheight = 0
+-- o.showcmd = false
+-- o.laststatus = 0
+-- o.cmdheight = 0
 
 -- Backspacing and indentation when wrapping
-vim.opt.backspace = { "eol", "start", "indent" }
-vim.opt.breakindent = true
+o.backspace = { "eol", "start", "indent" }
+o.breakindent = true
 
 vim.api.nvim_set_hl(0, "LeapBackdrop", { link = "Comment" })
 
@@ -95,8 +96,8 @@ function _G.get_lazyvim_base_dir()
   return "~/.local/share/nvim/lazy/LazyVim"
 end
 
-vim.opt.runtimepath:append("~/Code/nvim-plugins/denops-getting-started")
-vim.opt.runtimepath:append("~/Code/nvim-plugins/denops-helloworld.nvim")
+o.runtimepath:append("~/Code/nvim-plugins/denops-getting-started")
+o.runtimepath:append("~/Code/nvim-plugins/denops-helloworld.nvim")
 
 vim.cmd("let $NVIM_TUI_ENALE_TRUE_COLOR=1")
 
@@ -111,9 +112,7 @@ end
 -- "For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
 -- "Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
 -- github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
-if Util.has("termguicolors") then
-  vim.opt.termguicolors = true
-end
+if Util.has("termguicolors") then o.termguicolors = true end
 
 vim.commentstring = ""
 

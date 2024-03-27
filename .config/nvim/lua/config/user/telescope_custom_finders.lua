@@ -21,6 +21,7 @@ local nyoom_dir = vim.fn.expand("~/.config/nyoom.nvim")
 local niocalbanese_dir = vim.fn.expand("~/Code/dotfiles/nicoalbanese/.config/nvim")
 local modern_nvim_dir = vim.fn.expand("~/Code/dotfiles/modern-neovim")
 local nvim_pde_dir = vim.fn.expand("~/Code/dotfiles/nvim-pde")
+local folk_dir = vim.fn.expand("~/Code/dotfiles/folke-nvim")
 local inspiration_dirs = {
   doom = doom_dir,
   lvim = lvim_dir,
@@ -30,10 +31,11 @@ local inspiration_dirs = {
   nicoalbanese = niocalbanese_dir,
   modern = modern_nvim_dir,
   pde = nvim_pde_dir,
+  folke = folk_dir,
 }
 
 local inspiration_dirs_list = {}
-for name, dir in pairs(inspiration_dirs) do
+for _, dir in pairs(inspiration_dirs) do
   table.insert(inspiration_dirs_list, dir)
 end
 

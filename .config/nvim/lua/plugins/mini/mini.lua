@@ -1,7 +1,6 @@
 return {
   {
     "echasnovski/mini.nvim",
-    optional = true,
     config = function()
       require("mini.move").setup()
       require("mini.extra").setup()

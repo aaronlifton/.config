@@ -103,22 +103,22 @@ return {
       -- /mine
     })
 
+    local cmp_window = require("cmp.config.window")
     opts.window = {
-      -- local cmp_window = require("cmp.config.window")
-      -- completion = cmp_window.bordered(),
-      -- documentation = cmp_window.bordered(),
-      completion = {
-        border = "rounded",
-        winhighlight = "Normal:Normal,FloatBorder:Normal,CursorLine:Visual,Search:None",
-        scrollbar = false,
-        col_offset = -3,
-        side_padding = 1,
-      },
-      documentation = {
-        border = "rounded",
-        winhighlight = "Normal:Normal,FloatBorder:Normal,CursorLine:Visual,Search:None",
-        scrollbar = false,
-      },
+      completion = cmp_window.bordered(),
+      documentation = cmp_window.bordered(),
+      -- completion = {
+      --   border = "rounded",
+      --   winhighlight = "Normal:Normal,FloatBorder:Normal,CursorLine:Visual,Search:None",
+      --   scrollbar = false,
+      --   col_offset = -3,
+      --   side_padding = 1,
+      -- },
+      -- documentation = {
+      --   border = "rounded",
+      --   winhighlight = "Normal:Normal,FloatBorder:Normal,CursorLine:Visual,Search:None",
+      --   scrollbar = false,
+      -- },
     }
 
     opts.performance = {

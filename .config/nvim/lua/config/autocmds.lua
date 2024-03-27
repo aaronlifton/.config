@@ -2,104 +2,17 @@
 -- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
 -- Add any additional autocmds here
 -- https://www.lazyvim.org/configuration/general
-
--- Location information about the last message printed. The format is
--- `(did print, buffer number, line number)`.
-local last_echo = { false, -1, -1 }
-
--- The timer used for displaying a diagnostic in the commandline.
-local echo_timer = nil
-
--- The timer after which to display a diagnostic in the commandline.
-local echo_timeout = 250
-
--- The highlight group to use for warning messages.
-local warning_hlgroup = "WarningMsg"
-
--- The highlight group to use for error messages.
-local error_hlgroup = "ErrorMsg"
-
--- If the first diagnostic line has fewer than this many characters, also add
--- the second line to it.
-local short_line_limit = 20
-
--- Shows the current line's diagnostics in a floating window.
--- local function show_line_diagnostics()
---   vim.lsp.diagnostic.show_line_diagnostics({ severity_limit = "Warning" }, vim.fn.bufnr())
--- end
-
--- Prints the first diagnostic for the current line.
-local function echo_diagnostic()
-  if echo_timer then
-    echo_timer:stop()
-  end
-
-  echo_timer = vim.defer_fn(function()
-    local line = vim.fn.line(".") - 1
-    local bufnr = vim.api.nvim_win_get_buf(0)
-
-    if last_echo[1] and last_echo[2] == bufnr and last_echo[3] == line then
-      return
-    end
-
-    local diags = vim.diagnostic.get()
-
-    if #diags == 0 then
-      -- If we previously echo'd a message, clear it out by echoing an empty
-      -- message.
-      if last_echo[1] then
-        last_echo = { false, -1, -1 }
-
-        vim.api.nvim_command('echo ""')
-      end
-
-      return
-    end
-
-    last_echo = { true, bufnr, line }
-
-    local diag = diags[1]
-    local width = vim.api.nvim_get_option_value("columns", {}) - 15
-    local lines = { "unknown", "unknown" }
-    if diag.message then
-      lines = vim.split(diag.message, "\n")
-    end
-    local message = lines[1]
-    -- local trimmed = false
-
-    if #lines > 1 and #message <= short_line_limit then
-      message = message .. " " .. lines[2]
-    end
-
-    if width > 0 and #message >= width then
-      message = message:sub(1, width) .. "..."
-    end
-
-    local kind = "warning"
-    local hlgroup = warning_hlgroup
-
-    if diag.severity == vim.lsp.protocol.DiagnosticSeverity.Error then
-      kind = "error"
-      hlgroup = error_hlgroup
-    end
-
-    local chunks = {
-      { kind .. ": ", hlgroup },
-      { message },
-    }
-
-    vim.api.nvim_echo(chunks, false, {})
-  end, echo_timeout)
-end
-
+local d = require("util.diagnostics")
 vim.api.nvim_create_autocmd("CursorMoved", {
-  callback = echo_diagnostic,
+  callback = d.echo_diagnostic,
 })
 -- -- show line diagnostics
 vim.api.nvim_create_autocmd("CursorHold", {
   callback = function()
-    if require("plugins.lsp.utils").show_diagnostics() then
-      vim.schedule(vim.diagnostic.open_float(0, { source = "always" }))
+    if require("util.lsp_utils").show_diagnostics() then
+      vim.schedule(function()
+        vim.diagnostic.open_float({ bufnr = 0, source = "always", severity = vim.log.levels.INFO })
+      end)
     end
   end,
 })
@@ -162,14 +75,11 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
     local filetype = vim.api.nvim_get_option_value("filetype", { buf = bufnr })
     local buftype = vim.api.nvim_get_option_value("buftype", { buf = vim.fn.bufnr() })
     local bufname = vim.api.nvim_buf_get_name(ev.buf)
-    if buftype ~= "nofile" then
-      return
-    end
-    if bufname == "lazyterm" or filetype == "neo-tree" or bufname == "NvimTree" then
-      return
-    end
+    if buftype ~= "nofile" then return end
+    if bufname == "lazyterm" or filetype == "neo-tree" or bufname == "NvimTree" then return end
 
     local winid = vim.fn.bufwinid(ev.buf)
+    --- @type window
     if vim.api.nvim_win_get_config(winid).zindex then
       -- local chunks = { { "event fired" }, { vim.inspect(ev) } }
       -- vim.api.nvim_echo(chunks, false, {})
@@ -214,9 +124,7 @@ ac("BufLeave", {
 
     if vim.fn.index(auto_close_filetype, ft) ~= -1 then
       local winids = vim.fn.win_findbuf(event.buf)
-      if not winids then
-        return
-      end
+      if not winids then return end
       for _, win in pairs(winids) do
         vim.api.nvim_win_close(win, true)
       end
@@ -362,9 +270,7 @@ ac({ "BufEnter", "FocusGained", "InsertLeave", "CmdlineLeave", "WinEnter" }, {
   pattern = "*",
   group = numbertoggle,
   callback = function()
-    if vim.o.nu and vim.api.nvim_get_mode().mode ~= "i" then
-      vim.opt.relativenumber = true
-    end
+    if vim.o.nu and vim.api.nvim_get_mode().mode ~= "i" then vim.opt.relativenumber = true end
   end,
 })
 
@@ -383,9 +289,7 @@ ac({ "BufLeave", "FocusLost", "InsertEnter", "CmdlineEnter", "WinLeave" }, {
 ac("BufWritePre", {
   group = ag("auto_create_dir", { clear = true }),
   callback = function(args)
-    if args.match:match("^%w%w+://") then
-      return
-    end
+    if args.match:match("^%w%w+://") then return end
     local file = vim.uv.fs_realpath(args.match) or args.match
     vim.fn.mkdir(vim.fn.fnamemodify(file, ":p:h"), "p")
   end,
