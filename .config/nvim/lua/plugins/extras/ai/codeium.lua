@@ -71,9 +71,8 @@ return {
       table.insert(opts.sections.lualine_x, 2, {
         show_codeium_status,
         on_click = function(num_clicks, mouse_button, mods)
-          vim.cmd("echo 'num_clicks: " .. num_clicks .. "'")
-          vim.cmd("echo 'mouse_button: " .. mouse_button .. "'")
-          vim.cmd("echo 'mods: " .. vim.inspect(mods) .. "'")
+          local data = { num_clicks = num_clicks, mouse_button = mouse_button, mods = mods }
+          vim.cmd("echo 'mods: " .. vim.inspect(data) .. "'")
 
           if num_clicks == 1 and mouse_button == 1 and #mods == 0 then
             vim.cmd("echo 'Codeium'" .. vim.fn["codeium#GetStatusString"]())

@@ -105,8 +105,18 @@ return {
 
     local cmp_window = require("cmp.config.window")
     opts.window = {
-      completion = cmp_window.bordered(),
-      documentation = cmp_window.bordered(),
+      -- completion = cmp_window.bordered(),
+      -- documentation = cmp_window.bordered(),
+      completion = {
+        border = "rounded",
+        ---------------"Normal:Normal,FloatBorder:Normal,CursorLine:Visual,Search:None"
+        winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
+        zindex = 1001,
+        scrolloff = 0, -- 0
+        col_offset = 0, -- -3
+        side_padding = 1, -- 1
+        scrollbar = true,
+      },
       -- completion = {
       --   border = "rounded",
       --   winhighlight = "Normal:Normal,FloatBorder:Normal,CursorLine:Visual,Search:None",
@@ -114,11 +124,11 @@ return {
       --   col_offset = -3,
       --   side_padding = 1,
       -- },
-      -- documentation = {
-      --   border = "rounded",
-      --   winhighlight = "Normal:Normal,FloatBorder:Normal,CursorLine:Visual,Search:None",
-      --   scrollbar = false,
-      -- },
+      documentation = {
+        border = "rounded",
+        winhighlight = "Normal:Normal,FloatBorder:Normal,CursorLine:Visual,Search:None",
+        scrollbar = false,
+      },
     }
 
     opts.performance = {

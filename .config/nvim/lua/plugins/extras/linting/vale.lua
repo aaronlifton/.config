@@ -1,3 +1,4 @@
+local lsp_util = require("util.lsp")
 return {
   {
     "williamboman/mason.nvim",
@@ -9,8 +10,13 @@ return {
   {
     "mfussenegger/nvim-lint",
     opts = function(_, opts)
-      opts.linters_by_ft.markdown = opts.linters_by_ft.markdown or {}
-      table.insert(opts.linters_by_ft.markdown, "vale")
+      lsp_util.add_linters(opts, {
+        ["markdown"] = { "vale" },
+        ["mdx"] = { "vale" },
+      })
+
+      -- opts.linters_by_ft.markdown = opts.linters_by_ft.markdown or {}
+      -- table.insert(opts.linters_by_ft.markdown, "vale")
       return opts
     end,
   },
