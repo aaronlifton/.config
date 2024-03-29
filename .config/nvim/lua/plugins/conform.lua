@@ -30,9 +30,12 @@ return {
         ["html"] = { { "prettier" } },
         ["less"] = { { "prettier" } },
         ["lua"] = { { "stylua", "luaformatter" } },
-        ["markdown"] = { { "markdownlint-cli2", "cbfmt" } },
-        ["markdown.mdx"] = { { "markdownlint-cli2", "cbmft" } }, -- TODO: mdformat, prettier
-        ["mdx"] = { { "markdownlint-cli2", "cbmft" } }, -- TODO: mdformat, prettier
+        -- ["markdown"] = { { "markdownlint-cli2", "cbfmt" } },
+        -- ["markdown"] = { { "markdownlint-cli2", "cbfmt" } },
+        ["markdown"] = { "prettier" },
+        ["markdown.mdx"] = { "prettier" },
+        -- ["markdown.mdx"] = { { "mdformat", "markdownlint-cli2", "cbfmt" } }, -- TODO: mdformat, prettier
+        ["mdx"] = { { "prettier", "markdownlint-cli2", "cbfmt" } }, -- TODO: mdformat, prettier
         ["python"] = { { "black" } },
         ["rust"] = { "rustfmt" },
         ["scss"] = { { "prettier" } },
@@ -60,9 +63,22 @@ return {
           -- command = "/Users/aaron/.cargo/bin/cbfmt",
           prepend_args = {
             "--config",
-            vim.env.HOME .. "/.config/nvim/rules/cbfmt.toml",
+            vim.env.HOME .. "/.config/nvim/rules/.cbfmt.toml",
           },
         },
+        prettier = {
+          prepend_args = {
+            "--prose-wrap",
+            "always",
+          },
+        },
+        -- mdformat = {
+        --   prepend_args = {},
+        --   command = require("conform.util").find_executable({
+        --     "bin/format",
+        --   }, "mdformat"),
+        --   -- command = vim.env.HOME .. "/.config/nvim/bin/mdformatwrapper",
+        -- },
       },
     },
   },

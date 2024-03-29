@@ -4,12 +4,20 @@ return {
     dependencies = {
       {
         "creativenull/efmls-configs-nvim",
-        version = "v0.2.x",
+        version = false,
       },
     },
+  },
+  {
+    "neovim/nvim-lspconfig",
+    -- opts = {
+    --   servers = {},
+    -- },
     config = function(_, opts)
+      -- local capabilities = require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
       require("lspconfig").efm.setup({
         init_options = { documentFormatting = true, documentRangeFormatting = true },
+        filetypes = { "mdx", "fennel", "fish", "gitcommit", "sql" },
         settings = {
           rootMarkers = { ".git/" },
           languages = {
@@ -30,6 +38,10 @@ return {
             sql = {
               require("efmls-configs.formatters.sql-formatter"),
             },
+            mdx = {
+              require("efmls-configs.formatters.prettier"),
+              require("efmls-configs.formatters.cbfmt"),
+            },
             -- go = {
             --   require("efmls-configs.linters.djlint"),
             --   require("efmls-configs.linters.go_revive"),
@@ -39,6 +51,19 @@ return {
             -- },
           },
         },
+      })
+
+      local lsp_fmt_group = vim.api.nvim_create_augroup("LspFormattingGroup", {})
+      vim.api.nvim_create_autocmd("BufWritePost", {
+        group = lsp_fmt_group,
+        callback = function(ev)
+          local efm = vim.lsp.get_active_clients({ name = "efm", bufnr = ev.buf })
+
+          if vim.tbl_isempty(efm) then return end
+
+          vim.cmd("echo 'here'")
+          vim.lsp.buf.format({ name = "efm" })
+        end,
       })
     end,
   },

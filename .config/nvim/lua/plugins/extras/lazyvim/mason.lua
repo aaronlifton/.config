@@ -7,6 +7,9 @@ return {
         "shellcheck",
         "shfmt",
         "flake8",
+        "mdformat",
+        "prettier",
+        "markdownlint",
         "markdownlint-cli2",
       },
       ui = {

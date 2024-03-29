@@ -30,7 +30,6 @@ M.add_formatter_settings = function(opts, tbl)
       end
     end
   end
-  vim.cmd("echo 'Formatter config: " .. vim.inspect(config) .. "'")
 end
 
 return M

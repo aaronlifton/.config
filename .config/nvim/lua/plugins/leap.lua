@@ -8,6 +8,7 @@ return {
   --   -- })
   {
     "ggandor/leap.nvim",
+    dev = true,
     enabled = true,
     keys = {
       { "s", mode = { "n", "x", "o" }, desc = "Leap forward to" },

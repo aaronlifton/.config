@@ -1,39 +1,54 @@
 local Util = require("lazyvim.util")
--- Options are automatically loaded
--- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
--- Add any additional options here
---                                                                                                                                                                                            uuuuuuuybbbbbbbbb
+local o = vim.opt
+local g = vim.g
+local b = vim.b
+
+-- Optimizations on startup
+-- vim.loader.enable()
 
 -- vim.api.nvim_set_option("spelllang", "en_us")
 -- vim.api.nvim_set_option("spell", true)
-
-local opt = vim.opt
-local o = vim.opt
-
--- Optimizations on startup
-vim.loader.enable()
-
-o.spelllang = "en_us"
-o.spell = false
-o.sps = "file:/Users/aaron/.config/nvim/spell/sugg,best"
--- use a file for spell suggestions
-o.spellfile = "/Users/aaron/.config/nvim/spell/en.utf-8.add"
 vim.cmd("set spell syntax=off")
 vim.cmd("set nospell")
 
-o.mouse = "a"
-o.clipboard:append({ "unnamed", "unnamedplus" })
--- o.termgui_colors = 256
 o.background = "dark"
+o.backspace = { "eol", "start", "indent" }
+o.breakindent = true
+o.clipboard:append({ "unnamed" })
+o.spell = false
+o.spellfile = "/Users/aaron/.config/nvim/spell/en.utf-8.add"
+o.spelllang = "en_us" -- "en"
+o.sps = "file:/Users/aaron/.config/nvim/spell/sugg,best"
+o.startofline = true
+o.swapfile = false
 o.textwidth = 80
 
+g.material_style = "darker"
+g.disable_leap_secondary_labels = false
+g.enable_leap_lightspeed_mode = false
+g.astro_typescript = "enable"
+g["denops#deno"] = "/Users/aaron/.deno/bin/deno"
+g.native_snippets_enabled = false
+g.multiplexer = "wez" -- tmux
+g.pairs_plugin = "mini.pairs"
+g.outline_plugin = "outline.nvim"
+g.replace_typescript_ls = false
+g.gui_font_face = "Hack Nerd Font Mono"
+g.gui_font_size = 18
+g.editorconfig = true
+g.root_spec = {
+  "lsp",
+  { ".git", "lua", ".obsidian", "package.json", "Makefile", "go.mod", "cargo.toml", "pyproject.toml", "src" },
+  "cwd",
+}
+g.autoformat = true -- globally
+b.autoformat = true -- buffer-local
 -- opt.foldtext = "v:lua.custom_fold_text()"
 -- -- foldtext is now ufo
 -- o.foldtext = "v:lua.require'lazyvim.util'.ui.foldtext()"
-o.foldmethod = "expr"
-o.foldexpr = "nvim_treesitter#foldexpr()"
+-- o.foldmethod = "expr"
+-- o.foldexpr = "nvim_treesitter#foldexpr()"
 -- o.foldenable = false
-o.startofline = true
 
 -- Make Vim open and close folded text as needed because I can't be bothered to
 -- do so myself and wouldn't use text folding at all if it wasn't automatic.
@@ -48,13 +63,11 @@ o.startofline = true
 -- o.foldlevel = 0
 -- o.foldtext = "foldtext()"
 
-o.swapfile = false
-
 -- views can only be fully collapsed with the global statusline
-o.laststatus = 3
+-- o.laststatus = 3
 -- Default splitting will cause your main splits to jump when opening an edgebar.
 -- To prevent this, set `splitkeep` to either `screen` or `topline`.
-o.splitkeep = "screen"
+-- o.splitkeep = "screen"
 
 -- Minimal setup
 -- o.showcmd = false
@@ -62,32 +75,14 @@ o.splitkeep = "screen"
 -- o.cmdheight = 0
 
 -- Backspacing and indentation when wrapping
-o.backspace = { "eol", "start", "indent" }
-o.breakindent = true
-
-vim.api.nvim_set_hl(0, "LeapBackdrop", { link = "Comment" })
 
 -- Defaults
--- vim.g.mapleader = " "
--- vim.g.maplocalleader = "\\"
-
-vim.g.material_style = "darker"
-vim.g.disable_leap_secondary_labels = false
-vim.g.enable_leap_lightspeed_mode = false
-vim.g.astro_typescript = "enable"
-vim.g["denops#deno"] = "/Users/aaron/.deno/bin/deno"
-vim.g.native_snippets_enabled = false
-vim.g.multiplexer = "wez" -- tmux
-vim.g.pairs_plugin = "mini.pairs"
-vim.g.outline_plugin = "outline.nvim"
-vim.g.replace_typescript_ls = false
-vim.g.gui_font_face = "Hack Nerd Font Mono"
-vim.g.gui_font_size = 18
-vim.g.editorconfig = true
+-- g.mapleader = " "
+-- g.maplocalleader = "\\"
 
 -- Disable some repl providers
 for _, provider in ipairs({ "perl", "python3" }) do
-  vim.g["loaded_" .. provider .. "_provider"] = 0
+  g["loaded_" .. provider .. "_provider"] = 0
 end
 
 ---Get the full path to the LazyVim src dir
@@ -100,7 +95,6 @@ o.runtimepath:append("~/Code/nvim-plugins/denops-getting-started")
 o.runtimepath:append("~/Code/nvim-plugins/denops-helloworld.nvim")
 
 vim.cmd("let $NVIM_TUI_ENALE_TRUE_COLOR=1")
-
 -- Color fix
 -- "Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
 -- "If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
@@ -114,7 +108,7 @@ end
 -- github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
 if Util.has("termguicolors") then o.termguicolors = true end
 
-vim.commentstring = ""
+-- vim.commentstring = ""
 
 -- create_autocmd({ 'BufEnter', 'BufNewFile' }, {
 --   pattern = '.env*',
@@ -123,15 +117,7 @@ vim.commentstring = ""
 
 -- require("mini.starter").open()
 
-vim.g.root_spec = {
-  "lsp",
-  { ".git", "lua", ".obsidian", "package.json", "Makefile", "go.mod", "cargo.toml", "pyproject.toml", "src" },
-  "cwd",
-}
-vim.g.autoformat = true -- globally
-vim.b.autoformat = true -- buffer-local
-
-vim.g.is_original_codelens_refresh = true
+-- g.is_original_codelens_refresh = true
 -- vim.lsp.inlay_hint.enable(0, false)
 -- Fix inlay-hint auto-re-enabling bug
 -- LazyVim.toggle.inlay_hints = function(buffer, enabled)

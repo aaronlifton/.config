@@ -20,11 +20,13 @@ vim.api.nvim_create_autocmd("CursorHold", {
 vim.api.nvim_create_autocmd("User", {
   pattern = "TelescopePreviewerLoaded",
   callback = function(args)
+    vim.cmd("startinsert")
     if args.data.filetype ~= "help" then
       vim.wo.number = true
     elseif args.data.bufname:match("*.csv") then
       vim.wo.wrap = false
     end
+    -- change to insert mode
   end,
 })
 

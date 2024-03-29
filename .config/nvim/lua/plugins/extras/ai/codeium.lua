@@ -75,7 +75,7 @@ return {
           vim.cmd("echo 'mods: " .. vim.inspect(data) .. "'")
 
           if num_clicks == 1 and mouse_button == 1 and #mods == 0 then
-            vim.cmd("echo 'Codeium'" .. vim.fn["codeium#GetStatusString"]())
+            vim.cmd("echo 'Codeium: " .. vim.fn["codeium#GetStatusString"]() .. "'")
           end
         end,
       })

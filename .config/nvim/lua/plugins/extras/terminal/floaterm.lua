@@ -13,8 +13,8 @@ return {
       --   { desc = "Lazygit (root dir)" })
 
       --   { desc = "Lazygit (cwd)" })
-      { "<leader>gg",  "<cmd>FloatermNew --name=lazygitroot --opener=edit --titleposition=center --height=0.85 --width=0.85 --cwd=<root> lazygit<CR>",        desc = "Lazygit (root dir)" },
-      { "<leader>gG",  "<cmd>FloatermNew --name=lazygitbuffer --opener=edit --titleposition=center --height=0.85 --width=0.85 --cwd=<buffer> lazygit<CR>",    desc = "Lazygit (cwd)" },
+      -- { "<leader>gg",  "<cmd>FloatermNew --name=lazygitroot --opener=edit --titleposition=center --height=0.85 --width=0.85 --cwd=<root> lazygit<CR>",        desc = "Lazygit (root dir)" },
+      -- { "<leader>gG",  "<cmd>FloatermNew --name=lazygitbuffer --opener=edit --titleposition=center --height=0.85 --width=0.85 --cwd=<buffer> lazygit<CR>",    desc = "Lazygit (cwd)" },
 
       { "<leader>gl",  "<cmd>FloatermNew --name=lazydocker --opener=edit --titleposition=center --height=0.85 --width=0.85 --cwd=<root> lazydocker<CR>",      desc = "Lazydocker" },
       { "<leader>cen", "<cmd>FloatermNew --name=node --opener=edit --titleposition=center --wintype=split --height=0.35 node<CR>",                            desc = "Node" },

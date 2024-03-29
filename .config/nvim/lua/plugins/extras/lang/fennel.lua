@@ -45,10 +45,14 @@ return {
   {
     "Olical/nfnl",
     ft = "fennel",
-    init = function() require("nfnl").setup({}) end,
+    init = function()
+      require("nfnl").setup({})
+    end,
   },
-  {
-    -- "atweiden/vim-fennel",
-    "bakpakin/fennel.vim",
-  },
+  -- {
+  --   -- "atweiden/vim-fennel",
+  --   "bakpakin/fennel.vim",
+  --   lazy = true,
+  --   ft = "fennel"
+  -- },
 }

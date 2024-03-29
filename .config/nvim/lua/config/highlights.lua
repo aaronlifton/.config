@@ -15,7 +15,7 @@ vim.api.nvim_set_hl(0, "MiniPickMatchRanges", { fg = m.orange, bg = e.bg })
 vim.api.nvim_set_hl(0, "MiniPickNormal", { fg = e.fg, bg = b.floating_windows })
 vim.api.nvim_set_hl(0, "MiniPickPreviewLine", { fg = b.cursor_line, bg = m.darkyellow })
 vim.api.nvim_set_hl(0, "MiniPickPreviewRegion", { fg = e.fg, bg = e.highlight })
-
+-- vim.api.nvim_set_hl(0, "LeapBackdrop", { link = "Comment" })
 -- :=require("material.colors")
 -- {
 --   backgrounds = {

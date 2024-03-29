@@ -1,3 +1,5 @@
+local html_filetypes = { "html", "javascriptreact", "javascript.jsx", "typescriptreact", "typescript.tsx" }
+
 return {
   {
     "nvim-treesitter/nvim-treesitter",
@@ -15,6 +17,7 @@ return {
       servers = {
         emmet_language_server = {},
         emmet_ls = {
+          filetypes = html_filetypes,
           init_options = {
             html = {
               options = {
@@ -25,15 +28,16 @@ return {
           },
         },
         html = {
-          filetypes = {
-            "html",
-            "javascript",
-            "javascriptreact",
-            "javascript.jsx",
-            "typescript",
-            "typescriptreact",
-            "typescript.tsx",
-          },
+          filetypes = html_filetypes,
+          -- filetypes = {
+          --   "html",
+          --   -- "javascript",
+          --   "javascriptreact",
+          --   "javascript.jsx",
+          --   -- "typescript",
+          --   "typescriptreact",
+          --   "typescript.tsx",
+          -- },
         },
         cssmodules_ls = {},
         css_variables = {},
@@ -112,6 +116,25 @@ return {
       "html",
       "css",
       "sass",
+    },
+  },
+  {
+    "dcampos/cmp-emmet-vim",
+    keys = {
+      {
+        "<c-y>",
+        mode = "i",
+        desc = "Emmet expansion in insert mode (you probably need to type `<c-y>,`)",
+      },
+    },
+    dependencies = {
+      {
+        "mattn/emmet-vim",
+        config = function()
+          -- expand emmet snippet with <c-y>,
+          vim.g.user_emmet_leader_key = "<C-y>"
+        end,
+      },
     },
   },
 }

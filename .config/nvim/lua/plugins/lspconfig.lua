@@ -99,6 +99,11 @@ return {
       inlay_hints = {
         enabled = nvim_0_10,
       },
+      codelens = {
+        -- only enabled for go and lua.
+        -- seems to conflict with inlay hints for go.
+        enabled = false,
+      },
       setup = {
         eslint = function()
           require("lazyvim.util").lsp.on_attach(function(client)

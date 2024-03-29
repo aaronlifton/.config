@@ -1,6 +1,6 @@
-if not require("config").pde.html then
-  return {}
-end
+if not require("config").pde.html then return {} end
+
+local html_filetypes = { "html", "javascriptreact", "javascript.jsx", "typescriptreact", "typescript.tsx" }
 
 return {
   {
@@ -22,10 +22,12 @@ return {
       servers = {
         -- html
         html = {
-          filetypes = { "html", "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
+          -- filetypes = { "html", "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
+          filetypes = html_filetypes,
         },
         -- Emmet
         emmet_ls = {
+          filetypes = html_filetypes,
           init_options = {
             html = {
               options = {
@@ -43,7 +45,7 @@ return {
   {
     "nvimtools/none-ls.nvim",
     opts = function(_, opts)
-      local nls = require "null-ls"
+      local nls = require("null-ls")
       table.insert(opts.sources, nls.builtins.formatting.prettierd)
     end,
   },

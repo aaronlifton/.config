@@ -8,6 +8,7 @@ default.extend-ignore-re = [
   "\"xFoObar\"",
   "\"FoO\"",
   'Error[a-z]+',
+  '(\w+)\n',
 ]
 [default.extend-words]
 nvim = "nvim"

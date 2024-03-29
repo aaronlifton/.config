@@ -5,7 +5,7 @@
     "lazyvim.plugins.extras.dap.nlua",
     "lazyvim.plugins.extras.editor.leap",
     "lazyvim.plugins.extras.editor.mini-files",
-    "lazyvim.plugins.extras.editor.outline",
+    "lazyvim.plugins.extras.editor.trouble-v3",
     "lazyvim.plugins.extras.lang.ansible",
     "lazyvim.plugins.extras.lang.docker",
     "lazyvim.plugins.extras.lang.elixir",
@@ -24,6 +24,7 @@
     "lazyvim.plugins.extras.util.dot",
     "lazyvim.plugins.extras.util.gitui",
     "lazyvim.plugins.extras.util.project",
+    "plugins.extras.ai.ai",
     "plugins.extras.ai.codegpt",
     "plugins.extras.ai.codeium",
     "plugins.extras.ai.copilot",
@@ -51,7 +52,6 @@
     "plugins.extras.editor.docs.peek",
     "plugins.extras.editor.fold.ufo",
     "plugins.extras.editor.numb",
-    "plugins.extras.editor.outline",
     "plugins.extras.editor.package-info",
     "plugins.extras.editor.regex",
     "plugins.extras.editor.rest-client",
@@ -146,6 +146,7 @@
     "plugins.extras.ui.breadcrumbs",
     "plugins.extras.ui.colorschemes.bamboo",
     "plugins.extras.ui.colorschemes.catppuccin",
+    "plugins.extras.ui.colorschemes.dracula",
     "plugins.extras.ui.colorschemes.everforest",
     "plugins.extras.ui.colorschemes.helix",
     "plugins.extras.ui.colorschemes.material",
@@ -157,8 +158,6 @@
     "plugins.extras.ui.colorschemes.tokyonight",
     "plugins.extras.ui.diagflow",
     "plugins.extras.ui.fidget",
-    "plugins.extras.ui.image",
-    "plugins.extras.ui.img-clip",
     "plugins.extras.ui.live-command",
     "plugins.extras.ui.minimap",
     "plugins.extras.ui.status-column",
@@ -175,7 +174,7 @@
     "plugins.extras.window.winshift"
   ],
   "news": {
-    "NEWS.md": "2850"
+    "NEWS.md": "3314"
   },
   "version": 3
 }

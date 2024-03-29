@@ -1,11 +1,49 @@
--- local win = require("telescope.actions.state").get_current_picker(prompt_bufnr).preview_win
--- local win = require("telescope.actions.state").get_current_picker(prompt_bufnr).preview_win
--- local win = require("telescope.actions.state").get_current_picker(prompt_bufnr).preview_win
--- local win = require("telescope.actions.state").get_current_picker(prompt_bufnr).preview_win
 local Util = require("lazyvim.util")
 local actions = require("telescope.actions")
-local custom_finders = require("config.user.telescope_custom_finders")
-
+local leap_highlight = require("leap.highlight")
+-- local original_cleanup = leap_highlight.cleanup
+local _local_1_ = require("leap.util")
+-- local inc = _local_1_["inc"]
+local dec = _local_1_["dec"]
+local api = vim.api
+-- local map = vim.tbl_map
+leap_highlight.cleanup = function(self, affected_windows)
+  for _, _2_ in ipairs(self.extmarks) do
+    local _each_3_ = _2_
+    local bufnr = _each_3_[1]
+    local id = _each_3_[2]
+    local is_valid_buf = api.nvim_buf_is_valid(bufnr)
+    if is_valid_buf then api.nvim_buf_del_extmark(bufnr, self.ns, id) end
+  end
+  self.extmarks = {}
+  if pcall(api.nvim_get_hl, self.ns) then
+    for _, winid in ipairs(affected_windows) do
+      local is_valid_win = api.nvim_win_is_valid(winid)
+      if is_valid_win then
+        local wininfo = vim.fn.getwininfo(winid)[1]
+        api.nvim_buf_clear_namespace(wininfo.bufnr, self.ns, dec(wininfo.topline), wininfo.botline)
+      end
+    end
+    return api.nvim_buf_clear_namespace(0, self.ns, dec(vim.fn.line("w0")), vim.fn.line("w$"))
+  else
+    return nil
+  end
+end
+--
+-- do
+--   local saved_hls
+--   vim.api.nvim_create_autocmd('User', {
+--     pattern = 'LeapEnter',
+--     callback = function ()
+--       saved_hls = vim.o.hlsearch
+--       vim.o.hlsearch = false
+--     end,
+--   })
+--   vim.api.nvim_create_autocmd('User', {
+--     pattern = 'LeapLeave',
+--     callback = function () vim.o.hlsearch = saved_hls end,
+--   })
+-- end
 -- Function to open preview file in main editor
 local function open_preview_file(prompt_bufnr)
   local actions_state = require("telescope.actions.state")
@@ -103,9 +141,7 @@ local function goto_file_selection(prompt_bufnr, command)
         return
       end
 
-      if type(value) == "table" then
-        value = entry.display
-      end
+      if type(value) == "table" then value = entry.display end
 
       local sections = vim.split(value, ":")
 
@@ -115,9 +151,7 @@ local function goto_file_selection(prompt_bufnr, command)
     end
 
     local preview_win = telescope_state.get_status(prompt_bufnr).preview_win
-    if preview_win then
-      vim.api.nvim_win_set_config(preview_win, { style = "" })
-    end
+    if preview_win then vim.api.nvim_win_set_config(preview_win, { style = "" }) end
 
     local original_win_id = picker.original_win_id or 0
     local entry_bufnr = entry.bufnr
@@ -198,9 +232,7 @@ return {
           local telescope = require("telescope")
 
           telescope.load_extension("fzf")
-          if vim.g.outline_plugin == "aerieal" then
-            telescope.load_extension("aerial")
-          end
+          if vim.g.outline_plugin == "aerieal" then telescope.load_extension("aerial") end
           telescope.load_extension("bookmarks")
           telescope.load_extension("possession")
           telescope.load_extension("yank_history")
@@ -464,6 +496,8 @@ return {
               end,
               -- ["<a-s>"]
               ["S"] = function(prompt_bufnr)
+                local win = vim.api.nvim_get_current_win()
+
                 require("leap").leap({
                   targets = get_telescope_targets(prompt_bufnr),
                   action = function(target)
@@ -472,14 +506,17 @@ return {
                 })
               end,
               ["s"] = function(prompt_bufnr)
+                local win = vim.api.nvim_get_current_win()
+
                 require("leap").leap({
                   targets = get_telescope_targets(prompt_bufnr),
                   action = function(target)
                     target.pick:set_selection(target.row)
-                    local chunks = { { "event fired" }, { vim.inspect(vim.api.nvim_win_get_buf(prompt_bufnr)) } }
+                    local chunks = { { "event fired" }, { vim.inspect(vim.api.nvim_win_get_buf(win)) } }
                     vim.api.nvim_echo(chunks, false, {})
                     require("telescope.actions").select_default(prompt_bufnr)
                   end,
+                  telescope_leap = true,
                 })
               end,
               ["q"] = actions.close,

@@ -158,26 +158,26 @@ return {
       "TSCClose",
     },
   },
-  {
-    "dmmulroy/ts-error-translator.nvim",
-    ft = { "typescript", "typescriptreact" },
-    dependencies = {
-      "neovim/nvim-lspconfig",
-      opts = {
-        servers = {
-          tsserver = {
-            handlers = {
-              ["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
-                require("ts-error-translator").translate_diagnostics(err, result, ctx, config)
-                vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
-              end,
-            },
-          },
-        },
-      },
-    },
-    opts = {},
-  },
+  -- {
+  --   "dmmulroy/ts-error-translator.nvim",
+  --   ft = { "typescript", "typescriptreact" },
+  --   dependencies = {
+  --     "neovim/nvim-lspconfig",
+  --     opts = {
+  --       servers = {
+  --         tsserver = {
+  --           handlers = {
+  --             ["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
+  --               require("ts-error-translator").translate_diagnostics(err, result, ctx, config)
+  --               vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
+  --             end,
+  --           },
+  --         },
+  --       },
+  --     },
+  --   },
+  --   opts = {},
+  -- },
   {
     "nvim-neotest/neotest",
     optional = true,

@@ -7,7 +7,7 @@ return {
         preview = true,
         width_nofocus = 30,
         width_preview = 60,
-        max_number = 2,
+        -- max_number = 2,
       },
       options = {
         use_as_default_explorer = true,

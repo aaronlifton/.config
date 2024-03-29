@@ -17,30 +17,30 @@ wk.setup()
 require("config.keymaps.base")
 require("config.keymaps.windows")
 
---- Monkey-patch codelens refresh, which happens to also trigger inlay hints visibility
-local original_codelens_refresh = vim.lsp.codelens.refresh
-local toggle_codelens_original = function()
-  if vim.g.is_original_codelens_refresh then
-    vim.cmd("echo 'patching codelens refresh'")
-    ---@diagnostic disable-next-line:duplicate-set-field,redefined-local
-    vim.lsp.codelens.refresh = function(opts)
-      vim.cmd("echo 'disabling inlay hints from overridden codelens refresh'")
-      original_codelens_refresh(opts)
-
-      LazyVim.toggle.inlay_hints(nil, false)
-    end
-    vim.g.is_original_codelens_refresh = false
-    vim.lsp.codelens.refresh()
-  else
-    vim.cmd("echo 'restoring original codelens refresh'")
-    vim.lsp.codelens.refresh = original_codelens_refresh
-    vim.g.is_original_codelens_refresh = true
-    vim.lsp.codelens.refresh()
-  end
-end
-map("n", "<leader>_l", toggle_codelens_original, { noremap = true, silent = true })
--- map("n", "<leader>uh", toggle_codelens_original, { noremap = true, silent = true })
-toggle_codelens_original()
+-- --- Monkey-patch codelens refresh, which happens to also trigger inlay hints visibility
+-- local original_codelens_refresh = vim.lsp.codelens.refresh
+-- local toggle_codelens_original = function()
+--   if vim.g.is_original_codelens_refresh then
+--     vim.cmd("echo 'patching codelens refresh'")
+--     ---@diagnostic disable-next-line:duplicate-set-field,redefined-local
+--     vim.lsp.codelens.refresh = function(opts)
+--       vim.cmd("echo 'disabling inlay hints from overridden codelens refresh'")
+--       original_codelens_refresh(opts)
+--
+--       LazyVim.toggle.inlay_hints(nil, false)
+--     end
+--     vim.g.is_original_codelens_refresh = false
+--     vim.lsp.codelens.refresh()
+--   else
+--     vim.cmd("echo 'restoring original codelens refresh'")
+--     vim.lsp.codelens.refresh = original_codelens_refresh
+--     vim.g.is_original_codelens_refresh = true
+--     vim.lsp.codelens.refresh()
+--   end
+-- end
+-- map("n", "<leader>_l", toggle_codelens_original, { noremap = true, silent = true })
+-- -- map("n", "<leader>uh", toggle_codelens_original, { noremap = true, silent = true })
+-- toggle_codelens_original()
 
 -- Disabling since using kitty now
 -- Handle wezterm navigation
@@ -98,8 +98,8 @@ map("n", "<leader>ba", "<cmd>blast<cr>", { desc = "Last Buffer" })
 map("n", "<S-q>", "<cmd>bdelete!<CR>", { silent = true })
 
 -- Center the screen automatically
-map("n", "n", "nzzzv")
-map("n", "N", "Nzzzv")
+-- map("n", "n", "nzzzv")
+-- map("n", "N", "Nzzzv")
 
 -- map("n", "n", function()
 --   local bt = vim.bo.buftype
@@ -586,6 +586,12 @@ wk.register({
               T.grep_dir("folke", {})
             end,
             "Grep folke files",
+          },
+          k = {
+            function()
+              vim.cmd("e /Users/aaron/.local/share/nvim/lazy/LazyVim/lua/lazyvim/config/keymaps.lua")
+            end,
+            "View LazyVim keymap",
           },
         },
       },
