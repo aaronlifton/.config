@@ -512,11 +512,8 @@ return {
                   targets = get_telescope_targets(prompt_bufnr),
                   action = function(target)
                     target.pick:set_selection(target.row)
-                    local chunks = { { "event fired" }, { vim.inspect(vim.api.nvim_win_get_buf(win)) } }
-                    vim.api.nvim_echo(chunks, false, {})
                     require("telescope.actions").select_default(prompt_bufnr)
                   end,
-                  telescope_leap = true,
                 })
               end,
               ["q"] = actions.close,

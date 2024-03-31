@@ -185,27 +185,39 @@ return {
       "nvim-neotest/neotest-jest",
       "adrigzr/neotest-mocha",
       "marilari88/neotest-vitest",
+      "thenbe/neotest-playwright",
     },
-    opts = {
-      adapters = {
-        ["neotest-jest"] = {
+    opts = function(_, opts)
+      opts.adapters = opts.adapters or {}
+      vim.list_extend(opts.adapters, {
+        require("neotest-jest")({
           jestCommand = "npm test --",
           jestConfigFile = "custom.jest.config.ts",
           env = { CI = true },
           cwd = function()
             return vim.fn.getcwd()
           end,
-        },
-        ["neotest-mocha"] = {
+        }),
+        require("neotest-mocha")({
           command = "npm test --",
           env = { CI = true },
           cwd = function()
             return vim.fn.getcwd()
           end,
-        },
-        ["neotest-vitest"] = {},
-      },
-    },
+        }),
+        require("neotest-vitest")({
+          env = { CI = true },
+          cwd = function()
+            return vim.fn.getcwd()
+          end,
+        }),
+      })
+      opts.consumers = opts.consumers or {}
+      vim.list_extend(opts.consumers, {
+        -- add to your list of consumers
+        playwright = require("neotest-playwright.consumers").consumers,
+      })
+    end,
     -- stylua: ignore
     keys = {
       { "<leader>tw", function() require('neotest').run.run({ jestCommand = 'jest --watch ' }) end, desc = "Run Watch" },

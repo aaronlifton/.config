@@ -90,6 +90,7 @@ return {
         find_in_dir = function(state)
           local node = state.tree:get_node()
           local path = node.type == "file" and node:get_parent_id() or node:get_id()
+          vim.api.nvim_echo({ { "Searching in " .. path, "Normal" } }, true, {})
           require("telescope.builtin").find_files({ cwd = path })
         end,
       },

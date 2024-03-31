@@ -1,5 +1,23 @@
 local MiniExtra = require("mini.extra")
+local gen_spec = require("mini.ai").gen_spec
 local gen_ai_spec = MiniExtra.gen_ai_spec
+
+local mini_ai_git_signs = function()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local hunks = require("gitsigns.cache").cache[bufnr].hunks
+  hunks = vim.tbl_map(function(hunk)
+    local from_line = hunk.added.start
+    local from_col = 1
+    local to_line = hunk.vend
+    local to_col = #vim.api.nvim_buf_get_lines(bufnr, to_line - 1, to_line, false)[1] + 1
+    return {
+      from = { line = from_line, col = from_col },
+      to = { line = to_line, col = to_col },
+    }
+  end, hunks)
+
+  return hunks
+end
 
 return {
   {
@@ -14,6 +32,65 @@ return {
           I = gen_ai_spec.indent(),
           L = gen_ai_spec.line(),
           N = gen_ai_spec.number(),
+          f = gen_spec.function_call(),
+          g = {
+            {
+              "%b{}",
+              "\n%s*\n()().-()\n%s*\n[%s]*()", -- normal paragraphs
+              "^()().-()\n%s*\n[%s]*()", -- paragraph at start of file
+              "\n%s*\n()().-()()$", -- paragraph at end of file
+            },
+            {
+              ("[%.?!][%s]+()().-[^%s].-()[%.?!]()[%s]"):format(), -- normal sentence
+              "^[%{%[]?[%s]*()().-[^%s].-()[%.?!]()[%s]", -- sentence at start of paragraph
+              "[%.?!][%s]+()().-[^%s].-()()[\n%}%]]?$", -- sentence at end of paragraph
+              "^[%s]*()().-[^%s].-()()[%s]+$", -- sentence at that fills paragraph (no final punctuation)
+            },
+          },
+          h = mini_ai_git_signs,
+          k = gen_spec.treesitter({
+            i = { "@assignment.lhs", "@key.inner" },
+            a = { "@assignment.outer", "@key.inner" },
+          }),
+          p = {
+            {
+              "\n%s*\n()().-()\n%s*\n()[%s]*", -- normal paragraphs
+              "^()().-()\n%s*\n[%s]*()", -- paragraph at start of file
+              "\n%s*\n()().-()()$", -- paragraph at end of file
+            },
+          },
+          r = {
+            {
+              "%u[%l%d]+%f[^%l%d]",
+              "%f[%S][%l%d]+%f[^%l%d]",
+              "%f[%P][%l%d]+%f[^%l%d]",
+              "^[%l%d]+%f[^%l%d]",
+            },
+            "^().*()$",
+          },
+          v = gen_spec.treesitter({
+            i = { "@assignment.rhs", "@value.inner", "@return.inner" },
+            a = { "@assignment.outer", "@value.inner", "@return.outer" },
+          }),
+          -- WORD
+          W = { {
+            "()()%f[%w%p][%w%p]+()[ \t]*()",
+          } },
+          -- word
+          w = { "()()%f[%w_][%w_]+()[ \t]*()" },
+          -- line (same key as visual line in my mappings)
+          x = gen_ai_spec.line(),
+          -- chunk (as in from vim-textobj-chunk)
+          z = {
+            "\n.-%b{}.-\n",
+            "\n().-()%{\n.*\n.*%}().-\n()",
+          },
+          -- Scope
+          s = gen_spec.treesitter({
+            a = { "@function.outer", "@class.outer", "@testitem.outer" },
+            i = { "@function.inner", "@class.inner", "@testitem.inner" },
+          }),
+          ["$"] = gen_spec.pair("$", "$", { type = "balanced" }),
         },
       }
       -- used: a,i,f,c,t,d,e,g,u,U

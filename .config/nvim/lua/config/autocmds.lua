@@ -181,25 +181,34 @@ ac({ "BufNewFile", "BufRead" }, {
 -- })
 
 local to_close_with_esc_or_q = {
+  "DressingSelect",
+  "OverseerForm",
+  "OverseerList",
   "PlenaryTestPopup",
+  "checkhealth",
+  "floaterm",
+  "git",
   "help",
+  "help",
+  "lsp-installer",
   "lspinfo",
   "man",
+  "man",
+  "mini.files",
+  "neoai-input",
+  "neoai-output",
+  "neotest-output",
+  "neotest-output-panel",
+  "neotest-summary",
+  "netrw",
   "notify",
   "qf",
   "query",
   "spectre_panel",
   "startuptime",
-  "tsplayground",
-  "neotest-output",
-  "checkhealth",
-  "neotest-summary",
-  "neotest-output-panel",
   "toggleterm",
-  "floaterm",
-  "lsp-installer",
-  "DressingSelect",
-  "mini.files",
+  "tsplayground",
+  "vim",
 }
 -- close some filetypes with <esc>, in addition to <q>
 ac("FileType", {
@@ -287,15 +296,27 @@ ac({ "BufLeave", "FocusLost", "InsertEnter", "CmdlineEnter", "WinLeave" }, {
   end,
 })
 
+-- Auto toggle hlsearch
+local ns = vim.api.nvim_create_namespace("toggle_hlsearch")
+local function toggle_hlsearch(char)
+  if vim.fn.mode() == "n" then
+    local keys = { "<CR>", "n", "N", "*", "#", "?", "/" }
+    local new_hlsearch = vim.tbl_contains(keys, vim.fn.keytrans(char))
+
+    if vim.opt.hlsearch:get() ~= new_hlsearch then vim.opt.hlsearch = new_hlsearch end
+  end
+end
+vim.on_key(toggle_hlsearch, ns)
+
 -- Create a dir when saving a file if it doesn't exist
-ac("BufWritePre", {
-  group = ag("auto_create_dir", { clear = true }),
-  callback = function(args)
-    if args.match:match("^%w%w+://") then return end
-    local file = vim.uv.fs_realpath(args.match) or args.match
-    vim.fn.mkdir(vim.fn.fnamemodify(file, ":p:h"), "p")
-  end,
-})
+-- ac("BufWritePre", {
+--   group = ag("auto_create_dir", { clear = true }),
+--   callback = function(args)
+--     if args.match:match("^%w%w+://") then return end
+--     local file = vim.uv.fs_realpath(args.match) or args.match
+--     vim.fn.mkdir(vim.fn.fnamemodify(file, ":p:h"), "p")
+--   end,
+-- })
 
 -- - - - - - - - - - - - - - - - - - - - -
 -- Begin MiniFiles setup

@@ -160,21 +160,6 @@ end
 
 map({ "n", "x" }, "gw", "*N", { desc = "Search word under cursor" })
 
--- https://github.com/mhinz/vim-galore#saner-behavior-of-n-and-n map("n", "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next search result" })
-map("x", "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next search result" })
-map("o", "n", "'Nn'[v:searchforward]", { expr = true, desc = "Next search result" })
-map("n", "N", "'nN'[v:searchforward]", { expr = true, desc = "Prev search result" })
-map("x", "N", "'nN'[v:searchforward]", { expr = true, desc = "Prev search result" })
-map("o", "N", "'nN'[v:searchforward]", { expr = true, desc = "Prev search result" })
-
--- Add undo break-points
-map("i", ",", ",<c-g>u")
-map("i", ".", ".<c-g>u")
-map("i", ";", ";<c-g>u")
-
--- save file
-map({ "i", "v", "n", "s" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save file", remap = true })
-
 -- Indentation
 map("n", "<", "<<", { desc = "Deindent" })
 map("n", ">", ">>", { desc = "Indent" })
@@ -259,12 +244,6 @@ end, { desc = "Dashboard" })
 -- end
 -- map("n", "<leader>fR", lazyterm, { desc = "Terminal (root dir)" }) -- was ft
 -- map("n", "<ce/>", lazyterm, { desc = "Terminal (root dir)" })
-
--- Resize window using <ctrl> arrow keys
-map("n", "<C-Up>", "<cmd>resize +2<cr>", { desc = "Increase window height" })
-map("n", "<C-Down>", "<cmd>resize -2<cr>", { desc = "Decrease window height" })
-map("n", "<C-Left>", "<cmd>vertical resize -2<cr>", { desc = "Decrease window width" })
-map("n", "<C-Right>", "<cmd>vertical resize +2<cr>", { desc = "Increase window width" })
 
 -- tabs
 map("n", "<leader><tab>-", "<cmd>tabonly<cr>", { desc = "Close Other Tabs" })
@@ -592,6 +571,12 @@ wk.register({
               vim.cmd("e /Users/aaron/.local/share/nvim/lazy/LazyVim/lua/lazyvim/config/keymaps.lua")
             end,
             "View LazyVim keymap",
+          },
+          D = {
+            function()
+              T.grep_dir("dots", {})
+            end,
+            "Grep nvimdots files",
           },
         },
       },

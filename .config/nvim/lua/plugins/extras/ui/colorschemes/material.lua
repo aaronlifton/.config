@@ -69,7 +69,6 @@ return {
         "which-key",
         "nvim-notify",
       },
-      -- /START
       --   disable = {
       --     colored_cursor = false, -- Disable the colored cursor
       --     borders = false, -- Disable borders between verticaly split windows
@@ -115,6 +114,23 @@ return {
         DropBarMenuThumb = { link = "NormalNC" },
         DropBarFzfMatch = { link = "NormalNC" },
         DropBarIconKindScope = { link = "NormalNC" },
+        DropBarHover = { link = "NormalNC" },
+        DropBarPreview = { link = "NormalNC" },
+        DropBarIconKindArray = { link = "NormalNC" },
+        DropBarMenuHoverSymbol = { link = "NormalNC" },
+        DropBarMenuNormalFloat = { link = "NormalNC" },
+        DropBarIconKindH1Marker = { link = "NormalNC" },
+        DropBarIconKindH2Marker = { link = "NormalNC" },
+        DropBarIconKindH3Marker = { link = "NormalNC" },
+        DropBarIconKindH4Marker = { link = "NormalNC" },
+        DropBarIconKindH5Marker = { link = "NormalNC" },
+        DropBarIconKindH6Marker = { link = "NormalNC" },
+        DropBarIconKindProperty = { link = "GrappleName" },
+        DropBarIconKindNamespace = { link = "GrappleName" },
+        DropBarIconKindSpecifier = { link = "GrappleName" },
+        DropBarIconKindReference = { link = "GrappleName" },
+        Search = { link = "Added" },
+        IncSearch = { bg = "#cbe699" },
       },
       -- /END
     })

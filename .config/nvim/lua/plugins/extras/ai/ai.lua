@@ -8,13 +8,13 @@ return {
     },
   },
   {
-      "mthbernardes/codeexplain.nvim",
-      enabled = false,
-      cmd = "CodeExplain",
-      build = function()
-        vim.cmd [[silent UpdateRemotePlugins]]
-      end,
-    },
+    "mthbernardes/codeexplain.nvim",
+    enabled = false,
+    cmd = "CodeExplain",
+    build = function()
+      vim.cmd([[silent UpdateRemotePlugins]])
+    end,
+  },
   {
     "Bryley/neoai.nvim",
     dependencies = {
@@ -35,8 +35,8 @@ return {
       "NeoAIShortcut",
     },
     keys = {
-      { "<leader>as", desc = "Summarize Text" },
-      { "<leader>ag", desc = "Generate Git Message" },
+      { "<leader>czt", desc = "Summarize Text" },
+      { "<leader>czg", desc = "Generate Git Message" },
     },
     opts = {},
     config = function()

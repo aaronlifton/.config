@@ -7,9 +7,9 @@ return {
       for key, _ in pairs(opts.left) do
         table.insert(left_keys, key)
       end
-      local tmp = opts.left[#left_keys - 1]
-      opts.left[#left_keys - 1] = { ft = "hydra_hint", title = "Hydra", size = { height = 0.5 }, pinned = true }
-      table.insert(opts.left, tmp)
+      -- local tmp = opts.left[#left_keys - 1]
+      -- opts.left[#left_keys - 1] = { ft = "hydra_hint", title = "Hydra", size = { height = 0.5 }, pinned = true }
+      -- table.insert(opts.left, tmp)
 
       -- table.insert(opts.bottom, {})
       -- table.insert(opts.left,

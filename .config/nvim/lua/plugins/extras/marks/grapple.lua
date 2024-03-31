@@ -33,16 +33,16 @@ return {
       end)
     end,
   },
-  {
-    "goolord/alpha-nvim",
-    optional = true,
-    opts = function(_, dashboard)
-      local button = dashboard.button("m", "󰛢 " .. " Marks", "<cmd>Grapple toggle_tags<CR>")
-      button.opts.hl = "AlphaButtons"
-      button.opts.hl_shortcut = "AlphaShortcut"
-      table.insert(dashboard.section.buttons.val, 5, button)
-    end,
-  },
+  -- {
+  --   "goolord/alpha-nvim",
+  --   optional = true,
+  --   opts = function(_, dashboard)
+  --     local button = dashboard.button("m", "󰛢 " .. " Marks", "<cmd>Grapple toggle_tags<CR>")
+  --     button.opts.hl = "AlphaButtons"
+  --     button.opts.hl_shortcut = "AlphaShortcut"
+  --     table.insert(dashboard.section.buttons.val, 5, button)
+  --   end,
+  -- },
   {
     "nvimdev/dashboard-nvim",
     optional = true,

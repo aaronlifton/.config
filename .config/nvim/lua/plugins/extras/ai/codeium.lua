@@ -72,10 +72,10 @@ return {
         show_codeium_status,
         on_click = function(num_clicks, mouse_button, mods)
           local data = { num_clicks = num_clicks, mouse_button = mouse_button, mods = mods }
-          vim.cmd("echo 'mods: " .. vim.inspect(data) .. "'")
+          vim.api.nvim_echo({ { "mods: " .. vim.inspect(data) } }, true, {})
 
           if num_clicks == 1 and mouse_button == 1 and #mods == 0 then
-            vim.cmd("echo 'Codeium: " .. vim.fn["codeium#GetStatusString"]() .. "'")
+            vim.api.nvim_echo({ { "Codeium: " .. vim.fn["codeium#GetStatusString"]() } }, true, {})
           end
         end,
       })

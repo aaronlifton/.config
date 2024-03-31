@@ -29,7 +29,7 @@ local function dap_menu()
       },
     },
     mode = "n",
-    body = "<A-d>",
+    body = "<M-d>",
     -- stylua: ignore
     heads = {
       { "C", function() dap.set_breakpoint(vim.fn.input "[Condition] > ") end, desc = "Conditional Breakpoint", },

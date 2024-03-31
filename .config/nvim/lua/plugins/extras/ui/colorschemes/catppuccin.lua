@@ -32,18 +32,18 @@ return {
         }
       end,
       integrations = {
-        alpha = true,
+        -- alpha = true,
         cmp = true,
-        barbecue = {
-          dim_dirname = true, -- directory name is dimmed by default
-          bold_basename = true,
-          dim_context = false,
-          alt_background = false,
-        },
+        -- barbecue = {
+        --   dim_dirname = true, -- directory name is dimmed by default
+        --   bold_basename = true,
+        --   dim_context = false,
+        --   alt_background = false,
+        -- },
         dap = true,
         dap_ui = true,
         dashboard = true,
-        flash = true,
+        -- flash = true,
         headlines = true,
         gitsigns = true,
         harpoon = false,

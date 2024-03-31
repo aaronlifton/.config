@@ -1,7 +1,6 @@
 return {
   {
     "anuvyklack/hydra.nvim",
-    optional = true,
     opts = {
       specs = {
         test = function()
@@ -37,7 +36,7 @@ _s_: Stop
               },
             },
             mode = "n",
-            body = "<A-t>",
+            body = "<M-9>",
             heads = {
               { "F", cmd("w|lua require('neotest').run.run(vim.loop.cwd())"), desc = "All Files" },
               { "L", cmd("w|lua require('neotest').run.run_last({strategy = 'dap'})"), desc = "Debug Last" },

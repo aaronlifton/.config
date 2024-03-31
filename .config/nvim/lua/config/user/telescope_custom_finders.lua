@@ -22,6 +22,7 @@ local niocalbanese_dir = vim.fn.expand("~/Code/dotfiles/nicoalbanese/.config/nvi
 local modern_nvim_dir = vim.fn.expand("~/Code/dotfiles/modern-neovim")
 local nvim_pde_dir = vim.fn.expand("~/Code/dotfiles/nvim-pde")
 local folk_dir = vim.fn.expand("~/Code/dotfiles/folke-nvim")
+local dots_dir = vim.fn.expand("~/Code/dotfiles/nvim-dots")
 local inspiration_dirs = {
   doom = doom_dir,
   lvim = lvim_dir,
@@ -32,6 +33,7 @@ local inspiration_dirs = {
   modern = modern_nvim_dir,
   pde = nvim_pde_dir,
   folke = folk_dir,
+  dots = dots_dir,
 }
 
 local inspiration_dirs_list = {}

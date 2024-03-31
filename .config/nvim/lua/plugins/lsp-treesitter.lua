@@ -5,6 +5,7 @@ return {
       ensure_installed = {
         "astro",
         "bash",
+        "fennel",
         "gitcommit",
         "gitignore",
         "go",

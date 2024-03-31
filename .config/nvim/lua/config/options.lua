@@ -14,7 +14,7 @@ vim.cmd("set nospell")
 o.background = "dark"
 o.backspace = { "eol", "start", "indent" }
 o.breakindent = true
-o.clipboard:append({ "unnamed" })
+o.clipboard:append({ "unnamed", "unnamedplus" })
 o.spell = false
 o.spellfile = "/Users/aaron/.config/nvim/spell/en.utf-8.add"
 o.spelllang = "en_us" -- "en"
