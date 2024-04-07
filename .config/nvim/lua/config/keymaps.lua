@@ -73,6 +73,7 @@ require("config.keymaps.windows")
 --
 util.set_user_var("IS_NVIM", true)
 
+-- /Users/aaron/.config/nvim/lua/config/keymaps.lua
 -- better up/down
 map({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 map({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
@@ -263,31 +264,11 @@ if not vim.g.native_snippets_enabled then
 end
 
 map("n", "<leader>rw", util.editor.find_and_replace, { noremap = true, silent = true })
-map("n", "<leader>rl", util.editor.find_and_replace_within_lines, { silent = true })
-
--- map('n', '<leader>LR', ':lua vim.cmd("source ~/.config/nvim/init.lua")<CR>', { noremap = true })
-local function delete_mark()
-  local err, mark = pcall(function()
-    vim.cmd("echo 'Enter mark to delete: '")
-    return string.char(vim.fn.getchar())
-  end)
-  if not err or not mark then return end
-  vim.cmd(":delmark " .. mark)
-end
-
-map("n", "dm", delete_mark, { noremap = true })
-map("n", "dM", function()
-  vim.cmd("delmarks a-z0-9")
-end, { noremap = true })
-
--- Web search & URL handling
-map("v", "<leader>gs", util.search_google, { noremap = true, silent = true })
-map("n", "<leader>gu", util.open_url, { noremap = true, silent = true })
-map("v", "<leader>gu", util.v_open_url, { noremap = true, silent = true })
--- map('gx', [[:execute '!open ' . shellescape(expand('<cfile>'), 1)<CR>]]})
+map("n", "<leader>rl", util.editor.find_and_replace_within_lines, { silent = true }) -- map('n', '<leader>LR', ':lua vim.cmd("source ~/.config/nvim/init.lua")<CR>', { noremap = true }) local function delete_mark() local err, mark = pcall(function() vim.cmd("echo 'Enter mark to delete: '") return string.char(vim.fn.getchar()) end) if not err or not mark then return end vim.cmd(":delmark " .. mark) end map("n", "dm", delete_mark, { noremap = true }) map("n", "dM", function() vim.cmd("delmarks a-z0-9") end, { noremap = true }) -- Web search & URL handling map("v", "<leader>gs", util.search_google, { noremap = true, silent = true }) -- map('gx', [[:execute '!open ' . shellescape(expand('<cfile>'), 1)<CR>]]})
 
 map("n", "<leader>uS", function()
   util.toggle_vim_g_variable("enable_leap_lightspeed_mode")
+  vim.api.nvim_echo({ { "Toggled Leap Lightspeed Mode", "Normal" } }, true, {})
 end, { noremap = true })
 
 map("n", "<leader>rx", function()
@@ -419,6 +400,16 @@ wk.register({
           end,
           "Copy file path to clipboard",
         },
+        n = {
+          function()
+            local root = require("lspconfig.util").find_node_modules_ancestor(vim.fn.getcwd())
+            -- get the absolue path of the current file, and remove the root path from the beginning
+            local path = vim.fn.fnamemodify(vim.fn.expand("%"), ":.")
+            vim.api.nvim_call_function("setreg", { "+", path })
+            vim.api.nvim_echo({ { path, "Normal" } }, true, {})
+          end,
+          "Echo file path relative to project root",
+        },
         r = { "<cmd>lua vim.cmd('source ~/.config/nvim/init.lua')<CR>", "Reload config" },
       },
       d = {
@@ -510,7 +501,7 @@ wk.register({
             function()
               T.grep_inspiration_files({})
             end,
-            "Grep Lunarvim files",
+            "Grep all ~Inspiration~ files",
           },
           l = {
             function()
@@ -578,6 +569,10 @@ wk.register({
             end,
             "Grep nvimdots files",
           },
+          X = {
+            T.find_config_files_cursor,
+            "Find [X] config files",
+          },
         },
       },
     },
@@ -610,6 +605,7 @@ wk.register({
       n = { "<cmd>Telescope notify<cr>", "Telescope notify" },
       t = { "<cmd>Telescope todo<cr>", "Todo" },
       x = { "<cmd>lua require('sg.extensions.telescope').fuzzy_search_results()<CR>", "SG live grep" },
+      P = { "<cmd>Telescope spell_suggest<cr>", "Spelling" },
     },
     k = {
       --   r = {

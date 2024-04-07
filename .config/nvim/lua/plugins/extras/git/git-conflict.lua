@@ -13,20 +13,6 @@ return {
       { "<leader>gCl", "<cmd>GitConflictListQf<cr>", desc = "Git Conflict Quicklist" },
       { "[g", "<cmd>GitConflictPrevConflict<cr>", desc = "Prev Git Conflict" },
       { "]g", "<cmd>GitConflictPrevConflict<cr>", desc = "Next Git Conflict" },
-      {
-        "<leader>gx",
-        function()
-          require("plugins.hydra.git-action").open_git_conflict_hydra()
-        end,
-        desc = "Conflict",
-      },
-      {
-        "<leader>gz",
-        function()
-          require("plugins.hydra.git-action").open_git_signs_hydra()
-        end,
-        desc = "Signs",
-      },
     },
   },
   {

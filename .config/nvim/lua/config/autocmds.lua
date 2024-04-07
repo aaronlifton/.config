@@ -112,7 +112,7 @@ local auto_close_filetype = {
   "lazy",
   -- "mason"
   "lspinfo",
-  "toggleterm",
+  -- "toggleterm",
   -- "null-ls-info",
   -- "TelescopePrompt",
   "notify",
@@ -122,7 +122,7 @@ local auto_close_filetype = {
 ac("BufLeave", {
   group = ag("lazyvim_auto_close_win", { clear = true }),
   callback = function(event)
-    local ft = vim.api.nvim_buf_get_option(event.buf, "filetype")
+    local ft = vim.api.nvim_get_option_value("filetype", { buf = event.buf })
 
     if vim.fn.index(auto_close_filetype, ft) ~= -1 then
       local winids = vim.fn.win_findbuf(event.buf)
@@ -296,20 +296,28 @@ ac({ "BufLeave", "FocusLost", "InsertEnter", "CmdlineEnter", "WinLeave" }, {
   end,
 })
 
+local spectre_panel_group = ag("spectre_panel", { clear = true })
+ac("FileType", {
+  group = spectre_panel_group,
+  pattern = "spectre_panel",
+  callback = function()
+    if vim.fn.line(".") ~= 1 then vim.cmd("norm! gg") end
+  end,
+})
+
 -- Auto toggle hlsearch
 local ns = vim.api.nvim_create_namespace("toggle_hlsearch")
 local function toggle_hlsearch(char)
   if vim.fn.mode() == "n" then
     local keys = { "<CR>", "n", "N", "*", "#", "?", "/" }
     local new_hlsearch = vim.tbl_contains(keys, vim.fn.keytrans(char))
-
     if vim.opt.hlsearch:get() ~= new_hlsearch then vim.opt.hlsearch = new_hlsearch end
   end
 end
 vim.on_key(toggle_hlsearch, ns)
 
 -- Create a dir when saving a file if it doesn't exist
--- ac("BufWritePre", {
+-- ac("BufWritePcre", {
 --   group = ag("auto_create_dir", { clear = true }),
 --   callback = function(args)
 --     if args.match:match("^%w%w+://") then return end

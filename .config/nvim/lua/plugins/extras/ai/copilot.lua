@@ -36,7 +36,9 @@ return {
           dismiss = "<M-c>",
         },
       },
-      panel = { enabled = true, auto_refresh = true },
+      -- It is recommended to disable copilot.lua's suggestion and panel modules, as they can interfere with completions properly appearing in copilot-cmp. To do so, simply place the following in your copilot.lua config:
+      panel = { enabled = false },
+      -- panel = { enabled = true, auto_refresh = true },
       filetypes = {
         markdown = true,
         help = true,

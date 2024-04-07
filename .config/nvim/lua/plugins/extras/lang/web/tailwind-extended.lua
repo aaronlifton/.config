@@ -56,9 +56,6 @@ return {
         tailwindcss = {
           filetypes_include = tailwind_filetypes,
         },
-        -- emmet_ls = {
-        --   filetypes = tailwind_filetypes,
-        -- },
       },
     },
   },

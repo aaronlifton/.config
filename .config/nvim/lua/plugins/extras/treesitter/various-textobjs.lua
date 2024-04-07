@@ -1,3 +1,7 @@
+local textobjs = pcall(require, "various-textobjs")
+if not textobjs then textobjs = {
+  diagnostics = function() end,
+} end
 return {
   "chrisgrieser/nvim-various-textobjs",
   opts = { useDefaultKeymaps = false },
@@ -9,7 +13,16 @@ return {
     { "aC", ft = { "markdown" }, mode = { "o", "x" }, function() require("various-textobjs").mdFencedCodeBlock("outer") end, desc = "CodeBlock" },
     { "ie", ft = { "markdown" }, mode = { "o", "x" }, function() require("various-textobjs").mdEmphasis("inner") end, desc = "Emphasis" },
     { "ae", ft = { "markdown" }, mode = { "o", "x" }, function() require("various-textobjs").mdEmphasis("outer") end, desc = "Emphasis" },
-    { "gd", mode = { "o", "x" }, function() require("various-textobjs").diagnostics() end, desc = "Diagnostics" },
+    {
+      "gd", mode = { "o", "x" }, 
+      function()
+        local textobjs = pcall(require, "various-textobjs")
+        if textobjs then
+          textobjs.diagnostics()
+        end
+      end,
+      desc = "Diagnostics"
+    },
     -- { "iy", ft = { "python" }, mode = { "o", "x" }, function() require("various-textobjs").pyTripleQuotes("inner") end, desc = "Triple Quotes" },
     -- { "ay", ft = { "python" }, mode = { "o", "x" }, function() require("various-textobjs").pyTripleQuotes("outer") end, desc = "Triple Quotes" },
     { "iC", ft = { "css", "scss", "less" }, mode = { "o", "x" }, function() require("various-textobjs").cssSelector("inner") end, desc = "CSS Selector" },

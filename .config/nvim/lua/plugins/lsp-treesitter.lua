@@ -14,6 +14,7 @@ return {
         "json",
         "json5",
         "lua",
+        "latex",
         "markdown",
         "markdown_inline",
         "python",
@@ -80,6 +81,8 @@ return {
             ["if"] = "@function.inner",
             ["ac"] = "@class.outer",
             ["ic"] = "@class.inner",
+            ["aP"] = "@parameter.outer",
+            ["iP"] = "@parameter.inner",
           },
         },
         swap = {

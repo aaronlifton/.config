@@ -5,6 +5,45 @@ return {
     config = true,
     -- Uncomment next line if you want to follow only stable versions
     -- version = "*"
+    opts = {
+      snippet_engine = "luasnip",
+      enabled = true,
+      placeholders_text = {
+        description = "",
+      },
+      languages = {
+        lua = {
+          template = {
+            annotation_convention = "ldoc",
+          },
+        },
+        python = {
+          template = {
+            annotation_convention = "google_docstrings",
+          },
+        },
+        rust = {
+          template = {
+            annotation_convention = "rustdoc",
+          },
+        },
+        javascript = {
+          template = {
+            annotation_convention = "jsdoc",
+          },
+        },
+        typescript = {
+          template = {
+            annotation_convention = "tsdoc",
+          },
+        },
+        typescriptreact = {
+          template = {
+            annotation_convention = "tsdoc",
+          },
+        },
+      },
+    },
     keys = {
       -- {
       --   "<leader>cgf",

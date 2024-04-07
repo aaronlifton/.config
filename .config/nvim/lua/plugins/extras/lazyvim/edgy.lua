@@ -3,10 +3,11 @@ return {
     "folke/edgy.nvim",
     optional = true,
     opts = function(_, opts)
-      local left_keys = {}
-      for key, _ in pairs(opts.left) do
-        table.insert(left_keys, key)
-      end
+      -- local left_keys = {}
+      -- opts.bottom[1] = {}
+      -- for idx, _ in pairs(opts.bottom) do
+      --   if idx > 1 then opts.bottom[idx - 1] = opts[idx] end
+      -- end
       -- local tmp = opts.left[#left_keys - 1]
       -- opts.left[#left_keys - 1] = { ft = "hydra_hint", title = "Hydra", size = { height = 0.5 }, pinned = true }
       -- table.insert(opts.left, tmp)

@@ -8,6 +8,6 @@ return {
   cmd = { "Neogit" },
   opts = {},
   keys = {
-    { "<leader>gn", "<cmd>Neogit<cr>", desc = "Neogit" },
+    { "<leader>gN", "<cmd>Neogit<cr>", desc = "Neogit" },
   },
 }

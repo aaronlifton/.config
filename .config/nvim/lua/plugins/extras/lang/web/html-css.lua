@@ -1,4 +1,10 @@
-local html_filetypes = { "html", "javascriptreact", "javascript.jsx", "typescriptreact", "typescript.tsx" }
+local html_filetypes = {
+  "html",
+  "javascriptreact",
+  "javascript.jsx",
+  "typescriptreact",
+  "typescript.tsx",
+}
 
 return {
   {
@@ -29,15 +35,6 @@ return {
         },
         html = {
           filetypes = html_filetypes,
-          -- filetypes = {
-          --   "html",
-          --   -- "javascript",
-          --   "javascriptreact",
-          --   "javascript.jsx",
-          --   -- "typescript",
-          --   "typescriptreact",
-          --   "typescript.tsx",
-          -- },
         },
         cssmodules_ls = {},
         css_variables = {},
@@ -61,6 +58,11 @@ return {
             propertyIgnoredDueToDisplay = "warning",
           },
         },
+      },
+      setup = {
+        emmet_ls = function(_, opts)
+          opts.capabilities.textDocument.completion.completionItem.snippetSupport = true
+        end,
       },
     },
   },

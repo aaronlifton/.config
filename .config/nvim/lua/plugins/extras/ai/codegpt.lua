@@ -34,7 +34,7 @@ return {
       {
         "<leader>CCr",
         "<cmd>Chat code_edit<cr>",
-        desc = "Refactor code",
+        desc = "Code edit",
         mode = { "v" },
       },
     },
@@ -54,6 +54,7 @@ return {
         use_as_input = "<c-i>", -- key to use the popup content as input for a new API request
       }
 
+      vim.cmd("echo 'CodeGPT.nvim loaded'")
       vim.g["codegpt_commands"] = {
         ["tests"] = {
           language_instructions = {
@@ -82,7 +83,7 @@ return {
           },
 
           -- Overrides the user message template
-          user_message_template = "I have the following {{language}} code: ```{{filetype}}\n{{text_selection}}```\nEdit the above code. {{language_instructions}}",
+          user_message_template = "{{language_instructions}}\nI have the following {{language}} code: ```{{filetype}}\n{{text_selection}}```\nEdit the above code. {{command_args}}",
           callback_type = "code_popup",
         },
       }
@@ -92,10 +93,22 @@ return {
     "nvim-lualine/lualine.nvim",
     optional = true,
     after = "CodeGPT.nvim",
-    -- opts = function(_, opts)
-    --   local codegpt = require("codegpt")
-    --   table.insert(opts.sections.lualine_x, 2, { codegpt.get_status, "encoding", "fileformat" })
-    -- end,
+    opts = function(_, opts)
+      local codegpt = require("codegpt")
+      table.insert(opts.sections.lualine_x, 2, {
+        codegpt.get_status,
+        "encoding",
+        "fileformat",
+        on_click = function(num_clicks, mouse_button, mods)
+          local data = { num_clicks = num_clicks, mouse_button = mouse_button, mods = mods }
+          vim.api.nvim_echo({ { "mods: " .. vim.inspect(data) } }, true, {})
+
+          if num_clicks == 1 and mouse_button == 1 and #mods == 0 then
+            vim.api.nvim_echo({ { "CodeGPT: " .. codegpt.get_status() } }, true, {})
+          end
+        end,
+      })
+    end,
   },
   {
     "folke/which-key.nvim",

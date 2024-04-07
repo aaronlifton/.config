@@ -11,8 +11,5 @@
         "enabled": true
       }
     }
-  },
-  "lspconfig": {
-    "sumneko_lua": {}
   }
 }

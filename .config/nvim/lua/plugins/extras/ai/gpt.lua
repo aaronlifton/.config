@@ -105,37 +105,37 @@ return {
       { "<leader>Cr", "<cmd>ChatGPTRun roxygen_edit<CR>", desc = "Roxygen Edit", mode = { "n", "v" } },
       { "<leader>Cl", "<cmd>ChatGPTRun code_readability_analysis<CR>", desc = "Code Readability Analysis", mode = { "n", "v" },  },
       {
-        '<leader>rE',
+        '<leader>RE',
         '<cmd>Chat explain_code_4<cr>',
         desc = 'Explain code',
         mode = { 'v' },
       },
       {
-        '<leader>rd',
+        '<leader>Rd',
         '<cmd>Chat rails_add_rdoc<cr>',
         desc = 'Write documentation (RDoc)',
         mode = { 'v' },
       },
       {
-        '<leader>rt',
+        '<leader>Rt',
         '<cmd>Chat rails_add_rspec_tests<cr>',
         desc = 'Write unit tests (RSpec)',
         mode = { 'v' },
       },
       {
-        '<leader>re',
+        '<leader>Re',
         '<cmd>Chat rails_edit_code<cr>',
         desc = 'Refactor code (Rails)',
         mode = { 'v' },
       },
       {
-        '<leader>re',
+        '<leader>Re',
         '<cmd>Chat rails_edit_code2<cr>',
         desc = 'Refactor code2 (Rails)',
         mode = { 'v' },
       },
       {
-        '<leader>rc',
+        '<leader>RC',
         '<cmd>Chat rails_complete_code<cr>',
         desc = 'Complete code (Rails)',
         mode = { 'v' },
@@ -147,7 +147,7 @@ return {
     opts = {
       defaults = {
         ["<leader>C"] = { name = "󰚩 chatGPT" },
-        ["<leader>r"] = { name = "󰚩 RailsGPT", mode = "v" },
+        ["<leader>R"] = { name = "󰚩 RailsGPT", mode = "v" },
       },
     },
   },

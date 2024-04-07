@@ -1,6 +1,15 @@
 local ts_server_activated = true -- Change this variable to false if you want to use typescript-tools instead of lspconfig tsserver implementation
 local ft = { "typescript", "typescriptreact", "javascript", "javascriptreact" }
 
+local tsInlayHints = {
+  includeInlayParameterNameHints = "literal",
+  includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+  includeInlayFunctionParameterTypeHints = true,
+  includeInlayVariableTypeHints = false,
+  includeInlayPropertyDeclarationTypeHints = true,
+  includeInlayFunctionLikeReturnTypeHints = true,
+  includeInlayEnumMemberValueHints = true,
+}
 local inlayHints = {
   includeInlayParameterNameHints = "all",
   includeInlayParameterNameHintsWhenArgumentMatchesName = true,
@@ -45,9 +54,13 @@ return {
               disableSuggestions = true,
             },
           },
+          -- root_dir = function(...)
+          --   return require("lspconfig.util").root_pattern(".git")(...)
+          -- end,
+          -- single_file_support = false,
           settings = {
             typescript = {
-              inlayHints = inlayHints,
+              inlayHints = tsInlayHints,
               implementationsCodeLens = {
                 enabled = true,
               },
@@ -87,6 +100,18 @@ return {
         },
         denols = {},
       },
+      -- setup = {
+      --   tsserver = function()
+      --     require("lspconfig").tsserver.setup({
+      --       on_attach = function(client, bufnr)
+      --         -- echo client
+      --         vim.api.nvim.echo(client)
+      --         vim.api.nvim.echo(vim.client)
+      --         require("workspace-diagnostics").populate_workspace_diagnostics(client, bufnr)
+      --       end,
+      --     })
+      --   end,
+      -- },
     },
   },
   {

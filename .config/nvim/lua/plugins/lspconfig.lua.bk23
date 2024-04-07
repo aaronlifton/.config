@@ -49,16 +49,8 @@ return {
           settings = {
             Lua = {
               telemetry = { enable = false },
-              -- Do not override treesitter lua highlighting with lua_ls's highlighting
-              semantic = { enable = false },
               workspace = {
                 checkThirdParty = false,
-                library = {
-                  [vim.fn.expand("$VIMRUNTIME/lua")] = true,
-                  [vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true,
-                },
-                maxPreload = 100000,
-                preloadFileSize = 10000,
               },
               completion = {
                 -- workspaceWord = true,
@@ -86,7 +78,7 @@ return {
         texlab = { filetypes = { "tex", "pandoc", "bib" } },
         ltex = { filetypes = { "tex", "pandoc", "bib" } },
       },
-      filetypes = { "zig", "gitignore", "gitconfig" },
+      -- filetypes = { "zig", "gitignore", "gitconfig" },
     },
   },
   {

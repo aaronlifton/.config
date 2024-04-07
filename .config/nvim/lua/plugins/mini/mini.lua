@@ -45,6 +45,7 @@ return {
           toggle_preview = "<Tab>",
         },
       })
+      require("mini.splitjoin").setup()
 
       -- local starter = require("mini.starter")
       -- starter.setup({
@@ -361,7 +362,7 @@ return {
       {
         "<leader>Pb",
         function()
-          MiniExtra.pickers.buffers()
+          MiniExtra.pickers.oldfiles()
         end,
         desc = "Buffers",
       },

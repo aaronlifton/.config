@@ -4,4 +4,5 @@ return {
   { import = "plugins.mini.mini-ai" },
   { import = "plugins.mini.mini-animate" },
   { import = "plugins.mini.mini-hipatterns" },
+  { import = "plugins.mini.mini-splitjoin" },
 }

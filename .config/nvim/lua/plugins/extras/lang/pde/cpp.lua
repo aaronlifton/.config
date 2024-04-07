@@ -1,10 +1,8 @@
-if not require("config").pde.cpp then
-  return {}
-end
+if not require("config").pde.cpp then return {} end
 
 local function get_codelldb()
-  local mason_registry = require "mason-registry"
-  local codelldb = mason_registry.get_package "codelldb"
+  local mason_registry = require("mason-registry")
+  local codelldb = mason_registry.get_package("codelldb")
   local extension_path = codelldb:get_install_path() .. "/extension/"
   local codelldb_path = extension_path .. "adapter/codelldb"
   local liblldb_path = extension_path .. "lldb/lib/liblldb.so"
@@ -33,7 +31,12 @@ return {
           server = {
             root_dir = function(...)
               -- using a root .clang-format or .clang-tidy file messes up projects, so remove them
-              return require("lspconfig.util").root_pattern("compile_commands.json", "compile_flags.txt", "configure.ac", ".git")(...)
+              return require("lspconfig.util").root_pattern(
+                "compile_commands.json",
+                "compile_flags.txt",
+                "configure.ac",
+                ".git"
+              )(...)
             end,
             capabilities = {
               offsetEncoding = { "utf-16" },
@@ -82,12 +85,15 @@ return {
       },
       setup = {
         clangd = function(_, opts)
-          require("clangd_extensions").setup {
+          require("clangd_extensions").setup({
             server = opts.server,
             extensions = opts.extensions,
-          }
+          })
+          opts.capabilities.offsetEncoding = { "utf-16" }
           return true
         end,
+        texlab = {},
+        ltex = { filetypes = { "tex", "pandoc", "bib" } },
       },
     },
   },
@@ -97,7 +103,7 @@ return {
       setup = {
         codelldb = function()
           local codelldb_path, _ = get_codelldb()
-          local dap = require "dap"
+          local dap = require("dap")
           dap.adapters.codelldb = {
             type = "server",
             host = "localhost",
@@ -132,7 +138,7 @@ return {
   {
     "nvim-cmp",
     opts = function(_, opts)
-      table.insert(opts.sorting.comparators, 1, require "clangd_extensions.cmp_scores")
+      table.insert(opts.sorting.comparators, 1, require("clangd_extensions.cmp_scores"))
     end,
   },
   {
@@ -142,7 +148,7 @@ return {
     },
     opts = function(_, opts)
       vim.list_extend(opts.adapters, {
-        require "neotest-gtest",
+        require("neotest-gtest"),
       })
     end,
   },

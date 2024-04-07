@@ -6,9 +6,7 @@ local mf = require("mini.files")
 function M.map_split(buf_id, lhs, direction)
   local rhs = function()
     local fsentry = mf.get_fs_entry()
-    if fsentry.fs_type ~= "file" then
-      return
-    end
+    if fsentry.fs_type ~= "file" then return end
     -- Make new window and set it as target
     local new_target_window
     vim.api.nvim_win_call(mf.get_target_window(), function()
@@ -42,9 +40,7 @@ end
 
 function M.get_current_dir()
   local fsentry = mf.get_fs_entry()
-  if not fsentry then
-    return nil
-  end
+  if not fsentry then return nil end
   return vim.fs.dirname(fsentry.path)
 end
 
@@ -52,6 +48,7 @@ function M.files_set_cwd(path)
   -- Works only if cursor is on the valid file system entry
   local cur_entry_path = mf.get_fs_entry().path
   local cur_directory = vim.fs.dirname(cur_entry_path)
+  if not cur_directory then return end
   vim.fn.chdir(cur_directory)
 end
 
@@ -74,19 +71,13 @@ end
 --
 function M.file_actions(bufnr)
   local cwd = M.get_current_dir()
-  require("plugins.hydra.file-action").open(cwd, bufnr, function()
-    mf.close()
-  end)
+  vim.api.nvim_echo({ { "cwd: " .. cwd, "Added" } }, true, {})
 end
 
 function M.folder_actions(bufnr)
   local fsentry = mf.get_fs_entry()
-  if not fsentry then
-    return nil
-  end
-  require("plugins.hydra.folder-action").open(fsentry.path, bufnr, function()
-    mf.close()
-  end)
+  if not fsentry then return nil end
+  vim.api.nvim_echo({ { "fsentry: " .. fsentry.path, "Added" } }, true, {})
 end
 
 return M

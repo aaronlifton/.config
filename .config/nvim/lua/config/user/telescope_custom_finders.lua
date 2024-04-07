@@ -20,7 +20,7 @@ local ftw_dir = vim.fn.expand("~/Code/dotfiles/Matt-FTW-dotfiles/.config/nvim")
 local nyoom_dir = vim.fn.expand("~/.config/nyoom.nvim")
 local niocalbanese_dir = vim.fn.expand("~/Code/dotfiles/nicoalbanese/.config/nvim")
 local modern_nvim_dir = vim.fn.expand("~/Code/dotfiles/modern-neovim")
-local nvim_pde_dir = vim.fn.expand("~/Code/dotfiles/nvim-pde")
+local nvim_pde_dir = vim.fn.expand("~/.config/neovim-pde")
 local folk_dir = vim.fn.expand("~/Code/dotfiles/folke-nvim")
 local dots_dir = vim.fn.expand("~/Code/dotfiles/nvim-dots")
 local inspiration_dirs = {
@@ -63,6 +63,23 @@ function M.find_config_files(opts)
   local theme_opts = themes.get_ivy({
     sorting_strategy = "ascending",
     layout_strategy = "bottom_pane",
+    prompt_prefix = ">> ",
+    prompt_title = "~ Search My Config (Files) ~",
+    cwd = dir,
+    search_dirs = { dir },
+  })
+  opts = vim.tbl_deep_extend("force", theme_opts, opts)
+  builtin.find_files(opts)
+end
+
+function M.find_config_files_cursor(opts)
+  local dir = get_runtime_dir()
+  opts = opts or {}
+  local base_dir = get_lazyvim_base_dir()
+  -- get parent foler
+  local theme_opts = themes.get_dropdown({
+    sorting_strategy = "ascending",
+    layout_strategy = "cursor",
     prompt_prefix = ">> ",
     prompt_title = "~ Search My Config (Files) ~",
     cwd = dir,

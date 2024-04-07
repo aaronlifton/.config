@@ -15,6 +15,7 @@ o.background = "dark"
 o.backspace = { "eol", "start", "indent" }
 o.breakindent = true
 o.clipboard:append({ "unnamed", "unnamedplus" })
+o.fillchars = { eob = " " }
 o.spell = false
 o.spellfile = "/Users/aaron/.config/nvim/spell/en.utf-8.add"
 o.spelllang = "en_us" -- "en"
@@ -23,19 +24,19 @@ o.startofline = true
 o.swapfile = false
 o.textwidth = 80
 
-g.material_style = "darker"
-g.disable_leap_secondary_labels = false
-g.enable_leap_lightspeed_mode = false
 g.astro_typescript = "enable"
-g["denops#deno"] = "/Users/aaron/.deno/bin/deno"
-g.native_snippets_enabled = false
-g.multiplexer = "wez" -- tmux
-g.pairs_plugin = "mini.pairs"
-g.outline_plugin = "outline.nvim"
-g.replace_typescript_ls = false
+g.disable_leap_secondary_labels = false
+g.editorconfig = true
+g.enable_leap_lightspeed_mode = false
 g.gui_font_face = "Hack Nerd Font Mono"
 g.gui_font_size = 18
-g.editorconfig = true
+g.material_style = "darker"
+g.multiplexer = "kitty" -- "wez" -- "tmux"
+g.native_snippets_enabled = false
+g.outline_plugin = "outline.nvim"
+g.pairs_plugin = "mini.pairs"
+g.replace_typescript_ls = false
+g["denops#deno"] = "/Users/aaron/.deno/bin/deno"
 g.root_spec = {
   "lsp",
   { ".git", "lua", ".obsidian", "package.json", "Makefile", "go.mod", "cargo.toml", "pyproject.toml", "src" },

@@ -3,6 +3,7 @@ local p = require("persistence")
 
 return {
   "folke/persistence.nvim",
+  enabled = false,
   keys = {
     {
       "<leader>qS",

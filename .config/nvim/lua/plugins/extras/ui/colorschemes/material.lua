@@ -8,7 +8,11 @@ return {
     style = "darker", -- darker, lighter, oceanic, palenight, deep ocean
   },
   config = function(_, opts)
-    -- local colors = require("material.colors")
+    local colors = require("material.colors")
+    local e = colors.editor
+    local m = colors.main
+    local b = colors.backgrounds
+    local g = colors.git
     require("material").setup({
       contrast = {
         terminal = true, -- Enable contrast for the built-in terminal
@@ -131,12 +135,26 @@ return {
         DropBarIconKindReference = { link = "GrappleName" },
         Search = { link = "Added" },
         IncSearch = { bg = "#cbe699" },
+        MiniPickBorder = { fg = e.border, bg = e.bg },
+        MiniPickBorderBusy = { fg = e.border, bg = e.bg },
+        MiniPickBorderText = { fg = e.fg, bg = e.bg },
+        MiniPickIconDirectory = { fg = e.fg, bg = e.bg_alt },
+        MiniPickIconFile = { fg = e.fg, bg = e.bg },
+        MiniPickHeader = { fg = e.fg, bg = e.bg },
+        MiniPickMatchCurrent = { fg = g.modified, bg = b.cursor_line },
+        MiniPickMatchMarked = { fg = m.green, bg = m.darkred },
+        MiniPickMatchRanges = { fg = m.orange, bg = e.bg },
+        MiniPickNormal = { fg = e.fg, bg = b.floating_windows },
+        MiniPickPreviewLine = { fg = b.cursor_line, bg = m.darkyellow },
+        MiniPickPreviewRegion = { fg = e.fg, bg = e.highlight },
+        -- vim.api.nvim_set_hl(0, "LeapBackdrop", { link = "Comment" })
+        GlanceBorderTop = { fg = "#353535" },
+        GlanceListBorderBottom = { fg = "#353535" },
+        GlancePreviewBorderBottom = { fg = "#353535" },
       },
       -- /END
     })
 
-    vim.cmd("colorscheme material")
-    -- setup mini.pick
-    require("config/highlights")
+    -- vim.cmd("colorscheme material")
   end,
 }

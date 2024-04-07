@@ -258,14 +258,4 @@ function M.search_google()
   vim.fn.jobstart({ "open", search_url })
 end
 
-function M.open_url()
-  local text_under_cursor = vim.fn.expand("<cword>")
-  vim.fn.jobstart({ "open", text_under_cursor })
-end
-
-function M.v_open_url()
-  local selected_text = vim.fn.getreg("*")
-  vim.fn.jobstart({ "open", selected_text })
-end
-
 return M
