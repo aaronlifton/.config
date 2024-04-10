@@ -35,6 +35,16 @@ return {
       vim.list_extend(opts.ensure_installed, { "fennel-language-server" })
     end,
   },
+  {
+    "nvimtools/none-ls.nvim",
+    optional = true,
+    opts = function(_, opts)
+      local null_ls = require("null-ls")
+      opts.sources = vim.list_extend(opts.sources or {}, {
+        null_ls.builtins.formatting.fnlfmt,
+      })
+    end,
+  },
   -- {
   --   "rktjmp/hotpot.nvim",
   --   lazy = false,

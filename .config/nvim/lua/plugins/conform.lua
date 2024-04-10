@@ -47,7 +47,7 @@ return {
         ["yaml"] = { { "prettier" } },
         ["zig"] = { { "zigfmt" } },
         ["zsh"] = { { "shfmt" } },
-        fennel = { "fnlfmt" },
+        -- fennel = { "fnlfmt" },
         clojure = { "joker" },
         clojurescript = { "joker" },
       },

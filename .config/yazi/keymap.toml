@@ -21,6 +21,10 @@ append_keymap = [
   ], exec = "cd ~/.config/nvim", desc = "Go to the nvim directory" },
   { on = [
     "g",
+    "h",
+  ], exec = "cd ~/.config", desc = "Go to ~/.config" },
+  { on = [
+    "g",
     "c",
   ], exec = "cd ~/Code", desc = "Go to the code directory" },
   { on = [

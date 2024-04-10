@@ -74,24 +74,6 @@ require("config.keymaps.windows")
 util.set_user_var("IS_NVIM", true)
 
 -- /Users/aaron/.config/nvim/lua/config/keymaps.lua
--- better up/down
-map({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
-map({ "n", "x" }, "k", "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
-
--- Move Lines
-map("n", "<A-j>", "<cmd>m .+1<cr>==", { desc = "Move down" })
-map("n", "<A-k>", "<cmd>m .-2<cr>==", { desc = "Move up" })
-map("i", "<A-j>", "<esc><cy md>m .+1<cr>==gi", { desc = "Move down" })
-map("i", "<A-k>", "<esc><cmd>m .-2<cr>==gi", { desc = "Move up" })
-map("v", "<A-j>", ":m '>+1<cr>gv=gv", { desc = "Move down" })
-map("v", "<A-k>", ":m '<-2<cr>gv=gv", { desc = "Move up" })
-
-map("n", "<M-j>", "<cmd>m .+1<cr>==", { desc = "Move down" })
-map("n", "<M-k>", "<cmd>m .-2<cr>==", { desc = "Move up" })
-map("i", "<M-j>", "<esc><cy md>m .+1<cr>==gi", { desc = "Move down" })
-map("i", "<M-k>", "<esc><cmd>m .-2<cr>==gi", { desc = "Move up" })
-map("v", "<M-j>", ":m '>+1<cr>gv=gv", { desc = "Move down" })
-map("v", "<M-k>", ":m '<-2<cr>gv=gv", { desc = "Move up" })
 
 -- Buffers
 map("n", "<leader>bf", "<cmd>bfirst<cr>", { desc = "First Buffer" })
@@ -119,7 +101,7 @@ map("n", "<S-q>", "<cmd>bdelete!<CR>", { silent = true })
 --   end
 -- end, { noremap = true })
 --
--- Toggle statuslingkgkgkllle
+-- Toggle statusline
 map("n", "<leader>uS", function()
   if o.laststatus:get() == 0 then
     o.laststatus = 3
@@ -281,6 +263,7 @@ end, { noremap = true, desc = "Show current buffer name" })
 -- vim.api.nvim_echo({{vim.api.nvim_buf_get_name(vim.fn.bufnr()), "none"}},false, {})
 -- vim.api.nvim_echo({{table.concat(msg, linesep), "ErrorMsg"}}, true, {})
 
+-- Dont need
 map("v", "<C-a>", "^", { noremap = true })
 map("v", "<C-e>", "$", { noremap = true })
 map("v", "<Tab>", "$", { noremap = true })

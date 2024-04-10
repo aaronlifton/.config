@@ -18,6 +18,7 @@
     "lazyvim.plugins.extras.lang.terraform",
     "lazyvim.plugins.extras.lang.tex",
     "lazyvim.plugins.extras.lang.yaml",
+    "lazyvim.plugins.extras.lsp.none-ls",
     "lazyvim.plugins.extras.test.core",
     "lazyvim.plugins.extras.ui.alpha",
     "lazyvim.plugins.extras.ui.edgy",
@@ -163,7 +164,7 @@
     "plugins.extras.util.cloak",
     "plugins.extras.util.dial",
     "plugins.extras.util.hawtkeys",
-    "plugins.extras.util.scrollEOF",
+    "plugins.extras.util.scrolleof",
     "plugins.extras.window.window-picker",
     "plugins.extras.window.windows",
     "plugins.extras.window.winshift"
