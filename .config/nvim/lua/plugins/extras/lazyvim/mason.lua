@@ -11,6 +11,11 @@ return {
         "prettier",
         "markdownlint",
         "markdownlint-cli2",
+        "solargraph",
+        "rubocop",
+        "standardrb",
+        "sorbet",
+        "ruby-lsp",
       },
       ui = {
         border = "rounded",
@@ -38,14 +43,16 @@ return {
         "commitlint",
         "cspell",
         "css-lsp", -- csslss
-        "cssmodules-language-server", --- cssmodules_ls",
+        "cssmodules-language-server", -- cssmodules_ls",
         "deno denols",
         "docker-compose-language-service", -- docker_compose_language_service",
-        "dockerfile-language-server", --dockerls",
+        "dockerfile-language-server", -- dockerls",
+        "dprint",
         "elixir-ls",
         "emmet-language-server",
         "emmet-ls",
         "eslint-lsp",
+        "eslint_d",
         "fennel-language-server",
         "fixjson",
         "go-debug-adapter",
@@ -63,11 +70,12 @@ return {
         "gotestsum",
         "graphql-language-service-cli", -- graphql",
         "hadolint",
-        "html-lsp", --html
-        "htmx-lsp", --htmx
+        "html-lsp", -- html
+        "htmx-lsp", -- htmx
+        "impl", -- go (none-ls)
         "jq",
         "js-debug-adapter",
-        "json-lsp", --jsonls
+        "json-lsp", -- jsonls
         "lua-language-server", -- lua_ls",
         "luacheck",
         "markdown-toc",
@@ -75,12 +83,13 @@ return {
         "node-debug2-adapter",
         "oxlint",
         "prettier",
+        "prettierd",
         "prisma-language-server",
         "revive", -- drop in replacement for golint
         "ripper-tags",
         "rstcheck",
         "rubocop",
-        "ruby-lsp", -- ruby_ls",
+        "ruby-lsp", -- ruby_ls,
         "rust-analyzer",
         "rustywind",
         "selene",
@@ -92,50 +101,54 @@ return {
         "sqlls",
         "standardjs",
         "standardrb",
+        "rubocop",
+        "ruby-lsp",
+        "sorbet",
         "staticcheck", -- golang
         "stylelint",
         "stylua",
-        "svelte-language-server svelte",
+        "svelte-language-server",
         "tailwindcss-language-server", -- tailwindcss,
         "taplo",
         "terraform-ls", -- terraformls,
         "typescript-language-server", --tsserver,
         "typos",
-        "vim-language-server", -- vimls,
-        "yaml-language-server", --yamlls",
+        "vim-language-server", -- vimls
+        "yaml-language-server", -- yamlls
+        "yamllint", -- install via pip (or brew)
         "zls",
         "zprint",
-        -- "angular-language-server",, -- angularls
+        -- "angular-language-server", -- angularls
         -- "ansible-language-server", -- ansiblels
-        -- "autotools-language-server", -- autotools_ls"
+        -- "autotools-language-server", -- autotools_ls
         -- "bash-debug-adapter",
         -- "bash-debug-adapter",
         -- "bash-language-server",
-        -- "bash-language-server", -- bashls"
+        -- "bash-language-server", -- bashls
         -- "buf-language-server", -- bufls
         -- "clangd",
-        -- "clojure-lsp clojure_lsp",
-        -- "cmake-language-server cmake",
+        -- "clojure-lsp", -- clojure_lsp
+        -- "cmake-language-server", --cmake -- cmake works with none-ls
         -- "cmakelint",
         -- "codelldb",
         -- "debugpy",
         -- "debugpy",
         -- "delve",
         -- "delve",
-        -- "elm-language-server elmls",
+        -- "elm-language-server"m -- elmls
         -- "erg",
         -- "flake8",
-        -- "foam-language-server foam_ls",
+        -- "foam-language-server", -- foam_ls
         -- "gci",
         -- "iferr",
         -- "impl",
         -- "impl",
         -- "intelephense",
-        -- "jedi-language-server jedi_language_server",
+        -- "jedi-language-server", -- jedi_language_server
         -- "lemminx",
         -- "marksman",
         -- "marksman",
-        -- "neocmakelsp neocmake",
+        -- "neocmakelsp", -- neocmake -- investigate this for C++
         -- "nil nil_ls",
         -- "nilaway",
         -- "prettierd",
@@ -144,16 +157,15 @@ return {
         -- "pyre",
         -- "pyright",
         -- "pyright",
-        -- "python-lsp-server pylsp",
-        -- "rnix-lsp rnix",
+        -- "python-lsp-server", -- pylsp
+        -- "rnix-lsp" -- rnix",
         -- "ruff",
-        -- "ruff-lsp ruff_lsp",
+        -- "ruff-lsp" -- ruff_lsp
         -- "ruff-lsp",
-        -- "salt-lsp salt_ls",
+        -- "salt-lsp" -- salt_ls
         -- "shellharden",
         -- "texlab",
-        -- "vue-language-server volar",
-        -- more
+        -- "vue-language-server" -- volar
       },
     },
   },

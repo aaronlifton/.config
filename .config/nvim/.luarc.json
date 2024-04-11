@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/LuaLS/vscode-lua/master/setting/schema.json",
+  "diagnostics.globals": ["LazyVim", "vim", "MiniFiles", "MiniPickers"],
+  "workspace": {
+    "maxPreload": 1600,
+    "preloadFileSize": 1000,
+    "ignoreDir": [".vscode", "aaron"],
+    "checkThirdParty": false,
+    "library": [
+      "/Users/aaron/Code/nvim-plugins/leap.nvim/lua/",
+      "/Users/aaron/.local/share/nvim/lazy/neodev.nvim/types/nightly/",
+      "/Users/aaron/.local/share/nvim/lazy/edgy.nvim/lua/"
+    ]
+  }
+}

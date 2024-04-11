@@ -1,7 +1,7 @@
 return {
   {
     "michaelb/sniprun",
-    run = "bash ./install.sh",
+    run = "bass ./install.sh",
     cmd = { "SnipRun", "SnipInfo", "SnipLive", "SnipClose", "SnipReset", "SnipReplMemoryClean" },
     opts = {
       selected_interpreters = {}, --# use those instead of the default for the current filetype

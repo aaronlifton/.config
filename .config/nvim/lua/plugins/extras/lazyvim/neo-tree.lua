@@ -1,3 +1,9 @@
+local utils = {
+  notify = function(msg, level)
+    vim.notify(msg, level, { title = "NeoTree" })
+  end,
+}
+
 return {
   "nvim-neo-tree/neo-tree.nvim",
   opts = {

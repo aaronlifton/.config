@@ -14,7 +14,7 @@ return {
           i = {
             ["<C-k>"] = lga_actions.quote_prompt(),
             ["<C-I>"] = lga_actions.quote_prompt({ postfix = " --iglob " }),
-            ["<C-m>"] = lga_actions.quote_prompt({ postfix = " --glob **/*.{md,mdx} " }),
+            -- ["<C-m>"] = lga_actions.quote_prompt({ postfix = " --glob **/*.{md,mdx} " }),
           },
         },
         -- ... also accepts theme settings, for example:
@@ -28,7 +28,7 @@ return {
   keys = function()
     local lga_actions = require("telescope-live-grep-args.actions")
     return {
-      { "<leader>gc", function() require("telescope-live-grep-args.shortcuts").grep_word_under_cursor() end, desc = "Grep (current word)" },
+      { "<leader>su", function() require("telescope-live-grep-args.shortcuts").grep_word_under_cursor() end, desc = "Grep (current word)" },
       { "<leader>sg", function() require("telescope").extensions.live_grep_args.live_grep_args() end,        desc = "Grep (root dir)" },
       { "<leader>/", function() require("telescope").extensions.live_grep_args.live_grep_args() end,         desc = "Grep (root dir)" },
       }

@@ -16,7 +16,6 @@ return {
         opts.linters_by_ft[ft] = opts.linters_by_ft[ft] or {}
         table.insert(opts.linters_by_ft[ft], "typos")
       end
-      return opts
     end,
   },
 }

@@ -54,31 +54,31 @@ return {
     --     { name = "buffer" },
     --   },
     -- })
-    cmp.setup.cmdline("/", {
-      mapping = cmp.mapping.preset.cmdline({
-        ["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-        ["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-        ["<C-j>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-        ["<C-k>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-      }),
-      sources = {
-        { name = "buffer" },
-      },
-    })
-    cmp.setup.cmdline(":", {
-      mapping = cmp.mapping.preset.cmdline(),
-      sources = cmp.config.sources({
-        { name = "path" },
-      }, {
-        {
-          name = "cmdline",
-          option = {
-            ignore_cmds = { "Man", "!" },
-          },
-        },
-      }),
-    })
-
+    -- cmp.setup.cmdline("/", {
+    --   mapping = cmp.mapping.preset.cmdline({
+    --     ["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
+    --     ["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+    --     ["<C-j>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
+    --     ["<C-k>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+    --   }),
+    --   sources = {
+    --     { name = "buffer" },
+    --   },
+    -- })
+    -- cmp.setup.cmdline(":", {
+    --   mapping = cmp.mapping.preset.cmdline(),
+    --   sources = cmp.config.sources({
+    --     { name = "path" },
+    --   }, {
+    --     {
+    --       name = "cmdline",
+    --       option = {
+    --         ignore_cmds = { "Man", "!" },
+    --       },
+    --     },
+    --   }),
+    -- })
+    --
     opts.performance = {
       debounce = 20,
       throttle = 20,
@@ -94,9 +94,10 @@ return {
       -- { name = "cmp_tabnine" },
       { name = "treesitter" },
       { name = "luasnip", max_item_count = 8 },
+      { name = "path" },
     }, {
       { name = "buffer" },
-      { name = "path" },
+      -- { name = "path" },
     })
     opts.window = {
       -- completion = cmp_window.bordered(),
@@ -191,6 +192,10 @@ return {
       ["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
       -- ["<C-e>"] = cmp.mapping.abort(),
       -- ["<CR>"] = cmp.mapping.confirm({ select = true }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+      ["<CR>"] = cmp.mapping.confirm({
+        behavior = cmp.ConfirmBehavior.Insert,
+        select = true,
+      }),
       -- ["<CR>"] = cmp.mapping({
       --   i = cmp.mapping.confirm({ behavior = cmp.ConfirmBehavior.Replace, select = false }),
       --   c = function(fallback)

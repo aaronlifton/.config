@@ -16,11 +16,11 @@ table.insert(keys, { "<leader>bs", "<Cmd>BufferLineSortByExtension<CR>", desc = 
 return {
   "akinsho/bufferline.nvim",
   keys = keys,
-  opts = {
-    options = {
-      modified_icon = "",
-      color_icons = true,
-      separator_style = "slope",
-    },
-  },
+  -- opts = {
+  --   options = {
+  --     modified_icon = "",
+  --     color_icons = true,
+  --     separator_style = "slope",
+  --   },
+  -- },
 }

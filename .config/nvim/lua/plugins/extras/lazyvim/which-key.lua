@@ -20,6 +20,8 @@ return {
       ["<leader>u"] = { name = " ui" },
       ["<leader>w"] = { name = "󱂬 windows" },
       ["<leader>x"] = { name = "󰁨 diagnostics/quickfix" },
+      ["<leader>cl"] = { name = "lsp" },
+      ["<leader>uU"] = { name = "ui utilities" },
     },
   },
 }

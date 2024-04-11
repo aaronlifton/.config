@@ -1,6 +1,5 @@
 return {
   "HiPhish/rainbow-delimiters.nvim",
-  enabled = false,
   event = "LazyFile",
   config = function()
     require("rainbow-delimiters.setup").setup({

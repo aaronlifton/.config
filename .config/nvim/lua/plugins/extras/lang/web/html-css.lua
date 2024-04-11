@@ -108,7 +108,6 @@ return {
         ["typescript"] = { stylelint },
         ["typescriptreact"] = { stylelint },
       })
-      return opts
     end,
   },
   {

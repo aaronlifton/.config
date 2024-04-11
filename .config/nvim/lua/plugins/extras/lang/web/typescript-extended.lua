@@ -100,18 +100,19 @@ return {
         },
         denols = {},
       },
-      -- setup = {
-      --   tsserver = function()
-      --     require("lspconfig").tsserver.setup({
-      --       on_attach = function(client, bufnr)
-      --         -- echo client
-      --         vim.api.nvim.echo(client)
-      --         vim.api.nvim.echo(vim.client)
-      --         require("workspace-diagnostics").populate_workspace_diagnostics(client, bufnr)
-      --       end,
-      --     })
-      --   end,
-      -- },
+      setup = {
+        tsserver = function(server, server_opts)
+          require("lspconfig").tsserver.setup({
+            on_attach = function(client, bufnr)
+              vim.api.nvim_echo({
+                { "TSServer activated", "Type" },
+                { "Collecting workspace diagnostics", "DiagnosticWarn" },
+              }, false, {})
+              require("workspace-diagnostics").populate_workspace_diagnostics(client, bufnr)
+            end,
+          })
+        end,
+      },
     },
   },
   {

@@ -19,8 +19,6 @@ return {
           end,
         },
       }
-
-      return opts
     end,
   },
 }

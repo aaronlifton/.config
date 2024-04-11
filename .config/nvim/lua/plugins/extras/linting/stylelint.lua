@@ -19,8 +19,6 @@ return {
         ["sass"] = { "stylelint" },
         ["less"] = { "stylelint" },
       })
-
-      return opts
     end,
   },
 }

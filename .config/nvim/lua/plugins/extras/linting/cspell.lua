@@ -28,8 +28,6 @@ return {
           end
         end,
       }
-
-      return opts
     end,
   },
 }

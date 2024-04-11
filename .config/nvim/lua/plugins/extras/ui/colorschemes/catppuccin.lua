@@ -106,7 +106,10 @@ return {
         }
       end,
       integrations = {
-        -- alpha = true,
+        aerial = true,
+        alpha = true,
+        flash = true,
+        navic = { enabled = true, custom_bg = "lualine" },
         cmp = true,
         -- barbecue = {
         --   dim_dirname = true, -- directory name is dimmed by default
@@ -125,6 +128,7 @@ return {
         gitsigns = true,
         -- harpoon = false,
         illuminate = true,
+        -- indent_blankline = { enabled = true },
         indent_blankline = {
           enabled = true,
           scope_color = "lavender", -- catppuccin color (eg. `lavender`) Default: text
@@ -133,6 +137,15 @@ return {
         mason = true,
         markdown = true,
         mini = true,
+        -- native_lsp = {
+        --   enabled = true,
+        --   underlines = {
+        --     errors = { "undercurl" },
+        --     hints = { "undercurl" },
+        --     warnings = { "undercurl" },
+        --     information = { "undercurl" },
+        --   },
+        -- },
         native_lsp = {
           enabled = true,
           virtual_text = {
@@ -170,7 +183,6 @@ return {
         },
         -- symbols_outline = false,
         treesitter = true,
-        -- treesitter_context = false,
         treesitter_context = true,
         which_key = true,
       },
@@ -195,6 +207,12 @@ return {
     optional = true,
     opts = {
       load = { "catppuccin-macchiato-cursor", "catppuccin-macchiato-cursorline" },
+    },
+  },
+  {
+    "nvim-lualine/lualine.nvim",
+    options = {
+      theme = "catppuccin",
     },
   },
 }

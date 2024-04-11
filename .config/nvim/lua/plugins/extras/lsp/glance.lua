@@ -12,7 +12,10 @@ return {
   opts = {
     border = {
       enable = true,
+      top_char = "─",
+      bottom_char = "―",
     },
+    use_trouble_qf = true,
     hooks = {
       before_open = function(results, open, jump, method)
         local uri = vim.uri_from_bufnr(0)

@@ -17,6 +17,7 @@ return {
                   -- -- If you are using hotpot.nvim or aniseed,
                   -- -- make the server aware of neovim runtime files.
                   -- library = vim.api.nvim_list_runtime_paths(),
+                  -- checkThirdParty = false
                 },
                 diagnostics = {
                   globals = { "vim" },
@@ -27,6 +28,14 @@ return {
         },
       },
     },
+  },
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = function(_, opts)
+      if type(opts.ensure_installed) == "table" then
+        vim.list_extend(opts.ensure_installed, { "fennel" })
+      end
+    end,
   },
   {
     "williamboman/mason.nvim",
@@ -45,18 +54,12 @@ return {
       })
     end,
   },
-  -- {
-  --   "rktjmp/hotpot.nvim",
-  --   lazy = false,
-  --   config = function()
-  --     require("hotpot").setup()
-  --   end,
-  -- },
   {
     "Olical/nfnl",
     ft = "fennel",
     init = function()
       require("nfnl").setup({})
+      require("fennel.init").init()
     end,
   },
   -- {
@@ -64,5 +67,12 @@ return {
   --   "bakpakin/fennel.vim",
   --   lazy = true,
   --   ft = "fennel"
+  -- },
+  -- {
+  --   "rktjmp/hotpot.nvim",
+  --   lazy = false,
+  --   config = function()
+  --     require("hotpot").setup()
+  --   end,
   -- },
 }

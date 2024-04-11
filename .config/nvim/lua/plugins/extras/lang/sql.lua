@@ -98,8 +98,6 @@ return {
         ["plsql"] = { "sqlfluff" },
         ["mysql"] = { "sqlfluff" },
       })
-
-      return opts
     end,
   },
   {

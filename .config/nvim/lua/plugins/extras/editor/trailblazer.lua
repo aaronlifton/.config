@@ -1,4 +1,4 @@
-return {
+ {
     "LeonHeidelbach/trailblazer.nvim",
     enabled = false,
     keys = {

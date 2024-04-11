@@ -11,6 +11,36 @@ return {
     end,
   },
   {
+    "nvimtools/none-ls.nvim",
+    optional = true,
+    dependencies = {
+      {
+        "williamboman/mason.nvim",
+        opts = function(_, opts)
+          opts.ensure_installed = opts.ensure_installed or {}
+          vim.list_extend(opts.ensure_installed, { "gomodifytags", "impl" })
+        end,
+      },
+    },
+    opts = function(_, opts)
+      local nls = require("null-ls")
+      opts.sources = vim.list_extend(opts.sources or {}, {
+        -- LazyVim:
+        -- nls.builtins.code_actions.gomodifytags,
+        -- nls.builtins.code_actions.impl,
+        -- nls.builtins.formatting.goimports,
+        -- nls.builtins.formatting.gofumpt,
+        nls.builtins.diagnostics.golangci_lint.with({
+          -- condition = function(utils)
+          --   return utils.root_has_file({ ".golangci.yml" })
+          -- end,
+        }),
+        -- TODO: investigate
+        -- nls.diagnostics.staticcheck
+      })
+    end,
+  },
+  {
     "ray-x/go.nvim",
     dependencies = {
       "ray-x/guihua.lua",
@@ -28,7 +58,8 @@ return {
         gofmt = "gopls",
         goimports = "gopls",
         lsp_gofumpt = "true",
-        lsp_inlay_hints = { enable = false },
+        lup_inlay_hints = { enable = false },
+        lsp_codelens = { enable = false },
         run_in_floaterm = true,
         trouble = true,
         lsp_cfg = {
@@ -60,6 +91,7 @@ return {
   {
     "mfussenegger/nvim-lint",
     opts = function(_, opts)
+      -- To set linters to just golangcilint
       -- local settings = {
       --   ["go"] = { "golangcilint" },
       --   ["gomod"] = { "golangcilint" },
@@ -69,6 +101,7 @@ return {
       --   opts.linters_by_ft[ft] = linters
       -- end
 
+      -- TODO: investigate why local function was tried?
       -- Don't overwrite version
       -- lsp_util.add_linters(opts, {
       --   ["go"] = { "golangcilint" },
@@ -91,8 +124,6 @@ return {
         ["gomod"] = { "golangcilint" },
         ["gowork"] = { "golangcilint" },
       })
-
-      return opts
     end,
   },
   {

@@ -37,12 +37,37 @@ return {
     keys = {
       { "<leader>czt", desc = "Summarize Text" },
       { "<leader>czg", desc = "Generate Git Message" },
+      { "<M-=>", "<cmd>NeoAIToggle<cr>", desc = "Toggle NeoAI" },
+      {
+        "<leader>wfa",
+        function()
+          -- require("neoai").open()
+          local wins = vim.api.nvim_list_wins()
+          local neoai_win = nil
+          local neoai_buf = nil
+          for _, win in ipairs(wins) do
+            local buf = vim.api.nvim_win_get_buf(win)
+
+            if vim.bo[buf].ft == "neoai-input" then
+              neoai_win = win
+              neoai_buf = buf
+              break
+            end
+          end
+
+          if neoai_win and neoai_buf then
+            -- move focus to the buffer
+            vim.api.nvim_set_current_win(neoai_win)
+          else
+            require("neoai").open()
+          end
+        end,
+        desc = "Focus NeoAI",
+      },
     },
     opts = {},
-    config = function()
-      require("neoai").setup({
-        -- Options go here
-      })
+    config = function(_, opts)
+      require("neoai").setup(vim.tbl_extend("force", opts, {}))
     end,
   },
   {
