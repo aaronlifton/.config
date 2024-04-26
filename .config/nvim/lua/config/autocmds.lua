@@ -140,7 +140,7 @@ ac({ "BufEnter", "FocusGained", "InsertLeave", "CmdlineLeave", "WinEnter" }, {
 })
 
 ac({ "BufEnter" }, {
-  pattern = "*.md",
+  pattern = { "*.md", "help" },
   group = ag("readme", { clear = true }),
   callback = function()
     -- if at project root then disable diagnostics

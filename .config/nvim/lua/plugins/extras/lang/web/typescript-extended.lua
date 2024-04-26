@@ -48,6 +48,12 @@ return {
     opts = {
       servers = {
         tsserver = {
+          handlers = {
+            ["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
+              require("ts-error-translator").translate_diagnostics(err, result, ctx, config)
+              vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
+            end,
+          },
           enabled = ts_server_activated,
           init_options = {
             preferences = {
@@ -104,6 +110,7 @@ return {
         tsserver = function(server, server_opts)
           require("lspconfig").tsserver.setup({
             on_attach = function(client, bufnr)
+              require("lsp_signature").on_attach({ hint_prefix = "" })
               vim.api.nvim_echo({
                 { "TSServer activated", "Type" },
                 { "Collecting workspace diagnostics", "DiagnosticWarn" },
@@ -204,6 +211,10 @@ return {
   --   },
   --   opts = {},
   -- },
+  {
+    "dmmulroy/ts-error-translator.nvim",
+    opts = {},
+  },
   {
     "nvim-neotest/neotest",
     optional = true,

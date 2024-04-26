@@ -439,6 +439,31 @@ keys = {
 			print(success, stdout, stderr)
 		end),
 	},
+	-- Prompt for a name to use for a new workspace and switch to it.
+	-- See https://wezfurlong.org/wezterm/config/lua/keyassignment/SwitchToWorkspace.html#prompting-for-the-workspace-name
+	-- { key = "w", mods = "ALT", action = a.ShowLauncherArgs({ flags = "FUZZY|WORKSPACES" }) },
+	{
+		key = "N",
+		mods = "CTRL|SHIFT",
+		action = a.PromptInputLine({
+			description = wezterm.format({
+				{ Attribute = { Intensity = "Bold" } },
+				{ Foreground = { AnsiColor = "Fuchsia" } },
+				{ Text = "Enter name for new workspace" },
+			}),
+			action = wezterm.action_callback(function(window, pane, line)
+				--line will be `nil` if they hit escape without entering anything, an empty string if they just hit enter, or the actual line of text they wrote
+				if line then
+					window:perform_action(a.SwitchToWorkspace({ name = line }), pane)
+				end
+			end),
+		}),
+	},
+	{
+		key = "w",
+		mods = "ALT|CTRL",
+		action = a.ShowLauncherArgs({ flags = "FUZZY|WORKSPACES" }),
+	},
 	{
 		mods = "CMD|SHIFT",
 		key = "s",
@@ -526,31 +551,6 @@ keys = {
 				return cmd
 			end)
 		end),
-	},
-	-- Prompt for a name to use for a new workspace and switch to it.
-	-- See https://wezfurlong.org/wezterm/config/lua/keyassignment/SwitchToWorkspace.html#prompting-for-the-workspace-name
-	-- { key = "w", mods = "ALT", action = a.ShowLauncherArgs({ flags = "FUZZY|WORKSPACES" }) },
-	{
-		key = "N",
-		mods = "CTRL|SHIFT",
-		action = a.PromptInputLine({
-			description = wezterm.format({
-				{ Attribute = { Intensity = "Bold" } },
-				{ Foreground = { AnsiColor = "Fuchsia" } },
-				{ Text = "Enter name for new workspace" },
-			}),
-			action = wezterm.action_callback(function(window, pane, line)
-				--line will be `nil` if they hit escape without entering anything, an empty string if they just hit enter, or the actual line of text they wrote
-				if line then
-					window:perform_action(a.SwitchToWorkspace({ name = line }), pane)
-				end
-			end),
-		}),
-	},
-	{
-		key = "w",
-		mods = "ALT|CTRL",
-		action = a.ShowLauncherArgs({ flags = "FUZZY|WORKSPACES" }),
 	},
 	-- https://wezfurlong.org/wezterm/config/lua/keyassignment/SwitchToWorkspace.html#prompting-for-the-workspace-name
 	-- Prompt for a name to use for a new workspace and switch to it.

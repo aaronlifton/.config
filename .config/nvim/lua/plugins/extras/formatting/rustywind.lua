@@ -18,6 +18,7 @@ return {
         ["typescriptreact"] = { "rustywind" },
         ["vue"] = { "rustywind" },
         ["html"] = { "rustywind" },
+        ["astro"] = { "rustywind" },
       })
     end,
   },

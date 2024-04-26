@@ -21,7 +21,12 @@ return {
         condition = function(ctx)
           if vim.fs.find({ "cspell.json" }, { path = ctx.filename, upward = true })[1] then
               -- stylua: ignore
-              vim.keymap.set("n", "<leader>!", function() require("util.cspell").addWordToDictionary() end, { desc = "Add Word to Dictionary", silent = true })
+              vim.keymap.set(
+                "n",
+                "<leader>!",
+                function() require("util.cspell").addWordToDictionary() end,
+                { desc = "Add Word to Dictionary", silent = true }
+              )
             return true
           else
             return false

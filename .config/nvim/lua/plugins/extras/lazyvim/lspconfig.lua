@@ -77,9 +77,10 @@ return {
               workspace = {
                 checkThirdParty = false,
                 library = lsp_util.library({
-                  "lazy.nvim",
-                  "telescope.nvim",
-                  "edgy.nvim",
+                  "LazyVim",
+                  -- "lazy.nvim",
+                  -- "telescope.nvim",
+                  -- "edgy.nvim",
                 }),
                 -- library = {
                 --   [vim.fn.expand("$VIMRUNTIME/lua")] = true,
@@ -115,7 +116,7 @@ return {
             },
           },
         },
-        texlab = { filetypes = { "tex", "pandoc", "bib" } },
+        -- texlab = { filetypes = { "tex", "pandoc", "bib" } },
         ltex = { filetypes = { "tex", "pandoc", "bib" } },
       },
     },

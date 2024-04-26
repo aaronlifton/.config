@@ -1,30 +1,119 @@
+local cmd = function(use_homebrew)
+  local arch = {
+    ["arm64"] = "arm64",
+    ["aarch64"] = "arm64",
+    ["amd64"] = "amd64",
+    ["x86_64"] = "amd64",
+  }
+
+  local os_name = string.lower(vim.uv.os_uname().sysname)
+  local current_arch = arch[string.lower(vim.uv.os_uname().machine)]
+  local build_bin = fmt("next_ls_%s_%s", os_name, current_arch)
+
+  if use_homebrew then
+    return { "nextls", "--stdio" }
+  end
+  return { fmt("%s/lsp/nextls/burrito_out/%s", vim.env.XDG_DATA_HOME, build_bin), "--stdio" }
+end
+
 return {
-  -- -- https://github.com/IvanIvanoff/config/blob/e89a358b06a0ef20ec87c10eb9db9d8d5c5c6fc6/lvim/lua/user/plugins.lua#L49
-  -- {
-  --   "romgrk/nvim-treesitter-context",
-  --   config = function()
-  --     require("treesitter-context").setup({
-  --       enable = true, -- Enable this plugin (Can be enabled/disabled later via commands)
-  --       throttle = true, -- Throttles plugin updates (may improve performance)
-  --       max_lines = 0, -- How many lines the window should span. Values <= 0 mean no limit.
-  --       patterns = { -- Match patterns for TS nodes. These get wrapped to match at word boundaries.
-  --         default = {
-  --           "class",
-  --           "function",
-  --           "method",
-  --         },
-  --         elixir = {
-  --           "anonymous_function",
-  --           "arguments",
-  --           "block",
-  --           "do_block",
-  --           "list",
-  --           "map",
-  --           "tuple",
-  --           "quoted_content",
-  --         },
-  --       },
-  --     })
-  --   end,
-  -- },
+  {
+    "nvim-treesitter/nvim-treesitter",
+    opts = function(_, opts)
+      vim.list_extend(opts.ensure_installed, {
+        "elixir",
+        "heex",
+        "eex",
+      })
+    end,
+  },
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        elixirls = {},
+      },
+    },
+  },
+  {
+    "nvim-neotest/neotest",
+    optional = true,
+    dependencies = {
+      "jfpedroza/neotest-elixir",
+    },
+    opts = {
+      adapters = {
+        ["neotest-elixir"] = {},
+      },
+    },
+  },
+  {
+    "elixir-tools/elixir-tools.nvim",
+    version = "*",
+    event = { "BufReadPre", "BufNewFile" },
+    config = function()
+      local elixir = require("elixir")
+      local elixirls = require("elixir.elixirls")
+
+      elixir.setup({
+        -- nextls = { enable = true },
+        nextls = {
+          enable = false, -- defaults to false
+          port = 9000, -- connect via TCP with the given port. mutually exclusive with `cmd`. defaults to nil
+          cmd = "/opt/homebrew/bin/nextls", -- path to the executable. mutually exclusive with `port`
+          init_options = {
+            mix_env = "dev",
+            mix_target = "host",
+            experimental = {
+              completions = {
+                enable = false, -- control if completions are enabled. defaults to false
+              },
+            },
+          },
+          on_attach = function(client, bufnr)
+            -- custom keybinds
+          end,
+        },
+        elixirls = {
+          -- specify a repository and branch
+          -- repo = "mhanberg/elixir-ls", -- defaults to elixir-lsp/elixir-ls
+          -- branch = "mh/all-workspace-symbols", -- defaults to nil, just checkouts out the default branch, mutually exclusive with the `tag` option
+          -- tag = "v0.14.6", -- defaults to nil, mutually exclusive with the `branch` option
+
+          -- alternatively, point to an existing elixir-ls installation (optional)
+          -- not currently supported by elixirls, but can be a table if you wish to pass other args `{"path/to/elixirls", "--foo"}`
+          -- cmd = "/usr/local/bin/elixir-ls.sh",
+
+          -- default settings, use the `settings` function to override settings
+          settings = elixirls.settings({
+            dialyzerEnabled = true,
+            fetchDeps = false,
+            enableTestLenses = true, -- false,
+            suggestSpecs = true, -- false,
+          }),
+          on_attach = function(client, bufnr)
+            vim.keymap.set("n", "<space>fp", ":ElixirFromPipe<cr>", { buffer = true, noremap = true })
+            vim.keymap.set("n", "<space>tp", ":ElixirToPipe<cr>", { buffer = true, noremap = true })
+            vim.keymap.set("v", "<space>em", ":ElixirExpandMacro<cr>", { buffer = true, noremap = true })
+          end,
+        },
+        -- credo = {},
+        -- elixirls = {
+        --   enable = true,
+        --   settings = elixirls.settings({
+        --     dialyzerEnabled = false,
+        --     enableTestLenses = false,
+        --   }),
+        --   on_attach = function(client, bufnr)
+        --     vim.keymap.set("n", "<space>fp", ":ElixirFromPipe<cr>", { buffer = true, noremap = true })
+        --     vim.keymap.set("n", "<space>tp", ":ElixirToPipe<cr>", { buffer = true, noremap = true })
+        --     vim.keymap.set("v", "<space>em", ":ElixirExpandMacro<cr>", { buffer = true, noremap = true })
+        --   end,
+        -- },
+      })
+    end,
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+  },
 }

@@ -1,6 +1,7 @@
 local actions = require("telescope.actions")
 
 local function get_telescope_targets(prompt_bufnr)
+  vim.cmd("echo 'here'")
   local pick = require("telescope.actions.state").get_current_picker(prompt_bufnr)
   local scroller = require("telescope.pickers.scroller")
 
@@ -176,8 +177,9 @@ return {
               goto_file_selection(prompt_bufnr, "e")
             end,
             ["<C-y>"] = yank_preview_buffer,
-            ["<M-S>"] = function(prompt_bufnr)
-              -- local win = vim.api.nvim_get_current_win()
+          },
+          n = {
+            ["<C-6>"] = function(prompt_bufnr)
               require("leap").leap({
                 targets = get_telescope_targets(prompt_bufnr),
                 action = function(target)
@@ -185,7 +187,7 @@ return {
                 end,
               })
             end,
-            ["<M-s>"] = function(prompt_bufnr)
+            ["s"] = function(prompt_bufnr)
               require("leap").leap({
                 targets = get_telescope_targets(prompt_bufnr),
                 action = function(target)

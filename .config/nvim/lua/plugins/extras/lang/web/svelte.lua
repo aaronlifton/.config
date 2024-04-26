@@ -8,16 +8,18 @@ return {
     end,
   },
   {
-    "sveltejs/language-tools",
-    config = function()
-      require("plugins.configs.lspconfig").svelte.setup()
-    end,
-  },
-  {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
-        svelte = {},
+        -- svelte = {},
+        svelte = {
+          handlers = {
+            ["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
+              require("ts-error-translator").translate_diagnostics(err, result, ctx, config)
+              vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
+            end,
+          },
+        },
       },
     },
   },
@@ -29,10 +31,16 @@ return {
     end,
   },
   {
+    "dmmulroy/ts-error-translator.nvim",
+    opts = {},
+  },
+  {
     "luckasRanarison/nvim-devdocs",
     optional = true,
-    ensure_installed = {
-      "svelte",
+    opts = {
+      ensure_installed = {
+        "svelte",
+      },
     },
   },
 }

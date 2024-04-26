@@ -83,10 +83,16 @@ map("n", ">", ">>", { desc = "Indent" })
 
 -- CMD keys
 map({ "n", "v", "s", "i" }, "<D-s>", "<cmd>w<cr>", { noremap = true })
-map({ "n", "v", "s", "i" }, "<D-v>", "<cmd>norm gpa<cr>", { noremap = true })
+
+-- map({ "n", "v", "s", "i" }, "<D-v>", "<cmd>norm gpa<cr>", { noremap = true })
+-- map({ "s", "i" }, "<D-v>", "<cmd>norm gpa<cr>", { noremap = true })
+map({ "i", "t" }, "<D-v>", '<C-r>"', { desc = "Paste on insert mode" })
+map("v", "<D-v>", '"+P', { noremap = true })
+map("n", "<D-v>", "<cmd>norm gpa<cr>", { noremap = true })
+map("c", "<D-v>", "<C-R>+", { noremap = true }) -- Paste command mode, add a hack to force render it
+map("v", "<D-c>", '"+y', { noremap = true }) -- Copy
 
 -- Paste options
-map({ "i", "t" }, "<D-v>", '<C-r>"', { desc = "Paste on insert mode" })
 map("v", "p", '"_dP', { desc = "Paste without overwriting" })
 
 -- Copy whole text to clipboard
@@ -145,6 +151,7 @@ map("n", "<leader>fo", ":!open " .. vim.fn.expand("%:p:h") .. "<cr>", { noremap 
 local function spell_reload()
   vim.cmd(":mkspell! %")
 end
+
 map("n", "zR", spell_reload, { noremap = true, silent = true })
 
 if LazyVim.has("baleia.nvim") then
@@ -156,6 +163,16 @@ if LazyVim.has("baleia.nvim") then
     require("baleia").automatically(vim.fn.bufnr())
   end)
 end
+
+function GetDiags()
+  local diagnostics = vim.diagnostic.get(0)
+  local json = vim.fn.json_encode(diagnostics)
+  vim.fn.mkdir(vim.fn.stdpath("data") .. "/diagjson", "p")
+  local path = vim.fn.stdpath("data") .. "/diagnostics.json"
+  vim.fn.writefile({ json }, path)
+  vim.notify("Saved diagnostics to " .. path, vim.log.levels.INFO, { title = "Diagnostics" })
+end
+vim.api.nvim_command("command! SaveJsonDiags lua GetDiags()")
 
 -- Lazy options
 map("n", "<leader>l", "<Nop>")
@@ -257,6 +274,12 @@ map(
   "<Esc><cmd>lua require('telescope').extensions.refactoring.refactors()<CR>",
   { desc = "Select refactor..." }
 )
+
+map("n", "<leader>ccp", ":let @+=expand('%:p') .. <cr>", { desc = "Copy path to clipboard" })
+
+map("n", "<leader>cq", function()
+  vim.diagnostic.open_float(nil, { source = true })
+end, { desc = "Line Diagnostics (Source)" })
 
 -- Custom Telescope finders
 local T = require("util.custom_telescope_finders")

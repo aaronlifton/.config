@@ -4,5 +4,13 @@
   "useTabs": false,
   "printWidth": 120,
   "semi": false,
-  "singleQuote": false
+  "singleQuote": false,
+  "overides": [
+    {
+      "files": "*.jsonc",
+      "options": {
+        "trailingComma": false
+      }
+    }
+  ]
 }

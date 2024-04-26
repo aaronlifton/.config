@@ -1,5 +1,6 @@
 local M = {}
 
+---@param tbl table<string, string[]>
 M.add_formatters = function(opts, tbl)
   for ft, formatters in pairs(tbl) do
     if opts.formatters_by_ft[ft] == nil then
@@ -10,6 +11,29 @@ M.add_formatters = function(opts, tbl)
   end
 end
 
+---@param tbl table<string, string[]>
+M.remove_formatters = function(opts, tbl)
+  for ft, formatters in pairs(tbl) do
+    if opts.formatters_by_ft[ft] ~= nil then
+      for _, formatter in ipairs(formatters) do
+        for i, f in ipairs(opts.formatters_by_ft[ft]) do
+          if f == formatter then
+            table.remove(opts.formatters_by_ft[ft], i)
+          end
+        end
+      end
+    end
+  end
+end
+
+---@param tbl table<string, string[]>
+M.set_formatters = function(opts, tbl)
+  for ft, formatters in pairs(tbl) do
+    opts.formatters_by_ft[ft] = formatters
+  end
+end
+
+---@param tbl table<string, string[]>
 M.add_linters = function(opts, tbl)
   for ft, linters in pairs(tbl) do
     if opts.linters_by_ft[ft] == nil then

@@ -24,13 +24,26 @@ return {
       },
     })
   end,
+  commands = {
+    LiveGrepArgs = function()
+      require("telescope").extensions.live_grep_args.live_grep_args()
+    end,
+  },
   -- stylua: ignore
   keys = function()
     local lga_actions = require("telescope-live-grep-args.actions")
     return {
       { "<leader>su", function() require("telescope-live-grep-args.shortcuts").grep_word_under_cursor() end, desc = "Grep (current word)" },
       { "<leader>sg", function() require("telescope").extensions.live_grep_args.live_grep_args() end,        desc = "Grep (root dir)" },
-      { "<leader>/", function() require("telescope").extensions.live_grep_args.live_grep_args() end,         desc = "Grep (root dir)" },
+      {
+        "<leader>/",
+        function()
+          require("telescope").extensions.live_grep_args.live_grep_args({
+            postfix = " --glob '!./node_modules/*'"
+          })
+        end,
+        desc = "Grep (root dir)"
+      },
       }
   end
 ,

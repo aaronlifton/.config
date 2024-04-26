@@ -32,19 +32,16 @@ local filter_func = function(window_ids, filters)
     if not vim.api.nvim_win_is_valid(win) then
       goto continue
     end
-    ---@type {topline: number, height: number}|nil
+    ---@type {topline: number, height: number}
     local wininfo = vim.fn.getwininfo(win)
-    if wininfo == nil then
-      goto continue
+    local winbot = 0
+    if wininfo and wininfo.topline ~= nil then
+      winbot = winbot + wininfo.topline
+      if wininfo.height ~= nil then
+        winbot = winbot + wininfo.height
+      end
     end
-    -- local winbot = 0
-    -- if wininfo and wininfo.topline ~= nil then
-    --   winbot = winbot + wininfo.topline
-    --   if wininfo.height ~= nil then
-    --     winbot = winbot + wininfo.height
-    --   end
-    -- end
-    local winbot = (wininfo.topline or 0) + wininfo.height
+    local winbot = wininfo.topline + wininfo.height
     -- local wininfo = vim.api.nvim_win_get_config(win)
     if vim.api.nvim_win_is_valid(win) and winbot ~= 0 then
       -- Get the buffer ID of the window

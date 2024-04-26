@@ -71,8 +71,8 @@ return {
   {
     "stevearc/conform.nvim",
     opts = function(_, opts)
-      opts.formatters_by_ft.python = opts.formatters_by_ft.python or {}
-      table.insert(opts.formatters_by_ft.python, "zigfmt")
+      opts.formatters_by_ft.zig = opts.formatters_by_ft.zig or {}
+      table.insert(opts.formatters_by_ft.zig, "zigfmt")
     end,
   },
 }

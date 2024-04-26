@@ -26,9 +26,7 @@ return {
     },
     opts = function(_, opts)
       if type(opts.ensure_installed) == "table" then
-        vim.list_extend(opts.ensure_installed, {
-          "astro",
-        })
+        vim.list_extend(opts.ensure_installed, { "astro" })
       end
     end,
   },
@@ -37,6 +35,14 @@ return {
     opts = {
       servers = {
         astro = {},
+        -- astro = {
+        --   handlers = {
+        --     ["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
+        --       require("ts-error-translator").translate_diagnostics(err, result, ctx, config)
+        --       vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
+        --     end,
+        --   },
+        -- },
       },
     },
   },
@@ -45,6 +51,29 @@ return {
     opts = function(_, opts)
       opts.ensure_installed = opts.ensure_installed or {}
       vim.list_extend(opts.ensure_installed, { "astro-language-server" })
+    end,
+  },
+  {
+    "mfussenegger/nvim-lint",
+    opts = function(_, opts)
+      local lsp_util = require("util.lsp")
+      lsp_util.add_linters(opts, {
+        -- ["ruby"] = { "rubocop" },
+        -- ["astro"] = { "eslint_d", "stylelint", "vale" },
+        ["astro"] = { "eslint_d", "vale" },
+      })
+
+      -- opts.linters_by_ft.markdown = opts.linters_by_ft.markdown or {}
+      -- table.insert(opts.linters_by_ft.markdown, "vale")
+    end,
+  },
+  {
+    "stevearc/conform.nvim",
+    opts = function(_, opts)
+      local lsp_util = require("util.lsp")
+      lsp_util.add_formatters(opts, {
+        ["astro"] = { "dprint" }, -- https://github.com/g-plane/markup_fmt
+      })
     end,
   },
   {

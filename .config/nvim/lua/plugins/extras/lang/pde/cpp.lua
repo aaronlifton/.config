@@ -1,4 +1,6 @@
-if not require("config").pde.cpp then return {} end
+if not require("config").pde.cpp then
+  return {}
+end
 
 local function get_codelldb()
   local mason_registry = require("mason-registry")
@@ -92,8 +94,6 @@ return {
           opts.capabilities.offsetEncoding = { "utf-16" }
           return true
         end,
-        texlab = {},
-        ltex = { filetypes = { "tex", "pandoc", "bib" } },
       },
     },
   },

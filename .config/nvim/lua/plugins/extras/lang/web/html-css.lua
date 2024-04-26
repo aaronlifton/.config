@@ -4,6 +4,15 @@ local html_filetypes = {
   "javascript.jsx",
   "typescriptreact",
   "typescript.tsx",
+  -- "css",
+  "eruby",
+  -- "less",
+  -- "sass",
+  -- "scss",
+  "svelte",
+  -- "pug",
+  "vue",
+  "astro",
 }
 
 return {
@@ -21,7 +30,7 @@ return {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
-        emmet_language_server = {},
+        -- emmet_language_server = {},
         emmet_ls = {
           filetypes = html_filetypes,
           init_options = {
@@ -34,7 +43,8 @@ return {
           },
         },
         html = {
-          filetypes = html_filetypes,
+          -- Don't really need this LS
+          -- filetypes = html_filetypes,
         },
         cssmodules_ls = {},
         css_variables = {},
@@ -71,9 +81,10 @@ return {
     opts = function(_, opts)
       opts.ensure_installed = opts.ensure_installed or {}
       vim.list_extend(opts.ensure_installed, {
-        "emmet-language-server",
+        "emmet-ls", -- "emmet-language-server",
         "html-lsp",
         "cssmodules-language-server",
+        "css-variables-language-server",
         "css-lsp",
         "htmlhint",
         "stylelint",
@@ -84,18 +95,9 @@ return {
     "mfussenegger/nvim-lint",
     opts = function(_, opts)
       local stylelint = "stylelint"
+      local lsp_util = require("util.lsp")
 
-      local function add_linters(tbl)
-        for ft, linters in pairs(tbl) do
-          if opts.linters_by_ft[ft] == nil then
-            opts.linters_by_ft[ft] = linters
-          else
-            vim.list_extend(opts.linters_by_ft[ft], linters)
-          end
-        end
-      end
-
-      add_linters({
+      lsp_util.add_linters(opts, {
         ["html"] = { "htmlhint" },
         ["css"] = { stylelint },
         ["scss"] = { stylelint },

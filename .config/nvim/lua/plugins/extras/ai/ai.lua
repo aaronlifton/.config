@@ -1,3 +1,4 @@
+local ui_util = require("util.ui")
 return {
   {
     "huggingface/hfcc.nvim",
@@ -45,6 +46,15 @@ return {
           local wins = vim.api.nvim_list_wins()
           local neoai_win = nil
           local neoai_buf = nil
+
+          local bufs = vim.api.nvim_list_bufs()
+          for _, buf in ipairs(bufs) do
+            if vim.bo[buf].ft == "neoai-input" then
+              ui_util.goto_leftmost_win()
+              return
+            end
+          end
+
           for _, win in ipairs(wins) do
             local buf = vim.api.nvim_win_get_buf(win)
 

@@ -1,7 +1,9 @@
 local textobjs = pcall(require, "various-textobjs")
-if not textobjs then textobjs = {
-  diagnostics = function() end,
-} end
+if not textobjs then
+  textobjs = {
+    diagnostics = function() end,
+  }
+end
 return {
   "chrisgrieser/nvim-various-textobjs",
   opts = { useDefaultKeymaps = false },
@@ -31,7 +33,7 @@ return {
     { "a#", ft = { "css", "scss", "less" }, mode = { "o", "x" }, function() require("various-textobjs").cssColor("outer") end, desc = "CSS Color" },
     { "iP", ft = { "sh" }, mode = { "o", "x" }, function() require("various-textobjs").shellPipe("inner") end, desc = "Pipe" },
     { "aP", ft = { "sh" }, mode = { "o", "x" }, function() require("various-textobjs").shellPipe("outer") end, desc = "Pipe" },
-    { "iH", ft = { "html, xml, css, scss, less" }, mode = { "o", "x" }, function() require("various-textobjs").htmlAttribute("inner") end, desc = "HTML Attribute" },
+    { "iH", ft = { "html, xml, css, scss, less", "astro" }, mode = { "o", "x" }, function() require("various-textobjs").htmlAttribute("inner") end, desc = "HTML Attribute" },
     { "iv", mode = { "o", "x" }, function() require("various-textobjs").value("inner") end, desc = "Value" },
     { "av", mode = { "o", "x" }, function() require("various-textobjs").value("outer") end, desc = "Value" },
     { "ik", mode = { "o", "x" }, function() require("various-textobjs").key("inner") end, desc = "Key" },

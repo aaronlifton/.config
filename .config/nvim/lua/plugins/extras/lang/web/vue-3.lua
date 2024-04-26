@@ -11,7 +11,14 @@ return {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
-        volar = {},
+        volar = {
+          handlers = {
+            ["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
+              require("ts-error-translator").translate_diagnostics(err, result, ctx, config)
+              vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
+            end,
+          },
+        },
         tsserver = {},
       },
       setup = {
@@ -35,6 +42,10 @@ return {
     },
   },
   {
+    "dmmulroy/ts-error-translator.nvim",
+    opts = {},
+  },
+  {
     "williamboman/mason.nvim",
     opts = function(_, opts)
       opts.ensure_installed = opts.ensure_installed or {}
@@ -44,8 +55,10 @@ return {
   {
     "luckasRanarison/nvim-devdocs",
     optional = true,
-    ensure_installed = {
-      "vue-3",
+    opts = {
+      ensure_installed = {
+        "vue-3",
+      },
     },
   },
 }

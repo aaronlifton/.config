@@ -91,35 +91,7 @@ return {
   {
     "mfussenegger/nvim-lint",
     opts = function(_, opts)
-      -- To set linters to just golangcilint
-      -- local settings = {
-      --   ["go"] = { "golangcilint" },
-      --   ["gomod"] = { "golangcilint" },
-      --   ["gowork"] = { "golangcilint" },
-      -- }
-      -- for ft, linters in pairs(settings) do
-      --   opts.linters_by_ft[ft] = linters
-      -- end
-
-      -- TODO: investigate why local function was tried?
-      -- Don't overwrite version
-      -- lsp_util.add_linters(opts, {
-      --   ["go"] = { "golangcilint" },
-      --   ["gomod"] = { "golangcilint" },
-      --   ["gowork"] = { "golangcilint" },
-      -- })
-
-      local function add_linters(tbl)
-        for ft, linters in pairs(tbl) do
-          if opts.linters_by_ft[ft] == nil then
-            opts.linters_by_ft[ft] = linters
-          else
-            vim.list_extend(opts.linters_by_ft[ft], linters)
-          end
-        end
-      end
-
-      add_linters({
+      lsp_util.add_linters(opts, {
         ["go"] = { "golangcilint" },
         ["gomod"] = { "golangcilint" },
         ["gowork"] = { "golangcilint" },
@@ -141,4 +113,23 @@ return {
       require("gotests").setup()
     end,
   },
+  -- {
+  --   "neovim/nvim-lspconfig",
+  --   optional = true,
+  --   opts = {
+  --     setup = {
+  --       gopls = function(_, opts)
+  --         LazyVim.lsp.on_attach(function(client, _)
+  --           -- `vim.lsp.handlers["textDocument/signatureHelp"]` has been overwritten by another plugin?
+  --           -- Either disable the other plugin or set `config.lsp.signature.enabled = false` in your **Noice** config.
+  --           --   - plugin: nvim
+  --           --   - file: /Users/aaron/.local/share/bob/nightly/nvim-macos/share/nvim/runtime/lua/vim/lsp.lua
+  --           --   - line: 1390
+  --           require("lsp_signature").on_attach({ bind = true, handler_opts = { border = "rounded" } }, bufnr)
+  --           -- vim.lsp.codelens.refresh()
+  --         end)
+  --       end,
+  --     },
+  --   },
+  -- },
 }

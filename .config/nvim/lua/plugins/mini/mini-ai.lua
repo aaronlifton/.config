@@ -25,14 +25,15 @@ return {
     optional = true,
     opts = function(_, opts)
       local ai = require("mini.ai")
-      return {
+      vim.tbl_extend("keep", opts, {
         custom_textobjects = {
+          -- LazyVim uses o-ai, fctde
           X = gen_ai_spec.buffer(),
           D = gen_ai_spec.diagnostic(),
           I = gen_ai_spec.indent(),
           L = gen_ai_spec.line(),
           N = gen_ai_spec.number(),
-          f = gen_spec.function_call(),
+          F = gen_spec.function_call(),
           g = {
             {
               "%b{}",
@@ -92,7 +93,7 @@ return {
           }),
           ["$"] = gen_spec.pair("$", "$", { type = "balanced" }),
         },
-      }
+      })
       -- used: a,i,f,c,t,d,e,g,u,U
       -- B = MiniExtra.gen_ai_spec.treesitter({ a = "@block.outer", i = "@block.inner" }, {}),
       -- C = MiniExtra.gen_ai_spec.treesitter({ a = "@conditional.outer", i = "@conditional.inner" }, {}),

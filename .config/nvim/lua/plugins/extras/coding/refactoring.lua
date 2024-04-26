@@ -8,6 +8,29 @@ return {
     },
     keys = {
       {
+        "<leader>cR",
+        function()
+          require("refactoring").select_refactor()
+        end,
+        mode = { "n", "x", "v" },
+        desc = "Refactor",
+      },
+      {
+        "<leader>dv",
+        function()
+          require("refactoring").debug.print_var()
+        end,
+        mode = { "n", "x", "v" },
+        desc = "Print Variable",
+      },
+      {
+        "<leader>dR",
+        function()
+          require("refactoring").debug.cleanup()
+        end,
+        desc = "Remove Printed Variables",
+      },
+      {
         "<leader>rr",
         "<Esc><cmd>lua require('telescope').extensions.refactoring.refactors()<CR>",
         desc = "Select refactor...",
