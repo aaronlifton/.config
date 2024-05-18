@@ -13,11 +13,13 @@ return {
       lsp_util.add_linters(opts, {
         ["markdown"] = { "vale" },
         ["mdx"] = { "vale" },
+        ["tex"] = { "vale" },
       })
 
-      -- opts.linters_by_ft.markdown = opts.linters_by_ft.markdown or {}
-      -- table.insert(opts.linters_by_ft.markdown, "vale")
-      table.insert(require("lint").linters.vale.args, " --glob='*.{mdx}'")
+      opts.linters.vale = opts.linters.vale or {}
+      opts.linters.vale.condition = function(ctx)
+        return vim.fs.find({ ".vale" }, { type = "directory", path = ctx.filename, upward = true })[1]
+      end
     end,
   },
 }

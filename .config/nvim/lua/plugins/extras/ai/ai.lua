@@ -10,7 +10,7 @@ return {
   },
   {
     "mthbernardes/codeexplain.nvim",
-    enabled = false,
+    enabled = true,
     cmd = "CodeExplain",
     build = function()
       vim.cmd([[silent UpdateRemotePlugins]])
@@ -86,10 +86,26 @@ return {
       "MunifTanjim/nui.nvim",
     },
     opts = {},
-  --stylua: ignore
-  keys = {
-    { "<leader>sD", function() require("wtf").ai() end, desc = "Search Diagnostic with AI" },
-    { "<leader>sd", function() require("wtf").search() end, desc = "Search Diagnostic with Google" },
+    keys = {
+      {
+        "<leader>czd",
+        function()
+          require("wtf").ai()
+        end,
+        desc = "Search Diagnostic with AI",
+      },
+      {
+        "<leader>czs",
+        function()
+          require("wtf").search()
+        end,
+        desc = "Search Diagnostic with Google",
+      },
+    },
   },
-  },
+  -- {
+  --   "james1236/backseat.nvim",
+  --   cmd = { "Backseat", "BackseatAsk", "BackseatClear", "BackseatClearLine" },
+  --   config = true,
+  -- },
 }

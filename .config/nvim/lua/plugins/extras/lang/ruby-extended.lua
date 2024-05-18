@@ -1,15 +1,21 @@
+local lsp_util = require("util.lsp")
+local gems_util = require("util.ruby.gems")
+local has_sorbet_config = function()
+  return vim.fn.filereadable("sorbet/config") == 1
+end
+
 return {
   { import = "lazyvim.plugins.extras.lang.ruby" },
   { "tpope/vim-rails", ft = "ruby" },
   { "tpope/vim-bundler", ft = "ruby" },
-  {
-    "folke/which-key.nvim",
-    opts = {
-      defaults = {
-        ["<leader>R"] = { name = "Rails" },
-      },
-    },
-  },
+  -- {
+  --   "folke/which-key.nvim",
+  --   opts = {
+  --     defaults = {
+  --       ["<leader>R"] = { name = "Rails" },
+  --     },
+  --   },
+  -- },
   {
     "nvimtools/none-ls.nvim",
     enabled = true,
@@ -51,27 +57,29 @@ return {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
-        sorbet = {},
         standardrb = {
           on_new_config = function(new_config)
-            new_config.enabled = false
+            new_config.enabled = gems_util.in_bundle("standard")
           end,
         },
         rubocop = {
           on_new_config = function(new_config)
-            new_config.enabled = false
+            new_config.enabled = not gems_util.has_ruby_lsp() and gems_util.has_rubocop()
           end,
         },
         solargraph = {
           on_new_config = function(new_config)
-            new_config.enabled = false
+            new_config.enabled = not gems_util.has_ruby_lsp() and gems_util.in_bundle("solargraph")
           end,
           --   enabled = false,
           --   diagnostics = false,
           --   formatting = false,
         },
-        -- solargraph = {
-        -- },
+        sorbet = {
+          on_new_config = function(new_config)
+            new_config.enabled = has_sorbet_config()
+          end,
+        },
         ruby_lsp = {
           cmd = { "bundle", "exec", "ruby-lsp" },
           filetypes = { "ruby" },
@@ -96,9 +104,21 @@ return {
               "codeLens",
               "documentLink",
             },
-            formatter = "rubocop",
+            -- formatter = "rubocop",
+            -- when auto, formatter will detect formatter from bundle
+            formatter = "auto",
           },
           settings = {},
+          on_new_config = function(new_config)
+            -- ruby-lsp-rubyfmt needs formatter to be set to rubyfmt
+            -- https://github.com/jscharf/ruby-lsp-rubyfmt/blob/b28e16e9b847f70dc1ee2012296fda92cb30e7f5/README.md?plain=1#L41
+            if not gems_util.has_ruby_lsp() then
+              new_config.enabled = false
+            end
+            if gems_util.in_bundle("ruby-lsp-rubyfmt") then
+              new_config.init_options.formatter = "rubyfmt"
+            end
+          end,
           commands = {
             FormatRuby = {
               function()
@@ -111,16 +131,6 @@ return {
             },
           },
         },
-        -- yamlls = {
-        --   settings = {
-        --     yaml = {
-        --       validate = true,
-        --       schemaStore = {
-        --         enable = true,
-        --       },
-        --     },
-        --   },
-        -- },
         yamlls = require("util.yamlls_config").get_yamlls_config(),
       },
       setup = {
@@ -132,95 +142,111 @@ return {
             -- capabilities = config.capabilities
             on_attach = function(client, buffer)
               ruby_lsp_config.on_attach(client, buffer)
-              -- vim.api.nvim_create_user_command("FormatRuby", function()
-              --   vim.lsp.buf.format({
-              --     name = "ruby_lsp",
-              --     async = true,
-              --   })
-              -- end, {})
             end,
           })
+        end,
+        sorbet = function()
+          -- https://github.com/arandilopez/doom-neovim/blob/50ee5c1bd4bfb0686157ecfe545596c22b2173f9/lua/lsp/ruby.lua#L20
+          -- local sorbet_util = require("util.ruby.sorbet")
+          local function sorbet_root_pattern(...)
+            local patterns = { "sorbet/config" }
+            return require("lspconfig.util").root_pattern(unpack(patterns))(...)
+          end
 
-          -- local should_disable = function(root_dir, config)
-          --   return true
-          -- end
-          -- LazyVim.lsp.disable("solargraph", should_disable)
-          -- LazyVim.lsp.disable("rubocop", should_disable)
+          require("lspconfig").sorbet.setup({
+            -- init_options = { documentFormatting = false, codeAction = true },
+            -- cmd = {"srb", "tc", "--typed", "true", "--enable-all-experimental-lsp-features", "--lsp", "--disable-watchman",},
+            -- cmd = sorbet_util.cmd(),
+            cmd = { "srb", "tc", "--lsp" }, -- optionally "bundle" exec", "--disable-watchman"
+            filetypes = { "ruby" },
+            root_dir = function(fname)
+              return sorbet_root_pattern(fname)
+            end,
+          })
         end,
       },
-      sorbet = function()
-        -- https://github.com/arandilopez/doom-neovim/blob/50ee5c1bd4bfb0686157ecfe545596c22b2173f9/lua/lsp/ruby.lua#L20
-        local sorbet_util = require("util.ruby.sorbet")
-        local function sorbet_root_pattern(...)
-          local patterns = { "sorbet/config" }
-          return require("lspconfig.util").root_pattern(unpack(patterns))(...)
-        end
-
-        require("lspconfig").sorbet.setup({
-          -- init_options = { documentFormatting = false, codeAction = true },
-          -- cmd = {"srb", "tc", "--typed", "true", "--enable-all-experimental-lsp-features", "--lsp", "--disable-watchman",},
-          -- cmd = sorbet_util.cmd(),
-          cmd = { "srb", "tc", "--lsp" }, -- optionally "bundle" exec", "--disable-watchman"
-          filetypes = { "ruby" },
-          root_dir = function(fname)
-            return sorbet_root_pattern(fname)
-          end,
-        })
-      end,
     },
-  },
-  -- {
-  --   "neovim/nvim-lspconfig",
-  --   init = function() end,
-  -- },
-  {
-    "williamboman/mason-lspconfig.nvim",
-    opts = {
-      automatic_installation = {
-        exclude = { "solargraph" },
-      },
-    },
+    -- config = function(_, opts)
+    --   local function inverse_sorbet_root_pattern(...)
+    --     local patterns = { "sorbet/config" }
+    --     return not require("lspconfig.util").root_pattern(unpack(patterns))(...)
+    --   end
+    --   if LazyVim.lsp.get_config("ruby_lsp") then
+    --     LazyVim.lsp.disable("ruby_lsp", function()
+    --       return not gems_util.has_ruby_lsp()
+    --     end)
+    --   end
+    --   if LazyVim.lsp.get_config("rubocop") then
+    --     LazyVim.lsp.disable("rubocop", function()
+    --       return not gems_util.has_rubocop() or (gems_util.has_ruby_lsp() and gems_util.has_rubocop())
+    --       -- return not gems_util.has_rubocop() or LazyVim.lsp.get_config("ruby_lsp"g
+    --     end)
+    --   end
+    --
+    --   if LazyVim.lsp.get_config("solargraph") then
+    --     LazyVim.lsp.disable("solargraph", function()
+    --       return not gems_util.in_bundle("solargraph")
+    --     end)
+    --   end
+    --
+    --   if LazyVim.lsp.get_config("standardrb") then
+    --     LazyVim.lsp.disable("standardrb", function()
+    --       return not gems_util.in_bundle("standard")
+    --     end)
+    --   end
+    --
+    --   if LazyVim.lsp.get_config("sorbet") then
+    --     LazyVim.lsp.disable("sorbet", inverse_sorbet_root_pattern)
+    --   end
+    -- end,
   },
   {
     "mfussenegger/nvim-lint",
-    opts = function(_, opts)
-      local lsp_util = require("util.lsp")
-      local gems_util = require("util.ruby.gems")
-      if not gems_util.has_ruby_lsp() and gems_util.has_rubocop() then
-        lsp_util.add_linters(opts, {
-          ["ruby"] = { "rubocop" },
-        })
-      elseif gems_util.in_bundle("standard") then
-        lsp_util.add_linters(opts, {
-          ["ruby"] = { "standardrb" },
-        })
-      else
-        -- lsp_util.add_linters(opts, {
-        --   ["ruby"] = { "ruby" },
-        -- })
-      end
-    end,
+    opts = {
+      linters_by_ft = {
+        ruby = { "rubocop", "standardrb" },
+      },
+      linters = {
+        rubocop = {
+          condition = function(ctx)
+            -- return vim.fs.find({ ".rubocop.yml" }, { type = "file", path = ctx.filename, upward = true })[1]
+            -- ruby-lsp already provides diagnostics from rubocop
+            return not gems_util.has_ruby_lsp() and gems_util.has_rubocop()
+          end,
+        },
+        standardrb = {
+          condition = function(ctx)
+            -- return vim.fs.find({ ".standard.yml" }, { type = "file", path = ctx.filename, upward = true })[1]
+            return gems_util.in_bundle("standard")
+          end,
+        },
+      },
+    },
   },
   {
     "stevearc/conform.nvim",
-    opts = function(_, opts)
-      local lsp_util = require("util.lsp")
-      local gems_util = require("util.ruby.gems")
-      -- Ruby-lsp has built-in Rubocop diagnostics, so check for ruby-lsp.
-      if gems_util.has_rubocop() then
-        lsp_util.add_formatters(opts, {
-          ["ruby"] = { "rubocop" },
-        })
-      elseif gems_util.in_bundle("ruby-lsp-rubyfmt") then
-        lsp_util.add_formatters(opts, {
-          ["ruby"] = { "rubyfmt" },
-        })
-      end
-    end,
+    opts = {
+      formatters_by_ft = {
+        ruby = { "rubocop", "rubyfmt" },
+      },
+      formatters = {
+        rubocop = {
+          condition = function(ctx)
+            -- Ruby LSP contains rubocop diagnostics itself
+            return not gems_util.has_ruby_lsp() and gems_util.has_rubocop()
+          end,
+        },
+        rubyfmt = {
+          condition = function(ctx)
+            return gems_util.in_bundle("ruby-lsp-rubyfmt") or not gems_util.has_rubocop() -- and not standard
+          end,
+        },
+      },
+    },
   },
   {
     "nvim-neotest/neotest",
-    optional = true,
+    -- optional = true,
     dependencies = {
       "olimorris/neotest-rspec",
     },
@@ -239,6 +265,14 @@ return {
       },
     },
   },
+  -- {
+  --   "williamboman/mason-lspconfig.nvim",
+  --   opts = {
+  --     automatic_installation = {
+  --       exclude = { "solargraph" },
+  --     },
+  --   },
+  -- },
 }
 
 -- {

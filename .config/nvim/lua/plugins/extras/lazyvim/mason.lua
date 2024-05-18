@@ -1,19 +1,36 @@
 return {
   {
     "williamboman/mason.nvim",
+    dependencies = {
+      "zapling/mason-lock.nvim",
+      cmd = { "MasonLock", "MasonLockRestore" },
+      opts = {},
+    },
     opts = {
       ensure_installed = {
-        "stylua",
-        "shellcheck",
-        "shfmt",
         "flake8",
-        "mdformat",
-        "prettier",
+        "gofumpt",
+        "goimports",
+        "goimports-reviser",
+        "golangci-lint",
+        "golangci-lint-langserver", -- golangci_lint_ls
+        "golines",
+        "gomodifytags",
+        "gopls",
+        "gotests",
+        "gotestsum",
         "markdownlint",
         "markdownlint-cli2",
-        "solargraph",
+        "mdformat",
+        "prettier",
         "rubocop",
         "ruby-lsp",
+        "rubyfmt",
+        "shellcheck",
+        "shfmt",
+        "solargraph",
+        "sorbet",
+        "stylua",
       },
       ui = {
         border = "rounded",
@@ -34,17 +51,18 @@ return {
     cmd = { "MasonToolsInstall", "MasonToolsUpdate", "MasonToolsClean" },
     opts = {
       ensure_installed = {
-        "astro-language-server", -- astro"
+        "astro-language-server", -- astro
         "biome",
         "cbfmt",
         "chrome-debug-adapter",
         "commitlint",
         "cspell",
         "css-lsp", -- csslss
-        "cssmodules-language-server", -- cssmodules_ls",
-        "deno denols",
-        "docker-compose-language-service", -- docker_compose_language_service",
-        "dockerfile-language-server", -- dockerls",
+        "css-variables-language-server",
+        "cssmodules-language-server", -- cssmodules_ls
+        "deno", -- denols
+        "docker-compose-language-service", -- docker_compose_language_service
+        "dockerfile-language-server", -- dockerls
         "dprint",
         "elixir-ls",
         "emmet-language-server",
@@ -55,18 +73,16 @@ return {
         "fixjson",
         "go-debug-adapter",
         "gofumpt",
-        "gofumpt",
-        "goimports",
         "goimports",
         "goimports-reviser",
         "golangci-lint",
-        "golangci-lint-langserver", -- golangci_lint_ls",
+        "golangci-lint-langserver", -- golangci_lint_ls
         "golines",
         "gomodifytags",
         "gopls",
         "gotests",
         "gotestsum",
-        "graphql-language-service-cli", -- graphql",
+        "graphql-language-service-cli", -- graphql
         "hadolint",
         "html-lsp", -- html
         "htmx-lsp", -- htmx
@@ -74,7 +90,7 @@ return {
         "jq",
         "js-debug-adapter",
         "json-lsp", -- jsonls
-        "lua-language-server", -- lua_ls",
+        "lua-language-server", -- lua_ls
         "luacheck",
         "markdown-toc",
         "markdownlint-cli2",
@@ -87,28 +103,28 @@ return {
         "ripper-tags",
         "rstcheck",
         "rubocop",
+        "rubocop",
+        "ruby-lsp",
+        "rubyfmt",
         "rust-analyzer",
         "rustywind",
         "selene",
         "shellcheck",
         "shfmt",
         "solargraph",
+        "sorbet",
         "sourcery",
         "sqlls",
         "standardjs",
         "standardrb",
-        "rubocop",
-        "ruby-lsp",
-        "rubyfmt",
-        "sorbet",
         "staticcheck", -- golang
         "stylelint",
         "stylua",
         "svelte-language-server",
-        "tailwindcss-language-server", -- tailwindcss,
+        "tailwindcss-language-server", -- tailwindcss
         "taplo",
         "terraform-ls", -- terraformls,
-        "typescript-language-server", --tsserver,
+        "typescript-language-server", --tsserver
         "typos",
         "vim-language-server", -- vimls
         "yaml-language-server", -- yamlls
@@ -132,7 +148,7 @@ return {
         -- "debugpy",
         -- "delve",
         -- "delve",
-        -- "elm-language-server"m -- elmls
+        -- "elm-language-server" -- elmls
         -- "erg",
         -- "flake8",
         -- "foam-language-server", -- foam_ls
@@ -144,7 +160,6 @@ return {
         -- "jedi-language-server", -- jedi_language_server
         -- "lemminx",
         -- "marksman",
-        -- "marksman",
         -- "neocmakelsp", -- neocmake -- investigate this for C++
         -- "nil nil_ls",
         -- "nilaway",
@@ -155,7 +170,7 @@ return {
         -- "pyright",
         -- "pyright",
         -- "python-lsp-server", -- pylsp
-        -- "rnix-lsp" -- rnix",
+        -- "rnix-lsp" -- rnix"
         -- "ruff",
         -- "ruff-lsp" -- ruff_lsp
         -- "ruff-lsp",

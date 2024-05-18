@@ -34,15 +34,15 @@ return {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
-        astro = {},
-        -- astro = {
-        --   handlers = {
-        --     ["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
-        --       require("ts-error-translator").translate_diagnostics(err, result, ctx, config)
-        --       vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
-        --     end,
-        --   },
-        -- },
+        -- astro = {},
+        astro = {
+          handlers = {
+            ["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
+              require("ts-error-translator").translate_diagnostics(err, result, ctx, config)
+              vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
+            end,
+          },
+        },
       },
     },
   },
@@ -58,21 +58,9 @@ return {
     opts = function(_, opts)
       local lsp_util = require("util.lsp")
       lsp_util.add_linters(opts, {
-        -- ["ruby"] = { "rubocop" },
-        -- ["astro"] = { "eslint_d", "stylelint", "vale" },
-        ["astro"] = { "eslint_d", "vale" },
-      })
-
-      -- opts.linters_by_ft.markdown = opts.linters_by_ft.markdown or {}
-      -- table.insert(opts.linters_by_ft.markdown, "vale")
-    end,
-  },
-  {
-    "stevearc/conform.nvim",
-    opts = function(_, opts)
-      local lsp_util = require("util.lsp")
-      lsp_util.add_formatters(opts, {
-        ["astro"] = { "dprint" }, -- https://github.com/g-plane/markup_fmt
+        -- astro uses eslint instead of biome because eslint has astro rules
+        -- ["astro"] = { "eslint_d", "stylelint" },
+        ["astro"] = { "eslint" },
       })
     end,
   },

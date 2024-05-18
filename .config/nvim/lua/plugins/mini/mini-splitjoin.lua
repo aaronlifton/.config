@@ -1,6 +1,7 @@
 return {
   {
     "echasnovski/mini.splitjoin",
+    enabled = false,
     lazy = false,
     -- version = false,
     -- opts = {

@@ -25,7 +25,6 @@ local function get_telescope_targets(prompt_bufnr)
 end
 
 local function goto_file_selection(prompt_bufnr, command)
-  local actions = require("telescope.actions")
   local actions_state = require("telescope.actions.state")
   local telescope_state = require("telescope.state")
   local picker = actions_state.get_current_picker(prompt_bufnr)
@@ -154,7 +153,7 @@ return {
       { "<leader>sSp", LazyVim.telescope("lsp_dynamic_workspace_symbols", { symbols = { "Property" } }), desc = "Property" },
       { "<leader>sSv", LazyVim.telescope("lsp_dynamic_workspace_symbols", { symbols = { "Variable", "Parameter" } }), desc = "Variable" },
       { "<leader>sA", LazyVim.telescope("treesitter"), desc = "Treesitter Symbols" },
-      { "<leader>sp", "<cmd>Telescope builtin<cr>", desc = "Pickers (Telescope)" },
+      { "<leader>sP", "<cmd>Telescope builtin<cr>", desc = "Pickers (Telescope)" },
       { "<leader>fh", LazyVim.telescope("find_files", { hidden = true }), desc = "Find Files (hidden)" },
       { "<leader><c-space>", LazyVim.telescope("find_files", { hidden = true }), desc = "Find Files (hidden)" },
       { "<leader>gC", "<cmd>Telescope git_bcommits<cr>", desc = "File History" },
@@ -177,22 +176,25 @@ return {
               goto_file_selection(prompt_bufnr, "e")
             end,
             ["<C-y>"] = yank_preview_buffer,
+            ["<C-Tab>"] = require("telescope.actions").select_tab_drop,
+            ["<M-h>"] = require("telescope.actions").results_scrolling_left,
+            ["<M-l>"] = require("telescope.actions").results_scrolling_right,
           },
           n = {
-            ["<C-6>"] = function(prompt_bufnr)
-              require("leap").leap({
-                targets = get_telescope_targets(prompt_bufnr),
-                action = function(target)
-                  target.pick:set_selection(target.row)
-                end,
-              })
-            end,
             ["s"] = function(prompt_bufnr)
               require("leap").leap({
                 targets = get_telescope_targets(prompt_bufnr),
                 action = function(target)
                   target.pick:set_selection(target.row)
                   require("telescope.actions").select_default(prompt_bufnr)
+                end,
+              })
+            end,
+            ["S"] = function(prompt_bufnr)
+              require("leap").leap({
+                targets = get_telescope_targets(prompt_bufnr),
+                action = function(target)
+                  target.pick:set_selection(target.row)
                 end,
               })
             end,

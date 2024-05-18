@@ -6,7 +6,7 @@ return {
     event = { "LazyFile" },
     cmd = {
       "TabnineChat",
-      "TabnineChatClear"1,
+      "TabnineChatClear",
       "TabnineChatClose",
       "TabnineChatNew",
       "TabnineDisable",

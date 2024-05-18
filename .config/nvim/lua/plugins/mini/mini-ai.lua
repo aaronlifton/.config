@@ -1,10 +1,10 @@
-local MiniExtra = require("mini.extra")
-local gen_spec = require("mini.ai").gen_spec
-local gen_ai_spec = MiniExtra.gen_ai_spec
-
 local mini_ai_git_signs = function()
   local bufnr = vim.api.nvim_get_current_buf()
-  local hunks = require("gitsigns.cache").cache[bufnr].hunks
+  local gitsigns_cache = require("gitsigns.cache").cache[bufnr]
+  if not gitsigns_cache then
+    return
+  end
+  local hunks = gitsigns_cache.hunks
   hunks = vim.tbl_map(function(hunk)
     local from_line = hunk.added.start
     local from_col = 1
@@ -25,16 +25,53 @@ return {
     optional = true,
     opts = function(_, opts)
       local ai = require("mini.ai")
-      vim.tbl_extend("keep", opts, {
+      local MiniExtra = require("mini.extra")
+      return vim.tbl_deep_extend("keep", opts, {
         custom_textobjects = {
-          -- LazyVim uses o-ai, fctde
-          X = gen_ai_spec.buffer(),
-          D = gen_ai_spec.diagnostic(),
-          I = gen_ai_spec.indent(),
-          L = gen_ai_spec.line(),
-          N = gen_ai_spec.number(),
-          F = gen_spec.function_call(),
-          g = {
+          -- LazyVim uses: a,i,f,c,t,d,e,g,u,U
+          -- scope
+          O = ai.gen_spec.treesitter({
+            a = { "@function.outer", "@class.outer", "@testitem.outer" },
+            i = { "@function.inner", "@class.inner", "@testitem.inner" },
+          }),
+          j = ai.gen_spec.treesitter({
+            a = { "@jsx_attribute.outer" },
+            i = { "@jsx_attribute.inner" },
+          }, {}),
+          -- C = ai.gen_spec.treesitter({ a = "@comment.outer", i = "@comment.outer" }),
+          -- P = ai.gen_spec.treesitter({ a = "@parameter.outer", i = "@parameter.inner" }),
+          -- T = ai.gen_spec.treesitter({ a = "@parameter.type", i = "@type.inner" }),
+          -- r = ai.gen_spec.treesitter({ a = "@return.outer", i = "@return.inner" }),
+          -- X = ai.gen_spec.treesitter({ a = "@statement.outer", i = "@statement.outer" }),
+          k = ai.gen_spec.treesitter({
+            i = { "@assignment.lhs", "@key.inner" },
+            a = { "@assignment.outer", "@key.inner" },
+          }),
+          v = ai.gen_spec.treesitter({
+            i = { "@assignment.rhs", "@value.inner", "@return.inner" },
+            a = { "@assignment.outer", "@value.inner", "@return.outer" },
+          }),
+          -- chunk (as in from vim-textobj-chunk)
+          -- x = {
+          --   "\n.-%b{}.-\n",
+          --   "\n().-()%{\n.*\n.*%}().-\n()",
+          -- },
+          -- ["$"] = ai.gen_spec.pair("$", "$", { type = "balanced" }),
+          h = mini_ai_git_signs,
+          -- I = MiniExtra.gen_ai_spec.indent(),
+          N = MiniExtra.gen_ai_spec.number(),
+          L = MiniExtra.gen_ai_spec.line(),
+          D = MiniExtra.gen_ai_spec.diagnostic(),
+          E = MiniExtra.gen_ai_spec.diagnostic({ severity = vim.diagnostic.severity.ERROR }),
+          p = {
+            {
+              "\n%s*\n()().-()\n%s*\n()[%s]*", -- normal paragraphs
+              "^()().-()\n%s*\n[%s]*()", -- paragraph at start of file
+              "\n%s*\n()().-()()$", -- paragraph at end of file
+            },
+          },
+          -- TODO: only for markdown
+          S = {
             {
               "%b{}",
               "\n%s*\n()().-()\n%s*\n[%s]*()", -- normal paragraphs
@@ -43,24 +80,20 @@ return {
             },
             {
               -- ("[%.?!][%s]+()().-[^%s].-()[%.?!]()[%s]"):format(), -- normal sentence
+              "[%.?!][%s]+()().-[^%s].-()[%.?!]()[%s]", -- normal sentence
               "^[%{%[]?[%s]*()().-[^%s].-()[%.?!]()[%s]", -- sentence at start of paragraph
               "[%.?!][%s]+()().-[^%s].-()()[\n%}%]]?$", -- sentence at end of paragraph
               "^[%s]*()().-[^%s].-()()[%s]+$", -- sentence at that fills paragraph (no final punctuation)
             },
           },
-          h = mini_ai_git_signs,
-          k = gen_spec.treesitter({
-            i = { "@assignment.lhs", "@key.inner" },
-            a = { "@assignment.outer", "@key.inner" },
-          }),
-          p = {
-            {
-              "\n%s*\n()().-()\n%s*\n()[%s]*", -- normal paragraphs
-              "^()().-()\n%s*\n[%s]*()", -- paragraph at start of file
-              "\n%s*\n()().-()()$", -- paragraph at end of file
-            },
-          },
-          r = {
+          -- Imitate word ignoring digits and punctuation (supports only Latin alphabet):
+          W = { {
+            "()()%f[%w%p][%w%p]+()[ \t]*()",
+          } },
+          -- Word, ignoring punctuation and digits
+          -- w = { "()()%f[%w_][%w_]+()[ \t]*()" },
+          -- Word, with camel case support (supports only Latin alphabet) TestTest
+          w = {
             {
               "%u[%l%d]+%f[^%l%d]",
               "%f[%S][%l%d]+%f[^%l%d]",
@@ -69,32 +102,11 @@ return {
             },
             "^().*()$",
           },
-          v = gen_spec.treesitter({
-            i = { "@assignment.rhs", "@value.inner", "@return.inner" },
-            a = { "@assignment.outer", "@value.inner", "@return.outer" },
-          }),
-          -- WORD
-          W = { {
-            "()()%f[%w%p][%w%p]+()[ \t]*()",
-          } },
-          -- word
-          w = { "()()%f[%w_][%w_]+()[ \t]*()" },
-          -- line (same key as visual line in my mappings)
-          x = gen_ai_spec.line(),
-          -- chunk (as in from vim-textobj-chunk)
-          z = {
-            "\n.-%b{}.-\n",
-            "\n().-()%{\n.*\n.*%}().-\n()",
-          },
-          -- Scope
-          s = gen_spec.treesitter({
-            a = { "@function.outer", "@class.outer", "@testitem.outer" },
-            i = { "@function.inner", "@class.inner", "@testitem.inner" },
-          }),
-          ["$"] = gen_spec.pair("$", "$", { type = "balanced" }),
+          -- Lua block '%[%[().-()%]%]'
+          -- date '()%d%d%d%d%-%d%d%-%d%d()'
         },
       })
-      -- used: a,i,f,c,t,d,e,g,u,U
+
       -- B = MiniExtra.gen_ai_spec.treesitter({ a = "@block.outer", i = "@block.inner" }, {}),
       -- C = MiniExtra.gen_ai_spec.treesitter({ a = "@conditional.outer", i = "@conditional.inner" }, {}),
       -- O = MiniExtra.gen_ai_spec.treesitter({ a = "@loop.outer", i = "@loop.inner" }, {}),

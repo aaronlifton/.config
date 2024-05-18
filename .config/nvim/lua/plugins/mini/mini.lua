@@ -5,24 +5,24 @@ return {
       require("mini.move").setup()
       require("mini.extra").setup()
       require("mini.colors").setup()
-      require("mini.bracketed").setup({
-        -- can overwrite [b since I use bufferline HL
-        buffer = { suffix = "", options = {} },
-        comment = { suffix = "", options = {} },
-        conflict = { suffix = "", options = {} },
-        -- might already be in mini.indent-scope
-        -- diagnostic = { suffix = "d", options = {} },
-        file = { suffix = "", options = {} },
-        -- indent     = { suffix = "i", options = {} },
-        jump = { suffix = "j", options = {} },
-        -- location   = { suffix = "l", options = {} },
-        oldfile = { suffix = "o", options = {} },
-        quickfix = { suffix = "q", options = {} },
-        treesitter = { suffix = "t", options = {} },
-        undo = { suffix = "u", options = {} },
-        -- window     = { suffix = "w", options = {} },
-        yank = { suffix = "z", options = {} },
-      })
+      -- require("mini.bracketed").setup({
+      --   -- can overwrite [b since I use bufferline HL
+      --   buffer = { suffix = "", options = {} },
+      --   comment = { suffix = "", options = {} },
+      --   conflict = { suffix = "", options = {} },
+      --   -- might already be in mini.indent-scope
+      --   -- diagnostic = { suffix = "d", options = {} },
+      --   file = { suffix = "", options = {} },
+      --   -- indent     = { suffix = "i", options = {} },
+      --   jump = { suffix = "j", options = {} },
+      --   -- location   = { suffix = "l", options = {} },
+      --   oldfile = { suffix = "o", options = {} },
+      --   quickfix = { suffix = "q", options = {} },
+      --   treesitter = { suffix = "t", options = {} },
+      --   undo = { suffix = "u", options = {} },
+      --   -- window     = { suffix = "w", options = {} },
+      --   yank = { suffix = "z", options = {} },
+      -- })
       require("mini.splitjoin").setup()
 
       -- local starter = require("mini.starter")

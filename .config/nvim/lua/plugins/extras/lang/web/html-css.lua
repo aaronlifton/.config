@@ -46,7 +46,18 @@ return {
           -- Don't really need this LS
           -- filetypes = html_filetypes,
         },
-        cssmodules_ls = {},
+        cssmodules_ls = {
+          -- --- Use :LspStart cssmodules_ls to start this
+          -- autostart = false,
+          --
+          -- ---note: local on_attach happens AFTER autocmd LspAttach
+          -- on_attach = function(client)
+          --   -- https://github.com/davidosomething/dotfiles/issues/521
+          --   -- https://github.com/antonk52/cssmodules-language-server#neovim
+          --   -- avoid accepting `definitionProvider` responses from this LSP
+          --   client.server_capabilities.definitionProvider = false
+          -- end,
+        },
         css_variables = {},
         cssls = {
           lint = {
@@ -94,21 +105,33 @@ return {
   {
     "mfussenegger/nvim-lint",
     opts = function(_, opts)
-      local stylelint = "stylelint"
       local lsp_util = require("util.lsp")
 
+      -- vim.api.nvim_echo({ { vim.inspect(require("lint").linters_by_ft), "Normal" } }, true, {})
       lsp_util.add_linters(opts, {
         ["html"] = { "htmlhint" },
-        ["css"] = { stylelint },
-        ["scss"] = { stylelint },
-        ["less"] = { stylelint },
-        ["sugarss"] = { stylelint },
-        ["vue"] = { stylelint },
-        ["wxss"] = { stylelint },
-        ["javascript"] = { stylelint },
-        ["javascriptreact"] = { stylelint },
-        ["typescript"] = { stylelint },
-        ["typescriptreact"] = { stylelint },
+        ["css"] = { "stylelint" },
+        ["scss"] = { "stylelint" },
+        ["less"] = { "stylelint" },
+        ["sugarss"] = { "stylelint" },
+        ["vue"] = { "stylelint" },
+        ["wxss"] = { "stylelint" },
+        ["javascript"] = { "eslint", "stylelint" },
+        ["javascriptreact"] = { "eslint", "stylelint" },
+        ["typescript"] = { "eslint", "stylelint" },
+        ["typescriptreact"] = { "eslint", "stylelint" },
+      })
+    end,
+  },
+  {
+    "stevearc/conform.nvim",
+    opts = function(_, opts)
+      local lsp_util = require("util.lsp")
+
+      lsp_util.add_formatters(opts, {
+        ["css"] = { "prettier" },
+        ["scss"] = { "prettier" },
+        ["module.css"] = { "prettier" },
       })
     end,
   },

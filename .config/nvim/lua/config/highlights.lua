@@ -1,27 +1,48 @@
--- get the current theme
-local theme = vim.g.colors_name or "tokyonight"
-local c = pcall(require, theme .. ".colors")
-  or {
-    default = {
-      fg = "#c0caf5",
-      bg = "#24283b",
-      bg90 = "#1f2335",
-      bg80 = "#292e42",
-      bg70 = "#393c63",
-      bg60 = "#737aa2",
-      bg50 = "#9aa2f7",
-      bg40 = "#b4f9f8",
-      blue = "#7aa2f7",
-    },
-  }
 local M = {}
+local theme = vim.g.colors_name
 
 M.setup = function()
-  -- Tokyonight (Lazy default)
-  vim.api.nvim_set_hl(0, "NeoTreeTitleBar", { fg = c.default.fg, bg = c.default.blue })
-  -- https://oklch.com/#25.37,0.036,274.75,100
-  vim.api.nvim_set_hl(0, "ColorColumn", { bg = c.default.bg })
-  -- vim.api.nvim_set_hl(0, "ColorColumn", { fg = "#838383", bg = "#161a33" })
+  if theme == "tokyonight" then
+    local c = pcall(require, theme .. ".colors")
+      or {
+        default = {
+          fg = "#c0caf5",
+          bg = "#24283b",
+          bg90 = "#1f2335",
+          bg80 = "#292e42",
+          bg70 = "#393c63",
+          bg60 = "#737aa2",
+          bg50 = "#9aa2f7",
+          bg40 = "#b4f9f8",
+          blue = "#7aa2f7",
+        },
+      }
+    -- Tokyonight (Lazy default)
+    vim.api.nvim_set_hl(0, "NeoTreeTitleBar", { fg = c.default.fg, bg = c.default.blue })
+    -- https://oklch.com/#25.37,0.036,274.75,100
+    vim.api.nvim_set_hl(0, "ColorColumn", { bg = c.default.bg })
+    -- BufferLineCloseButtonxxx guifg=#45475b guibg=#181826
+    -- BufferLineBackgroundxxx guifg=#636da6 guibg=#1e2031
+    -- 22:21:35 msg_show BufferLineErrorDiagnosticxxx guifg=#f38ba9 guibg=#181826 guisp=#932c3e
+    -- vim.api.nvim_set_hl(0, "BufferLineCloseButton", { fg = "#45475b", bg = "#1e2031" })
+    -- vim.api.nvim_set_hl(0, "BufferLineErrorDiagnostic", { fg = "#f38ba9", bg = "#1e2031" })
+    -- vim.api.nvim_set_hl(0, "BufferLineErrorDiagnostic", { fg = "#f38ba9", bg = "#1e2031" })
+    -- vim.api.nvim_set_hl(0, "BufferLineErrorVisible", { fg = "#f38ba9", bg = "#1e2031" })
+    -- vim.api.nvim_set_hl(0, "BufferLineError", { fg = "#f38ba9", bg = "#1e2031", sp = "#c53b53" })
+    -- vim.api.nvim_set_hl(0, "BufferLineSeparatorSelected", { fg = "#11111c", bg = "#1e2031", sp = "#c53b53" })
+    -- BufferLineSeparatorSelectedxxx guifg=#11111c guibg=#1e1e2f
+    --
+  elseif theme == "cyberdream" then
+    local U = require("util.colors")
+    local C = require("cyberdream.colors")
+    local t = C.default
+    -- vim.api.nvim_set_hl(0, "LeapLabelPrimary", {
+    --   fg = "#ffffff",
+    --   bg = U.darken(t.blue, 0.3),
+    --   bold = true,
+    -- })
+    vim.api.nvim_set_hl(0, "ColorColumn", { bg = U.darken(t.bgAlt, 0.79) })
+  end
 end
 
 return M

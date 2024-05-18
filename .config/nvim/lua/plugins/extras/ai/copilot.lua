@@ -16,6 +16,39 @@
 --   },
 -- }
 return {
+  { import = "lazyvim.plugins.extras.coding.copilot" },
+  -- {
+  --     "nvim-lualine/lualine.nvim",
+  --     optional = true,
+  --     event = "VeryLazy",
+  --     opts = function(_, opts)
+  --       local Utils = require "utils"
+  --       local colors = {
+  --         [""] = Utils.fg "Special",
+  --         ["Normal"] = Utils.fg "Special",
+  --         ["Warning"] = Utils.fg "DiagnosticError",
+  --         ["InProgress"] = Utils.fg "DiagnosticWarn",
+  --       }
+  --       table.insert(opts.sections.lualine_x, 2, {
+  --         function()
+  --           local icon = require("config.icons").icons.kinds.Copilot
+  --           local status = require("copilot.api").status.data
+  --           return icon .. (status.message or "")
+  --         end,
+  --         cond = function()
+  --           local ok, clients = pcall(vim.lsp.get_active_clients, { name = "copilot", bufnr = 0 })
+  --           return ok and #clients > 0
+  --         end,
+  --         color = function()
+  --           if not package.loaded["copilot"] then
+  --             return
+  --           end
+  --           local status = require("copilot.api").status.data
+  --           return colors[status.status] or colors[""]
+  --         end,
+  --       })
+  --     end,
+  --   }
   {
     "zbirenbaum/copilot.lua",
     cmd = "Copilot",
@@ -23,63 +56,78 @@ return {
     event = "InsertEnter",
     opts = {
       suggestion = {
-        -- enabled = false,
+        enabled = false,
         -- auto_trigger = false,
-        enabled = true,
-        auto_trigger = true,
+        -- enabled = true,
+        -- auto_trigger = true,
         keymap = {
-          accept = "<M-CR>",
-          accept_line = "<M-l>",
-          accept_word = "<M-k>",
-          next = "<M-]>",
-          prev = "<M-[>",
-          dismiss = "<M-c>",
+          accept = "<M-C-CR>",
+          accept_line = "<M-C-l>",
+          accept_word = "<M-C-k>",
+          next = "<M-C-]>",
+          prev = "<M-C-[>",
+          dismiss = "<M-C-c>",
         },
+        -- keymap = {
+        --   accept = "<M-l>",
+        --   accept_word = false,
+        --   accept_line = false,
+        --   next = "<M-]>",
+        --   prev = "<M-[>",
+        --   dismiss = "<C-]>",
+        -- },
       },
       -- It is recommended to disable copilot.lua's suggestion and panel modules, as they can interfere with completions properly appearing in copilot-cmp. To do so, simply place the following in your copilot.lua config:
       panel = { enabled = false },
       -- panel = { enabled = true, auto_refresh = true },
-      filetypes = {
-        markdown = true,
-        help = true,
-        "javascript",
-        "javascriptreact",
-        "typescript",
-        "typescript.tsx",
-        "typescriptreact",
-        "javascript",
-        "javascript.jsx",
-        "javascriptreact",
-        "vue",
-        "css",
-        "scss",
-        "less",
-        "html",
-        "json",
-        "jsonc",
-        "yaml",
-        "markdown",
-        "markdown.mdx",
-        "markdown",
-        "markdown.mdx",
-        "graphql",
-        "handlebars",
-        "lua",
-        "astro",
-        "svelte",
-        "vim",
-        "python",
-        "sh",
-        "zsh",
-        "bash",
-        "fish",
-        "zig",
-        "go",
-        "gohtml",
-        "goimports",
-      },
+      -- filetypes = {
+      --   markdown = true,
+      --   help = true,
+      --   "javascript",
+      --   "javascriptreact",
+      --   "typescript",
+      --   "typescript.tsx",
+      --   "typescriptreact",
+      --   "javascript",
+      --   "javascript.jsx",
+      --   "javascriptreact",
+      --   "vue",
+      --   "css",
+      --   "scss",
+      --   "less",
+      --   "html",
+      --   "json",
+      --   "jsonc",
+      --   "yaml",
+      --   "markdown",
+      --   "markdown.mdx",
+      --   "markdown",
+      --   "markdown.mdx",
+      --   "graphql",
+      --   "handlebars",
+      --   "lua",
+      --   "astro",
+      --   "svelte",
+      --   "vim",
+      --   "python",
+      --   "sh",
+      --   "zsh",
+      --   "bash",
+      --   "fish",
+      --   "zig",
+      --   "go",
+      --   "gohtml",
+      --   "goimports",
+      -- },
       keys = {
-        { "<leader>cI", "<cmd>Copilot toggle<cr>", desc = "Toggle IA" },
+        { "<leader>cI", "<cmd>Copilot toggle<cr>", desc = "Toggle Copilot" },
+        {
+          "<leader>ct",
+          function()
+            require("copilot.suggestion").toggle_auto_trigger()
+          end,
+          desc = "Toggle IA",
+        },
         {
           "<leader>cP",
           function()
@@ -118,7 +166,9 @@ return {
     config = function(_, opts)
       local has_words_before = function()
         -- if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then
-        if vim.api.nvim_get_option_value("buftype", { buf = 0 }) == "prompt" then return false end
+        if vim.api.nvim_get_option_value("buftype", { buf = 0 }) == "prompt" then
+          return false
+        end
         local line, col = unpack(vim.api.nvim_win_get_cursor(0))
         return col ~= 0 and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match("^%s*$") == nil
       end
@@ -140,7 +190,9 @@ return {
       -- attach cmp source whenever copilot attaches
       -- fixes lazy-loading issues with the copilot cmp source
       require("lazyvim.util").lsp.on_attach(function(client)
-        if client.name == "copilot" then copilot_cmp._on_insert_enter({}) end
+        if client.name == "copilot" then
+          copilot_cmp._on_insert_enter({})
+        end
       end)
     end,
   },

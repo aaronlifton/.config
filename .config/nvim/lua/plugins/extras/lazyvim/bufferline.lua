@@ -16,11 +16,27 @@ table.insert(keys, { "<leader>bs", "<Cmd>BufferLineSortByExtension<CR>", desc = 
 return {
   "akinsho/bufferline.nvim",
   keys = keys,
-  -- opts = {
-  --   options = {
-  --     modified_icon = "",
-  --     color_icons = true,
-  --     separator_style = "slope",
-  --   },
-  -- },
+  opts = {
+    -- modified_icon = "",
+    -- color_icons = true,
+    -- separator_style = "slope",
+    highlights = {
+      fill = {
+        fg = "#ffffff",
+        bg = "#000000",
+      },
+      -- background = {
+      --   fg = "<colour-value-here>",
+      --   bg = "<colour-value-here>",
+      -- },
+      -- tab = {
+      --   fg = "<colour-value-here>",
+      --   bg = "<colour-value-here>",
+      -- },
+      -- tab_selected = {
+      --   fg = "<colour-value-here>",
+      --   bg = "<colour-value-here>",
+      -- },
+    },
+  },
 }

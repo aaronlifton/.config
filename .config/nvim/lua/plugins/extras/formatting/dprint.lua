@@ -1,5 +1,7 @@
 local lsp_util = require("util.lsp")
-
+local dprint_filenames = { "dprint.json", ".dprint.json", "dprint.jsonc", ".dprint.jsonc" }
+local notified = false
+local use_global_dprint_formatter = false
 return {
   {
     "williamboman/mason.nvim",
@@ -12,7 +14,9 @@ return {
     "stevearc/conform.nvim",
     opts = function(_, opts)
       local util = require("conform.util")
-      lsp_util.set_formatters(opts, {
+      local conform = require("conform")
+
+      lsp_util.add_formatters(opts, {
         ["jsonc"] = { "dprint" },
         ["json"] = { "dprint" },
         ["javascript"] = { "dprint" },
@@ -24,51 +28,54 @@ return {
         ["vue"] = { "dprint" },
       })
 
+      local prettier_settings = {
+        condition = function(_, ctx)
+          local dprint_available = conform.get_formatter_info("dprint", ctx.buf).available
+          local biome_available = conform.get_formatter_info("biome", ctx.buf).available
+          -- return not biome_available and not dprint_available
+          return false
+        end,
+      }
       lsp_util.add_formatter_settings(opts, {
+        -- dprint runs biome itself, so always enable it unless it's a
+        -- prettier/eslint project (e.g. React Native, Remix, some NextJS projects, etc.)
+        -- prefer to run biome through dprint, as it's more performant
         dprint = {
-          prepend_args = { "-c", vim.fn.stdpath("config") .. "/rules/dprint.json" },
-          -- condition = function(ctx)
-          --   return vim.fs.find({
-          --     "dprint.json",
-          --     ".dprint.jsonc",
-          --     -- "dprint.jsonc",
-          --     -- ".dprint.jsonc",
-          --   }, { path = ctx.filename, upward = true })[1]
-          -- end,
-          -- TODO: remove since there is now a condition
-          cwd = util.root_file({
-            "dprint.json",
-            "dprint.jsonc",
-            ".dprint.json",
-            ".dprint.jsonc",
-            "package.json", -- added this line
-          }),
-        },
-      })
-
-      local slow_format_filetypes = {}
-      require("conform").setup({
-        format_on_save = function(bufnr)
-          if slow_format_filetypes[vim.bo[bufnr].filetype] then
-            return
-          end
-          local function on_format(err)
-            if err and err:match("timeout$") then
-              slow_format_filetypes[vim.bo[bufnr].filetype] = true
+          condition = function(_, ctx)
+            if use_global_dprint_formatter then
+              local has_prettier = vim.fs.find({ ".prettierrc.js" }, { upward = true })[1]
+              local has_eslint = vim.fs.find({ ".eslintrc.js" }, { upward = true })[1]
+              return not has_prettier and not has_eslint
+              -- return not require("conform").get_formatter_info("prettier", ctx.buf).available
+              --   and not require("conform").get_formatter_info("biome", ctx.buf).available
+            else
+              local has_dprint = vim.fs.find(dprint_filenames, { upward = true })[1]
+              return has_dprint
             end
-          end
-
-          return { timeout_ms = 200, lsp_fallback = true }, on_format
-        end,
-
-        format_after_save = function(bufnr)
-          if not slow_format_filetypes[vim.bo[bufnr].filetype] then
-            return
-          end
-          return { lsp_fallback = true }
-        end,
+          end,
+          -- prepend_args = { "-c", vim.fn.stdpath("config") .. "/rules/dprint.json" },
+          prepend_args = function(ctx)
+            -- Use a base dprint config for non-dprint projects, as dprint is the default formatter
+            local has_dprint = vim.fs.find(dprint_filenames, { upward = true })[1]
+            if not has_dprint then
+              if not notified then
+                vim.api.nvim_echo({ { "Using dprint default config" } }, true, {})
+                notified = true
+              end
+              return { "-c", vim.fn.stdpath("config") .. "/rules/dprint.json" }
+            end
+          end,
+        },
+        biome = {
+          condition = function(_, ctx)
+            local has_dprint_config = vim.fs.find(dprint_filenames, { upward = true })[1]
+            local has_biome = vim.fs.find({ "biome.json" }, { path = ctx.filename, upward = true })[1]
+            return has_biome and not has_dprint_config
+          end,
+        },
+        prettier = prettier_settings,
+        prettierd = prettier_settings,
       })
-      -- return opts
     end,
   },
 }

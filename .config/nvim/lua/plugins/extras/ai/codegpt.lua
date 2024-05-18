@@ -2,6 +2,7 @@ return {
   {
     "dpayne/CodeGPT.nvim",
     cmd = "Chat",
+    build = "pip install tiktoken",
     dependencies = {
       "nvim-lua/plenary.nvim",
       "MunifTanjim/nui.nvim",

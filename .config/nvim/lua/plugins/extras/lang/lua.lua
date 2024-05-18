@@ -1,3 +1,6 @@
+local nvim_0_10 = vim.fn.has("nvim-0.10")
+local lsp_util = require("util.lsp")
+
 return {
   {
     "sam4llis/nvim-lua-gf",
@@ -17,6 +20,57 @@ return {
       },
     },
     opts = {
+      servers = {
+        lua_ls = {
+          settings = {
+            Lua = {
+              runtime = {
+                -- LuaFun needs LuaJIT 2.1 for tail recursion
+                version = "LuaJIT",
+                pathStrict = true,
+                path = { "?.lua", "?/init.lua" },
+              },
+              telemetry = { enable = false },
+              semantic = { enable = false }, -- Do not override treesitter lua highlighting with lua_ls's highlighting
+              workspace = {
+                checkThirdParty = false,
+                library = lsp_util.library(),
+                maxPreload = 8000,
+                preloadFileSize = 1000,
+                ignoreDir = { ".*", "aaron", "config/nvim", "nvim/lua" },
+                -- maxPreload = 100000,
+                -- preloadFileSize = 10000,
+              },
+              completion = {
+                -- workspaceWord = true,
+                -- callSnippet = "Both",
+                callSnippet = "Replace",
+              },
+              hint = {
+                enable = nvim_0_10,
+                setType = nvim_0_10,
+                paramType = true, -- Show type hints at the parameter of the function.
+                paramName = "Literal", -- Show hints of parameter name (literal types only) at the function call.
+                arrayIndex = "Auto", -- Show hints only when the table is greater than 3 items, or the table is a mixed table.
+              },
+              diagnostics = {
+                globals = { "vim", "LazyVim" },
+                undefined_global = false, -- remove this from diag!
+                missing_parameters = false, -- missing fields :)
+                disable = { "missing-parameters", "missing-fields" },
+              },
+              -- format = {
+              --   enable = true,
+              --   defaultConfig = {
+              --     indent_style = "space",
+              --     indent_size = "2",
+              --     continuation_indent_size = "2",
+              --   },
+              -- },
+            },
+          },
+        },
+      },
       setup = {
         lua_ls = function(_, _)
           local lsp_utils = require("util.lsp")

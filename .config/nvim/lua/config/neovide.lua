@@ -21,7 +21,7 @@ vim.g.neovide_scale_factor = 1.0
 -- vim.o.guifont = "Fira Code,Symbols Nerd Font Mono:h34"
 -- vim.g.neovide_scale_factor = 0.3
 -- 4
--- vim.o.guifont = {"Cascadia Code Light,Vazir Code Hack,MesloLGS NF,Hack Nerd Font", ":h15"}
+-- vim.o.guifont = {"Cascadia Code Light,MesloLGS NF,Hack Nerd Font", ":h15"}
 -- 5
 vim.g.gui_font_face = "Iosevka SS08"
 vim.o.guifont = "Iosevka SS08 Light:h18:#e-subpixelantialias"
@@ -75,6 +75,7 @@ end)
 vim.g.neovide_padding_top = 5
 vim.g.neovide_padding_right = 5
 vim.g.neovide_padding_left = 5
+vim.g.neovide_padding_bottom = 5
 
 vim.g.neovide_window_blurred = true
 vim.g.neovide_floating_blur_amount_x = 5.0
@@ -110,7 +111,7 @@ vim.g.neovide_scroll_animation_length = 0.2
 -- keys
 vim.g.neovide_input_use_logo = true
 vim.g.neovide_input_macos_alt_is_meta = true
-vim.g.neovide_fullscreen = true
+vim.g.neovide_fullscreen = false
 
 -- KEYS
 -- map("n", "æ", "<A-a>", symbol_key_opts)

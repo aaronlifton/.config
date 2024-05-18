@@ -66,33 +66,43 @@ function M.on_attach(on_attach)
   })
 end
 
----@param names string[]
 ---@return string[]
-function M.get_plugin_paths(names)
-  local plugins = require("lazy.core.config").plugins
-  local paths = {}
-  for _, name in ipairs(names) do
-    if plugins[name] then
-      table.insert(paths, plugins[name].dir .. "/lua")
-    else
-      vim.notify("Invalid plugin name: " .. name)
+function M.library()
+  local runtime_paths = vim.api.nvim_get_runtime_file("", true)
+  local library = {}
+  for _, path in ipairs(runtime_paths) do
+    -- add bob nightly runtime paths
+    if string.match(path, "nvim-macos") then
+      table.insert(library, path)
     end
   end
-  return paths
+  table.insert(library, vim.fn.expand("~/.local/share/nvim/lazy/neodev.nvim/types/nightly"))
+  local additional_paths = require("util.lua_ls_library")
+  for _, path in ipairs(additional_paths) do
+    table.insert(library, path)
+  end
+  return library
 end
 
----@param plugins string[]
----@return string[]
-function M.library(plugins)
-  local paths = M.get_plugin_paths(plugins)
-  table.insert(paths, vim.fn.stdpath("config") .. "/lua")
-  table.insert(paths, vim.env.VIMRUNTIME .. "/lua")
-  table.insert(paths, "${3rd}/luv/library")
-  table.insert(paths, "${3rd}/busted/library")
-  table.insert(paths, "${3rd}/luassert/library")
-  table.insert(paths, vim.fn.expand("~/.local/share/nvim/lazy/neodev.nvim/types/nightly"))
-  table.insert(paths, vim.fn.expand("~/Code/nvim-plugins/leap.nvim/lua/"))
-  return paths
+-- local conform = require("conform")
+---@param ctx conform.Context
+---@return string
+M.jsx_formatter = function(ctx)
+  local dprint_filenames = { "dprint.json", ".dprint.json", "dprint.jsonc", ".dprint.jsonc" }
+  local has_biome = vim.fs.find({ "biome.json" }, { path = ctx.filename, upward = true })[1]
+  local has_dprint = vim.fs.find(dprint_filenames, { upward = true })[1]
+  local has_prettier = vim.fs.find({ ".prettierrc.js" }, { upward = true })[1]
+  local has_eslint = vim.fs.find({ ".eslintrc.js" }, { upward = true })[1]
+
+  if ctx.filename:match(".astro") then
+    return "dprint"
+  elseif has_prettier and has_eslint then
+    return "prettier"
+  elseif has_biome and not has_dprint then
+    return "biome"
+  else
+    return "dprint"
+  end
 end
 
 return M

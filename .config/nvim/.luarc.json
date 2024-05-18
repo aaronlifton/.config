@@ -2,14 +2,30 @@
   "$schema": "https://raw.githubusercontent.com/LuaLS/vscode-lua/master/setting/schema.json",
   "diagnostics.globals": ["LazyVim", "vim", "MiniFiles", "MiniPickers"],
   "workspace": {
-    "maxPreload": 1600,
+    "maxPreload": 8000,
     "preloadFileSize": 1000,
-    "ignoreDir": [".vscode", "aaron"],
+    "ignoreDir": [".*", "aaron", "config/nvim", "nvim/lua"],
     "checkThirdParty": false,
     "library": [
-      "/Users/aaron/Code/nvim-plugins/leap.nvim/lua/",
-      "/Users/aaron/.local/share/nvim/lazy/neodev.nvim/types/nightly/",
-      "/Users/aaron/.local/share/nvim/lazy/edgy.nvim/lua/"
+      "/Users/aaron/.config/nvim",
+      "/Users/aaron/.local/share/nvim/site",
+      "/Users/aaron/.local/share/nvim/lazy/lazy.nvim",
+      "/Users/aaron/.local/share/nvim/lazy/codeium.vim",
+      "/Users/aaron/.local/share/nvim/lazy/conform.nvim",
+      "/Users/aaron/.local/share/nvim/lazy/mini.ai",
+      "/Users/aaron/.local/share/nvim/lazy/nvim-treesitter",
+      "/Users/aaron/.local/share/nvim/lazy/noice.nvim",
+      "/Users/aaron/.local/share/nvim/lazy/lualine.nvim",
+      "/Users/aaron/.local/share/nvim/lazy/telescope.nvim",
+      "/Users/aaron/.local/share/nvim/lazy/nvim-cmp",
+      "/Users/aaron/.local/share/nvim/lazy/copilot.lua",
+      "/Users/aaron/.local/share/nvim/lazy/nvim-lspconfig",
+      "/Users/aaron/.local/share/nvim/lazy/mason.nvim",
+      "/Users/aaron/.local/share/bob/38b9c32/nvim-macos/share/nvim/runtime",
+      "/Users/aaron/.local/share/bob/38b9c32/nvim-macos/share/nvim/runtime/pack/dist/opt/matchit",
+      "/Users/aaron/.local/share/bob/38b9c32/nvim-macos/lib/nvim",
+      "/Users/aaron/.config/nvim/after",
+      "${3rd}/luv/library"
     ]
   }
 }

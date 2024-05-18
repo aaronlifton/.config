@@ -37,6 +37,13 @@ return {
       vim.g.codeium_disable_bindings = 1
 
       vim.keymap.set("i", "<M-CR>", function()
+        -- vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-e>", true, true, true), "n", true)
+
+        -- vim.schedule_wrap(function()
+        --   if cmp.visible() then
+        --     require("cmp").mapping.abort()
+        --   end
+        -- end)
         return vim.fn["codeium#Accept"]()
       end, opts)
 
@@ -56,7 +63,11 @@ return {
         return vim.fn["codeium#Clear"]()
       end, opts)
 
-      vim.keymap.set("n", "<leader>cM", "<cmd>CodeiumToggle<cr>", { desc = "Toggle IA (Codeium)" })
+      vim.keymap.set("i", "<M-BS>", function()
+        return vim.fn["codeium#Complete"]()
+      end, opts)
+
+      vim.keymap.set("n", "<leader>cI2", "<cmd>CodeiumToggle<cr>", { desc = "Toggle Codeium" })
     end,
   },
   {

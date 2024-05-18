@@ -60,7 +60,6 @@ function M.leftmost_wins()
   local editor_wins = vim.tbl_map(function(buf)
     return vim.fn.bufwinid(buf)
   end, editor_bufs)
-  print(editor_wins)
   local leftwins = {}
   for _, win in ipairs(editor_wins) do
     if M.is_leftmost_window(win) and win ~= -1 then
@@ -69,6 +68,7 @@ function M.leftmost_wins()
   end
   return leftwins
 end
+
 function M.goto_leftmost_win()
   local leftwins = M.leftmost_wins()
   if #leftwins == 0 then
@@ -76,6 +76,7 @@ function M.goto_leftmost_win()
   end
   vim.api.nvim_set_current_win(leftwins[1])
 end
+
 function M.switch_to_highest_window()
   local windows = vim.api.nvim_list_wins()
   local highest_win = windows[1]

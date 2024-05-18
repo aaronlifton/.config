@@ -1,4 +1,4 @@
--- Options are automatically loaded before lazy.nvim startup
+-- Options are automatically loaded before lazy.nvim startupoptions
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
 -- Add any additional options here
 
@@ -27,6 +27,8 @@ o.sps = "file:/Users/aaron/.config/nvim/spell/sugg,best"
 o.startofline = true
 o.swapfile = false
 o.textwidth = 80
+o.termguicolors = trueoptions
+-- o.formatoptions = "jcrqlnt" -- "jcroqlnt" -- tcqj
 -- o.colorcolumn = "80"
 
 -- g.gui_font_face = "Hack Nerd Font Mono"
@@ -35,6 +37,7 @@ o.textwidth = 80
 -- g.gui_font_face = "MonaLisa Nerd Font Mono"
 g.gui_font_face = "Sauce Code Pro Nerd Font Mono"
 g.gui_font_size = 18
+g.custom_notifications = {}
 -------------------------------------------------
 
 -- vim.env.XDG_CACHE_HOME = vim.env.XDG_CACHE_HOME or vim.env.HOME .. "/.cache"

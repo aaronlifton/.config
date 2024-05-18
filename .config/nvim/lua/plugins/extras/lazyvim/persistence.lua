@@ -3,7 +3,7 @@ local p = require("persistence")
 
 return {
   "folke/persistence.nvim",
-  enabled = false,
+  -- enabled = false,
   -- event = "BufReadPre",
   -- opts = { options = { "buffers", "curdir", "tabpages", "winsize", "help" } },
   keys = {

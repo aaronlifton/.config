@@ -5,7 +5,7 @@ function M.has_rubocop()
 end
 
 function M.has_ruby_lsp()
-  return M.in_bundle("ruby-lsp")
+  return M.in_bundle("ruby-lsp") == true
 end
 
 function M.gemfile()
@@ -14,12 +14,12 @@ end
 
 function M.in_bundle(gemname)
   if M.bundle_cache ~= nil then
-    return M.bundle_cache[gemname]
+    return M.bundle_cache[gemname] == true
   else
     M.bundle_cache = M.bundle_cache or {}
     local gemfile = M.gemfile()
     if not gemfile then
-      return
+      return false
     end
 
     local found = false
@@ -37,7 +37,7 @@ function M.in_bundle(gemname)
     end
 
     M.bundle_cache[gemname] = found
-    return found
+    return found == true
   end
 end
 

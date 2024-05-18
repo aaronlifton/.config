@@ -39,56 +39,22 @@ return {
     "stevearc/conform.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.formatters_by_ft["markdown"] = { { "prettierd", "prettier" } }
-      opts.formatters_by_ft["markdown.mdx"] = { { "prettierd", "prettier" } }
+      -- opts.formatters_by_ft["markdown"] = { { "prettierd", "prettier" } }
+      -- opts.formatters_by_ft["markdown.mdx"] = { { "prettierd", "prettier" } }
+      opts.formatters_by_ft["markdown"] = { "dprint" }
+      opts.formatters_by_ft["markdown.mdx"] = { "dprint" }
       opts.formatters_by_ft["mdx"] = vim.list_slice(opts.formatters_by_ft["markdown.mdx"])
     end,
-    -- opts = {
-    --   formatters_by_ft = {
-    --     -- ["markdown"] = { "prettier" },
-    --     ["markdown.mdx"] = { "prettier_d" },
-    --     ["mdx"] = { "prettier_d" },
-    --   },
-    -- },
-    -- NOTE: Had edited the wrong file and thought this was the workaround
-    -- TODO: Remove after testing above
-    --
-    -- opts = function(_, opts)
-    --   opts.formatters_by_ft["markdown.mdx"] = opts.formatters_by_ft["markdown.mdx"] or {}
-    --
-    --   local prettier_idx = nil
-    --   for i, v in ipairs(opts.formatters_by_ft["markdown.mdx"]) do
-    --     if v == "prettier" then
-    --       prettier_idx = i
-    --       break
-    --     end
-    --   end
-    --
-    --   if prettier_idx then
-    --     table.remove(opts.formatters_by_ft["markdown.mdx"], prettier_idx)
-    --   else
-    --     prettier_idx = 1
-    --   end
-    --   table.insert(opts.formatters_by_ft["markdown.mdx"], prettier_idx, "prettier_d")
-    --   -- Set same settings for duplicate filetype, create shallow copy via vim.list_slice
-    --   opts.formatters_by_ft["mdx"] = vim.list_slice(opts.formatters_by_ft["markdown.mdx"])
-    -- end,
   },
-  -- {
-  --   "neovim/nvim-lspconfig",
-  --   opts = {
-  --     servers = {
-  --       marksman = {
-  --         condition = function(self, ctx)
-  --           return ctx.filename ~= "README.md"
-  --         end,
-  --       },
-  --       vale = {
-  --         condition = function(self, ctx)
-  --           return ctx.filename ~= "README.md"
-  --         end,
-  --       },
-  --     },
-  --   },
-  -- },
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        -- marksman = {
+        --   enabled = false,
+        -- },
+        marksman = {},
+      },
+    },
+  },
 }

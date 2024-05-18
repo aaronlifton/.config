@@ -61,4 +61,33 @@ function M.baleia_colorize()
   require("baleia").automatically(vim.fn.bufnr())
 end
 
+function M.count_words(opts)
+  local count = 0
+  local mode = vim.api.nvim_get_mode().mode
+  -- vim.api.nvim_echo({ { "Opts", "Normal" }, { vim.inspect(opts), "Normal" } }, true, {})
+
+  ---@param lines string[]
+  ---@return number
+  local count_words = function(lines)
+    for _, line in ipairs(lines) do
+      for _ in line:gmatch("%w+") do
+        count = count + 1
+      end
+    end
+    return count
+  end
+
+  if opts.range == 2 then
+    local start_line = opts.line1
+    local end_line = opts.line2
+    local lines = vim.api.nvim_buf_get_lines(0, start_line - 1, end_line, false)
+    count = count_words(lines)
+  else
+    local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)
+    count = count_words(lines)
+  end
+  vim.api.nvim_echo({ { "Word count: " .. count } }, true, {})
+end
+vim.api.nvim_create_user_command("WordCount", M.count_words, { range = true })
+
 return M

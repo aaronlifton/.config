@@ -1,5 +1,3 @@
-local lsp_util = require("util.lsp")
-
 return {
   {
     "williamboman/mason.nvim",
@@ -14,12 +12,23 @@ return {
       servers = {
         biome = {},
       },
+      -- setup = {
+      --   tsserver = function(server, server_opts)
+      --     require("lspconfig").biome.setup({
+      --       on_attach = function(client, bufnr)
+      --         return 1
+      --       end,
+      --     })
+      --   end,
+      -- },
     },
   },
   {
     "stevearc/conform.nvim",
     opts = function(_, opts)
-      local util = require("conform.util")
+      local lsp_util = require("util.lsp")
+      local conform = require("conform")
+
       lsp_util.add_formatters(opts, {
         ["jsonc"] = { "biome" },
         ["json"] = { "biome" },
@@ -33,45 +42,32 @@ return {
       })
 
       local prettier_settings = {
-        condition = function(self, ctx)
-          -- check if the filename ends in mdx
-          if vim.fn.fnamemodify(ctx.filename, ":e") == "mdx" then
-            return true
-          else
-            local dprint_filenames = { "dprint.json", "dprint.jsonc", ".dprint.json", ".dprint.jsonc" }
-            local has_higher_precedence_formatter =
-              vim.fs.find({ "biome.json", table.unpack(dprint_filenames) }, { path = ctx.filename, upward = true })[1]
-            return not has_higher_precedence_formatter
-          end
+        condition = function(_, ctx)
+          return not vim.fs.find({ "biome.json" }, { path = ctx.filename, upward = true })[1]
         end,
-        cwd = util.root_file({
-          -- https://prettier.io/docs/en/configuration.html
-          ".prettierrc",
-          ".prettierrc.json",
-          ".prettierrc.yml",
-          ".prettierrc.yaml",
-          ".prettierrc.json5",
-          ".prettierrc.js",
-          ".prettierrc.cjs",
-          ".prettierrc.toml",
-          "prettier.config.js",
-          "prettier.config.cjs",
-          "prettier.config.mjs",
-          "package.json",
-        }),
       }
 
       lsp_util.add_formatter_settings(opts, {
         biome = {
-          condition = function(self, ctx)
+          condition = function(_, ctx)
             return vim.fs.find({ "biome.json" }, { path = ctx.filename, upward = true })[1]
           end,
         },
         prettier = prettier_settings,
         prettierd = prettier_settings,
       })
-
-      -- return opts
     end,
   },
+  -- {
+  --   "mfussenegger/nvim-lint",
+  --   opts = function(_, opts)
+  --     local lsp_util = require("util.lsp")
+  --     lsp_util.add_linters(opts, {
+  --       javascript = { "biome" },
+  --       javascriptreact = { "biome" }, --stylelint
+  --       typescript = { "biome" },
+  --       typescriptreact = { "biome" }, --stylelint
+  --     })
+  --   end,
+  -- },
 }

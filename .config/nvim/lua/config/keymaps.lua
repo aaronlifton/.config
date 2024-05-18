@@ -4,6 +4,7 @@
 local map = vim.keymap.set
 local o = vim.opt
 local lazyutil = require("lazy.util")
+local git_util = require("util.git")
 
 map({ "n", "i", "v", "x" }, "<C-7>", "<cmd>WhichKey<cr>", { desc = "WhichKey" })
 -- Buffers
@@ -31,14 +32,15 @@ end, { desc = "Toggle Tabline" })
 
 -- toggle colorcolumn
 map("n", "<leader>um", function()
-  if o.colorcolumn == "" then
-    o.colorcolumn = "81"
+  local col = vim.o.colorcolumn
+  if col == "" then
+    vim.o.colorcolumn = "81"
   else
-    o.colorcolumn = ""
+    vim.o.colorcolumn = ""
   end
 end, { desc = "Toggle colorcolumn" })
 
--- toggle formatexpr
+-- toggle formatexpr to format paragraphs
 map("n", "<leader>uM", function()
   if o.formatexpr == "" then
     -- o.formatexpr = "v:lua.require'lazyvim.util'.format.formatexpr()"
@@ -74,6 +76,35 @@ for i = 1, 9 do
   map("n", "<leader><tab>" .. i, "<cmd>tabn " .. i .. "<cr>", { desc = "Tab " .. i })
 end
 map("n", "<leader><tab>-", "<cmd>tabonly<cr>", { desc = "Close Other Tabs" })
+map("n", "<leader>f<tab>", function()
+  vim.ui.select(vim.api.nvim_list_tabpages(), {
+    prompt = "Select Tab:",
+    format_item = function(tabid)
+      local wins = vim.api.nvim_tabpage_list_wins(tabid)
+      local not_floating_win = function(winid)
+        return vim.api.nvim_win_get_config(winid).relative == ""
+      end
+      wins = vim.tbl_filter(not_floating_win, wins)
+      local bufs = {}
+      for _, win in ipairs(wins) do
+        local buf = vim.api.nvim_win_get_buf(win)
+        local buftype = vim.api.nvim_get_option_value("buftype", { buf = buf })
+        if buftype ~= "nofile" then
+          local fname = vim.api.nvim_buf_get_name(buf)
+          table.insert(bufs, vim.fn.fnamemodify(fname, ":t"))
+        end
+      end
+      local tabnr = vim.api.nvim_tabpage_get_number(tabid)
+      local cwd = string.format(" %8s: ", vim.fn.fnamemodify(vim.fn.getcwd(-1, tabnr), ":t"))
+      local is_current = vim.api.nvim_tabpage_get_number(0) == tabnr and "✸" or " "
+      return tabnr .. is_current .. cwd .. table.concat(bufs, ", ")
+    end,
+  }, function(tabid)
+    if tabid ~= nil then
+      vim.cmd(tabid .. "tabnext")
+    end
+  end)
+end, { desc = "Tabs" })
 
 map({ "n", "x" }, "gw", "*N", { desc = "Search word under cursor" })
 
@@ -86,8 +117,8 @@ map({ "n", "v", "s", "i" }, "<D-s>", "<cmd>w<cr>", { noremap = true })
 
 -- map({ "n", "v", "s", "i" }, "<D-v>", "<cmd>norm gpa<cr>", { noremap = true })
 -- map({ "s", "i" }, "<D-v>", "<cmd>norm gpa<cr>", { noremap = true })
-map({ "i", "t" }, "<D-v>", '<C-r>"', { desc = "Paste on insert mode" })
-map("v", "<D-v>", '"+P', { noremap = true })
+map("i", "<D-v>", '<C-r>"', { desc = "Paste on insert mode" })
+map({ "v", "t" }, "<D-v>", '"+P', { noremap = true })
 map("n", "<D-v>", "<cmd>norm gpa<cr>", { noremap = true })
 map("c", "<D-v>", "<C-R>+", { noremap = true }) -- Paste command mode, add a hack to force render it
 map("v", "<D-c>", '"+y', { noremap = true }) -- Copy
@@ -124,13 +155,12 @@ map("n", "dd", function()
   end
 end, { noremap = true, expr = true, desc = "Don't yank empty line to clipboard" })
 
--- Search inside visually highlighted text. Use `silent = false` for it to
--- make effect immediately.
-map("x", "g/", "<esc>/\\%V", { silent = false, desc = "Search inside visual selection" })
+-- Search inside visually highlighted text
+map("x", "g/", "<esc>/\\%V", { silent = false, desc = "Search Inside Visual Selection" })
 
 -- Search visually selected text (slightly better than builtins in Neovim>=0.8)
-map("x", "*", [[y/\V<C-R>=escape(@", '/\')<CR><CR>]])
-map("x", "#", [[y?\V<C-R>=escape(@", '?\')<CR><CR>]])
+map("x", "*", [[y/\V<C-R>=escape(@", '/\')<CR><CR>]], { desc = "Search Selected Text", silent = true })
+map("x", "#", [[y?\V<C-R>=escape(@", '?\')<CR><CR>]], { desc = "Search Selected Text (Backwards)", silent = true })
 
 -- Press jk fast to enter
 map("i", "jk", "<ESC>", { silent = true })
@@ -173,6 +203,10 @@ function GetDiags()
   vim.notify("Saved diagnostics to " .. path, vim.log.levels.INFO, { title = "Diagnostics" })
 end
 vim.api.nvim_command("command! SaveJsonDiags lua GetDiags()")
+
+-- Comment box
+map("n", "]/", "/\\S\\zs\\s*╭<CR>zt", { desc = "Next Block Comment" })
+map("n", "[/", "?\\S\\zs\\s*╭<CR>zt", { desc = "Prev Block Comment" })
 
 -- Lazy options
 map("n", "<leader>l", "<Nop>")
@@ -265,6 +299,13 @@ map("n", "<leader>wb", function()
     vim.g.last_winid = vim.fn.bufnr()
     vim.nvim_echo({ { last_winid_dup, "Normal" } }, false, {})
     vim.fn.win_gotoid(last_winid_dup)
+  else
+    vim.g.last_winid = vim.fn.bufnr()
+
+    vim.api.nvim_echo({
+      { "Saved window", "Normal" },
+      { "Navigate back using <leader>wb", "Comment" },
+    }, false, {})
   end
 end, { desc = "Last Window" })
 
@@ -275,12 +316,98 @@ map(
   { desc = "Select refactor..." }
 )
 
-map("n", "<leader>ccp", ":let @+=expand('%:p') .. <cr>", { desc = "Copy path to clipboard" })
+-- map("n", "<leader>ccp", ":let @+=expand('%:p')<cr>", { desc = "Copy path to clipboard" })
+map("n", "<leader>ccp", function()
+  -- ":let @+=expand('%:p')<cr>"
+  local current_path = vim.fn.expand("%:p")
+  vim.api.nvim_echo({ { current_path, "Normal" } }, false, {})
+  vim.cmd("let @+=expand('%:p')")
+  -- vim.api.nvim_call_function('setreg', {'+', "test"})
+end, { desc = "Copy path to clipboard" })
 
 map("n", "<leader>cq", function()
   vim.diagnostic.open_float(nil, { source = true })
 end, { desc = "Line Diagnostics (Source)" })
 
+map("n", "<leader>Ln", function()
+  require("util.notepad").launch_notepad()
+end, { desc = "Toggle Notepad" })
+
+map("n", "<leader>ghB", LazyVim.lazygit.blame_line, { desc = "Blame Line (LazyGit)" })
+
+local leap_fns = require("config.keymaps.leap")
+map("n", "<leader>j", leap_fns.leap_ts_parents, { desc = "Leap AST Parents" })
+map("n", "<leader>glw", leap_fns.leap_spooky_viw, { desc = "Leap viw (Spooky)" })
+map("n", "<leader>gld", leap_fns.leap_spooky_diw, { desc = "Leap diw (Spooky)" })
+map("n", "<leader>glD", leap_fns.leap_spooky_dd, { desc = "Leap dd (Spooky)" })
+
+map("n", "<leader>uA", function()
+  require("util.ai").toggle(true)
+end, { desc = "ChatGPT" })
+
+map("n", "zV", function()
+  require("util.spell_dictionary").add_to_vale_dictionary()
+end, { desc = "Add to Vale dictionary" })
+
+map("n", "gS", function()
+  require("treesj").toggle({ split = { recursive = false } })
+end, { desc = "SplitJoin" })
+
+map("n", "gSs", function()
+  require("treesj").toggle({ split = { recursive = true } })
+end, { desc = "SplitJoin (Recursive)" })
+map("n", "gSj", function()
+  require("treesj").join()
+end, { desc = "Join" })
+
+map("n", "<leader>cI", "<cmd>Copilot toggle<cr>", { desc = "Toggle Copilot" })
+
+map("n", "<leader>cifd", function()
+  local filename = vim.fn.expand("%")
+  local modified_date = vim.fn.getftime(filename)
+  local modified_date_str = vim.fn.strftime("%c", modified_date)
+  --- @type string
+  local date
+  if git_util.is_git_repo() then
+    local commit_date = vim.fn.system("git log -1 --format=%cd --date=local " .. filename)
+    local commit_date_str = vim.fn.strftime("%c", commit_date)
+    if commit_date ~= "" then
+      date = commit_date_str .. " (Commit Time)"
+    end
+  end
+  date = date or modified_date_str .. " (Modified Time)"
+  vim.api.nvim_echo({ { date, "Title" } }, true, {})
+end, { desc = "Show file updated date" })
+
+map("n", "dm", function()
+  local cur_line = vim.fn.line(".")
+  -- Delete buffer local mark
+  for _, mark in ipairs(vim.fn.getmarklist("%")) do
+    if mark.pos[2] == cur_line and mark.mark:match("[a-zA-Z]") then
+      vim.api.nvim_buf_del_mark(0, string.sub(mark.mark, 2, #mark.mark))
+      return
+    end
+  end
+  -- Delete global marks
+  local cur_buf = vim.api.nvim_win_get_buf(vim.api.nvim_get_current_win())
+  for _, mark in ipairs(vim.fn.getmarklist()) do
+    if mark.pos[1] == cur_buf and mark.pos[2] == cur_line and mark.mark:match("[a-zA-Z]") then
+      vim.api.nvim_buf_del_mark(0, string.sub(mark.mark, 2, #mark.mark))
+      return
+    end
+  end
+end, { noremap = true, desc = "Mark on Current Line" })
+
+-- Empty Line
+map("n", "gO", "<Cmd>call append(line('.') - 1, repeat([''], v:count1))<CR>", { desc = "Empty Line Above" })
+map("n", "go", "<Cmd>call append(line('.'), repeat([''], v:count1))<CR>", { desc = "Empty Line Below" })
+
+-- Insert Mode
+map({ "c", "i", "t" }, "<M-BS>", "<C-w>", { desc = "Delete Word" })
+
+map("n", "<leader>cI1", "<cmd>Copilot toggle<cr>", { desc = "Toggle Copilot" })
+
+--------------------------------------------------------------------------------
 -- Custom Telescope finders
 local T = require("util.custom_telescope_finders")
 map("n", "<leader>flg", function()

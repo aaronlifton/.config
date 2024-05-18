@@ -29,6 +29,8 @@ local lazyvim_close_with_q_filetypes = {
 local to_close_with_esc_or_q = {
   "neoai-input",
   "neoai-output",
+  "chatgpt-input",
+  "chatgpt-output",
 }
 for _, ft in ipairs(lazyvim_close_with_q_filetypes) do
   table.insert(to_close_with_esc_or_q, ft)
@@ -144,9 +146,13 @@ ac({ "BufEnter" }, {
   group = ag("readme", { clear = true }),
   callback = function()
     -- if at project root then disable diagnostics
-    if vim.fn.getcwd() == vim.fn.expand("%:p:h") then
-      vim.diagnostic.disable(0)
-    end
+    -- if vim.fn.getcwd() == vim.fn.expand("%:p:h") then
+    -- local filename = vim.fn.expand("%:t")
+    -- if filename == "README.md" or filename == "CHANGELOG.md" then
+    --   vim.diagnostic.disable(0)
+    --   vim.api.nvim_echo({ { "Disabled diagnostics", "Special" } }, false, {})
+    -- end
+    vim.opt_local.spell = false
   end,
 })
 
