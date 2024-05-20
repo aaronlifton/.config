@@ -14,7 +14,7 @@ return {
     end,
     opts = {
       actions_paths = {
-        actions_config_path .. "/general.json",
+        -- actions_config_path .. "/general.json",
         actions_config_path .. "/rails.json",
       },
       api_key_cmd = 'op item get "Neovim ChatGPT" --fields credential',
@@ -104,6 +104,8 @@ return {
       { "<leader>Cx", "<cmd>ChatGPTRun explain_code<CR>", desc = "Explain Code", mode = { "n", "v" } },
       { "<leader>Cr", "<cmd>ChatGPTRun roxygen_edit<CR>", desc = "Roxygen Edit", mode = { "n", "v" } },
       { "<leader>Cl", "<cmd>ChatGPTRun code_readability_analysis<CR>", desc = "Code Readability Analysis", mode = { "n", "v" },  },
+      { "<leader>Ra", "<cmd>ChatGPTRun WriteRailsCode<cr>", desc = "Write Rails code" },
+      { "<leader>Rt", "<cmd>ChatGPTRun WriteRSpecTests<cr>", desc = "Write Rails code", mode = "v" },
       {
         '<leader>RE',
         '<cmd>Chat explain_code_4<cr>',
@@ -116,12 +118,12 @@ return {
         desc = 'Write documentation (RDoc)',
         mode = { 'v' },
       },
-      {
-        '<leader>Rt',
-        '<cmd>Chat rails_add_rspec_tests<cr>',
-        desc = 'Write unit tests (RSpec)',
-        mode = { 'v' },
-      },
+      -- {
+      --   '<leader>Rt',
+      --   '<cmd>Chat rails_add_rspec_tests<cr>',
+      --   desc = 'Write unit tests (RSpec)',
+      --   mode = { 'v' },
+      -- },
       {
         '<leader>Re',
         '<cmd>Chat rails_edit_code<cr>',

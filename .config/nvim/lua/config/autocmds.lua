@@ -63,6 +63,26 @@ ac("BufRead", {
   end,
 })
 
+ac("BufRead", {
+  pattern = "*_spec.rb",
+  callback = function()
+    -- local spec_pair = require("mini.ai").gen_spec.pair
+    local ai = require("mini.ai")
+    vim.b.miniai_config = {
+      custom_textobjects = {
+        C = ai.gen_spec.treesitter({
+          a = { "@rspec.context" },
+          i = { "@rspec.context" },
+        }),
+        I = ai.gen_spec.treesitter({
+          a = { "@rspec.it" },
+          i = { "@rspec.it" },
+        }),
+      },
+    }
+  end,
+})
+
 -- local auto_close_filetype = {
 --   "lazy",
 --   "mason",
@@ -173,22 +193,23 @@ ac({ "BufEnter" }, {
 --   end,
 -- })
 
+-- TODO: Remove since not used since switched to native snippets
 -- Use the more sane snippet session leave logic. Copied from:
 -- https://github.com/L3MON4D3/LuaSnip/issues/258#issuecomment-1429989436
-ac("ModeChanged", {
-  pattern = "*",
-  callback = function()
-    if not vim.g.vscode then
-      if
-        ((vim.v.event.old_mode == "s" and vim.v.event.new_mode == "n") or vim.v.event.old_mode == "i")
-        and require("luasnip").session.current_nodes[vim.api.nvim_get_current_buf()]
-        and not require("luasnip").session.jump_active
-      then
-        require("luasnip").unlink_current()
-      end
-    end
-  end,
-})
+-- ac("ModeChanged", {
+--   pattern = "*",
+--   callback = function()
+--     if not vim.g.vscode then
+--       if
+--         ((vim.v.event.old_mode == "s" and vim.v.event.new_mode == "n") or vim.v.event.old_mode == "i")
+--         and require("luasnip").session.current_nodes[vim.api.nvim_get_current_buf()]
+--         and not require("luasnip").session.jump_active
+--       then
+--         require("luasnip").unlink_current()
+--       end
+--     end
+--   end,
+-- })
 
 ac("ColorScheme", {
   pattern = "*",

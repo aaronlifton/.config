@@ -41,18 +41,17 @@ return {
                 -- maxPreload = 100000,
                 -- preloadFileSize = 10000,
               },
-              completion = {
-                -- workspaceWord = true,
-                -- callSnippet = "Both",
-                callSnippet = "Replace",
-              },
-              hint = {
-                enable = nvim_0_10,
-                setType = nvim_0_10,
-                paramType = true, -- Show type hints at the parameter of the function.
-                paramName = "Literal", -- Show hints of parameter name (literal types only) at the function call.
-                arrayIndex = "Auto", -- Show hints only when the table is greater than 3 items, or the table is a mixed table.
-              },
+              -- completion = {
+              --   callSnippet = "Replace",
+              -- },
+              -- Using LazyVim's config
+              -- hint = {
+              --   enable = true,
+              --   setType = true,
+              --   paramType = true, -- Show type hints at the parameter of the function.
+              --   paramName = "Literal", -- Show hints of parameter name (literal types only) at the function call.
+              --   arrayIndex = "Auto", -- Show hints only when the table is greater than 3 items, or the table is a mixed table.
+              -- },
               diagnostics = {
                 globals = { "vim", "LazyVim" },
                 undefined_global = false, -- remove this from diag!

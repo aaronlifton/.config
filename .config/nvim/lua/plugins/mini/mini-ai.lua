@@ -28,7 +28,7 @@ return {
       local MiniExtra = require("mini.extra")
       return vim.tbl_deep_extend("keep", opts, {
         custom_textobjects = {
-          -- LazyVim uses: a,i,f,c,t,d,e,g,u,U
+          -- LazyVim uses: a,i,f,c,t,d,e,g,u,U,o
           -- scope
           O = ai.gen_spec.treesitter({
             a = { "@function.outer", "@class.outer", "@testitem.outer" },
@@ -38,7 +38,7 @@ return {
             a = { "@jsx_attribute.outer" },
             i = { "@jsx_attribute.inner" },
           }, {}),
-          -- C = ai.gen_spec.treesitter({ a = "@comment.outer", i = "@comment.outer" }),
+          C = ai.gen_spec.treesitter({ a = "@comment.outer", i = "@comment.outer" }),
           -- P = ai.gen_spec.treesitter({ a = "@parameter.outer", i = "@parameter.inner" }),
           -- T = ai.gen_spec.treesitter({ a = "@parameter.type", i = "@type.inner" }),
           -- r = ai.gen_spec.treesitter({ a = "@return.outer", i = "@return.inner" }),
@@ -50,6 +50,10 @@ return {
           v = ai.gen_spec.treesitter({
             i = { "@assignment.rhs", "@value.inner", "@return.inner" },
             a = { "@assignment.outer", "@value.inner", "@return.outer" },
+          }),
+          x = ai.gen_spec.treesitter({
+            a = { "@structure.outer" },
+            i = { "@structure.inner" },
           }),
           -- chunk (as in from vim-textobj-chunk)
           -- x = {

@@ -111,15 +111,20 @@ return {
         flash = true,
         navic = { enabled = true, custom_bg = "lualine" },
         cmp = true,
-        -- barbecue = {
-        --   dim_dirname = true, -- directory name is dimmed by default
-        --   bold_basename = true,
-        --   dim_context = false,
-        --   alt_background = false,
-        -- },
+        barbecue = {
+          dim_dirname = true, -- directory name is dimmed by default
+          bold_basename = true,
+          dim_context = false,
+          alt_background = false,
+        },
+        colorful_winsep = {
+          enabled = true,
+          color = "lavender",
+        },
         dap = true,
         dap_ui = true,
         dashboard = true,
+        diffview = true,
         dropbar = { enabled = true, color_mode = true },
         -- flash = true,
         fidget = true,

@@ -19,5 +19,6 @@ return {
         },
       },
     })
+    local x = function() end
   end,
 }

@@ -1,0 +1,95 @@
+{
+  "OutputArgs": {
+    "type": "chat",
+    "opts": {
+      "title": "Output arguments",
+      "template": "The output arguments are:\n\n```use_sorbet: {{use_sorbet}}\ncommand: {{command}}\n```"
+    },
+    "args": {
+      "use_sorbet": {
+        "type": "boolean",
+        "optional": "true",
+        "default": false
+      },
+      "command": {
+        "type": "string",
+        "optional": "true",
+        "default": "Complete"
+      }
+    }
+  },
+  "WriteRailsMethod": {
+    "type": "chat",
+    "opts": {
+      "template": "You are a Ruby on Rails programmer. Implement the {{method}} method(s) for the following code.\n\nExisting code:\n```{{filetype}}\n{{input}}\n```\n\n```{{filetype}}",
+      "title": "Write Rails code",
+      "strategy": "replace",
+      "params": {
+        "model": "gpt-3.5-turbo",
+        "stop": [
+          "```"
+        ]
+      }
+    },
+    "args": {
+      "method": {
+        "type": "string",
+        "optional": "true",
+        "default": "empty"
+      }
+    }
+  },
+  "WriteRSpecTests": {
+    "type": "chat",
+    "opts": {
+      "title": "Write RSpec tests",
+      "template": "For the folllowing instructions, do not use \"get :create\" etc and instead use full routes like \"api_v1_birds_path\". Implement RSpec tests for the following code.\n\nCode:\n```{{filetype}}\n{{input}}\n```\n\nTests:\n```{{filetype}}",
+      "strategy": "append",
+      "params": {
+        "model": "gpt-3.5-turbo",
+        "stop": [
+          "```"
+        ],
+        "max_tokens": 2048
+      }
+    },
+    "args": {
+      "use_shoulda": {
+        "type": "string",
+        "optional": "true",
+        "default": "false"
+      },
+      "factory_bot_models": {
+        "type": "string",
+        "optional": "true",
+        "default": ""
+      }
+    }
+  },
+  "WriteRSpecShouldaFactoryBotTests": {
+    "type": "chat",
+    "opts": {
+      "title": "Write RSpec tests",
+      "template": "For the following command, usee shoulda_matchers, and treat the non-empty strings in ths following array as existing FactoryBot models :[{{m1}},{{m2}}, {{m3}}]. Implement RSpec tests for the following code.\n\nCode:\n```{{filetype}}\n{{input}}\n```\n\nTests:\n```{{filetype}}",
+      "strategy": "append",
+      "params": {
+        "model": "gpt-3.5-turbo",
+        "stop": [
+          "```"
+        ]
+      }
+    },
+    "args": {
+      "use_shoulda": {
+        "type": "string",
+        "optional": "true",
+        "default": "false"
+      },
+      "factory_bot_models": {
+        "type": "string",
+        "optional": "true",
+        "default": ""
+      }
+    }
+  }
+}

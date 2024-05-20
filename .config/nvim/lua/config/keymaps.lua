@@ -124,7 +124,7 @@ map("c", "<D-v>", "<C-R>+", { noremap = true }) -- Paste command mode, add a hac
 map("v", "<D-c>", '"+y', { noremap = true }) -- Copy
 
 -- Paste options
-map("v", "p", '"_dP', { desc = "Paste without overwriting" })
+map("v", "p", '"_dP', { desc = "Paste without overwriting" }, { silent = true })
 
 -- Copy whole text to clipboard
 map("n", "<C-c>", ":%y+<CR>", { desc = "Copy whole text to clipboard", silent = true })
@@ -405,7 +405,10 @@ map("n", "go", "<Cmd>call append(line('.'), repeat([''], v:count1))<CR>", { desc
 -- Insert Mode
 map({ "c", "i", "t" }, "<M-BS>", "<C-w>", { desc = "Delete Word" })
 
+-- Codeium is <leader>cI2
 map("n", "<leader>cI1", "<cmd>Copilot toggle<cr>", { desc = "Toggle Copilot" })
+
+map("n", "<leader>snn", "<cmd>Telescope notify<cr>", { desc = "Notify" })
 
 --------------------------------------------------------------------------------
 -- Custom Telescope finders

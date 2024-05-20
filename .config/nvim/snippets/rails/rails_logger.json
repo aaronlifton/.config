@@ -8,11 +8,7 @@
   },
   "rails.logger.error": {
     "prefix": "logger",
-    "
-
-    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaassssssssssaaaaassssssssssssssssssssssssssssss                                                                                                                                                                   jaa
-
-    aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaassssssssssaaaaassssssssssssssssssssssssssssss                                                                                                                                                                 body": [
+    "body": [
       "logger.error { '${1:message}' }"
     ],
     "description": "Logs an error message"

@@ -39,6 +39,14 @@ function Manager:render(area)
 end
 
 -- Show user/group of files in status bar
+-- Plugins
+require("starship"):setup()
+require("zoxide"):setup({
+	update_db = true,
+})
+require("session"):setup({
+	sync_yanked = true,
+})
 function Status:owner()
 	local h = cx.active.current.hovered
 	if h == nil or ya.target_family() ~= "unix" then
@@ -64,3 +72,12 @@ function Status:render(area)
 		table.unpack(Progress:render(area, right:width())),
 	}
 end
+
+-- Plugins
+require("starship"):setup()
+require("zoxide"):setup({
+	update_db = true,
+})
+require("session"):setup({
+	sync_yanked = true,
+})

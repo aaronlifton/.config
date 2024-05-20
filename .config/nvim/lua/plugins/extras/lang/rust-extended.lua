@@ -49,6 +49,24 @@ return {
        { "<leader>prd", function() require("crates").open_documentation() end, desc = "Documentation" },
        { "<leader>prc", function() require("crates").open_crates_io() end, desc = "Crates.io" },
     },
+    keys = {
+      {
+        "K",
+        function()
+          if vim.fn.expand("%:t") == "Cargo.toml" and require("crates").popup_available() then
+            require("crates").show_popup()
+          else
+            vim.lsp.buf.hover()
+          end
+        end,
+        desc = "Show Crate Documentation",
+      },
+    },
+    opts = function(_, opts)
+      -- TODO: remove when LazyVim's crates.nvim config is updated
+      opts["src"] = nil
+      return opts
+    end,
   },
   {
     "folke/which-key.nvim",
