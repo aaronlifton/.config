@@ -6,7 +6,28 @@ end
 
 return {
   { import = "lazyvim.plugins.extras.lang.ruby" },
-  { "tpope/vim-rails", ft = "ruby" },
+  {
+    "tpope/vim-rails",
+    ft = "ruby",
+    config = function()
+      vim.g.rails_projections = {
+        ["app/controllers/*_controller.rb"] = {
+          test = {
+            "spec/requests/{}_controller_spec.rb",
+            "spec/controllers/{}_controller_spec.rb",
+          },
+        },
+        ["spec/requests/*_spec.rb"] = {
+          alternate = {
+            "app/controllers/{}.rb",
+          },
+        },
+        ["app/lib/*.rb"] = {
+          test = "spec/lib/{}_spec.rb",
+        },
+      }
+    end,
+  },
   { "tpope/vim-bundler", ft = "ruby" },
   -- {
   --   "folke/which-key.nvim",
@@ -71,6 +92,7 @@ return {
           on_new_config = function(new_config)
             new_config.enabled = not gems_util.has_ruby_lsp() and gems_util.in_bundle("solargraph")
           end,
+          -- filetypes = { "eruby" },
           --   enabled = false,
           --   diagnostics = false,
           --   formatting = false,
@@ -205,6 +227,7 @@ return {
     opts = {
       linters_by_ft = {
         ruby = { "rubocop", "standardrb" },
+        eruby = { "erb_lint" },
       },
       linters = {
         rubocop = {
@@ -228,6 +251,7 @@ return {
     opts = {
       formatters_by_ft = {
         ruby = { "rubocop", "rubyfmt" },
+        eruby = { "erb_format" },
       },
       formatters = {
         rubocop = {

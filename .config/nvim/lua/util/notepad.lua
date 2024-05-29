@@ -1,7 +1,7 @@
 local M = {}
 
 --[[ launch_notepad()
--- Launch a small, transparent floating window with a scartch buffer that persists until Neovim closes
+-- Launch a small, transparent floating window with a scratch buffer that persists until Neovim closes
 --
 -- @requires M.notepad_loaded, M.notepad_buf, M.notepad_win variables in util (this) module
 --]]
@@ -29,7 +29,7 @@ function M.launch_notepad()
       height = math.ceil(vim.o.lines * 0.5),
       width = math.ceil(vim.o.columns * 0.5),
       row = 1, --> Top of the window
-      col = math.ceil(vim.o.columns * 0.5), --> Far right; should add up to 1 with win_width
+      col = math.ceil(vim.o.columns * 0.5), --> Right aligned; should add up to 1 with win_width
     })
     vim.api.nvim_win_set_option(M.notepad_win, "winblend", 30) --> Semi transparent buffer
 

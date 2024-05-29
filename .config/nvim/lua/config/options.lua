@@ -38,6 +38,9 @@ o.termguicolors = trueoptions
 g.gui_font_face = "Sauce Code Pro Nerd Font Mono"
 g.gui_font_size = 18
 g.custom_notifications = {}
+
+vim.treesitter.language.register("markdown", "neoai-output")
+
 -------------------------------------------------
 
 -- vim.env.XDG_CACHE_HOME = vim.env.XDG_CACHE_HOME or vim.env.HOME .. "/.cache"

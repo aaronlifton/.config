@@ -38,6 +38,36 @@ return {
         desc = "Code edit",
         mode = { "v" },
       },
+      {
+        "<leader>RE",
+        "<cmd>Chat explain_code_4<cr>",
+        desc = "Explain code",
+        mode = { "v" },
+      },
+      {
+        "<leader>Rd",
+        "<cmd>Chat rails_add_rdoc<cr>",
+        desc = "Write documentation (RDoc)",
+        mode = { "v" },
+      },
+      {
+        "<leader>Re",
+        "<cmd>Chat rails_edit_code<cr>",
+        desc = "Refactor code (Rails)",
+        mode = { "v" },
+      },
+      {
+        "<leader>Re",
+        "<cmd>Chat rails_edit_code2<cr>",
+        desc = "Refactor code2 (Rails)",
+        mode = { "v" },
+      },
+      {
+        "<leader>RC",
+        "<cmd>Chat rails_complete_code<cr>",
+        desc = "Complete code (Rails)",
+        mode = { "v" },
+      },
     },
     config = function()
       require("codegpt.config")
@@ -72,7 +102,6 @@ return {
             typescript = "Use JSDoc format.",
             javascript = "Use JSDoc format.",
           },
-          -- Overrides the max tokens to be 1024
           max_tokens = 1024,
         },
         ["code_edit"] = {
@@ -115,7 +144,8 @@ return {
     "folke/which-key.nvim",
     opts = {
       defaults = {
-        ["<leader>CC"] = { name = "CodeGPT" },
+        ["<leader>CC"] = { name = "󰚩 CodeGPT" },
+        ["<leader>R"] = { name = "󰚩 RailsGPT", mode = "v" },
       },
     },
   },

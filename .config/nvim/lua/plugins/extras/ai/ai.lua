@@ -3,9 +3,73 @@ return {
   {
     "huggingface/hfcc.nvim",
     event = "InsertEnter",
-    enabled = false,
+    enabled = true,
     opts = {
-      model = "bigcode/starcoder",
+      -- api_token is set via huggingface-cli
+      -- tokens_to_clear = { "<|endoftext|>" },
+      -- model = "bigcode/starcoder",
+      model = "bigcode/starcoder2-15b", -- the model ID, behavior depends on backend
+      backend = "huggingface", -- backend ID, "huggingface" | "ollama" | "openai" | "tgi"
+      -- url = nil, -- the http url of the backend
+      -- tokens_to_clear = { "<|endoftext|>" }, -- tokens to remove from the model's output
+      -- -- parameters that are added to the request body, values are arbitrary, you can set any field:value pair here it will be passed as is to the backend
+      -- request_body = {
+      --   parameters = {
+      --     max_new_tokens = 60,
+      --     temperature = 0.2,
+      --     top_p = 0.95,
+      --   },
+      -- },
+      -- -- set this if the model supports fill in the middle
+      -- fim = {
+      --   enabled = true,
+      --   prefix = "<fim_prefix>",
+      --   middle = "<fim_middle>",
+      --   suffix = "<fim_suffix>",
+      -- },
+      -- debounce_ms = 150,
+      accept_keymap = "<S-D-CR>",
+      dismiss_keymap = "<C-CR>",
+      -- accept_keymap = "<Tab>",
+      -- dismiss_keymap = "<S-Tab>",
+      -- tls_skip_verify_insecure = false,
+      -- -- llm-ls configuration, cf llm-ls section
+      -- lsp = {
+      --   bin_path = nil,
+      --   host = nil,
+      --   port = nil,
+      --   version = "0.5.3",
+      -- },
+      -- tokenizer = nil, -- cf Tokenizer paragraph
+      -- -- tokenizer = {
+      -- --   repository = "bigcode/starcoder",
+      -- -- }
+      -- context_window = 1024, -- max number of tokens for the context window
+      context_window = 2048, -- max number of tokens for the context window
+      -- -- context_window = 8192,
+      enable_suggestions_on_startup = false,
+      -- enable_suggestions_on_files = "*", -- pattern matching syntax to enable suggestions on specific files, either a string or a list of strings
+      -- disable_url_path_completion = false, -- cf Backend
+    },
+    keys = {
+      -- { "<leader>cI2", "<cmd>CodeiumToggle<cr>", desc = "Toggle Codeium" },
+      { "<leader>cI4", "<cmd>LLMToggleAutoSuggest<cr>", desc = "Toggle HFCC Autosuggest" },
+      { "<leader>cI5", "<cmd>LLMSuggestion<cr>", desc = "Request HFCC Suggestion" },
+    },
+    config = function(_, opts)
+      require("llm").setup(opts)
+      vim.api.nvim_create_user_command("StarCoder", function()
+        require("hfcc.completion").complete()
+      end, {})
+    end,
+  },
+  {
+    "folke/which-key.nvim",
+    opts = {
+      defaults = {
+        ["<leader>cI4"] = { name = "Toggle HFCC Autosuggest" },
+        ["<leader>cI5"] = { name = "Request HFCC Suggestion" },
+      },
     },
   },
   {

@@ -23,6 +23,9 @@ return {
         -- Only set these options specific to this terminal buffer.
         vim.api.nvim_set_option_value("foldmethod", "manual", { scope = "local" })
         vim.api.nvim_set_option_value("foldexpr", "0", { scope = "local" })
+        vim.keymap.set("n", "<C-\\>", function()
+          vim.api.nvim_command("ToggleTermToggleAll")
+        end, { silent = "true", noremap = true })
       end,
       highlights = {
         Normal = {

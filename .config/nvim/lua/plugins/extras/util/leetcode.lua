@@ -14,6 +14,7 @@ return {
   opts = {
     -- configuration goes here
     lang = "ruby",
+    -- lang = "typescript",
     -- keys = {
     --   toggle = { "<leader>lq" }, ---@type string|string[]
     --   confirm = { "<leader>l<CR>" }, ---@type string|string[]

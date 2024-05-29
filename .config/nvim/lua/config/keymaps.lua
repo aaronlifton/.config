@@ -293,21 +293,7 @@ map("n", "<M-E>", "<cmd>Neotree reveal_force_cwd<cr>", { desc = "Reveal in neo-t
 
 map("n", "<leader>sO", "<cmd>Telescope oldfiles<cr>", { desc = "Oldfiles" })
 
-map("n", "<leader>wb", function()
-  if vim.g.last_winid ~= nil then
-    local last_winid_dup = vim.g.last_winid
-    vim.g.last_winid = vim.fn.bufnr()
-    vim.nvim_echo({ { last_winid_dup, "Normal" } }, false, {})
-    vim.fn.win_gotoid(last_winid_dup)
-  else
-    vim.g.last_winid = vim.fn.bufnr()
-
-    vim.api.nvim_echo({
-      { "Saved window", "Normal" },
-      { "Navigate back using <leader>wb", "Comment" },
-    }, false, {})
-  end
-end, { desc = "Last Window" })
+require("config.keymaps.window")
 
 map(
   "n",
@@ -315,6 +301,8 @@ map(
   "<Esc><cmd>lua require('telescope').extensions.refactoring.refactors()<CR>",
   { desc = "Select refactor..." }
 )
+
+map("n", "<M-->", "<cmd>ChatGPT<CR>", { desc = "ChatGPT" })
 
 -- map("n", "<leader>ccp", ":let @+=expand('%:p')<cr>", { desc = "Copy path to clipboard" })
 map("n", "<leader>ccp", function()
@@ -332,7 +320,7 @@ end, { desc = "Line Diagnostics (Source)" })
 map("n", "<leader>Ln", function()
   require("util.notepad").launch_notepad()
 end, { desc = "Toggle Notepad" })
-
+-- :<C-U>call <SNR>80_searchsyn('\<lt>\%(class\|module\)\>',['rubyModule','rubyClass'],'b','n')<CR>
 map("n", "<leader>ghB", LazyVim.lazygit.blame_line, { desc = "Blame Line (LazyGit)" })
 
 local leap_fns = require("config.keymaps.leap")
@@ -369,7 +357,7 @@ map("n", "<leader>cifd", function()
   --- @type string
   local date
   if git_util.is_git_repo() then
-    local commit_date = vim.fn.system("git log -1 --format=%cd --date=local " .. filename)
+    local commit_date = vim.fn.system("git log -1 --format=%cd --date=unix " .. filename)
     local commit_date_str = vim.fn.strftime("%c", commit_date)
     if commit_date ~= "" then
       date = commit_date_str .. " (Commit Time)"
@@ -407,9 +395,26 @@ map({ "c", "i", "t" }, "<M-BS>", "<C-w>", { desc = "Delete Word" })
 
 -- Codeium is <leader>cI2
 map("n", "<leader>cI1", "<cmd>Copilot toggle<cr>", { desc = "Toggle Copilot" })
+map("n", "<leader>cI3", function()
+  vim.api.nvim_command("CodeiumDisable")
+  require("copilot").disable()
+  vim.api.nvim_command("LLMToggleAutoSuggest")
+end, { desc = "Toggle Copilot/Codeium to HFCC" })
+map("n", "<leader>cId", function()
+  vim.api.nvim_command("CodeiumDisable")
+  vim.api.nvim_command("Copilot disable")
+  vim.api.nvim_echo({
+    { "Disabled AI\n\n", "Title" },
+    { "Copilot ", "Type" },
+    { "Disabled\n", "Comment" },
+    { "Codeium ", "Type" },
+    { "Disabled", "Comment" },
+  }, true, {})
+end, { desc = "Turn off all AI" })
 
 map("n", "<leader>snn", "<cmd>Telescope notify<cr>", { desc = "Notify" })
 
+map("n", "zF", ":norm z=1<cr>", { desc = "Choose first spelling suggestion" })
 --------------------------------------------------------------------------------
 -- Custom Telescope finders
 local T = require("util.custom_telescope_finders")

@@ -58,19 +58,43 @@ M.get_yamlls_config = function()
             enable = false,
             url = "",
           },
+          -- schemaStore = {
+          --   enable = true,
+          --   url = "https://www.schemastore.org/json",
+          -- },
 
           -- schemas from store, matched by filename
           -- loaded automatically
-          schemas = require("schemastore").yaml.schemas({
-            select = {
-              "kustomization.yaml",
-              "GitHub Workflow",
-            },
-          }),
+          schemas = vim.tbl_extend(
+            "keep",
+            require("schemastore").yaml.schemas({
+              select = {
+                "kustomization.yaml",
+                "GitHub Workflow",
+              },
+            }),
+            {
+              -- From yaml-companion
+              -- ["https://json.schemastore.org/github-workflow.json"] = { "**/.github/workflows/*.yml", "**/.github/workflows/*.yaml", "**/.gitea/workflows/*.yml", "**/.gitea/workflows/*.yaml", "**/.forgejo/workflows/*.yml", "**/.forgejo/workflows/*.yaml" },
+              -- ["https://json.schemastore.org/kustomization.json"] = { "kustomization.yaml", "kustomization.yml" }
+              ["https://json.schemastore.org/github-workflow.json"] = "/.github/workflows/*.yml",
+              ["https://gitlab.com/gitlab-org/gitlab/-/raw/master/app/assets/javascripts/editor/schema/ci.json"] = {
+                "/.gitlab-ci.yml",
+                "/.gitlab/ci/*.yml",
+              },
+              ["https://aka.ms/configuration-dsc-schema/0.2"] = "/*.dsc.yaml",
+              ["https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json"] = {
+                "/docker-compose.{yml,yaml}",
+                "/compose.{yml,yaml}",
+              },
+              ["https://json.schemastore.org/prometheus.json"] = "/prometheus.yml",
+            }
+          ),
         },
       },
     },
   })
+  return yamlls_cfg
 end
 
 return M

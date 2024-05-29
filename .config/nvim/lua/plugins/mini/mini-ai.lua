@@ -29,7 +29,11 @@ return {
       return vim.tbl_deep_extend("keep", opts, {
         custom_textobjects = {
           -- LazyVim uses: a,i,f,c,t,d,e,g,u,U,o
-          -- scope
+          -- Lazyvim already sets this one
+          -- o = ai.gen_spec.treesitter({ -- code block
+          --   a = { "@block.outer", "@conditional.outer", "@loop.outer" },
+          --   i = { "@block.inner", "@conditional.inner", "@loop.inner" },
+          -- }),
           O = ai.gen_spec.treesitter({
             a = { "@function.outer", "@class.outer", "@testitem.outer" },
             i = { "@function.inner", "@class.inner", "@testitem.inner" },
@@ -51,10 +55,10 @@ return {
             i = { "@assignment.rhs", "@value.inner", "@return.inner" },
             a = { "@assignment.outer", "@value.inner", "@return.outer" },
           }),
-          x = ai.gen_spec.treesitter({
-            a = { "@structure.outer" },
-            i = { "@structure.inner" },
-          }),
+          -- x = ai.gen_spec.treesitter({
+          --   a = { "@structure.outer" },
+          --   i = { "@structure.inner" },
+          -- }),
           -- chunk (as in from vim-textobj-chunk)
           -- x = {
           --   "\n.-%b{}.-\n",

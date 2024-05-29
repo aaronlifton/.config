@@ -7,6 +7,7 @@ local is_doc = string.find(current_path, "aaron/Documents") ~= nil
 
 -- if vim.bo.buftype == "help" or filename == "README.md" or filename == "CHANGELOG.md" or is_doc then
 vim.diagnostic.disable()
+-- end
 -- vim.opt_local.spell = false
 
 -- LazyVim.toggle("spell", { false })

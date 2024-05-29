@@ -10,7 +10,7 @@ return {
 
         -- WARNING !!! Glob for '-g *{*}' will not use .gitignore file: https://github.com/BurntSushi/ripgrep/issues/2252
         cmd_flags = (
-          "--smart-case -g *.{*lua,rb,ts,tsx,js,cjs,mjs} -g !*.{min.js,spec.ts,test.ts} --fixed-strings --no-ignore"
+          "--smart-case -g *.{*astro,lua,rb,ts,tsx,js,cjs,mjs} -g !*.{min.js,spec.ts,test.ts} --fixed-strings --no-ignore"
           .. " -g !**/node_modules/"
         ),
         -- "--smart-case -g *.{*,py} -g !*.{min.js,pyc} --fixed-strings --no-fixed-strings --no-ignore -M 500"

@@ -27,6 +27,15 @@ return {
         skip = true,
       },
     })
+    table.insert(opts.routes, {
+      filter = {
+        event = "notify",
+        find = "TypeScript Server Error",
+      },
+      opts = {
+        skip = true,
+      },
+    })
     local focused = true
     vim.api.nvim_create_autocmd("FocusGained", {
       callback = function()

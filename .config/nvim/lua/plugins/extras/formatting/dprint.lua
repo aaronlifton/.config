@@ -32,8 +32,7 @@ return {
         condition = function(_, ctx)
           local dprint_available = conform.get_formatter_info("dprint", ctx.buf).available
           local biome_available = conform.get_formatter_info("biome", ctx.buf).available
-          -- return not biome_available and not dprint_available
-          return false
+          return not biome_available and not dprint_available
         end,
       }
       lsp_util.add_formatter_settings(opts, {

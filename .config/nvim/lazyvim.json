@@ -18,6 +18,7 @@
     "plugins.extras.ai.copilot",
     "plugins.extras.ai.gen",
     "plugins.extras.ai.gpt",
+    "plugins.extras.ai.model",
     "plugins.extras.cmp.dotenv",
     "plugins.extras.cmp.yanky",
     "plugins.extras.coding.annotation",
@@ -33,6 +34,7 @@
     "plugins.extras.editor.git.blame",
     "plugins.extras.editor.git.diffview",
     "plugins.extras.editor.git.git-conflict",
+    "plugins.extras.editor.git.github",
     "plugins.extras.editor.git.worktree",
     "plugins.extras.editor.leap-spooky",
     "plugins.extras.editor.package-info",
@@ -129,7 +131,7 @@
     "plugins.extras.util.smart-splits"
   ],
   "news": {
-    "NEWS.md": "4944"
+    "NEWS.md": "4964"
   },
   "version": 4
 }

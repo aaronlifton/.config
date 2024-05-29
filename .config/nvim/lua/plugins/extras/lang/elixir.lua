@@ -51,6 +51,7 @@ return {
     "elixir-tools/elixir-tools.nvim",
     version = "*",
     event = { "BufReadPre", "BufNewFile" },
+    commands = {},
     config = function()
       local elixir = require("elixir")
       local elixirls = require("elixir.elixirls")
@@ -111,6 +112,9 @@ return {
         --   end,
         -- },
       })
+
+      -- Unbind the :M command
+      vim.api.nvim_del_user_command("M")
     end,
     dependencies = {
       "nvim-lua/plenary.nvim",

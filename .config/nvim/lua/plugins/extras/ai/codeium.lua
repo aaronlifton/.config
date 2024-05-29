@@ -49,7 +49,7 @@ return {
 
       vim.keymap.set("n", "<leader>ch", function()
         return vim.fn["codeium#Chat"]()
-      end, { desc = "Chat with IA (Codeium)" })
+      end, { desc = "Chat with AI (Codeium)" })
 
       vim.keymap.set("i", "<M-]>", function()
         return vim.fn["codeium#CycleCompletions"](1)

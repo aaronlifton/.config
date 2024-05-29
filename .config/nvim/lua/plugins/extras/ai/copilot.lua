@@ -126,7 +126,7 @@ return {
           function()
             require("copilot.suggestion").toggle_auto_trigger()
           end,
-          desc = "Toggle IA",
+          desc = "Toggle AI",
         },
         {
           "<leader>cP",
@@ -195,5 +195,14 @@ return {
         end
       end)
     end,
+  },
+  {
+    "folke/which-key.nvim",
+    opts = {
+      defaults = {
+        ["<leader>cP"] = { name = "󰚩 Copilot Panel" },
+        ["<leader>ct"] = { name = "Toggle Autotrigger (Copilot)" },
+      },
+    },
   },
 }

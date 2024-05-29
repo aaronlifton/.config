@@ -32,6 +32,9 @@ local to_close_with_esc_or_q = {
   "chatgpt-input",
   "chatgpt-output",
 }
+local to_not_close_with_esc = {
+  "spectre_panel",
+}
 for _, ft in ipairs(lazyvim_close_with_q_filetypes) do
   table.insert(to_close_with_esc_or_q, ft)
 end

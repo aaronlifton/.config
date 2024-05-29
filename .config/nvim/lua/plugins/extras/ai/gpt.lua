@@ -14,7 +14,7 @@ return {
     end,
     opts = {
       actions_paths = {
-        -- actions_config_path .. "/general.json",
+        actions_config_path .. "/general.json",
         actions_config_path .. "/rails.json",
       },
       api_key_cmd = 'op item get "Neovim ChatGPT" --fields credential',
@@ -80,7 +80,17 @@ return {
         n = 1,
       },
       show_quickfixes_cmd = "Trouble quickfix",
-      -- actions_paths = { "~/.config/nvim/custom_actions.json" },
+      popup_layout = {
+        default = "center",
+        center = {
+          width = "60%",
+          height = "80%",
+        },
+        right = {
+          width = "30%",
+          width_settings_open = "50%",
+        },
+      },
     },
     cmd = {
       "ChatGPT",
@@ -106,42 +116,7 @@ return {
       { "<leader>Cl", "<cmd>ChatGPTRun code_readability_analysis<CR>", desc = "Code Readability Analysis", mode = { "n", "v" },  },
       { "<leader>Ra", "<cmd>ChatGPTRun WriteRailsCode<cr>", desc = "Write Rails code" },
       { "<leader>Rt", "<cmd>ChatGPTRun WriteRSpecTests<cr>", desc = "Write Rails code", mode = "v" },
-      {
-        '<leader>RE',
-        '<cmd>Chat explain_code_4<cr>',
-        desc = 'Explain code',
-        mode = { 'v' },
-      },
-      {
-        '<leader>Rd',
-        '<cmd>Chat rails_add_rdoc<cr>',
-        desc = 'Write documentation (RDoc)',
-        mode = { 'v' },
-      },
-      -- {
-      --   '<leader>Rt',
-      --   '<cmd>Chat rails_add_rspec_tests<cr>',
-      --   desc = 'Write unit tests (RSpec)',
-      --   mode = { 'v' },
-      -- },
-      {
-        '<leader>Re',
-        '<cmd>Chat rails_edit_code<cr>',
-        desc = 'Refactor code (Rails)',
-        mode = { 'v' },
-      },
-      {
-        '<leader>Re',
-        '<cmd>Chat rails_edit_code2<cr>',
-        desc = 'Refactor code2 (Rails)',
-        mode = { 'v' },
-      },
-      {
-        '<leader>RC',
-        '<cmd>Chat rails_complete_code<cr>',
-        desc = 'Complete code (Rails)',
-        mode = { 'v' },
-      }
+      { "<M-Bslash>t", "<cmd>ChatGPTRun GenType<cr>", desc = "Generate type documentation", mode = "v" },
     },
   },
   {

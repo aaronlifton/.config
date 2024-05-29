@@ -1,0 +1,20 @@
+{
+  "GenType": {
+    "type": "chat",
+    "opts": {
+      "title": "Generate type documentation",
+      "template": "Generate type documentation for the following code. Return the type documention above the original code, and nothing else.  Use the usual doc format for {{filetype}}.\n\nExisting code:\n```{{filetype}}\n{{input}}\n```\n\n```{{filetype}}",
+      "strategy": "replace",
+      "params": {
+        "model": "gpt-3.5-turbo",
+        "stop": ["```"]
+      }
+    },
+    "args": {
+      "doctype": {
+        "type": "string",
+        "optional": "true"
+      }
+    }
+  }
+}

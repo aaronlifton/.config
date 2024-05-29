@@ -5,8 +5,7 @@ return {
     config = function()
       require("leap-spooky").setup({
         -- Additional text objects, to be merged with the default ones.
-        -- E.g.: {'iq', 'aq'}
-        extra_text_objects = { "iq", "aq", "if", "af" },
+        -- E.g.: {'iq', 'aq'} extra_text_objects = { "iq", "aq", "if", "af" },
         -- Mappings will be generated corresponding to all native text objects,
         -- like: (ir|ar|iR|aR|im|am|iM|aM){obj}.
         -- Special line objects will also be added, by repeating the affixes.
@@ -31,7 +30,28 @@ return {
 
       -- Configure leap here since leap opts don't work
       local leap = require("leap")
-      leap.opts.equivalence_classes = { " \t\r\n", "([{", ")]}", "'\"`" }
+      leap.opts.equivalence_classes = {
+        " \t\r\n",
+        "([{",
+        ")]}",
+        "'\"`",
+        "1!",
+        "2@",
+        "3#",
+        "4$",
+        "5%",
+        "6^",
+        "7&",
+        "8*",
+        "9(",
+        "0)",
+        -- "=-",
+        -- "_+",
+        -- ":;",
+        -- "<,>",
+        -- "?/",
+        -- "|\\",
+      }
       leap.opts.substitute_chars = { ["\r"] = "¬" }
       -- leap.opts.special_keys = {
       --   prev_target = "<backspace>",

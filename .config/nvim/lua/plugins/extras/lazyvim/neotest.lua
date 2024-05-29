@@ -31,5 +31,10 @@ return {
         end
       end,
     },
+    discovery = {
+      filter_dir = function(dir)
+        return not vim.startswith(dir, "node_modules")
+      end,
+    },
   },
 }
