@@ -28,7 +28,7 @@ map("n", "<leader>wb", function()
     vim.api.nvim_echo({
       { vim.inspect(vim.g.last_win), "Title" },
     }, false, {})
-    last_info = vim.g.last_win[#vim.g.last_win]
+    local last_info = vim.g.last_win[#vim.g.last_win]
     local tabpage = last_info.tabpage
     local winid = last_info.winid
     local bufnr = last_info.bufnr
@@ -59,3 +59,16 @@ end, { desc = "Last Window" })
 map("n", "<leader>wh", function()
   vim.api.nvim_command("HighestWindow")
 end)
+
+-- maximize the height of the current window  using builtin lua neovim api
+map("n", "<leader>wg", function()
+  local max_win_height = vim.api.nvim_get_option("lines") - 5
+  vim.api.nvim_command(":set ma")
+  for _ = 1, (max_win_height / 2) do
+    vim.api.nvim_command(':exe "norm \\<c-w>+"')
+  end
+  vim.api.nvim_command(":sleep 50m<cr>")
+  vim.api.nvim_command(':exe "norm \\<c-w>+"')
+  vim.api.nvim_command(":set noma")
+  vim.api.nvim_command(':exe "norm \\<c-w>+"')
+end, { desc = "Maximize Height" })

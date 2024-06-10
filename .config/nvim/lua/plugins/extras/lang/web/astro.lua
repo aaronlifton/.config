@@ -19,39 +19,29 @@ local source_action = function()
 end
 
 return {
-  {
-    "nvim-treesitter/nvim-treesitter",
-    dependencies = {
-      { "virchau13/tree-sitter-astro" },
-    },
-    opts = function(_, opts)
-      if type(opts.ensure_installed) == "table" then
-        vim.list_extend(opts.ensure_installed, { "astro" })
-      end
-    end,
-  },
+  { import = "lazyvim.plugins.extras.lang.astro" },
+  -- {
+  --   "nvim-treesitter/nvim-treesitter",
+  --   dependencies = {
+  --     { "virchau13/tree-sitter-astro" },
+  --   },
+  --   opts = function(_, opts)
+  --     if type(opts.ensure_installed) == "table" then
+  --       vim.list_extend(opts.ensure_installed, { "astro" })
+  --     end
+  --   end,
+  -- },
   {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
-        -- astro = {},
         astro = {
           handlers = {
-            ["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
-              require("ts-error-translator").translate_diagnostics(err, result, ctx, config)
-              vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
-            end,
+            ["textDocument/publishDiagnostics"] = require("util.lsp").publish_to_ts_error_translator,
           },
         },
       },
     },
-  },
-  {
-    "williamboman/mason.nvim",
-    opts = function(_, opts)
-      opts.ensure_installed = opts.ensure_installed or {}
-      vim.list_extend(opts.ensure_installed, { "astro-language-server" })
-    end,
   },
   {
     "mfussenegger/nvim-lint",
@@ -59,7 +49,6 @@ return {
       local lsp_util = require("util.lsp")
       lsp_util.add_linters(opts, {
         -- astro uses eslint instead of biome because eslint has astro rules
-        -- ["astro"] = { "eslint_d", "stylelint" },
         ["astro"] = { "eslint" },
       })
     end,
@@ -71,12 +60,4 @@ return {
       "astro",
     },
   },
-  -- {
-  --   "folke/which-key.nvim",
-  --   opts = {
-  --     defaults = {
-  --       ["<leader>xa"] = { name = " database" },
-  --     },
-  --   },
-  -- },
 }

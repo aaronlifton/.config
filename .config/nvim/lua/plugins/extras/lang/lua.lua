@@ -32,15 +32,16 @@ return {
               },
               telemetry = { enable = false },
               semantic = { enable = false }, -- Do not override treesitter lua highlighting with lua_ls's highlighting
-              workspace = {
-                checkThirdParty = false,
-                library = lsp_util.library(),
-                maxPreload = 8000,
-                preloadFileSize = 1000,
-                ignoreDir = { ".*", "aaron", "config/nvim", "nvim/lua" },
-                -- maxPreload = 100000,
-                -- preloadFileSize = 10000,
-              },
+              -- -- Already defined in .luarc.json
+              -- workspace = {
+              --   checkThirdParty = false,
+              --   library = lsp_util.library(),
+              --   maxPreload = 8000,
+              --   preloadFileSize = 1000,
+              --   ignoreDir = { ".*", "aaron", "config/nvim", "nvim/lua" },
+              --   -- maxPreload = 100000,
+              --   -- preloadFileSize = 10000,
+              -- },
               -- completion = {
               --   callSnippet = "Replace",
               -- },

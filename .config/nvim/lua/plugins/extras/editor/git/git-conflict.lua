@@ -4,7 +4,8 @@ return {
     opts = {
       default_mappings = false,
     },
-    version = "v1.0.0",
+    -- version = "v1.0.0",
+    version = "v1.3.0",
     cmd = { "GitConflictChooseTheirs", "GitConflictChooseOurs", "GitConflictChooseBoth", "GitConflictListQf" },
     keys = {
       { "<leader>gCt", "<cmd>GitConflictChooseTheirs<cr>", desc = "Choose Their Changes" },

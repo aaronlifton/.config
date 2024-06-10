@@ -144,7 +144,8 @@ return {
   --       "tailwindcss-language-server", -- tailwindcss
   --       "taplo",
   --       "terraform-ls", -- terraformls,
-  --       "typescript-language-server", --tsserver
+  --       -- "typescript-language-server", --tsserver
+  --       "vtsls"
   --       "typos",
   --       "vim-language-server", -- vimls
   --       "yaml-language-server", -- yamlls

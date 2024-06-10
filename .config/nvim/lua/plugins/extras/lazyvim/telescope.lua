@@ -1,4 +1,5 @@
 local actions = require("telescope.actions")
+local util = require("util.telescope_finders")
 
 local function get_telescope_targets(prompt_bufnr)
   vim.cmd("echo 'here'")
@@ -159,6 +160,11 @@ return {
       { "<leader>gC", "<cmd>Telescope git_bcommits<cr>", desc = "File History" },
       { "<leader>gS", "<cmd>Telescope git_stash<cr>", desc = "stash" },
       { "<leader>gb", "<cmd>Telescope git_branches<cr>", desc = "branches" },
+      { "<leader>ff", util.telescope("files"), desc = "Find Files (Root Dir)" },
+      { "<leader>fF", util.telescope("files", { cwd = false }), desc = "Find Files (Cwd)" },
+      -- { "<leader>sg", LazyVim.telescope("live_grep", { layout_strategy = "horizontal", layout_config = { width = 0.5, height = 0.5 } }), desc = "Grep (Root Dir)"},
+      -- { "<leader>sG", LazyVim.telescope("live_grep", { cwd = false, layout_strategy = "horizontal", layout_config = { width = 0.5, height = 0.5 } }), desc = "Grep (cwd)"}
+      -- { cwd = false }
     },
     opts = {
       defaults = {
@@ -211,10 +217,20 @@ return {
         },
       },
       pickers = {
-        find_files = {
-          hidden = false,
-        },
+        -- find_files = {
+        --   theme = "dropdown",
+        --   previewer = false,
+        --   -- hidden = false,
+        --   hidden = true,
+        --   find_command = { "rg", "--files", "--hidden", "-g", "!.git" },
+        -- },
+        -- git_files = {
+        --   theme = "dropdown",
+        --   previewer = false,
+        -- },
         buffers = {
+          -- theme = "dropdown",
+          -- previewer = false,
           layout_config = {
             prompt_position = "top",
             height = 0.5,

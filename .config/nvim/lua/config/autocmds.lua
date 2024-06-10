@@ -219,7 +219,6 @@ ac("ColorScheme", {
   group = ag("fix_highlights", { clear = true }),
   callback = function()
     require("config.highlights").setup()
-    vim.api.nvim_echo({ { "Highlights updated", "Normal" } }, false, {})
   end,
 })
 

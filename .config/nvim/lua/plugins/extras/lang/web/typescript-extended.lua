@@ -1,25 +1,14 @@
-local ts_server_activated = true -- Change this variable to false if you want to use typescript-tools instead of lspconfig tsserver implementation
-local ft = { "typescript", "typescriptreact", "javascript", "javascriptreact" }
-
-local tsInlayHints = {
-  includeInlayParameterNameHints = "literal",
-  includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-  includeInlayFunctionParameterTypeHints = true,
-  includeInlayVariableTypeHints = false,
-  includeInlayPropertyDeclarationTypeHints = true,
-  includeInlayFunctionLikeReturnTypeHints = true,
-  includeInlayEnumMemberValueHints = true,
-}
-local inlayHints = {
-  includeInlayParameterNameHints = "all",
-  includeInlayParameterNameHintsWhenArgumentMatchesName = true,
-  includeInlayFunctionParameterTypeHints = true,
-  includeInlayVariableTypeHints = true,
-  includeInlayVariableTypeHintsWhenTypeMatchesName = true,
-  includeInlayPropertyDeclarationTypeHints = true,
-  includeInlayFunctionLikeReturnTypeHints = true,
-  includeInlayEnumMemberValueHints = true,
-}
+--- same as LazyVim config, can delete
+-- local jsInlayHints = {
+--   includeInlayParameterNameHints = "all",
+--   includeInlayParameterNameHintsWhenArgumentMatchesName = true,
+--   includeInlayFunctionParameterTypeHints = true,
+--   includeInlayVariableTypeHints = true,
+--   includeInlayVariableTypeHintsWhenTypeMatchesName = true,
+--   includeInlayPropertyDeclarationTypeHints = true,
+--   includeInlayFunctionLikeReturnTypeHints = true,
+--   includeInlayEnumMemberValueHints = true,
+-- }
 
 local source_action = function(name)
   return function()
@@ -47,126 +36,42 @@ return {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
-        tsserver = {
+        vtsls = {
           handlers = {
-            ["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
-              require("ts-error-translator").translate_diagnostics(err, result, ctx, config)
-              vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
-            end,
-          },
-          enabled = ts_server_activated,
-          init_options = {
-            preferences = {
-              disableSuggestions = true,
-            },
-          },
-          -- root_dir = function(...)
-          --   return require("lspconfig.util").root_pattern(".git")(...)
-          -- end,
-          -- single_file_support = false,
-          settings = {
-            typescript = {
-              inlayHints = tsInlayHints,
-              implementationsCodeLens = {
-                enabled = true,
-              },
-              referencesCodeLens = {
-                enabled = true,
-                showOnAllFunctions = true,
-              },
-            },
-            javascript = {
-              inlayHints = inlayHints,
-              implementationsCodeLens = {
-                enabled = true,
-              },
-              referencesCodeLens = {
-                enabled = true,
-                showOnAllFunctions = true,
-              },
-            },
+            ["textdocument/publishdiagnostics"] = require("util.lsp").publish_to_ts_error_translator,
           },
           keys = {
+            -- already defined by lazyvim:
+            -- <leader>gd require("vtsls").commands.goto_source_definition(0)*
+            -- <leader>gr require("vtsls").commands.file_references(0)
+            -- <leader>co require("vtsls").commands.organize_imports(0)
+            -- <leader>cm require("vtsls").commands.add_missing_imports(0)
+            -- <leader>cd require("vtsls").commands.fix_all(0)
+            -- <leader>cv require("vtsls").commands.select_ts_version(0)
             {
-              "<leader>co",
-              source_action("organizeImports"),
-              desc = "Organize Imports",
-            },
-            {
-              "<leader>cM",
-              source_action("addMissingImports"),
-              desc = "Add Missing Imports",
-            },
-            {
-              "<leader>cR",
+              "<leader>cr",
               source_action("removeUnused"),
-              desc = "Remove Unused Imports",
+              desc = "Remove unused imports",
             },
           },
         },
         denols = {},
       },
-      setup = {
-        tsserver = function(server, server_opts)
-          require("lspconfig").tsserver.setup({
-            on_attach = function(client, bufnr)
-              require("lsp_signature").on_attach({ hint_prefix = "" })
-              vim.api.nvim_echo({
-                { "TSServer activated", "Type" },
-                { "Collecting workspace diagnostics", "DiagnosticWarn" },
-              }, false, {})
-              require("workspace-diagnostics").populate_workspace_diagnostics(client, bufnr)
-            end,
-          })
-        end,
-      },
-    },
-  },
-  -- {
-  --   "folke/which-key.nvim",
-  --   opts = {
-  --     defaults = {
-  --       ["<leader>co"] = { name = "Organize Imports" },
-  --       ["<leader>cM"] = { name = "Add Missing Imports" },
-  --       ["<leader>cR"] = { name = "Remove Unused Imports" },
-  --     },
-  --   },
-  -- },
-  {
-    "pmizio/typescript-tools.nvim",
-    dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
-    enabled = not ts_server_activated,
-    ft = ft,
-    opts = {
-      cmd = { "typescript-language-server", "--stdio" },
-      settings = {
-        code_lens = "all",
-        expose_as_code_action = "all",
-        tsserver_plugins = {
-          "@styled/typescript-styled-plugin",
-        },
-        tsserver_file_preferences = {
-          completions = {
-            completeFunctionCalls = true,
-          },
-          init_options = {
-            preferences = {
-              disableSuggestions = true,
-            },
-          },
-          includeInlayParameterNameHints = "all",
-          includeInlayEnumMemberValueHints = true,
-          includeInlayFunctionLikeReturnTypeHints = true,
-          includeInlayFunctionParameterTypeHints = true,
-          includeInlayPropertyDeclarationTypeHints = true,
-          includeInlayVariableTypeHints = true,
-        },
-      },
-    },
-    keys = {
-      { "<leader>cO", ft = ft, "<cmd>TSToolsOrganizeImports<cr>", desc = "Organize Imports" },
-      { "<leader>cR", ft = ft, "<cmd>TSToolsRemoveUnusedImports<cr>", desc = "Remove Unused Imports" },
-      { "<leader>cM", ft = ft, "<cmd>TSToolsAddMissingImports<cr>", desc = "Add Missing Imports" },
+      -- setup = {
+      -- vtsls = function(server, server_opts)
+      --   require("lspconfig").tsserver.setup({
+      --     on_attach = function(client, bufnr)
+      --       -- if pcall(require, "lsp_signature") then
+      --       --   require("lsp_signature").on_attach({ hint_prefix = "" })
+      --       -- end
+      --
+      --       -- if pcall(require, "workspace-diagnostics") then
+      --       --   require("workspace-diagnostics").populate_workspace_diagnostics(client, bufnr)
+      --       -- end
+      --     end,
+      --   })
+      -- end,
+      -- },
     },
   },
   {

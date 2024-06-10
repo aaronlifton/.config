@@ -4,10 +4,12 @@
     "lazyvim.plugins.extras.coding.yanky",
     "lazyvim.plugins.extras.dap.nlua",
     "lazyvim.plugins.extras.editor.dial",
+    "lazyvim.plugins.extras.editor.mini-diff",
     "lazyvim.plugins.extras.editor.mini-files",
     "lazyvim.plugins.extras.editor.mini-move",
-    "lazyvim.plugins.extras.editor.trouble-v3",
+    "lazyvim.plugins.extras.lang.sql",
     "lazyvim.plugins.extras.lang.tex",
+    "lazyvim.plugins.extras.lang.toml",
     "lazyvim.plugins.extras.lang.yaml",
     "lazyvim.plugins.extras.test.core",
     "lazyvim.plugins.extras.ui.edgy",
@@ -115,7 +117,6 @@
     "plugins.extras.ui.colorschemes.gruvbox-material",
     "plugins.extras.ui.colorschemes.material",
     "plugins.extras.ui.colorschemes.sonokai",
-    "plugins.extras.ui.comment-box",
     "plugins.extras.ui.fidget",
     "plugins.extras.ui.live-command",
     "plugins.extras.ui.no-neck-pain",
@@ -131,7 +132,7 @@
     "plugins.extras.util.smart-splits"
   ],
   "news": {
-    "NEWS.md": "4964"
+    "NEWS.md": "5950"
   },
-  "version": 4
+  "version": 6
 }

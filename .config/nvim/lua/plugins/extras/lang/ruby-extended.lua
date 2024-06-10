@@ -90,7 +90,7 @@ return {
         },
         solargraph = {
           on_new_config = function(new_config)
-            new_config.enabled = not gems_util.has_ruby_lsp() and gems_util.in_bundle("solargraph")
+            new_config.enabled = not gems_util.has_ruby_lsp() -- and gems_util.in_bundle("solargraph")
           end,
           -- filetypes = { "eruby" },
           --   enabled = false,
@@ -113,7 +113,7 @@ return {
               "foldingRanges",
               "selectionRanges",
               "semanticHighlighting",
-              -- "formatting",
+              "formatting", -- needed for formatting
               "diagnostics",
               "signatureHelp",
               --
@@ -126,7 +126,6 @@ return {
               "codeLens",
               "documentLink",
             },
-            -- formatter = "rubocop",
             -- when auto, formatter will detect formatter from bundle
             formatter = "auto",
           },
@@ -137,9 +136,15 @@ return {
             if not gems_util.has_ruby_lsp() then
               new_config.enabled = false
             end
+            -- if gems_util.has_rubocop() then
+            --   new_config.init_options.formatter = "rubocop"
             if gems_util.in_bundle("ruby-lsp-rubyfmt") then
               new_config.init_options.formatter = "rubyfmt"
             end
+            vim.api.nvim_echo({
+              { "Ruby LSP formatter: " .. new_config.init_options.formatter },
+              { "enabled: " .. tostring(new_config.enabled) },
+            }, true, {})
           end,
           commands = {
             FormatRuby = {
@@ -262,7 +267,7 @@ return {
         },
         rubyfmt = {
           condition = function(ctx)
-            return gems_util.in_bundle("ruby-lsp-rubyfmt") or not gems_util.has_rubocop() -- and not standard
+            return gems_util.in_bundle("ruby-lsp-rubyfmt")
           end,
         },
       },

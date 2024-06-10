@@ -13,31 +13,9 @@ return {
       servers = {
         volar = {
           handlers = {
-            ["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
-              require("ts-error-translator").translate_diagnostics(err, result, ctx, config)
-              vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
-            end,
+            ["textDocument/publishDiagnostics"] = require("util.lsp").publish_to_ts_error_translator,
           },
         },
-        tsserver = {},
-      },
-      setup = {
-        tsserver = function(_, opts)
-          local mason_registry = require("mason-registry")
-          local vue_language_server_path = mason_registry.get_package("vue-language-server"):get_install_path()
-            .. "/node_modules/@vue/language-server"
-
-          opts.init_options = {
-            plugins = {
-              {
-                name = "@vue/typescript-plugin",
-                location = vue_language_server_path,
-                languages = { "vue" },
-              },
-            },
-          }
-          opts.filetypes = { "typescript", "javascript", "javascriptreact", "typescriptreact", "vue" }
-        end,
       },
     },
   },

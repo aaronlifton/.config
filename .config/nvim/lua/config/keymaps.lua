@@ -348,7 +348,7 @@ map("n", "gSj", function()
   require("treesj").join()
 end, { desc = "Join" })
 
-map("n", "<leader>cI", "<cmd>Copilot toggle<cr>", { desc = "Toggle Copilot" })
+map("n", "<leader>cI", "", { desc = "AI Controls" })
 
 map("n", "<leader>cifd", function()
   local filename = vim.fn.expand("%")
@@ -415,9 +415,32 @@ end, { desc = "Turn off all AI" })
 map("n", "<leader>snn", "<cmd>Telescope notify<cr>", { desc = "Notify" })
 
 map("n", "zF", ":norm z=1<cr>", { desc = "Choose first spelling suggestion" })
+
+map("n", "]g", ":GitConflictNextConflict<cr>", { desc = "Next Git Conflict" })
+map("n", "[g", ":GitConflictPrevConflict<cr>", { desc = "Prev Git Conflict" })
+
+-- Clear the quickfix window keymap set on BufEnter
+vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+  pattern = "qf",
+  callback = function()
+    vim.keymap.set("n", "<C-d>", function()
+      vim.fn.setqflist({})
+    end, { buffer = true })
+  end,
+})
+
+map("n", "<leader>fm", function()
+  local module = vim.fn.input("Module: ")
+  vim.cmd("Neotree focus filesystem left")
+  vim.cmd("Neotree node_modules/" .. module)
+end, { desc = "Explorer (node_modules)" })
+
+map("n", "<leader>xC", function()
+  vim.fn.setqflist({})
+end, { desc = "Clear Quickfix" })
 --------------------------------------------------------------------------------
 -- Custom Telescope finders
-local T = require("util.custom_telescope_finders")
+local T = require("util.telescope_finders")
 map("n", "<leader>flg", function()
   T.grep_lazyvim_files()
 end, { desc = "Grep lazyvim files" })

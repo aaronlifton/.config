@@ -115,7 +115,8 @@ return {
           end,
           desc = "copy path to clipboard",
         },
-        ["J"] = function()
+        -- ["J"] = function()
+        ["S"] = function()
           local leap_util = require("util.leap")
           local buf = vim.api.nvim_get_current_buf()
           local leap = leap_util.get_leap_for_buf(buf)

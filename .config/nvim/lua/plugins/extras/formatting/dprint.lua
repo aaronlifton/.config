@@ -1,7 +1,7 @@
 local lsp_util = require("util.lsp")
 local dprint_filenames = { "dprint.json", ".dprint.json", "dprint.jsonc", ".dprint.jsonc" }
 local notified = false
-local use_global_dprint_formatter = false
+local use_global_dprint_formatter = true
 return {
   {
     "williamboman/mason.nvim",
@@ -44,7 +44,8 @@ return {
             if use_global_dprint_formatter then
               local has_prettier = vim.fs.find({ ".prettierrc.js" }, { upward = true })[1]
               local has_eslint = vim.fs.find({ ".eslintrc.js" }, { upward = true })[1]
-              return not has_prettier and not has_eslint
+              local biome_available = conform.get_formatter_info("biome", ctx.buf).available
+              return not has_prettier and not has_eslint and not biome_available
               -- return not require("conform").get_formatter_info("prettier", ctx.buf).available
               --   and not require("conform").get_formatter_info("biome", ctx.buf).available
             else

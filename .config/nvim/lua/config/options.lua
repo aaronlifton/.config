@@ -27,7 +27,7 @@ o.sps = "file:/Users/aaron/.config/nvim/spell/sugg,best"
 o.startofline = true
 o.swapfile = false
 o.textwidth = 80
-o.termguicolors = trueoptions
+o.termguicolors = true
 -- o.formatoptions = "jcrqlnt" -- "jcroqlnt" -- tcqj
 -- o.colorcolumn = "80"
 

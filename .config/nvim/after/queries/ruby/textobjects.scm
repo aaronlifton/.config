@@ -18,4 +18,8 @@
 (case) @conditional.outer
 (then) @conditional.inner
 (else (_) @conditional.inner)
+(pair) (_) (hash_key_symbol) @key.inner
+(pair (hash_key_symbol) (_) @value.inner)
+(pair) (string)  @key.inner
+(pair (string) (_) @value.inner)
 ;; https://github.com/search?q=path%3A**%2Fnvim%2Fafter%2Fqueries%2Fruby%2Ftextobjects.scm&ref=opensearch&type=code

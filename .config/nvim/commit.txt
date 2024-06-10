@@ -1,0 +1,11 @@
+feat: various customizing
+
+Update 'lazygit' dependency.
+Add various mappings for general navigation, color, sniping, etc.
+Implement 'grep' mapping for LazyVim files.
+Temporarily remove 'coc-json' dependency.
+Add 'gitignore' pattern to ignore tag files.
+Use 'None-LSP' plugin for improved performance.
+Add 'whichKey' keymap.
+Fix issue with line number color in treesitter blocks.
+Remove 'autoclose' mappings to prevent conflict with telescope mappings.

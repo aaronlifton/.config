@@ -17,6 +17,7 @@
 -- }
 return {
   { import = "lazyvim.plugins.extras.coding.copilot" },
+  { import = "lazyvim.plugins.extras.coding.copilot-chat" },
   -- {
   --     "nvim-lualine/lualine.nvim",
   --     optional = true,
@@ -120,42 +121,41 @@ return {
       --   "goimports",
       -- },
       keys = {
-        { "<leader>cI", "<cmd>Copilot toggle<cr>", desc = "Toggle Copilot" },
         {
-          "<leader>ct",
+          "<leader>cIt",
           function()
             require("copilot.suggestion").toggle_auto_trigger()
           end,
-          desc = "Toggle AI",
+          desc = "Toggle auto trigger",
         },
-        {
-          "<leader>cP",
-          function()
-            require("copilot.panel").open({ "bottom", 0.25 })
-          end,
-          desc = "Toggle Copilot Panel",
-        },
-        {
-          "<leader>c]",
-          function()
-            require("copilot.panel").jump_next()
-          end,
-          desc = "Jump next (Copilot Panel)",
-        },
-        {
-          "<leader>c]",
-          function()
-            require("copilot.panel").jump_prev()
-          end,
-          desc = "Jump prev (Copilot Panel)",
-        },
-        {
-          "<leader>cg",
-          function()
-            require("copilot.panel").accept()
-          end,
-          desc = "Jump prev (Copilot Panel)",
-        },
+        -- {
+        --   "<leader>avp",
+        --   function()
+        --     require("copilot.panel").open({ "bottom", 0.25 })
+        --   end,
+        --   desc = "Toggle Copilot Panel",
+        -- },
+        -- {
+        --   "<leader>c]",
+        --   function()
+        --     require("copilot.panel").jump_next()
+        --   end,
+        --   desc = "Jump next (Copilot Panel)",
+        -- },
+        -- {
+        --   "<leader>c[",
+        --   function()
+        --     require("copilot.panel").jump_prev()
+        --   end,
+        --   desc = "Jump prev (Copilot Panel)",
+        -- },
+        -- {
+        --   "<leader>cg",
+        --   function()
+        --     require("copilot.panel").accept()
+        --   end,
+        --   desc = "Jump prev (Copilot Panel)",
+        -- },
       },
     },
   },
@@ -197,12 +197,106 @@ return {
     end,
   },
   {
-    "folke/which-key.nvim",
-    opts = {
-      defaults = {
-        ["<leader>cP"] = { name = "󰚩 Copilot Panel" },
-        ["<leader>ct"] = { name = "Toggle Autotrigger (Copilot)" },
+    "CopilotC-Nvim/CopilotChat.nvim",
+    keys = {
+      --     { "<leader>a", false },
+      --     { "<leader>cha", "", desc = "+󰚩 Copilot Chat" },
+      --     {
+      --       "<leader>aa",
+      --       false,
+      --     },
+      {
+        "<M-0>",
+        function()
+          return require("CopilotChat").toggle()
+        end,
+        desc = "Chat (Copilot)",
+        mode = { "n", "v" },
       },
+      {
+        "<leader>ax",
+        false,
+      },
+      --     {
+      --       "<leader>chx",
+      --       function()
+      --         return require("CopilotChat").reset()
+      --       end,
+      --       desc = "Clear (CopilotChat)",
+      --       mode = { "n", "v" },
+      --     },
+      --     {
+      --       "<leader>aq",
+      --       false,
+      --     },
+      --     {
+      --       "<leader>chq",
+      --       function()
+      --         local input = vim.fn.input("Quick Chat: ")
+      --         if input ~= "" then
+      --           require("CopilotChat").ask(input)
+      --         end
+      --       end,
+      --       desc = "Quick Chat (CopilotChat)",
+      --       mode = { "n", "v" },
+      --     },
     },
+    config = function(_, opts)
+      local chat = require("CopilotChat")
+      require("CopilotChat.integrations.cmp").setup()
+
+      vim.api.nvim_create_autocmd("BufEnter", {
+        pattern = "copilot-chat",
+        callback = function()
+          vim.opt_local.relativenumber = false
+          vim.opt_local.number = false
+          vim.keymap.set({ "n", "v" }, "ax", function()
+            return require("CopilotChat").reset()
+          end, { desc = "Clear (CopilotChat)" })
+        end,
+      })
+
+      chat.setup(opts)
+    end,
   },
+  -- {
+  --   "nvim-telescope/telescope.nvim",
+  --   keys = {
+  --     -- Show help actions with telescope
+  --     { "<leader>ad", false },
+  --     {
+  --       "<leader>Ad",
+  --       function()
+  --         local actions = require("CopilotChat.actions")
+  --         local help = actions.help_actions()
+  --         if not help then
+  --           LazyVim.warn("No diagnostics found on the current line")
+  --           return
+  --         end
+  --         require("CopilotChat.integrations.telescope").pick(help)
+  --       end,
+  --       desc = "Diagnostic Help (CopilotChat)",
+  --       mode = { "n", "v" },
+  --     },
+  --     -- Show prompts actions with telescope
+  --     { "<leader>ap", false },
+  --     {
+  --       "<leader>Ap",
+  --       function()
+  --         local actions = require("CopilotChat.actions")
+  --         require("CopilotChat.integrations.telescope").pick(actions.prompt_actions())
+  --       end,
+  --       desc = "Prompt Actions (CopilotChat)",
+  --       mode = { "n", "v" },
+  --     },
+  --   },
+  -- },
+  -- {
+  --   "folke/which-key.nvim",
+  --   opts = {
+  --     defaults = {
+  --       ["<leader>Ap"] = { name = "+󰚩 Copilot" },
+  --     },
+  --   },
+  -- },
 }

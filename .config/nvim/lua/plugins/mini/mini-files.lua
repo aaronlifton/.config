@@ -20,15 +20,17 @@ return {
       --     require("mini.files").open()
       --   end,
       -- },
+      { "<leader>fm", false },
+      { "<leader>fM", false },
       {
-        "<leader>F",
+        "<leader>fj",
         function()
           require("mini.files").open(vim.api.nvim_buf_get_name(0), true)
         end,
         desc = "Explorer (Current File)",
       },
       {
-        "<leader>Fd",
+        "<leader>fJ",
         function()
           require("mini.files").open(vim.loop.cwd(), true)
         end,

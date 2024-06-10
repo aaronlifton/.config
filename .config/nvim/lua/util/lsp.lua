@@ -105,4 +105,9 @@ M.jsx_formatter = function(ctx)
   end
 end
 
+function M.publish_to_ts_error_translator(err, result, ctx, config)
+  require("ts-error-translator").translate_diagnostics(err, result, ctx, config)
+  vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
+end
+
 return M

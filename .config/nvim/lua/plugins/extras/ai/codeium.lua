@@ -47,7 +47,7 @@ return {
         return vim.fn["codeium#Accept"]()
       end, opts)
 
-      vim.keymap.set("n", "<leader>ch", function()
+      vim.keymap.set("n", "<leader>chw", function()
         return vim.fn["codeium#Chat"]()
       end, { desc = "Chat with AI (Codeium)" })
 
@@ -63,7 +63,7 @@ return {
         return vim.fn["codeium#Clear"]()
       end, opts)
 
-      vim.keymap.set("i", "<M-BS>", function()
+      vim.keymap.set("i", "<M-BSlash>", function()
         return vim.fn["codeium#Complete"]()
       end, opts)
 

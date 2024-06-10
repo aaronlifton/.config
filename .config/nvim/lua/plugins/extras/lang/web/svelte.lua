@@ -1,23 +1,12 @@
 return {
-  {
-    "nvim-treesitter/nvim-treesitter",
-    opts = function(_, opts)
-      if type(opts.ensure_installed) == "table" then
-        vim.list_extend(opts.ensure_installed, { "svelte" })
-      end
-    end,
-  },
+  { import = "lazyvim.plugins.extras.lang.svelte" },
   {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
-        -- svelte = {},
         svelte = {
           handlers = {
-            ["textDocument/publishDiagnostics"] = function(err, result, ctx, config)
-              require("ts-error-translator").translate_diagnostics(err, result, ctx, config)
-              vim.lsp.diagnostic.on_publish_diagnostics(err, result, ctx, config)
-            end,
+            ["textDocument/publishDiagnostics"] = require("util.lsp").publish_to_ts_error_translator,
           },
         },
       },

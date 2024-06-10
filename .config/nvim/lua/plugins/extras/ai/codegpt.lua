@@ -144,7 +144,6 @@ return {
     "folke/which-key.nvim",
     opts = {
       defaults = {
-        ["<leader>CC"] = { name = "󰚩 CodeGPT" },
         ["<leader>R"] = { name = "󰚩 RailsGPT", mode = "v" },
       },
     },

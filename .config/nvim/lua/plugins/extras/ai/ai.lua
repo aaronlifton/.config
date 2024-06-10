@@ -100,8 +100,9 @@ return {
       "NeoAIShortcut",
     },
     keys = {
-      { "<leader>czt", desc = "Summarize Text" },
-      { "<leader>czg", desc = "Generate Git Message" },
+      -- { "<leader>ck", "", desc = "+NeoAI" },
+      -- { "<leader>aS", desc = "Summarize Text (NeoAI)" },
+      -- { "<leader>aG", desc = "Generate Git Message (NeoAI)" },
       { "<M-=>", "<cmd>NeoAIToggle<cr>", desc = "Toggle NeoAI" },
       {
         "<leader>wfa",
@@ -128,6 +129,7 @@ return {
               break
             end
           end
+          vim.api.nvim_echo({ { "NeoAI: " .. vim.fn["neoai#GetStatusString"]() } }, true, {})
 
           if neoai_win and neoai_buf then
             -- move focus to the buffer
@@ -151,15 +153,16 @@ return {
     },
     opts = {},
     keys = {
+      { "<leader>aw", "", desc = "+󰚩 WTF" },
       {
-        "<leader>czd",
+        "<leader>awd",
         function()
           require("wtf").ai()
         end,
         desc = "Search Diagnostic with AI",
       },
       {
-        "<leader>czs",
+        "<leader>aws",
         function()
           require("wtf").search()
         end,

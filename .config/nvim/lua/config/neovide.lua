@@ -37,7 +37,7 @@ ResizeGuiFont = function(delta)
 end
 
 ResetGuiFont = function()
-  vim.g.gui_font_size = 22
+  vim.g.gui_font_size = 20
   RefreshGuiFont()
 end
 

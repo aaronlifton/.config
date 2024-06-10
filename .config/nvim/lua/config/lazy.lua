@@ -14,7 +14,6 @@ require("lazy").setup({
     -- import any extras modules here
     -- { import = "lazyvim.plugins.extras.ui.mini-animate" },
     { import = "lazyvim.plugins.extras.vscode" },
-    { import = "lazyvim.plugins.extras.lazyrc" },
     { import = "lazyvim.plugins.extras.editor.leap" },
     -- Disable when done testing
     -- { import = "lazyvim.plugins.extras.lsp.none-ls" },
