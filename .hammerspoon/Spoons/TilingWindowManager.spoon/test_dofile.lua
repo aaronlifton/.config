@@ -1,0 +1,1 @@
+-- hs.logger.new("Hammerspoon", "info").i("here")
