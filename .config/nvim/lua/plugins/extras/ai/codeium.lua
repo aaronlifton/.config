@@ -47,9 +47,9 @@ return {
         return vim.fn["codeium#Accept"]()
       end, opts)
 
-      vim.keymap.set("n", "<leader>chw", function()
+      vim.keymap.set("n", "<leader>aC", function()
         return vim.fn["codeium#Chat"]()
-      end, { desc = "Chat with AI (Codeium)" })
+      end, { desc = "Open Web Chat (Codeium)" })
 
       vim.keymap.set("i", "<M-]>", function()
         return vim.fn["codeium#CycleCompletions"](1)

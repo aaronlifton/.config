@@ -43,7 +43,7 @@ return {
       }
     end,
     keys = {
-      { "<leader>i", "<cmd>Gen<cr>", mode = { "n", "v" }, desc = "IA (Gen)" },
+      { "<leader>i", "<cmd>Gen<cr>", mode = { "n", "v" }, desc = "AI (Gen)" },
     },
   },
   {
