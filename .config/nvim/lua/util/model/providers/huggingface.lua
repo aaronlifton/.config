@@ -22,6 +22,7 @@ function M.request_completion(handlers, params, options)
   local model = (options or {}).model or "bigscience/bloom"
 
   echo("Params", params)
+  echo("Options", options)
   -- TODO handle non-streaming calls
   return sse.curl_client({
     url = "https://api-inference.huggingface.co/models/" .. model,

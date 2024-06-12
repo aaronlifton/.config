@@ -173,7 +173,7 @@ return {
             ["<C-k>"] = actions.move_selection_previous,
             ["<C-j>"] = actions.move_selection_next,
             ["<S-esc>"] = actions.close,
-            ["<C-p>"] = require("telescope.actions.layout").toggle_preview,
+            ["<C-w>"] = require("telescope.actions.layout").toggle_preview,
             ["<c-l>"] = require("telescope.actions.layout").cycle_layout_next,
             ["<a-l>"] = require("telescope.actions.layout").cycle_layout_prev,
             ["<C-Down>"] = actions.cycle_history_next,

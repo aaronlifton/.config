@@ -14,8 +14,8 @@ return {
     keys = {
       { "<C-m>a", ":M<cr>", mode = "n", desc = "Run a completion prompt" },
       { "<C-m><space>", ":Mchat<cr>", mode = "n", desc = "Open a chat buffer" },
-      { "<C-m>d", ":Mdelete<cr>", mode = "n" },
-      { "<C-m>s", ":Mselect<cr>", mode = "n" },
+      { "<C-m>d", ":Mdelete<cr>", mode = "n", desc = "Delete" },
+      { "<C-m>s", ":Mselect<cr>", mode = "n", desc = "Select" },
       { "<C-m>ma", ":MCadd<cr>", mode = "n", desc = "Add the current file into context" },
       { "<C-m>md", ":MCremove<cr>", mode = "n", desc = "Remove the current file into context" },
       { "<C-m>mD", ":MCclear<cr>", mode = "n", desc = "Clear the current context" },
@@ -25,6 +25,7 @@ return {
       { "<leader>agc", "<cmd>Model commit2<cr>", desc = "Generate commit (Gemini)" },
       { "<leader>agv", "<cmd>Model commit:openai<cr>", desc = "Generate commit (OpenAI)" },
       { "<leader>agb", "<cmd>Model ConventionalCommit<cr>", desc = "Generate commit2 (OpenAI)" },
+      { "<C-m>c", "<cmd>Model codestral:fim<cr>", desc = "Complete (Codestral FIM)" },
     },
 
     -- To override defaults add a config field and call setup()

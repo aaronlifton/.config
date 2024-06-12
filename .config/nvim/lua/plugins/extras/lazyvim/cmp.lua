@@ -22,6 +22,7 @@ return {
       "hrsh7th/cmp-cmdline",
       "hrsh7th/cmp-nvim-lua",
       "ray-x/cmp-treesitter",
+      "tzachar/cmp-ai",
     },
     keys = {
       { "<leader>ciC", "<cmd>CmpStatus<CR>", desc = "Cmp Status" },
@@ -55,6 +56,7 @@ return {
         { name = "nvim_lsp", max_item_count = 15 },
         { name = "codeium", priority = 100 },
         { name = "copilot", priority = 100 },
+        { name = "cmp_ai", priority = 100 },
         -- { name = "nvim_lua" },
         { name = "treesitter" },
         { name = "path" },
@@ -89,6 +91,16 @@ return {
           behavior = cmp.ConfirmBehavior.Insert,
           select = true,
         }),
+        ["<C-x>"] = cmp.mapping(
+          cmp.mapping.complete({
+            config = {
+              sources = cmp.config.sources({
+                { name = "cmp_ai" },
+              }),
+            },
+          }),
+          { "i" }
+        ),
 
         -- Already set by LazyVim
         ["<S-CR>"] = cmp.mapping.confirm({

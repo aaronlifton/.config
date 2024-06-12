@@ -22,6 +22,7 @@ local get_git_diff = function(system_cmd)
   return git_diff
 end
 
+---@type table<string, Prompt>
 return vim.tbl_extend("force", starter_prompts, {
   NodeJsConvert = {
     provider = openai,
@@ -152,6 +153,23 @@ return vim.tbl_extend("force", starter_prompts, {
           },
         },
       }
+    end,
+  },
+  ["codestral:fim"] = {
+    provider = require("util.model.providers.codestral"),
+    mode = mode.INSERT,
+    params = {
+      model = "codestral-latest",
+      temperature = 0.1,
+      n = 1,
+      max_tokens = 100,
+      endpoint = "fim",
+    },
+    builder = function(input)
+      -- /Users/aaron/.local/share/nvim/lazy/cmp-ai/lua/cmp_ai/backends/codestral.lua
+      local context = require("util.model.context")
+      local ctx = context:get()
+      return { prompt = ctx.lines_before }
     end,
   },
   commit2 = {

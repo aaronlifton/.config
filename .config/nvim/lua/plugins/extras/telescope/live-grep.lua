@@ -10,15 +10,28 @@ return {
     telescope.setup({
       extensions = {
         live_grep_args = {
-          auto_quoting = true, -- enable/disable auto-quoting
-          mappings = { -- extend mappings
+          auto_quoting = true,
+          mappings = {
             i = {
               ["<C-q>"] = lga_actions.quote_prompt(),
               ["<C-i>"] = lga_actions.quote_prompt({ postfix = " --iglob " }),
+              ["<C-t>"] = lga_actions.quote_prompt({ postfix = " --iglob=!*{test,spec}*" }),
+              ["<C-l>"] = lga_actions.quote_prompt({
+                postfix = table.concat({
+                  " --iglob=!*{test,spec}*",
+                  "--iglob=*.lua",
+                }, " "),
+              }),
+              ["<C-j>"] = lga_actions.quote_prompt({
+                postfix = table.concat({
+                  " --iglob=!*{test,spec}*",
+                  "--iglob=*.{js,ts,tsx}",
+                }, " "),
+              }),
               ["<C-S-m>"] = lga_actions.quote_prompt({ postfix = " --glob **/*.{md,mdx} " }),
               ["<C-space>"] = lga_actions.to_fuzzy_refine,
               ["<C-f>"] = custom_pickers.actions.set_extension,
-              ["<C-S-fl>"] = custom_pickers.actions.set_folders,
+              ["<D-F>"] = custom_pickers.actions.set_folders,
             },
           },
           -- ... also accepts theme settings, for example:
@@ -36,7 +49,6 @@ return {
   },
   -- stylua: ignore
   keys = function()
-    local lga_actions = require("telescope-live-grep-args.actions")
     return {
       {
         "<leader>su",
