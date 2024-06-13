@@ -2,7 +2,7 @@ local nvim_0_10 = vim.fn.has("nvim-0.10")
 local lsp_util = require("util.lsp")
 
 return {
-  { "folke/neodev.nvim", before = "neovim/nvim-lspconfig" },
+  { "folke/lazydev.nvim", before = "neovim/nvim-lspconfig" },
   {
     "neovim/nvim-lspconfig",
     init = function()

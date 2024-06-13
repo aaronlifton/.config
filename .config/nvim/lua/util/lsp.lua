@@ -76,7 +76,7 @@ function M.library()
       table.insert(library, path)
     end
   end
-  table.insert(library, vim.fn.expand("~/.local/share/nvim/lazy/neodev.nvim/types/nightly"))
+  table.insert(library, vim.fn.expand("~/.local/share/nvim/lazy/lazydev.nvim"))
   local additional_paths = require("util.lua_ls_library")
   for _, path in ipairs(additional_paths) do
     table.insert(library, path)

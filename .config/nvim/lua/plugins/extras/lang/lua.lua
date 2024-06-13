@@ -1,21 +1,14 @@
-local nvim_0_10 = vim.fn.has("nvim-0.10")
-local lsp_util = require("util.lsp")
-
 return {
   {
     "sam4llis/nvim-lua-gf",
   },
   {
-    "folke/neodev.nvim",
-    opts = {},
-  },
-  {
     "neovim/nvim-lspconfig",
     dependencies = {
       {
-        "folke/neodev.nvim",
+        "folke/lazydev.nvim",
         opts = {
-          library = { plugins = { "neotest", "nvim-dap-ui" }, types = true },
+          library = { plugins = { "neotest", "nvim-dap-ui" } },
         },
       },
     },

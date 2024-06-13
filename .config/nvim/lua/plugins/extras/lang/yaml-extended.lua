@@ -8,7 +8,9 @@ return {
     },
     opts = {},
     config = function(_, opts)
-      require("telescope").load_extension("yaml_schema")
+      if LazyVim.has("telescope") then
+        require("telescope").load_extension("yaml_schema")
+      end
     end,
     keys = {
       { "<leader>sy", "<cmd>Telescope yaml_schema<cr>" },

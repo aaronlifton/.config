@@ -81,7 +81,7 @@ return {
   -- "/Users/aaron/.local/share/nvim/lazy/mini.surround",
   -- "/Users/aaron/.local/share/nvim/lazy/neo-tree.nvim",
   -- "/Users/aaron/.local/share/nvim/lazy/neoconf.nvim",
-  -- "/Users/aaron/.local/share/nvim/lazy/neodev.nvim",
+  -- "/Users/aaron/.local/share/nvim/lazy/lazydev.nvim",
   -- "/Users/aaron/.local/share/nvim/lazy/neogen",
   -- "/Users/aaron/.local/share/nvim/lazy/nfnl",
   -- "/Users/aaron/.local/share/nvim/lazy/no-neck-pain.nvim",
