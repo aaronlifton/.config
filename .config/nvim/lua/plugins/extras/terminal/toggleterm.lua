@@ -18,14 +18,14 @@ return {
           return vim.o.columns * 0.40
         end
       end,
-      on_open = function()
+      on_open = function(term)
         -- Prevent infinite calls from freezing neovim.
         -- Only set these options specific to this terminal buffer.
         vim.api.nvim_set_option_value("foldmethod", "manual", { scope = "local" })
         vim.api.nvim_set_option_value("foldexpr", "0", { scope = "local" })
-        vim.keymap.set("n", "<C-\\>", function()
-          vim.api.nvim_command("ToggleTermToggleAll")
-        end, { silent = "true", noremap = true })
+      end,
+      on_close = function(term)
+        vim.cmd("startinsert!")
       end,
       highlights = {
         Normal = {
@@ -38,7 +38,7 @@ return {
           link = "FloatBorder",
         },
       },
-      open_mapping = false, -- [[<c-\>]],
+      open_mapping = [[<c-\>]],
       hide_numbers = true, -- hide the number column in toggleterm buffers
       shade_filetypes = {},
       shade_terminals = false,
@@ -86,7 +86,7 @@ return {
     -- stylua: ignore
     keys = {
       { [[<c-\>]], "<cmd>ToggleTerm direction=horizontal<cr>", mode = "n", desc = "Toggle Terminal" },
-      { [[<A-\>]], "<cmd>ToggleTerm direction=vertical<cr>", mode = "n", desc = "Toggle Terminal (Vert)" },
+      -- { [[<M-Bslash>]], "<cmd>ToggleTerm direction=vertical<cr>", mode = "n", desc = "Toggle Terminal (Vert)" },
     },
   },
   -- {

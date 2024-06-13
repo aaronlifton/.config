@@ -1,3 +1,6 @@
+if LazyVim.has_extra("editor.fzf") then
+  return {}
+end
 local actions = require("telescope.actions")
 local util = require("util.telescope_finders")
 

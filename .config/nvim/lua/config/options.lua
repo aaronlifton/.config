@@ -28,6 +28,7 @@ o.startofline = true
 o.swapfile = false
 o.textwidth = 80
 o.termguicolors = true
+o.shell = "fish"
 -- o.formatoptions = "jcrqlnt" -- "jcroqlnt" -- tcqj
 -- o.colorcolumn = "80"
 
@@ -38,6 +39,8 @@ o.termguicolors = true
 g.gui_font_face = "Sauce Code Pro Nerd Font Mono"
 g.gui_font_size = 18
 g.custom_notifications = {}
+vim.g.picker = "fzf" -- telescope
+vim.api.nvim_echo({ { vim.inspect(LazyVim.has_extra("editor.fzf")), "Normal" } }, true, {})
 
 vim.treesitter.language.register("markdown", "neoai-output")
 

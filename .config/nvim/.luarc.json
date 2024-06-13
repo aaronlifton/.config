@@ -26,6 +26,7 @@
       "/Users/aaron/.local/share/nvim/lazy/nvim-treesitter",
       "/Users/aaron/.local/share/nvim/lazy/overseer.nvim",
       "/Users/aaron/.local/share/nvim/lazy/telescope.nvim",
+      "/Users/aaron/.local/share/nvim/lazy/fzf-lua",
       "/Users/aaron/.local/share/nvim/site",
       "${3rd}/luv/library"
     ]

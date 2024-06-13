@@ -112,3 +112,14 @@ hs.hotkey.bind("⌘⇧⌥", "c", window.thunk_push({ left = 1 / 6, width = 2 / 3
 
 -- Chrome
 -- hs.hotkey.bind("⌃⌥⌘", "t", new_tab_next_to_current_tab_chrome)
+
+-- Between monitors
+local duration = 0
+hs.hotkey.bind({ "alt", "ctrl", "cmd" }, "Right", function()
+	local win = hs.window.focusedWindow()
+	win:moveOneScreenSouth(false, true, duration)
+end)
+hs.hotkey.bind({ "alt", "ctrl", "cmd" }, "Left", function()
+	local win = hs.window.focusedWindow()
+	win:moveOneScreenNorth(false, true, duration)
+end)
