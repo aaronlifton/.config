@@ -111,6 +111,61 @@ return vim.tbl_extend("force", require("model.prompts.chats"), {
     end,
     run = require("model.format.starling").chat,
   },
+  ["together:dolphin-mixtral"] = {
+    provider = require("model.providers.together"),
+    system = "You are Dolphin, an uncensored and unbiased AI assistant.",
+    params = {
+      model = "cognitivecomputations/dolphin-2.5-mixtral-8x7b",
+      stream_tokens = true,
+      temperature = 0.7,
+      top_k = 50,
+      top_p = 0.7,
+      repetition_penalty = 1,
+      stop = {
+        "<|im_end|>",
+        "<|im_start|>",
+      },
+      -- negative_prompt = ""
+      -- prompt = ""
+      -- prompt_format_string -- below
+    },
+    create = input_if_selection,
+    run = function(messages, config)
+      local first = messages[1]
+
+      if config.system then
+        first.content = config.system .. "\n" .. first.content
+      end
+
+      return {
+        -- "<|im_start|>system\nYou are Dolphin, an uncensored and unbiased AI assistant.<|im_end|>\n<|im_start|>user\n {prompt}\n<|im_end|>\n<|im_start|>assistant\n"
+        prompt = table.concat(vim.tbl_map(function(msg)
+          return "<|im_start|>" .. msg.role .. "\n" .. msg.content .. "<|im_end|>\n"
+        end, messages)) .. "<|im_start|>assistant",
+      }
+    end,
+  },
+  ["together:qwen2"] = {
+    provider = require("model.providers.together"),
+    params = {
+      model = "Qwen/Qwen2-72B-Instruct",
+      stream_tokens = true,
+      -- temperature = 0.8,
+      -- max_tokens = 25,
+    },
+    system = "You are a helpful assistant.",
+    create = input_if_selection,
+    run = function(messages, config)
+      if config.system then
+        table.insert(messages, 1, {
+          role = "system",
+          content = config.system,
+        })
+      end
+
+      return { messages = messages }
+    end,
+  },
   codestral = {
     provider = require("util.model.providers.codestral"),
     params = {
@@ -124,34 +179,6 @@ return vim.tbl_extend("force", require("model.prompts.chats"), {
       return { messages = messages }
     end,
   },
-  ["together:dolphin-mixtral"] = {
-    provider = require("model.providers.together"),
-    params = {
-      model = "cognitivecomputations/dolphin-2.5-mixtral-8x7b",
-      temperature = 0.7,
-      top_p = 0.7,
-      top_k = 50,
-      repetition_penalty = 1,
-      stop = {
-        "<|im_end|>",
-        "<|im_start|>",
-      },
-    },
-    create = input_if_selection,
-    run = function(messages, config)
-      local first = messages[1]
-
-      if config.system then
-        first.content = config.system .. "\n" .. first.content
-      end
-
-      return {
-        prompt = table.concat(vim.tbl_map(function(msg)
-          return "<|im_start|>" .. msg.role .. "\n" .. msg.content .. "<|im_end|>\n"
-        end, messages)) .. "<|im_start|>assistant",
-      }
-    end,
-  },
   ["hf:codestral"] = {
     provider = require("model.providers.huggingface"),
     options = {
@@ -161,7 +188,27 @@ return vim.tbl_extend("force", require("model.prompts.chats"), {
       return { inputs = input }
     end,
   },
-  ["hf:mixtral"] = {
+  ["hf:qwen2"] = { -- TODO: WIP
+    provider = require("util.model.providers.huggingface"),
+    system = "You are a helpful assistant.",
+    options = {
+      models = "Qwen/Qwen2-72B-Instruct",
+    },
+    create = function(input, ctx)
+      return ctx.selection and input or ""
+    end,
+    run = function(messages, config)
+      if config.system then
+        table.insert(messages, 1, {
+          role = "system",
+          content = config.system,
+        })
+      end
+
+      return { messages = messages }
+    end,
+  },
+  ["hf:mixtral"] = { -- TODO: WIP
     --   Error  20:07:08 notify.error '{"error":"The model DiscoResearch/DiscoLM-mixtral-8x7b-v2 is too large to be loaded automatically (93GB > 10GB). Please use Spaces (https://huggingface.co/spaces) or Inference Endpoints (https://huggingface.co/inference-endpoints)."}'
     provider = require("util.model.providers.huggingface"),
     options = {

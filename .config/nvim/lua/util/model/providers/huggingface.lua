@@ -15,6 +15,7 @@ local M = {}
 function echo(title, body)
   vim.api.nvim_echo({ { title, "Title" }, { vim.inspect(body), "String" } }, true, {})
 end
+
 ---@param handlers StreamHandlers
 ---@param params? any Additional params for request. Note the parameters detailed at https://huggingface.co/docs/api-inference/detailed_parameters need to go in the `params.parameters` field.
 ---@param options? { model?: string }
