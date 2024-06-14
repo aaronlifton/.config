@@ -111,33 +111,47 @@ end
 
 function M.grep_config_files(opts)
   local dir = get_runtime_dir()
-  local theme_opts = themes.get_ivy({
-    sorting_strategy = "ascending",
-    layout_strategy = "bottom_pane",
-    prompt_prefix = ">> ",
-    prompt_title = "~ Search My Config ~",
-    cwd = dir,
-    search_dirs = { dir },
-  })
-  opts = vim.tbl_deep_extend("force", theme_opts, opts)
-  builtin.live_grep(opts)
+  if vim.g.lazyvim_picker == "fzf" then
+    require("fzf-lua").live_grep({
+      prompt = "My Config>",
+      cwd = dir,
+    })
+  else
+    local theme_opts = themes.get_ivy({
+      sorting_strategy = "ascending",
+      layout_strategy = "bottom_pane",
+      prompt_prefix = ">> ",
+      prompt_title = "~ Search My Config ~",
+      cwd = dir,
+      search_dirs = { dir },
+    })
+    opts = vim.tbl_deep_extend("force", theme_opts, opts)
+    -- builtin.live_grep(opts)
+    require("telescope.builtin").find_files(opts)
+  end
 end
 
 function M.find_config_files(opts)
-  local dir = get_runtime_dir()
   opts = opts or {}
-  local base_dir = get_lazyvim_base_dir()
-  -- get parent foler
-  local theme_opts = themes.get_ivy({
-    sorting_strategy = "ascending",
-    layout_strategy = "bottom_pane",
-    prompt_prefix = ">> ",
-    prompt_title = "~ Search My Config (Files) ~",
-    cwd = dir,
-    search_dirs = { dir },
-  })
-  opts = vim.tbl_deep_extend("force", theme_opts, opts)
-  builtin.find_files(opts)
+  local dir = get_runtime_dir()
+  if vim.g.lazyvim_picker == "fzf" then
+    require("fzf-lua").files({
+      prompt = "My Config>",
+      cwd = dir,
+    })
+  else
+    -- get parent foler
+    local theme_opts = themes.get_ivy({
+      sorting_strategy = "ascending",
+      layout_strategy = "bottom_pane",
+      prompt_prefix = ">> ",
+      prompt_title = "~ Search My Config (Files) ~",
+      cwd = dir,
+      search_dirs = { dir },
+    })
+    opts = vim.tbl_deep_extend("force", theme_opts, opts)
+    builtin.find_files(opts)
+  end
 end
 
 function M.find_config_files_cursor(opts)
@@ -202,31 +216,45 @@ function M.grep_inspiration_files(opts)
 end
 
 function M.find_lazyvim_files(opts)
-  opts = opts or {}
-  local theme_opts = themes.get_ivy({
-    sorting_strategy = "ascending",
-    layout_strategy = "bottom_pane",
-    prompt_prefix = ">> ",
-    prompt_title = "~ LazyVim files ~",
-    cwd = get_runtime_dir(),
-    search_dirs = { get_lazyvim_base_dir() },
-  })
-  opts = vim.tbl_deep_extend("force", theme_opts, opts)
-  builtin.find_files(opts)
+  if vim.g.lazyvim_picker == "fzf" then
+    require("fzf-lua").files({
+      prompt = "LazyVim files>",
+      cwd = get_lazyvim_base_dir(),
+    })
+  else
+    opts = opts or {}
+    local theme_opts = themes.get_ivy({
+      sorting_strategy = "ascending",
+      layout_strategy = "bottom_pane",
+      prompt_prefix = ">> ",
+      prompt_title = "~ LazyVim files ~",
+      cwd = get_runtime_dir(),
+      search_dirs = { get_lazyvim_base_dir() },
+    })
+    opts = vim.tbl_deep_extend("force", theme_opts, opts)
+    builtin.find_files(opts)
+  end
 end
 
 function M.grep_lazyvim_files(opts)
-  opts = opts or {}
-  local theme_opts = themes.get_ivy({
-    sorting_strategy = "ascending",
-    layout_strategy = "bottom_pane",
-    prompt_prefix = ">> ",
-    prompt_title = "~ search lazyVim ~",
-    cwd = get_runtime_dir(),
-    search_dirs = { get_lazyvim_base_dir() },
-  })
-  opts = vim.tbl_deep_extend("force", theme_opts, opts)
-  builtin.live_grep(opts)
+  if vim.g.lazyvim_picker == "fzf" then
+    require("fzf-lua").live_grep({
+      prompt = "LazyVim files>",
+      cwd = get_lazyvim_base_dir(),
+    })
+  else
+    opts = opts or {}
+    local theme_opts = themes.get_ivy({
+      sorting_strategy = "ascending",
+      layout_strategy = "bottom_pane",
+      prompt_prefix = ">> ",
+      prompt_title = "~ search lazyVim ~",
+      cwd = get_runtime_dir(),
+      search_dirs = { get_lazyvim_base_dir() },
+    })
+    opts = vim.tbl_deep_extend("force", theme_opts, opts)
+    builtin.live_grep(opts)
+  end
 end
 
 local copy_to_clipboard_action = function(prompt_bufnr)

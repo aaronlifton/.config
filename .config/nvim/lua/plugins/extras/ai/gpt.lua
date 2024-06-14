@@ -1,6 +1,7 @@
 local actions_config_path = vim.fn.stdpath("config") .. "/lua/config/gpt/actions"
 
 return {
+  { "nvim-telescope/telescope.nvim", enabled = true },
   {
     "jackMort/ChatGPT.nvim",
     dependencies = {

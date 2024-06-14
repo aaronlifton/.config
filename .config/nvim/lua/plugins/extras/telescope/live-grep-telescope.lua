@@ -1,4 +1,4 @@
-if LazyVim.has_extra("editor.fzf") then
+if not vim.g.lazyvim_picker == "telescope" then
   return {}
 end
 return {

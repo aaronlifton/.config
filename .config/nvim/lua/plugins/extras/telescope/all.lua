@@ -1,6 +1,7 @@
-if LazyVim.has_extra("editor.fzf") then
+if vim.g.lazyvim_picker == "fzf" then
   return {
     { import = "plugins.extras.telescope.live-grep-fzf" },
+    { import = "plugins.extras.telescope.urlview" },
   }
 else
   return {

@@ -1,20 +1,13 @@
-if not LazyVim.has_extra("editor.fzf") then
+if not vim.g.lazyvim_picker == "fzf" then
   return {}
 end
 return {
-  -- { import = "lazyvim.plugins.extras.editor.fzf" },
   {
-    -- LazyVim disabled telescope, so re-enable it for:
-    -- <leader>p
-    -- <leader>sy
     "nvim-telescope/telescope.nvim",
-    enabled = false,
+    enabled = true,
   },
   {
     "ibhagwan/fzf-lua",
-    cond = function()
-      return LazyVim.has("fzf-lua")
-    end,
     keys = {
       { "<leader>su", "<cmd>lua require('fzf-lua').grep_cword()<CR>", desc = "Grep (current word)", mode = "n" },
       { "<leader>su", "<cmd>lua require('fzf-lua').grep_visual()<CR>", desc = "Grep (selection)", mode = "v" },
@@ -33,6 +26,7 @@ return {
       {
         "<leader>sg",
         function()
+          vim.api.nvim_echo({ { "Grep (root dir)" } }, true, {})
           local actions = require("fzf-lua.actions")
           ---@param flag string
           local toggle_flag = function(flag)
@@ -45,19 +39,31 @@ return {
               )
             end
           end
-          require("fzf-lua").live_grep({
+          require("fzf-lua").live_grep_glob({
+            rg_glob = true,
+            -- rg_glob_fn = function(query)
+            --   local regex, flags = query:match("^(.-)%s%-%-(.*)$")
+            --   -- If no separator is detected will return the original query
+            --   return (regex or query), flags
+            -- end,
             actions = {
+              -- LazyVim mapping:
+              -- ctrl-q: select-all+accept
+              -- ctrl-u: half-page-up
+              -- ctrl-d: half-page-down
+              -- ctrl-x: jump
+              -- <c-f>: preview-page-down
+              -- <c-b>: preview-page-up
+              -- ctrl-t: trouble
+              -- ctrl-r: toggle-root-dir
+              -- alt-c: toggle-root-dir
               ["ctrl-y"] = toggle_flag("--iglob=*.lua --iglob=!*{test,spec}*"),
               ["ctrl-j"] = toggle_flag("--iglob=*.{js,ts,tsx} --iglob=!*{test,spec}*"),
-              ["alt-t"] = toggle_flag("--iglob=*{spec,test}*"),
-              -- ["ctrl-z"] = function(_, opts)
-              --   local current_buf = vim.api.nvim_get_current_buf()
-              --   local win = vim.api.nvim_get_current_win()
-              --   -- vim.api.nvim_echo({ { "Current buffer: " .. vim.inspect(current_buf), "Normal" } }, true, {})
-              --   require("leap").leap({
-              --     target_windows = { win },
-              --   })
-              -- end,
+              ["alt-r"] = require("fzf-lua.config").defaults.actions.files["ctrl-r"],
+              ["ctrl-r"] = toggle_flag("--iglob=*.rb --iglob=!*{test,spec}*"),
+              ["alt-t"] = toggle_flag("--iglob=*{spec,test}*.{lua,js,ts,tsx,rb}"),
+              ["alt-s"] = toggle_flag("--iglob=spec/**/*.rb"),
+              ["alt-v"] = actions.toggle_hidden,
             },
           })
         end,
@@ -65,8 +71,17 @@ return {
       },
       {
         "<leader>/",
-        "<cmd>lua require('fzf-lua').live_grep({ glob = '!./node_modules/*' })<CR>",
+        function()
+          require("fzf-lua").live_grep({ glob = "!./node_modules/*" })
+        end,
         desc = "Grep (root dir)",
+      },
+      {
+        "<leader>fM",
+        function()
+          require("fzf-lua").live_grep({ glob = "./node_modules/*" })
+        end,
+        desc = "Grep (node_modules)",
       },
       {
         "<C-x><C-f>",
@@ -79,5 +94,15 @@ return {
       },
     },
   },
-  -- { import = "plugins.extras.lsp.glance" },
+  {
+    "neovim/nvim-lspconfig",
+    opts = function()
+      local keys = require("lazyvim.plugins.lsp.keymaps").get()
+
+      keys[#keys + 1] = { "gd", false }
+      keys[#keys + 1] = { "gr", false }
+      keys[#keys + 1] = { "gy", false }
+      keys[#keys + 1] = { "gI", false }
+    end,
+  },
 }

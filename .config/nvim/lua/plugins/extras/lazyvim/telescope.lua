@@ -1,8 +1,101 @@
-if LazyVim.has_extra("editor.fzf") then
-  return {}
-end
 local actions = require("telescope.actions")
 local util = require("util.telescope_finders")
+
+local keys = {}
+if vim.g.lazyvim_picker == "telescope" then
+  keys = {
+    {
+      "<leader>ssa",
+      LazyVim.pick("lsp_document_symbols", {
+        symbols = {
+          "Class",
+          "Function",
+          "Method",
+          "Constructor",
+          "Interface",
+          "Module",
+          "Struct",
+          "Trait",
+          "Field",
+          "Property",
+          "Enum",
+          "Constant",
+        },
+      }),
+      desc = "All",
+    },
+    { "<leader>ssc", LazyVim.pick("lsp_document_symbols", { symbols = { "Class" } }), desc = "Class" },
+    { "<leader>ssf", LazyVim.pick("lsp_document_symbols", { symbols = { "Function" } }), desc = "Function" },
+    { "<leader>ssm", LazyVim.pick("lsp_document_symbols", { symbols = { "Method" } }), desc = "Method" },
+    { "<leader>ssC", LazyVim.pick("lsp_document_symbols", { symbols = { "Constructor" } }), desc = "Constructor" },
+    { "<leader>sse", LazyVim.pick("lsp_document_symbols", { symbols = { "Enum" } }), desc = "Enum" },
+    { "<leader>ssi", LazyVim.pick("lsp_document_symbols", { symbols = { "Interface" } }), desc = "Interface" },
+    { "<leader>ssM", LazyVim.pick("lsp_document_symbols", { symbols = { "Module" } }), desc = "Module" },
+    { "<leader>sss", LazyVim.pick("lsp_document_symbols", { symbols = { "Struct" } }), desc = "Struct" },
+    { "<leader>sst", LazyVim.pick("lsp_document_symbols", { symbols = { "Trait" } }), desc = "Trait" },
+    { "<leader>ssF", LazyVim.pick("lsp_document_symbols", { symbols = { "Field" } }), desc = "Field" },
+    { "<leader>ssp", LazyVim.pick("lsp_document_symbols", { symbols = { "Property" } }), desc = "Property" },
+    {
+      "<leader>ssv",
+      LazyVim.pick("lsp_document_symbols", { symbols = { "Variable", "Parameter" } }),
+      desc = "Variable",
+    },
+    {
+      "<leader>sSa",
+      LazyVim.pick("lsp_dynamic_workspace_symbols", {
+        symbols = {
+          "Class",
+          "Function",
+          "Method",
+          "Constructor",
+          "Interface",
+          "Module",
+          "Struct",
+          "Trait",
+          "Field",
+          "Property",
+          "Enum",
+          "Constant",
+        },
+      }),
+      desc = "All",
+    },
+    { "<leader>sSc", LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Class" } }), desc = "Class" },
+    { "<leader>sSf", LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Function" } }), desc = "Function" },
+    { "<leader>sSm", LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Method" } }), desc = "Method" },
+    {
+      "<leader>sSC",
+      LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Constructor" } }),
+      desc = "Constructor",
+    },
+    { "<leader>sSe", LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Enum" } }), desc = "Enum" },
+    { "<leader>sSi", LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Interface" } }), desc = "Interface" },
+    { "<leader>sSM", LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Module" } }), desc = "Module" },
+    { "<leader>sSs", LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Struct" } }), desc = "Struct" },
+    { "<leader>sSt", LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Trait" } }), desc = "Trait" },
+    { "<leader>sSF", LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Field" } }), desc = "Field" },
+    { "<leader>sSp", LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Property" } }), desc = "Property" },
+    {
+      "<leader>sSv",
+      LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Variable", "Parameter" } }),
+      desc = "Variable",
+    },
+    { "<leader>sA", LazyVim.pick("treesitter"), desc = "Treesitter Symbols" },
+    { "<leader>sP", "<cmd>Telescope builtin<cr>", desc = "Pickers (Telescope)" },
+    { "<leader>fh", LazyVim.pick("find_files", { hidden = true }), desc = "Find Files (hidden)" },
+    { "<leader><c-space>", LazyVim.pick("find_files", { hidden = true }), desc = "Find Files (hidden)" },
+    { "<leader>gC", "<cmd>Telescope git_bcommits<cr>", desc = "File History" },
+    { "<leader>gS", "<cmd>Telescope git_stash<cr>", desc = "stash" },
+    { "<leader>gb", "<cmd>Telescope git_branches<cr>", desc = "branches" },
+    { "<leader>ff", util.telescope("files"), desc = "Find Files (Root Dir)" },
+    { "<leader>fF", util.telescope("files", { cwd = false }), desc = "Find Files (Cwd)" },
+    { "<leader>sS", "", desc = "Goto Symbols (Workspace)" },
+    { "<leader>ss", "", desc = "Goto Symbols" },
+    -- { "<leader>sg", LazyVim.pick("live_grep", { layout_strategy = "horizontal", layout_config = { width = 0.5, height = 0.5 } }), desc = "Grep (Root Dir)"},
+    -- { "<leader>sG", LazyVim.pick("live_grep", { cwd = false, layout_strategy = "horizontal", layout_config = { width = 0.5, height = 0.5 } }), desc = "Grep (cwd)"}
+    -- { cwd = false }
+  }
+end
 
 local function get_telescope_targets(prompt_bufnr)
   vim.cmd("echo 'here'")
@@ -121,54 +214,7 @@ return {
       end,
     },
     -- stylua: ignore
-    keys = {
-      {
-        "<leader>ssa",
-        LazyVim.pick("lsp_document_symbols", { symbols = { "Class", "Function", "Method", "Constructor", "Interface", "Module", "Struct", "Trait", "Field", "Property", "Enum", "Constant" } }),
-        desc = "All",
-      },
-      { "<leader>ssc", LazyVim.pick("lsp_document_symbols", { symbols = { "Class" } }), desc = "Class" },
-      { "<leader>ssf", LazyVim.pick("lsp_document_symbols", { symbols = { "Function" } }), desc = "Function" },
-      { "<leader>ssm", LazyVim.pick("lsp_document_symbols", { symbols = { "Method" } }), desc = "Method" },
-      { "<leader>ssC", LazyVim.pick("lsp_document_symbols", { symbols = { "Constructor" } }), desc = "Constructor" },
-      { "<leader>sse", LazyVim.pick("lsp_document_symbols", { symbols = { "Enum" } }), desc = "Enum" },
-      { "<leader>ssi", LazyVim.pick("lsp_document_symbols", { symbols = { "Interface" } }), desc = "Interface" },
-      { "<leader>ssM", LazyVim.pick("lsp_document_symbols", { symbols = { "Module" } }), desc = "Module" },
-      { "<leader>sss", LazyVim.pick("lsp_document_symbols", { symbols = { "Struct" } }), desc = "Struct" },
-      { "<leader>sst", LazyVim.pick("lsp_document_symbols", { symbols = { "Trait" } }), desc = "Trait" },
-      { "<leader>ssF", LazyVim.pick("lsp_document_symbols", { symbols = { "Field" } }), desc = "Field" },
-      { "<leader>ssp", LazyVim.pick("lsp_document_symbols", { symbols = { "Property" } }), desc = "Property" },
-      { "<leader>ssv", LazyVim.pick("lsp_document_symbols", { symbols = { "Variable", "Parameter" } }), desc = "Variable" },
-      {
-        "<leader>sSa",
-        LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Class", "Function", "Method", "Constructor", "Interface", "Module", "Struct", "Trait", "Field", "Property", "Enum", "Constant" } }),
-        desc = "All",
-      },
-      { "<leader>sSc", LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Class" } }), desc = "Class" },
-      { "<leader>sSf", LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Function" } }), desc = "Function" },
-      { "<leader>sSm", LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Method" } }), desc = "Method" },
-      { "<leader>sSC", LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Constructor" } }), desc = "Constructor" },
-      { "<leader>sSe", LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Enum" } }), desc = "Enum" },
-      { "<leader>sSi", LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Interface" } }), desc = "Interface" },
-      { "<leader>sSM", LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Module" } }), desc = "Module" },
-      { "<leader>sSs", LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Struct" } }), desc = "Struct" },
-      { "<leader>sSt", LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Trait" } }), desc = "Trait" },
-      { "<leader>sSF", LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Field" } }), desc = "Field" },
-      { "<leader>sSp", LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Property" } }), desc = "Property" },
-      { "<leader>sSv", LazyVim.pick("lsp_dynamic_workspace_symbols", { symbols = { "Variable", "Parameter" } }), desc = "Variable" },
-      { "<leader>sA", LazyVim.pick("treesitter"), desc = "Treesitter Symbols" },
-      { "<leader>sP", "<cmd>Telescope builtin<cr>", desc = "Pickers (Telescope)" },
-      { "<leader>fh", LazyVim.pick("find_files", { hidden = true }), desc = "Find Files (hidden)" },
-      { "<leader><c-space>", LazyVim.pick("find_files", { hidden = true }), desc = "Find Files (hidden)" },
-      { "<leader>gC", "<cmd>Telescope git_bcommits<cr>", desc = "File History" },
-      { "<leader>gS", "<cmd>Telescope git_stash<cr>", desc = "stash" },
-      { "<leader>gb", "<cmd>Telescope git_branches<cr>", desc = "branches" },
-      { "<leader>ff", util.telescope("files"), desc = "Find Files (Root Dir)" },
-      { "<leader>fF", util.telescope("files", { cwd = false }), desc = "Find Files (Cwd)" },
-      -- { "<leader>sg", LazyVim.pick("live_grep", { layout_strategy = "horizontal", layout_config = { width = 0.5, height = 0.5 } }), desc = "Grep (Root Dir)"},
-      -- { "<leader>sG", LazyVim.pick("live_grep", { cwd = false, layout_strategy = "horizontal", layout_config = { width = 0.5, height = 0.5 } }), desc = "Grep (cwd)"}
-      -- { cwd = false }
-    },
+    keys = keys,
     opts = {
       defaults = {
         mappings = {
@@ -265,15 +311,6 @@ return {
         ["ui-select"] = {
           require("telescope.themes").get_dropdown({}),
         },
-      },
-    },
-  },
-  {
-    "folke/which-key.nvim",
-    opts = {
-      defaults = {
-        ["<leader>sS"] = { name = "Goto Symbols (Workspace)" },
-        ["<leader>ss"] = { name = "Goto Symbols" },
       },
     },
   },

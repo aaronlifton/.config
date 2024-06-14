@@ -1,6 +1,5 @@
 return {
   "dnlhc/glance.nvim",
-  after = "fzf-lua",
   init = function()
     local keys = require("lazyvim.plugins.lsp.keymaps").get()
 
