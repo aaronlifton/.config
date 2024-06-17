@@ -13,7 +13,7 @@ $git_state\
 \n$character\
 """
 
-command_timeout = 1500
+command_timeout = 2500
 
 [battery]
 disabled = true

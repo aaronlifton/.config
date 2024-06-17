@@ -90,7 +90,7 @@ return {
         },
         solargraph = {
           on_new_config = function(new_config)
-            new_config.enabled = not gems_util.has_ruby_lsp() -- and gems_util.in_bundle("solargraph")
+            new_config.enabled = not gems_util.has_ruby_lsp() and gems_util.in_bundle("solargraph")
           end,
           -- filetypes = { "eruby" },
           --   enabled = false,
@@ -131,32 +131,15 @@ return {
           },
           settings = {},
           on_new_config = function(new_config)
-            -- ruby-lsp-rubyfmt needs formatter to be set to rubyfmt
-            -- https://github.com/jscharf/ruby-lsp-rubyfmt/blob/b28e16e9b847f70dc1ee2012296fda92cb30e7f5/README.md?plain=1#L41
             if not gems_util.has_ruby_lsp() then
               new_config.enabled = false
             end
-            -- if gems_util.has_rubocop() then
-            --   new_config.init_options.formatter = "rubocop"
+            -- ruby-lsp-rubyfmt needs formatter to be set to rubyfmt
+            -- https://github.com/jscharf/ruby-lsp-rubyfmt/blob/b28e16e9b847f70dc1ee2012296fda92cb30e7f5/README.md?plain=1#L41
             if gems_util.in_bundle("ruby-lsp-rubyfmt") then
               new_config.init_options.formatter = "rubyfmt"
             end
-            vim.api.nvim_echo({
-              { "Ruby LSP formatter: " .. new_config.init_options.formatter },
-              { "enabled: " .. tostring(new_config.enabled) },
-            }, true, {})
           end,
-          commands = {
-            FormatRuby = {
-              function()
-                vim.lsp.buf.format({
-                  name = "ruby_lsp",
-                  async = true,
-                })
-              end,
-              description = "Format using ruby-lsp",
-            },
-          },
         },
         yamlls = require("util.yamlls_config").get_yamlls_config(),
       },

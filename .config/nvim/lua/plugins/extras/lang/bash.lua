@@ -29,6 +29,17 @@ return {
       table.insert(opts.linters_by_ft.bash, "shellcheck")
     end,
   },
+  -- TODO: implement a condition to not format scripts from repos
+  -- {
+  --   "stevearc/conform.nvim",
+  --   opts = {
+  --     formatters = {
+  --       shfmt = {
+  --         condition = function(ctx) end,
+  --       },
+  --     },
+  --   },
+  -- },
   {
     "nvim-neotest/neotest",
     optional = true,
