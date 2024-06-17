@@ -1,3 +1,4 @@
+---@class util.editor
 local M = {}
 
 function M.has_words_before()

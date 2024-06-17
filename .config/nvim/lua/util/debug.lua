@@ -1,3 +1,4 @@
+---@class util.debug
 local M = {}
 
 M.echo = function(title, body)

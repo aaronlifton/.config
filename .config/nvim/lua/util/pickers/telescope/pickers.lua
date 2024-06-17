@@ -1,3 +1,4 @@
+---@class util.pickers.telescope.pickers
 local M = {}
 
 local pickers = require("telescope.pickers")
@@ -34,14 +35,11 @@ function M.git_diff_picker(opts)
   opts = opts or require("telescope.themes").get_dropdown({})
   local list = vim.fn.systemlist("git diff --name-only")
   pickers
-    .new(
-      opts,
-      {
-        prompt_title = "Git Diff Files",
-        finder = finders.new_table({ results = list }),
-        sorter = conf.generic_sorter(opts),
-      }
-    )
+    .new(opts, {
+      prompt_title = "Git Diff Files",
+      finder = finders.new_table({ results = list }),
+      sorter = conf.generic_sorter(opts),
+    })
     :find()
 end
 

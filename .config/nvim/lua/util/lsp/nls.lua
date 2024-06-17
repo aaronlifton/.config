@@ -1,3 +1,4 @@
+---@class util.lsp.nls
 local M = {}
 
 local loaded = false

@@ -40,6 +40,7 @@ g.gui_font_face = "Sauce Code Pro Nerd Font Mono"
 g.gui_font_size = 18
 g.custom_notifications = {}
 g.lazyvim_picker = "fzf" -- telescope
+g.lsp_goto_source = "glance"
 vim.treesitter.language.register("markdown", "neoai-output")
 
 -------------------------------------------------

@@ -110,6 +110,7 @@ function rhs_options:with_buffer(num)
   return self
 end
 
+---@class util.bind
 local bind = {}
 
 ---@param cmd_string string

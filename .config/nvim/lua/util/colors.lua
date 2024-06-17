@@ -1,3 +1,4 @@
+---@class util.colors
 local M = {}
 
 local hsluv = require("catppuccin.lib.hsluv")

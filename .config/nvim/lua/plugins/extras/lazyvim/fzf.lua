@@ -1,11 +1,8 @@
-if not vim.g.lazyvim_picker == "fzf" then
-  return {}
-end
 return {
-  {
-    "nvim-telescope/telescope.nvim",
-    enabled = true,
-  },
+  { import = "lazyvim.plugins.extras.editor.fzf" },
+  { "nvim-telescope/telescope.nvim", enabled = true },
+  { import = "plugins.extras.telescope.urlview" },
+  { import = "plugins.extras.telescope.zoxide" },
   {
     "ibhagwan/fzf-lua",
     keys = {
@@ -58,7 +55,7 @@ return {
               -- ctrl-r: toggle-root-dir
               -- alt-c: toggle-root-dir
               ["ctrl-y"] = toggle_flag("--iglob=*.lua --iglob=!*{test,spec}*"),
-              ["ctrl-j"] = toggle_flag("--iglob=*.{js,ts,tsx} --iglob=!*{test,spec}*"),
+              ["alt-j"] = toggle_flag("--iglob=*.{js,ts,tsx} --iglob=!*{test,spec}*"),
               ["alt-r"] = require("fzf-lua.config").defaults.actions.files["ctrl-r"],
               ["ctrl-r"] = toggle_flag("--iglob=*.rb --iglob=!*{test,spec}*"),
               ["alt-t"] = toggle_flag("--iglob=*{spec,test}*.{lua,js,ts,tsx,rb}"),
@@ -97,12 +94,15 @@ return {
   {
     "neovim/nvim-lspconfig",
     opts = function()
-      local keys = require("lazyvim.plugins.lsp.keymaps").get()
+      local util = require("util")
+      if util.has_extra("lsp.glance") then
+        local keys = require("lazyvim.plugins.lsp.keymaps").get()
 
-      keys[#keys + 1] = { "gd", false }
-      keys[#keys + 1] = { "gr", false }
-      keys[#keys + 1] = { "gy", false }
-      keys[#keys + 1] = { "gI", false }
+        keys[#keys + 1] = { "gd", false }
+        keys[#keys + 1] = { "gr", false }
+        keys[#keys + 1] = { "gy", false }
+        keys[#keys + 1] = { "gI", false }
+      end
     end,
   },
 }

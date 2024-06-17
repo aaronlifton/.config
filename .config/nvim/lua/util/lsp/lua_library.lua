@@ -1,3 +1,4 @@
+---@type string[]
 return {
   "/Users/aaron/.config/nvim",
   "/Users/aaron/.config/nvim/after",

@@ -1,3 +1,4 @@
+---@class util.table
 local M = {}
 local TableExt = {}
 
