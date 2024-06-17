@@ -1,6 +1,5 @@
+---@class util.formatters
 local M = {}
-
-local conform = require("conform")
 
 M.biome_conditions = {
   biome_present = true,

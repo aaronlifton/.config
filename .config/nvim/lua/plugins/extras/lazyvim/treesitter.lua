@@ -3,6 +3,32 @@ return {
   ---@type TSConfig
   ---@diagnostic disable-next-line: missing-fields
   opts = {
+    ensure_installed = {
+      -- "bash",
+      -- "c",
+      -- "diff",
+      -- "html",
+      -- "javascript",
+      -- "jsdoc",
+      -- "json",
+      -- "jsonc",
+      -- "lua",
+      -- "luadoc",
+      -- "luap",
+      "markdown",
+      "markdown_inline",
+      -- "printf",
+      -- "python",
+      -- "query",
+      -- "regex",
+      -- "toml",
+      -- "tsx",
+      -- "typescript",
+      -- "vim",
+      "vimdoc",
+      -- "xml",
+      -- "yaml",
+    },
     -- From LazyVim treesitter config
     -- incremental_selection = {
     --   enable = true,

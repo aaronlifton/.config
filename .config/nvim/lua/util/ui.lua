@@ -1,3 +1,4 @@
+---@class util.ui
 local M = {}
 
 M.list_win_configs = function()

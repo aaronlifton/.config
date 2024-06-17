@@ -1,3 +1,4 @@
+---@class util.git
 local M = {}
 
 M.git_repo = function()

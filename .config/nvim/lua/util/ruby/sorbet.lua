@@ -29,7 +29,8 @@ local sorbet_command = function()
   return cmd
 end
 
-return {
+---@class util.ruby.sorbet
+local M = {
   available = function()
     return not not sorbet_command()
   end,
@@ -37,3 +38,5 @@ return {
     return sorbet_command()
   end,
 }
+
+return M

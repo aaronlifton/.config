@@ -1,4 +1,12 @@
-local M = {}
+---@class util.lsp
+---@field lua_library string[]
+---@field ruby util.lsp.ruby
+---@field nls util.lsp.nls
+local M = {
+  lua_library = require("util.lsp.lua_library"),
+  ruby = require("util.lsp.ruby"),
+  nls = require("util.lsp.nls"),
+}
 
 ---@param tbl table<string, string[]>
 M.add_formatters = function(opts, tbl)

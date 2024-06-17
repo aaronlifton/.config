@@ -145,7 +145,7 @@ return {
       },
       setup = {
         ruby_lsp = function(_, opts)
-          local ruby_lsp_config = require("util.ruby-lsp")
+          local ruby_lsp_config = require("util.lsp.ruby")
           -- local config = require("lsp.config")
           require("lspconfig").ruby_lsp.setup({
             -- on_attach = config.on_attach

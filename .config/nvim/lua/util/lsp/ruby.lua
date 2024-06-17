@@ -1,5 +1,6 @@
 -- From https://github.com/Shopify/ruby-lsp/blob/main/EDITORS.md
 -- textDocument/diagnostic support until 0.10.0 is released
+---@class util.lsp.ruby
 local M = {}
 -- selene allow(global_usage)
 _timers = {}
@@ -44,13 +45,9 @@ function M.setup_diagnostics(client, buffer)
   })
 end
 
-local on_attach = function(client, buffer)
+M.on_attach = function(client, buffer)
   M.setup_diagnostics(client, buffer)
   M.add_ruby_deps_command(client, buffer)
 end
 
-local exports = {
-  on_attach = on_attach,
-}
-
-return exports
+return M

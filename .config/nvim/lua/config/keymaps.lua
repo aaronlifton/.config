@@ -441,7 +441,7 @@ end, { desc = "Clear Quickfix" })
 --------------------------------------------------------------------------------
 -- Custom Telescope finders
 -- if LazyVim.has("telescope") then
-local T = require("util.telescope_finders")
+local T = require("util.pickers.telescope.finders")
 map("n", "<leader>flg", function()
   T.grep_lazyvim_files()
 end, { desc = "Grep lazyvim files" })

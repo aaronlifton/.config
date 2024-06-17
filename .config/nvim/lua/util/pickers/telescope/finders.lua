@@ -1,3 +1,4 @@
+---@class util.pickers.telescope.finders
 local M = {}
 
 local _, builtin = pcall(require, "telescope.builtin")

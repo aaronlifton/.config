@@ -1,5 +1,5 @@
 local actions = require("telescope.actions")
-local util = require("util.telescope_finders")
+local util = require("util.pickers.telescope.finders")
 
 local keys = {}
 if vim.g.lazyvim_picker == "telescope" then

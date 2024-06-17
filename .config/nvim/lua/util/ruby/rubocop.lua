@@ -44,7 +44,8 @@ local rubocop_command = function()
   return cmd
 end
 
-return {
+---@class util.ruby.rubocop
+local M = {
   tool = "rubocop",
   definition = {
     available = function()
@@ -55,3 +56,5 @@ return {
     end,
   },
 }
+
+return M

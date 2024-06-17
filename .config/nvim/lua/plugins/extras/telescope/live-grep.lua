@@ -1,6 +1,3 @@
-if not vim.g.lazyvim_picker == "telescope" then
-  return {}
-end
 return {
   "nvim-telescope/telescope-live-grep-args.nvim",
   event = "VeryLazy",
@@ -8,7 +5,7 @@ return {
     require("telescope").load_extension("lazy")
     local telescope = require("telescope")
     local lga_actions = require("telescope-live-grep-args.actions")
-    local custom_pickers = require("util.telescope_pickers")
+    local custom_pickers = require("util.pickers.telescope.pickers")
     -- local lga_shortcuts = require("telescope-live-grep-args.shortcuts")
     telescope.setup({
       extensions = {
@@ -57,7 +54,7 @@ return {
         "<leader>su",
         function()
           require("telescope-live-grep-args.shortcuts").grep_word_under_cursor({
-            cwd = require("util.telescope_finders").get_root(),
+            cwd = require("util.pickers.telescope.finders").get_root(),
           })
         end,
         desc = "Grep (current word)",
@@ -67,7 +64,7 @@ return {
         "<leader>su",
         function()
           require("telescope-live-grep-args.shortcuts").grep_visual_selection({
-            cwd = require("util.telescope_finders").get_root(),
+            cwd = require("util.pickers.telescope.finders").get_root(),
           })
         end,
         desc = "Grep (selection)",

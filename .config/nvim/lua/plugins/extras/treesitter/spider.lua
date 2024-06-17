@@ -1,6 +1,5 @@
 return {
   "chrisgrieser/nvim-spider",
-  enabled = false,
   opts = {},
   -- stylua: ignore
   keys = {

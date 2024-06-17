@@ -1,3 +1,4 @@
+---@class util.leap
 local M = {}
 
 ---@param buf number

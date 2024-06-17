@@ -18,7 +18,8 @@ local function request(method, cb)
   end, 0)
 end
 
-return {
+---@class util.ruby.lsp_commands
+local M = {
   setup = function(command)
     local INCLUDE_INDIRECT_OPTION = "include_indirect"
     command("LspRubyShowDependencies", function(opts)
@@ -51,3 +52,5 @@ return {
     })
   end,
 }
+
+return M

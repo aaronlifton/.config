@@ -179,6 +179,17 @@ ac({ "BufEnter" }, {
   end,
 })
 
+-- ac({ "FileType" }, {
+--   pattern = { "help" },
+--   group = ag("readme", { clear = true }),
+--   callback = function(args)
+--     vim.api.nvim_command(":sleep 50m<cr>")
+--     vim.schedule_wrap(function()
+--       vim.treesitter.stop(args.buf)
+--     end)
+--   end,
+-- })
+
 -- INFO: This was causing the terminal flash
 -- Disabled: investigating terminal opening flash
 -- ac({ "BufLeave", "FocusLost", "InsertEnter", "CmdlineEnter", "WinLeave" }, {

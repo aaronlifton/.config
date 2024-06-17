@@ -57,7 +57,6 @@ return {
           prepend_args = function(ctx)
             -- Use a base dprint config for non-dprint projects, as dprint is the default formatter
             local has_dprint = vim.fs.find(dprint_filenames, { upward = true })[1]
-            vim.api.nvim_echo({ { "Has dprint", "Normal" }, { tostring(has_dprint), "Normal" } }, true, {})
             if not has_dprint then
               if not notified then
                 vim.api.nvim_echo({ { "Using dprint default config" } }, true, {})
