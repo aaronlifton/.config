@@ -2,7 +2,7 @@
 	ui = true
 [user]
 	name = Aaron Lifton
-	email = aaronlifton@gmail.com
+	email = alifton@synack.com
 	signingKey = A5ACD3327CECF3D95AD7E6CC93D3E9320BF8BC47
 [alias]
 	st = status
@@ -81,3 +81,10 @@
 	tool = bc
 [difftool]
 	bc = trustExitCode
+[push]
+	autoSetupRemote = true
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
