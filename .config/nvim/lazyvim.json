@@ -27,7 +27,6 @@
     "plugins.extras.ai.gen",
     "plugins.extras.ai.gpt",
     "plugins.extras.ai.model",
-    "plugins.extras.cmp.dotenv",
     "plugins.extras.cmp.yanky",
     "plugins.extras.coding.annotation",
     "plugins.extras.coding.luapad",

@@ -4,6 +4,6 @@ return {
     "chrisgrieser/cmp_yanky",
   },
   opts = function(_, opts)
-    table.insert(opts.sources, { name = "cmp_yanky" })
+    table.insert(opts.sources, { name = "cmp_yanky", group_index = 1 })
   end,
 }
