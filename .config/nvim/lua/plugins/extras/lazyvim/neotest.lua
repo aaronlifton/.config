@@ -15,22 +15,7 @@ return {
     -- },
     -- status = { virtual_text = true },
     -- output = { open_on_run = true },
-    consumers = {
-      overseer = require("neotest.consumers.overseer"),
-    },
-    overseer = {
-      enabled = true,
-      force_default = true,
-    },
-    quickfix = {
-      open = function()
-        if LazyVim.has("trouble.nvim") then
-          require("trouble").open({ mode = "quickfix", focus = false })
-          -- else
-          vim.cmd("copen")
-        end
-      end,
-    },
+    consumers = {},
     discovery = {
       filter_dir = function(dir)
         return not vim.startswith(dir, "node_modules")

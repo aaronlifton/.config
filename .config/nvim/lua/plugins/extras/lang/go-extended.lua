@@ -105,14 +105,13 @@ return {
       "go",
     },
   },
-  -- what is the latest testing library?
-  {
-    "yanskun/gotests.nvim",
-    ft = "go",
-    config = function()
-      require("gotests").setup()
-    end,
-  },
+  -- {
+  --   "yanskun/gotests.nvim",
+  --   ft = "go",
+  --   config = function()
+  --     require("gotests").setup()
+  --   end,
+  -- },
   -- {
   --   "neovim/nvim-lspconfig",
   --   optional = true,

@@ -1,4 +1,3 @@
-local nvim_0_10 = vim.fn.has("nvim-0.10")
 local lsp_util = require("util.lsp")
 
 return {
@@ -54,7 +53,7 @@ return {
         },
       },
       inlay_hints = {
-        enabled = nvim_0_10,
+        enabled = true,
       },
       codelens = {
         -- only enabled for go, ts, js and lua.
@@ -73,8 +72,11 @@ return {
   {
     "folke/which-key.nvim",
     opts = {
-      defaults = {
-        ["<leader>cl"] = { name = "lsp" },
+      spec = {
+        mode = "n",
+        { "<leader>ci", group = "Lsp Info" },
+        { "<leader>cl", group = "Lsp Controls" },
+        -- { "<leader>cl", group = "Lsp Controls", icon = { icon = " ", color = "orange" } },
       },
     },
   },

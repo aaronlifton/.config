@@ -94,4 +94,19 @@ function M.switch_to_highest_window()
   vim.api.nvim_set_current_win(highest_win)
 end
 vim.cmd("command! HighestWindow lua require('util.ui').switch_to_highest_window()")
+
+---@param hl string
+function M.square_border(hl)
+  return {
+    { "┌", hl },
+    { "─", hl },
+    { "┐", hl },
+    { "│", hl },
+    { "┘", hl },
+    { "─", hl },
+    { "└", hl },
+    { "│", hl },
+  }
+end
+
 return M

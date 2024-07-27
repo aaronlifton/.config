@@ -22,8 +22,9 @@ return {
   {
     "folke/which-key.nvim",
     opts = {
-      defaults = {
-        ["<leader>rg"] = { name = "RGFlow" },
+      spec = {
+        mode = "n",
+        { "<leader>rg", group = "rgFlow" },
       },
     },
   },

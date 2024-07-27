@@ -49,13 +49,26 @@ return {
             -- <leader>cd require("vtsls").commands.fix_all(0)
             -- <leader>cv require("vtsls").commands.select_ts_version(0)
             {
-              "<leader>cr",
+              "<leader>cM",
               source_action("removeUnused"),
               desc = "Remove unused imports",
             },
           },
         },
-        denols = {},
+        denols = {
+          on_new_config = function(new_config)
+            local configs = { "deno.json", "deno.jsonc" }
+            local root = require("lazyvim.util.root").get()
+
+            for _, config in ipairs(configs) do
+              if vim.fn.filereadable(root .. "/" .. config) == 1 then
+                return true
+              end
+            end
+
+            new_config.enabled = false
+          end,
+        },
       },
       -- setup = {
       -- vtsls = function(server, server_opts)
@@ -124,7 +137,7 @@ return {
       vim.list_extend(opts.adapters, {
         require("neotest-jest")({
           jestCommand = "npm test --", -- "npx jest"
-          jestConfigFile = "custom.jest.config.ts",
+          jestConfigFile = "jest.config.js",
           -- jestConfigFile = function(file)
           --   -- Find the jest config in monorepo projects
           --   if string.find(file, "/(apps|libs|features)/") then

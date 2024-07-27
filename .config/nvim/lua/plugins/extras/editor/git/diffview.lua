@@ -2,8 +2,40 @@ return {
   {
     "sindrets/diffview.nvim",
     keys = {
-      { "<leader>gd", "<cmd>DiffviewFileHistory<CR>", desc = "Diff File History" },
-      { "<leader>gD", "<cmd>DiffviewOpen<CR>", desc = "Diff View Open" },
+      { "<leader>gHh", "<cmd>DiffviewFileHistory<CR>", desc = "Diff File History" },
+      { "<leader>gHm", "<cmd>DiffviewFileHistory master<CR>", desc = "Diff File History (master)" },
+      { "<leader>gHM", "<cmd>DiffviewFileHistory main<CR>", desc = "Diff File History (main)" },
+      { "<leader>gHh", ":'<,'>DiffviewFileHistory", desc = "Diff View (Selection)", mode = "v" },
+      { "<leader>gDh", "<cmd>DiffviewOpen<CR>", desc = "Diff View" },
+      { "<leader>gDH", "<cmd>DiffviewOpen HEAD~1<CR>", desc = "Diff View (HEAD~1)" },
+      { "<leader>gDm", "<cmd>DiffviewOpen master<CR>", desc = "Diff View (master)" },
+      { "<leader>gDM", "<cmd>DiffviewOpen main<CR>", desc = "Diff View (main)" },
+      { "<leader>gDd", "<cmd>DiffviewOpen development<CR>", desc = "Diff View (development)" },
+      {
+        "<leader>gDx",
+        function()
+          local input = vim.fn.input("compare: ")
+          vim.api.nvim_command("DiffviewOpen " .. input)
+        end,
+        desc = "Diff View (pick)",
+      },
+      {
+        "<leader>gDf",
+        function()
+          local input = vim.fn.input("compare: ")
+          local path = vim.fn.expand("%p")
+          vim.api.nvim_command("DiffviewOpen " .. input .. " -- " .. path)
+        end,
+        desc = "Diff View (pick - current file)",
+      },
+      -- Alternative mappings
+      -- { "<leader>gd", "<cmd>DiffviewFileHistory<CR>", desc = "Diff File History" },
+      -- { "<leader>gF", "<cmd>DiffviewFileHistory master<CR>", desc = "Diff File History (master)" },
+      -- { "<leader>gF", ":'<,'>DiffviewFileHistory", desc = "Diff View (Selection)", mode = "v" },
+      -- { "<leader>gD", "<cmd>DiffviewOpen<CR>", desc = "Diff View Open" },
+      -- { "<leader>gM", "<cmd>DiffviewOpen master<CR>", desc = "Diff View (master)" },
+      -- { "<leader>gm", "<cmd>DiffviewOpen master -- " .. vim.fn.expand("%") .. "<CR>", desc = "Diff View (master)" },
+      -- { "<leader>gH", "<cmd>DiffviewOpen HEAD~1<CR>", desc = "Diff View (HEAD~1)" },
     },
     opts = function(_, opts)
       local actions = require("diffview.actions")
@@ -16,6 +48,8 @@ return {
       opts.hooks = {
         diff_buf_read = function(bufnr)
           vim.b[bufnr].view_activated = false
+          require("git-conflict").setup()
+          vim.api.nvim_command("GitConflictRefresh")
         end,
       }
 
@@ -47,8 +81,10 @@ return {
   {
     "folke/which-key.nvim",
     opts = {
-      defaults = {
-        ["<leader>gC"] = { name = "conflicts" },
+      spec = {
+        mode = "n",
+        { "<leader>gD", group = "Diff View Open" },
+        { "<leader>gH", group = "Diff File History" },
       },
     },
   },

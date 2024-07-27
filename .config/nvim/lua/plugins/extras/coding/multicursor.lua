@@ -8,7 +8,7 @@ return {
     },
     cmd = { "MCstart", "MCvisual", "MCclear", "MCpattern", "MCvisualPattern", "MCunderCursor" },
     keys = {
-      { mode = { "v", "n" }, "<leader>m", "<cmd>MCstart<cr>", desc = "Multicursor" },
+      { mode = { "v", "n" }, "<leader><C-m>", "<cmd>MCstart<cr>", desc = "Multicursor" },
     },
     opts = {
       hint_config = {

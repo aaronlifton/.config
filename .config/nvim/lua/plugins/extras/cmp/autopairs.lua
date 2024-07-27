@@ -1,24 +1,8 @@
-if vim.g.pairs_plugin == "mini.pairs" then
-  return {
-    {
-      "echasnovski/mini.pairs",
-      enabled = true,
-    }
-  }
-end
-
 return {
   {
     "echasnovski/mini.pairs",
     enabled = false,
   },
-  -- {
-  --   "altermo/ultimate-autopair.nvim",
-  --   enabled = false,
-  --   event = { "InsertEnter", "CmdlineEnter" },
-  --   branch = "v0.6",   --recomended as each new version will have breaking changes
-  --   opts = {},
-  -- }
   {
     "hrsh7th/nvim-cmp",
     dependencies = {
@@ -60,35 +44,35 @@ return {
       npairs.add_rules({
         -- Rule for a pair with left-side ' ' and right side ' '
         Rule(" ", " ")
-        -- Pair will only occur if the conditional function returns true
-            :with_pair(function(opts)
-              -- We are checking if we are inserting a space in (), [], or {}
-              local pair = opts.line:sub(opts.col - 1, opts.col)
+          -- Pair will only occur if the conditional function returns true
+          :with_pair(function(opts)
+            -- We are checking if we are inserting a space in (), [], or {}
+            local pair = opts.line:sub(opts.col - 1, opts.col)
+            return vim.tbl_contains({
+              brackets[1][1] .. brackets[1][2],
+              brackets[2][1] .. brackets[2][2],
+              brackets[3][1] .. brackets[3][2],
+            }, pair)
+          end)
+          :with_move(cond.none())
+          :with_cr(cond.none())
+          -- We only want to delete the pair of spaces when the cursor is as such: ( | )
+          :with_del(
+            function(opts)
+              local col = vim.api.nvim_win_get_cursor(0)[2]
+              local context = opts.line:sub(col - 1, col + 2)
               return vim.tbl_contains({
-                brackets[1][1] .. brackets[1][2],
-                brackets[2][1] .. brackets[2][2],
-                brackets[3][1] .. brackets[3][2],
-              }, pair)
-            end)
-            :with_move(cond.none())
-            :with_cr(cond.none())
-        -- We only want to delete the pair of spaces when the cursor is as such: ( | )
-            :with_del(
-              function(opts)
-                local col = vim.api.nvim_win_get_cursor(0)[2]
-                local context = opts.line:sub(col - 1, col + 2)
-                return vim.tbl_contains({
-                  brackets[1][1] .. "  " .. brackets[1][2],
-                  brackets[2][1] .. "  " .. brackets[2][2],
-                  brackets[3][1] .. "  " .. brackets[3][2],
-                }, context)
-              end
-            ),
+                brackets[1][1] .. "  " .. brackets[1][2],
+                brackets[2][1] .. "  " .. brackets[2][2],
+                brackets[3][1] .. "  " .. brackets[3][2],
+              }, context)
+            end
+          ),
 
         -- Javascript arrow key
         Rule("%(.*%)%s*%=>$", " {  }", { "typescript", "typescriptreact", "javascript" })
-            :use_regex(true)
-            :set_end_pair_length(2),
+          :use_regex(true)
+          :set_end_pair_length(2),
 
         -- Auto addspace on =
         -- Rule("=", "")
@@ -125,16 +109,16 @@ return {
         npairs.add_rules({
           -- Each of these rules is for a pair with left-side '( ' and right-side ' )' for each bracket type
           Rule(bracket[1] .. " ", " " .. bracket[2])
-              :with_pair(cond.none())
-              :with_move(function(opts)
-                return opts.char == bracket[2]
-              end)
-              :with_del(cond.none())
-              :use_key(bracket[2])
-          -- Removes the trailing whitespace that can occur without this
-              :replace_map_cr(function(_)
-                return "<C-c>2xi<CR><C-c>O"
-              end),
+            :with_pair(cond.none())
+            :with_move(function(opts)
+              return opts.char == bracket[2]
+            end)
+            :with_del(cond.none())
+            :use_key(bracket[2])
+            -- Removes the trailing whitespace that can occur without this
+            :replace_map_cr(function(_)
+              return "<C-c>2xi<CR><C-c>O"
+            end),
         })
       end
     end,

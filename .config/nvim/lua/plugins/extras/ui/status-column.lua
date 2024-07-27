@@ -9,7 +9,16 @@ return {
         segments = {
           { text = { builtin.lnumfunc }, click = "v:lua.ScLa" },
           {
+            sign = { name = { "Mark" }, auto = true },
+            click = "v:lua.ScSa",
+          },
+          {
             sign = { name = { "Diagnostic*" }, text = { ".*" }, maxwidth = 1, colwidth = 1, auto = true },
+            click = "v:lua.ScSa",
+          },
+          {
+            sign = { name = { "Dap" }, colwidth = 1, auto = true },
+
             click = "v:lua.ScSa",
           },
           { text = { builtin.foldfunc, " " }, click = "v:lua.ScFa" },
@@ -20,19 +29,19 @@ return {
       require("statuscol").setup(opts)
     end,
   },
-  {
-    "lewis6991/gitsigns.nvim",
-    opts = {
-      signs = {
-        add = { text = "┃" },
-        change = { text = "┃" },
-        delete = { text = "󱈸" },
-        topdelete = { text = "󱈸" },
-        changedelete = { text = "┃" },
-        untracked = { text = "┇" },
-      },
-      signcolumn = true,
-      numhl = true,
-    },
-  },
+  -- {
+  --   "lewis6991/gitsigns.nvim",
+  --   opts = {
+  --     signs = {
+  --       add = { text = "┃" },
+  --       change = { text = "┃" },
+  --       delete = { text = "󱈸" },
+  --       topdelete = { text = "󱈸" },
+  --       changedelete = { text = "┃" },
+  --       untracked = { text = "┇" },
+  --     },
+  --     signcolumn = true,
+  --     numhl = true,
+  --   },
+  -- },
 }

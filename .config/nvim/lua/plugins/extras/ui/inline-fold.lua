@@ -23,6 +23,6 @@ return {
     },
   },
   keys = {
-    { "<leader>uI", "<cmd>InlineFoldToggle<CR>", desc = "Toggle Inline Fold" },
+    { "<leader>uz", "<cmd>InlineFoldToggle<CR>", desc = "Toggle Inline Fold" },
   },
 }

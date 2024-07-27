@@ -11,32 +11,17 @@ return {
       { "<F4>", "<cmd>CompilerToggleResults<cr>", desc = "Toggle Compiler Results" },
     },
   },
+  { import = "lazyvim.plugins.extras.editor.overseer" },
   {
     "stevearc/overseer.nvim",
-    -- commit = "68a2d344cea4a2e11acfb5690dc8ecd1a1ec0ce0",
-    cmd = {
-      "OverseerOpen",
-      "OverseerClose",
-      "OverseerToggle",
-      "OverseerSaveBundle",
-      "OverseerLoadBundle",
-      "OverseerDeleteBundle",
-      "OverseerRunCmd",
-      "OverseerRun",
-      "OverseerInfo",
-      "OverseerBuild",
-      "OverseerQuickAction",
-      "OverseerTaskAction ",
-      "OverseerClearCache",
-    },
-    opts = {
-      task_list = {
-        direction = "bottom",
-        min_height = 15,
-        max_height = 15,
-        default_detail = 1,
-      },
-    },
+    -- opts = {
+    --   task_list = {
+    --     direction = "bottom",
+    --     min_height = 15,
+    --     max_height = 15,
+    --     default_detail = 1,
+    --   },
+    -- },
     config = function()
       require("overseer").setup({
         templates = { "builtin", "user.astro_check" },

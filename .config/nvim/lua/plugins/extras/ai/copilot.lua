@@ -248,8 +248,6 @@ return {
       vim.api.nvim_create_autocmd("BufEnter", {
         pattern = "copilot-chat",
         callback = function()
-          vim.opt_local.relativenumber = false
-          vim.opt_local.number = false
           vim.keymap.set({ "n", "v" }, "ax", function()
             return require("CopilotChat").reset()
           end, { desc = "Clear (CopilotChat)" })

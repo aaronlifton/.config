@@ -66,8 +66,8 @@ map("i", "<M-k>", "<up>", { desc = "Move cursor left" })
 map("n", "E", "ge")
 
 -- Increment/decrement
-map("n", "+", "<C-a>")
-map("n", "-", "<C-x>")
+-- map("n", "+", "<C-a>")
+-- map("n", "-", "<C-x>")
 
 -- Tabs
 map("n", "<tab>", "<cmd>tabnext<cr>", { desc = "Next Tab" })
@@ -109,8 +109,8 @@ end, { desc = "Tabs" })
 map({ "n", "x" }, "gw", "*N", { desc = "Search word under cursor" })
 
 -- Indentation
-map("n", "<", "<<", { desc = "Deindent" })
-map("n", ">", ">>", { desc = "Indent" })
+-- map("n", "<", "<<", { desc = "Deindent" })
+-- map("n", ">", ">>", { desc = "Indent" })
 
 -- CMD keys
 map({ "n", "v", "s", "i" }, "<D-s>", "<cmd>w<cr>", { noremap = true })
@@ -209,8 +209,8 @@ map("n", "]/", "/\\S\\zs\\s*╭<CR>zt", { desc = "Next Block Comment" })
 map("n", "[/", "?\\S\\zs\\s*╭<CR>zt", { desc = "Prev Block Comment" })
 
 -- Lazy options
-map("n", "<leader>l", "<Nop>")
-map("n", "<leader>L", "<Nop>")
+map("n", "<leader>l", "<Nop>") -- Lazy
+map("n", "<leader>L", "<Nop>") -- Changeloog
 map("n", "<leader>ll", "<cmd>Lazy<cr>", { desc = "Lazy" })
 
 map("n", "<leader>ld", function()
@@ -291,16 +291,7 @@ end, { desc = "Open neo-tree at current file or working directory" })
 
 map("n", "<M-E>", "<cmd>Neotree reveal_force_cwd<cr>", { desc = "Reveal in neo-tree at cwd" })
 
-map("n", "<leader>sO", "<cmd>Telescope oldfiles<cr>", { desc = "Oldfiles" })
-
 require("config.keymaps.window")
-
-map(
-  "n",
-  "<leader>rr",
-  "<Esc><cmd>lua require('telescope').extensions.refactoring.refactors()<CR>",
-  { desc = "Select refactor..." }
-)
 
 map("n", "<M-->", "<cmd>ChatGPT<CR>", { desc = "ChatGPT" })
 
@@ -320,14 +311,41 @@ end, { desc = "Line Diagnostics (Source)" })
 map("n", "<leader>Ln", function()
   require("util.notepad").launch_notepad()
 end, { desc = "Toggle Notepad" })
--- :<C-U>call <SNR>80_searchsyn('\<lt>\%(class\|module\)\>',['rubyModule','rubyClass'],'b','n')<CR>
-map("n", "<leader>ghB", LazyVim.lazygit.blame_line, { desc = "Blame Line (LazyGit)" })
+
+map("n", "<leader>gW", LazyVim.lazygit.browse, { desc = "Git Browse" })
+
+-- Float term
+map("n", "<C-S-/>", function()
+  LazyVim.terminal({}, {
+    border = "rounded",
+    persistent = true,
+    size = { width = 0.5, height = 0.75 },
+    backdrop = 75,
+    ctrl_hjkl = false,
+  } --[[@as LazyTermOpts]])
+end, { desc = "Float terminal" })
+map("t", "<C-S-/>", "<cmd>close<cr>", { desc = "Hide Terminal" })
+-- map("n", "<C-S-'>", function()
+--   -- vim.api.nvim_command("exe v:count0 2 .")
+--   LazyVim.terminal({}, {
+--     border = "rounded",
+--     persistent = true,
+--     size = { width = 0.5, height = 0.75 },
+--     backdrop = 75,
+--     ctrl_hjkl = false,
+--     margin = {
+--       left = 100,
+--       right = -100,
+--     },
+--   } --[[@as LazyTermOpts]])
+-- end, { desc = "Float terminal" })
+-- map("t", "<C-S-'>", "<cmd>close<cr>", { desc = "Hide Terminal" })
+--
 
 local leap_fns = require("config.keymaps.leap")
 map("n", "<leader>j", leap_fns.leap_ts_parents, { desc = "Leap AST Parents" })
-map("n", "<leader>glw", leap_fns.leap_spooky_viw, { desc = "Leap viw (Spooky)" })
-map("n", "<leader>gld", leap_fns.leap_spooky_diw, { desc = "Leap diw (Spooky)" })
-map("n", "<leader>glD", leap_fns.leap_spooky_dd, { desc = "Leap dd (Spooky)" })
+-- map("n", "<leader>glw", leap_fns.leap_spooky_viw, { desc = "Leap viw (Spooky)" })
+-- map("n", "<leader>gld", leap_fns.leap_spooky_diw, { desc = "Leap diw (Spooky)" })
 
 map("n", "<leader>uA", function()
   require("util.ai").toggle(true)
@@ -340,17 +358,14 @@ end, { desc = "Add to Vale dictionary" })
 map("n", "gS", function()
   require("treesj").toggle({ split = { recursive = false } })
 end, { desc = "SplitJoin" })
-
-map("n", "gSs", function()
+map("n", "g<C-s>", function()
   require("treesj").toggle({ split = { recursive = true } })
 end, { desc = "SplitJoin (Recursive)" })
-map("n", "gSj", function()
+map("n", "gJ", function()
   require("treesj").join()
 end, { desc = "Join" })
 
-map("n", "<leader>cI", "", { desc = "AI Controls" })
-
-map("n", "<leader>cifd", function()
+map("n", "<leader>gT", function()
   local filename = vim.fn.expand("%")
   local modified_date = vim.fn.getftime(filename)
   local modified_date_str = vim.fn.strftime("%c", modified_date)
@@ -365,7 +380,7 @@ map("n", "<leader>cifd", function()
   end
   date = date or modified_date_str .. " (Modified Time)"
   vim.api.nvim_echo({ { date, "Title" } }, true, {})
-end, { desc = "Show file updated date" })
+end, { desc = "Last Modified" })
 
 map("n", "dm", function()
   local cur_line = vim.fn.line(".")
@@ -419,16 +434,6 @@ map("n", "zF", ":norm z=1<cr>", { desc = "Choose first spelling suggestion" })
 map("n", "]g", ":GitConflictNextConflict<cr>", { desc = "Next Git Conflict" })
 map("n", "[g", ":GitConflictPrevConflict<cr>", { desc = "Prev Git Conflict" })
 
--- Clear the quickfix window keymap set on BufEnter
-vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
-  pattern = "qf",
-  callback = function()
-    vim.keymap.set("n", "<C-d>", function()
-      vim.fn.setqflist({})
-    end, { buffer = true })
-  end,
-})
-
 map("n", "<leader>fm", function()
   local module = vim.fn.input("Module: ")
   vim.cmd("Neotree focus filesystem left")
@@ -438,6 +443,13 @@ end, { desc = "Explorer (node_modules)" })
 map("n", "<leader>xC", function()
   vim.fn.setqflist({})
 end, { desc = "Clear Quickfix" })
+
+map("n", "[n", function()
+  require("neotest").jump.prev({ status = "failed" })
+end, { silent = true, desc = "Prev Test Failure" })
+map("n", "]n", function()
+  require("neotest").jump.next({ status = "failed" })
+end, { silent = true, desc = "Next Test Failure" })
 --------------------------------------------------------------------------------
 -- Custom Telescope finders
 -- if LazyVim.has("telescope") then
@@ -457,99 +469,6 @@ end, { desc = "Grep config files" })
 map("n", "<leader>flM", function()
   T.find_config_files({})
 end, { desc = "Find config files" })
-map("n", "<leader>flI", function()
-  T.grep_inspiration_files({ layout_strategy = "center" })
-end)
--- end
---
--- m = {
---   function()
---     t.grep_config_files({})
---   end,
---   "grep [m]y config files",
--- },
--- m = {
---   function()
---     t.find_config_files({})
---   end,
---   "find [m]y config files",
--- },
--- p = {
---   function()
---     t.find_project_files()
---   end,
---   "find project files",
--- },
--- i = {
---   name = "inspiration",
---   i = {
---     function()
---       t.grep_inspiration_files({})
---     end,
---     "grep all ~inspiration~ files",
---   },
---   l = {
---     function()
---       t.grep_dir("lvim", {})
---     end,
---     "grep lunarvim files",
---   },
---   d = {
---     function()
---       t.grep_dir("doom", {})
---     end,
---     "grep doomnvim files",
---   },
---   f = {
---     function()
---       t.grep_dir("ftw", {})
---     end,
---     "grep ftw files",
---   },
---   n = {
---     function()
---       t.grep_dir("nyoom", {})
---     end,
---     "grep nyoom files",
---   },
---   n = {
---     function()
---       t.grep_dir("nicoalbanese", {})
---     end,
---     "grep nicoalbanese files",
---   },
---   m = {
---     function()
---       t.grep_dir("modern", {})
---     end,
---     "grep modern-neovim files",
---   },
---   p = {
---     function()
---       t.grep_dir("pde", {})
---     end,
---     "grep neovim-pde files",
---   },
---   f = {
---     function()
---       t.grep_dir("folke", {})
---     end,
---     "grep folke files",
---   },
---   k = {
---     function()
---       vim.cmd("e /users/aaron/.local/share/nvim/lazy/lazyvim/lua/lazyvim/config/keymaps.lua")
---     end,
---     "view lazyvim keymap",
---   },
---   d = {
---     function()
---       t.grep_dir("dots", {})
---     end,
---     "grep nvimdots files",
---   },
---   x = {
---     t.find_config_files_cursor,
---     "find [x] config files",
---   },
--- },
+-- map("n", "<leader>flI", function()
+--   T.grep_inspiration_files({ layout_strategy = "center" })
+-- end)

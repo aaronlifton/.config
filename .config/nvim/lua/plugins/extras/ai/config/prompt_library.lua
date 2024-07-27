@@ -172,6 +172,45 @@ return vim.tbl_extend("force", starter_prompts, {
       return { prompt = ctx.lines_before }
     end,
   },
+  ["DiffExplain:development"] = {
+    provider = gemini,
+    mode = mode.BUFFER,
+    builder = function()
+      local git_diff = vim.fn.system({ "git", "--no-pager", "diff", "--staged", "development" })
+      vim.api.nvim_echo({ { "Length of diff:\n", "Title" }, { tostring(#git_diff), "Number" } }, true, {})
+      -- local word_count = 0
+      -- for _ in git_diff:gmatch("%S+") do
+      --     word_count = word_count + 1
+      -- end
+
+      local words = {}
+      for word in git_diff:gmatch("%S+") do
+        table.insert(words, word)
+        if #words >= 7000 then
+          break
+        end
+      end
+      git_diff = table.concat(words, " ")
+
+      if not git_diff:match("^diff") then
+        error("Git error:\n" .. git_diff)
+      end
+      return {
+        contents = {
+          {
+            parts = {
+              {
+                text = "Describe the changes made in the following diff. Try to focus on the app's functionality."
+                  .. "Git diff: ```\n"
+                  .. git_diff
+                  .. "\n```",
+              },
+            },
+          },
+        },
+      }
+    end,
+  },
   commit2 = {
     provider = gemini,
     mode = mode.INSERT,

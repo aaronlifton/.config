@@ -5,7 +5,8 @@ function M.has_rubocop()
 end
 
 function M.has_ruby_lsp()
-  return M.in_bundle("ruby-lsp") == true
+  -- .lsp/Gemfile is the custom bundleGemfile path
+  return M.in_bundle("ruby-lsp") == true or vim.fn.filereadable(".lsp/Gemfile") == 1
 end
 
 function M.gemfile()
@@ -24,7 +25,9 @@ function M.in_bundle(gemname)
 
     local found = false
     for line in io.lines(gemfile) do
-      local gem = line:match('"([^"]+)"')
+      --"  gem 'ruby-lsp-rails'":match('"([^"]+)"')
+
+      local gem = line:match('"([^"]+)"') or line:match("'([^\"]+)'")
       if gem then
         M.bundle_cache[gem] = true
 

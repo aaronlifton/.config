@@ -1,3 +1,4 @@
+-- TODO: deprecated, functionality is in lazyvim/refactoring
 return {
   {
     "andrewferrier/debugprint.nvim",

@@ -50,4 +50,14 @@ return {
       table.insert(opts.config.center, 4, zoxide)
     end,
   },
+  {
+    "echasnovski/mini.starter",
+    optional = true,
+    opts = function(_, opts)
+      local util = require("util.dashboard")
+      opts.items = vim.list_extend(opts.items, {
+        util.new_section("Zoxide ", "Telescope zoxide list", "Telescope"),
+      })
+    end,
+  },
 }

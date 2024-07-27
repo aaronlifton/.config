@@ -1,6 +1,14 @@
 {
   "$schema": "https://raw.githubusercontent.com/LuaLS/vscode-lua/master/setting/schema.json",
-  "diagnostics.globals": ["LazyVim", "vim", "MiniFiles", "MiniPickers", "MiniExtra"],
+  "diagnostics.globals": [
+    "LazyVim",
+    "vim",
+    "MiniFiles",
+    "MiniPickers",
+    "MiniExtra",
+    "MiniDiff",
+    "require"
+  ],
   "workspace": {
     "maxPreload": 8000,
     "preloadFileSize": 1000,

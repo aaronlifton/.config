@@ -2,7 +2,7 @@ local M = {}
 local theme = vim.g.colors_name
 
 M.setup = function()
-  if theme == "tokyonight" then
+  if theme == "tokyonight-moon" then
     local c = pcall(require, theme .. ".colors")
       or {
         default = {
@@ -17,21 +17,7 @@ M.setup = function()
           blue = "#7aa2f7",
         },
       }
-    -- Tokyonight (Lazy default)
-    vim.api.nvim_set_hl(0, "NeoTreeTitleBar", { fg = c.default.fg, bg = c.default.blue })
-    -- https://oklch.com/#25.37,0.036,274.75,100
     vim.api.nvim_set_hl(0, "ColorColumn", { bg = c.default.bg })
-    -- BufferLineCloseButtonxxx guifg=#45475b guibg=#181826
-    -- BufferLineBackgroundxxx guifg=#636da6 guibg=#1e2031
-    -- 22:21:35 msg_show BufferLineErrorDiagnosticxxx guifg=#f38ba9 guibg=#181826 guisp=#932c3e
-    -- vim.api.nvim_set_hl(0, "BufferLineCloseButton", { fg = "#45475b", bg = "#1e2031" })
-    -- vim.api.nvim_set_hl(0, "BufferLineErrorDiagnostic", { fg = "#f38ba9", bg = "#1e2031" })
-    -- vim.api.nvim_set_hl(0, "BufferLineErrorDiagnostic", { fg = "#f38ba9", bg = "#1e2031" })
-    -- vim.api.nvim_set_hl(0, "BufferLineErrorVisible", { fg = "#f38ba9", bg = "#1e2031" })
-    -- vim.api.nvim_set_hl(0, "BufferLineError", { fg = "#f38ba9", bg = "#1e2031", sp = "#c53b53" })
-    -- vim.api.nvim_set_hl(0, "BufferLineSeparatorSelected", { fg = "#11111c", bg = "#1e2031", sp = "#c53b53" })
-    -- BufferLineSeparatorSelectedxxx guifg=#11111c guibg=#1e1e2f
-    --
   elseif theme == "cyberdream" then
     local U = require("util.colors")
     local C = require("cyberdream.colors")

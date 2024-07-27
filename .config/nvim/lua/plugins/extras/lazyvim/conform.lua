@@ -13,14 +13,14 @@ return {
           end
         end
 
-        return { timeout_ms = 200, lsp_fallback = true }, on_format
+        return { timeout_ms = 200, lsp_format = "fallback" }, on_format
       end,
 
       format_after_save = function(bufnr)
         if not slow_format_filetypes[vim.bo[bufnr].filetype] then
           return
         end
-        return { lsp_fallback = true }
+        return { lsp_format = "fallback" }
       end,
     })
   end,

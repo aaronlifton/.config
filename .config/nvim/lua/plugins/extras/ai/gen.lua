@@ -42,15 +42,13 @@ return {
         extract = "```$filetype\n(.-)```",
       }
     end,
-    keys = {
-      { "<leader>i", "<cmd>Gen<cr>", mode = { "n", "v" }, desc = "AI (Gen)" },
-    },
   },
   {
     "folke/which-key.nvim",
     opts = {
-      defaults = {
-        ["<leader>i"] = { name = "Gen" },
+      spec = {
+        mode = { "n", "v" },
+        { "<leader>i", group = "AI (Gen)" },
       },
     },
   },

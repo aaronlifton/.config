@@ -72,8 +72,9 @@ return {
         -- top_p = 1,
       },
       openai_edit_params = {
-        model = "gpt-3.5-turbo-16k",
+        -- model = "gpt-3.5-turbo-16k",
         -- model = "gpt-4",
+        model = "gpt-4o",
         frequency_penalty = 0,
         presence_penalty = 0,
         temperature = 0,
@@ -132,7 +133,6 @@ return {
       -- { "<leader>ar", "<cmd>ChatGPTRun roxygen_edit<CR>", desc = "Roxygen Edit", mode = { "n", "v" } },
       -- { "<leader>aT", "<cmd>ChatGPTRun translate<CR>", desc = "Translate", mode = { "n", "v" } },
       --
-      { "<leader>ag", "", "󰚩 Generate" },
       { "<leader>agt", "<cmd>ChatGPTRun add_tests<CR>", desc = "Generate tests (GPT)", mode = { "n", "v" } },
       { "<leader>agd", "<cmd>ChatGPTRun docstring<CR>", desc = "Generate docstring (GPT)", mode = { "n", "v" } },
       { "<leader>ags", "<cmd>ChatGPTRun summarize<CR>", desc = "Generate summary (GPT)", mode = { "n", "v" } },
@@ -140,11 +140,9 @@ return {
       { "<leader>agra", "<cmd>ChatGPTRun WriteRailsMethod<cr>", desc = "Generate method", mode = { "n", "v" } },
       { "<leader>agrt", "<cmd>ChatGPTRun WriteRSpecTests<cr>", desc = "Generate RSpec tests", mode = {"n", "v"} },
       -- Modify
-      { "<leader>am", "", "󰚩 Modify" },
       { "<leader>amo", "<cmd>ChatGPTRun optimize_code<CR>", desc = "Optimize Code", mode = { "n", "v" } },
       { "<leader>amf", "<cmd>ChatGPTRun fix_bugs<CR>", desc = "Fix Bugs", mode = { "n", "v" } },
       -- Analyze 
-      { "<leader>an", "", "󰚩 Analyze" },
       { "<leader>ank", "<cmd>ChatGPTRun keywords<CR>", desc = "Extract Keywords", mode = { "n", "v" } },
       { "<leader>ane", "<cmd>ChatGPTRun explain_code<CR>", desc = "Explain Code", mode = { "n", "v" } },
       { "<leader>anr", "<cmd>ChatGPTRun code_readability_analysis<CR>", desc = "Analyze Code Readability", mode = { "n", "v" },  },
@@ -153,14 +151,15 @@ return {
   {
     "folke/which-key.nvim",
     opts = {
-      defaults = {
-        ["<leader>ag"] = { name = "󰚩 Generate" },
-        ["<leader>agr"] = { name = "󰚩 Rails" },
-        ["<leader>ch"] = { name = "󰚩 ChatGPT" },
-        ["<leader>am"] = { name = "󰚩 Modify" },
-        ["<leader>an"] = { name = "󰚩 Analyze" },
-        -- ["<leader>a"] = { name = "+󰚩 AI" },
-        ["<leader>chr"] = { name = "󰚩 Rails" },
+      spec = {
+        mode = "n",
+        { "<leader>ag", group = "󰚩 Generate" },
+        { "<leader>agr", group = "󰚩 Rails" },
+        { "<leader>am", group = "󰚩 Modify" },
+        { "<leader>an", group = "󰚩 Analyze" },
+        { "<leader>ch", group = "󰚩 ChatGPT" },
+        { "<leader>chr", group = "󰚩 Rails" },
+        -- { "<leader>a", { group = "+󰚩 AI" },
       },
     },
   },

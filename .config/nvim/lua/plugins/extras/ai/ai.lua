@@ -30,11 +30,10 @@ return {
       })
     end,
   },
-
   {
     "huggingface/hfcc.nvim",
     event = "InsertEnter",
-    enabled = true,
+    enabled = false,
     opts = {
       -- api_token is set via huggingface-cli
       -- tokens_to_clear = { "<|endoftext|>" },
@@ -95,15 +94,6 @@ return {
     end,
   },
   {
-    "folke/which-key.nvim",
-    opts = {
-      defaults = {
-        ["<leader>cI4"] = { name = "Toggle HFCC Autosuggest" },
-        ["<leader>cI5"] = { name = "Request HFCC Suggestion" },
-      },
-    },
-  },
-  {
     "mthbernardes/codeexplain.nvim",
     enabled = true,
     cmd = "CodeExplain",
@@ -138,35 +128,21 @@ return {
       {
         "<leader>wfa",
         function()
-          -- require("neoai").open()
           local wins = vim.api.nvim_list_wins()
-          local neoai_win = nil
           local neoai_buf = nil
-
-          local bufs = vim.api.nvim_list_bufs()
-          for _, buf in ipairs(bufs) do
-            if vim.bo[buf].ft == "neoai-input" then
-              ui_util.goto_leftmost_win()
-              return
-            end
-          end
-
+          local current_buf = vim.api.nvim_get_current_buf()
           for _, win in ipairs(wins) do
             local buf = vim.api.nvim_win_get_buf(win)
-
             if vim.bo[buf].ft == "neoai-input" then
-              neoai_win = win
               neoai_buf = buf
-              break
+              if current_buf ~= neoai_buf then
+                vim.api.nvim_set_current_win(win)
+                return
+              else
+                vim.api.nvim_command('execute "norm w"')
+                vim.api.nvim_command('execute "norm w"')
+              end
             end
-          end
-          vim.api.nvim_echo({ { "NeoAI: " .. vim.fn["neoai#GetStatusString"]() } }, true, {})
-
-          if neoai_win and neoai_buf then
-            -- move focus to the buffer
-            vim.api.nvim_set_current_win(neoai_win)
-          else
-            require("neoai").open()
           end
         end,
         desc = "Focus NeoAI",
@@ -175,6 +151,7 @@ return {
     opts = {},
     config = function(_, opts)
       require("neoai").setup(vim.tbl_extend("force", opts, {}))
+      vim.treesitter.language.register("markdown", "neoai-output")
     end,
   },
   {

@@ -1,5 +1,6 @@
 return {
   "nvimdev/dashboard-nvim",
+  optional = true,
   opts = function(_, opts)
     vim.api.nvim_create_autocmd("TabNewEntered", { command = "Dashboard" })
 

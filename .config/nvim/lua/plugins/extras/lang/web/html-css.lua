@@ -107,7 +107,6 @@ return {
     opts = function(_, opts)
       local lsp_util = require("util.lsp")
 
-      -- vim.api.nvim_echo({ { vim.inspect(require("lint").linters_by_ft), "Normal" } }, true, {})
       lsp_util.add_linters(opts, {
         ["html"] = { "htmlhint" },
         ["css"] = { "stylelint" },
@@ -116,7 +115,7 @@ return {
         ["sugarss"] = { "stylelint" },
         ["vue"] = { "stylelint" },
         ["wxss"] = { "stylelint" },
-        ["javascript"] = { "eslint", "stylelint" },
+        -- ["javascript"] = { "eslint", "stylelint" },
         ["javascriptreact"] = { "eslint", "stylelint" },
         ["typescript"] = { "eslint", "stylelint" },
         ["typescriptreact"] = { "eslint", "stylelint" },

@@ -52,7 +52,6 @@ end
 
 ---@param wininfo table<string, any>
 local get_parent_node_startlines = function(wininfo)
-  ---@type TSNode[]?
   -- lang from wininfo
   -- local lang = vim.bo.filetype
   -- local matches = {
@@ -72,21 +71,34 @@ local get_parent_node_startlines = function(wininfo)
   --     "variable_declaration",
   --   },
   -- }
-  local matches = M.available_text_objs()
-  if matches then
-    local nodes = M.get_parent_nodes()
-    if nodes then
-      local startlines = {}
-      for _, node in ipairs(nodes) do
-        if vim.tbl_contains(matches, node:type()) then
-          local startline, startcol, _, _ = node:range()
-          if startline + 1 >= wininfo.topline then
-            table.insert(startlines, startline)
-          end
+
+  ------@type TSNode[]?
+  ---local lsp_matches = M.available_text_objs()
+
+  local matches = {
+    "variable_declaration",
+    "function_declaration",
+    "method_definition",
+    "function_call",
+    "assignment_statement",
+    "comment",
+    "import_statement",
+    "lexical_declaration",
+    "expression_statement",
+    "export_statement",
+  }
+  local nodes = M.get_parent_nodes()
+  if nodes then
+    local startlines = {}
+    for _, node in ipairs(nodes) do
+      if vim.tbl_contains(matches, node:type()) then
+        local startline, startcol, _, _ = node:range()
+        if startline + 1 >= wininfo.topline then
+          table.insert(startlines, startline)
         end
       end
-      return startlines
     end
+    return startlines
   end
 end
 

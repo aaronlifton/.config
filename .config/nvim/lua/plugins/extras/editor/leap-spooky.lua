@@ -26,6 +26,7 @@ return {
         -- if the unnamed register is in use.
         -- paste_on_remote_yank = false,
         paste_on_remote_yank = true,
+        extra_text_objects = { "iq", "aq", "if", "af", "ii", "ai" },
       })
 
       -- Configure leap here since leap opts don't work

@@ -76,7 +76,7 @@ return {
           vim.api.nvim_exec("Neotree focus git_status left", true)
         end,
         ["h"] = "close_node",
-        ["<c-/>"] = "fuzzy_finder_directory",
+        ["<C-/>"] = "fuzzy_finder_directory",
         ["D"] = function(state)
           local node = state.tree:get_node()
           local log = require("neo-tree.log")

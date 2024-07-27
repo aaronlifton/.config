@@ -13,9 +13,9 @@ return {
       -- size can be a number or function which is passed the current terminal
       size = function(term)
         if term.direction == "horizontal" then
-          return 15
+          return 30 -- 15
         elseif term.direction == "vertical" then
-          return vim.o.columns * 0.40
+          return vim.o.columns * 0.4
         end
       end,
       on_open = function(term)
@@ -50,13 +50,7 @@ return {
       direction = "horizontal",
       close_on_exit = true, -- close the terminal window when the process exits
       shell = vim.o.shell, -- change the default shell
-      -- size = function(term)
-      --   if term.direction == "horizontal" then
-      --     return 30 -- 15
-      --   elseif term.direction == "vertical" then
-      --     return vim.o.columns * 0.4
-      --   end
-      -- end,
+      -- autochdir = false,
       -- open_mapping = [[<c-\>]],
       -- hide_numbers = true, -- hide the number column in toggleterm buffers
       -- shade_filetypes = {},
@@ -72,20 +66,22 @@ return {
       -- -- Change the default shell. Can be a string or a function returning a string
       -- shell = vim.o.shell,
       -- -- This field is only relevant if direction is set to 'float'
-      -- float_opts = {
-      --   -- The border key is *almost* the same as 'nvim_open_win'
-      --   -- see :h nvim_open_win for details on borders however
-      --   -- the 'curved' border is a custom border type
-      --   -- not natively supported but implemented in this plugin.
-      --   border = "curved",
-      --   -- like `size`, width and height can be a number or function which is passed the current terminal
-      --   highlights = { border = "Normal", background = "Normal" },
-      --   winblend = 3,
-      -- },
+      float_opts = {
+        -- The border key is *almost* the same as 'nvim_open_win'
+        -- see :h nvim_open_win for details on borders however
+        -- the 'curved' border is a custom border type
+        -- not natively supported but implemented in this plugin.
+        border = "curved",
+        -- like `size`, width and height can be a number or function which is passed the current terminal
+        highlights = { border = "Normal", background = "Normal" },
+        winblend = 3,
+      },
     },
     -- stylua: ignore
     keys = {
-      { [[<c-\>]], "<cmd>ToggleTerm direction=horizontal<cr>", mode = "n", desc = "Toggle Terminal" },
+      { [[<C-\>]], "<cmd>ToggleTerm direction=horizontal<cr>", mode = "n", desc = "Toggle Terminal" },
+      { [[<C-S-\>]], [[<Cmd>exe v:count 2. "ToggleTerm direction=float"<CR>]], mode = "n", desc = "Toggle Terminal 2"},
+      { [[<C-D-\>]], [[<Cmd>exe v:count1 . "ToggleTerm direction=horizontal"<CR>]], mode = "n", desc = "Toggle Terminal 1"}
       -- { [[<M-Bslash>]], "<cmd>ToggleTerm direction=vertical<cr>", mode = "n", desc = "Toggle Terminal (Vert)" },
     },
   },

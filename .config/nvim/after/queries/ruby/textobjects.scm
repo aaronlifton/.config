@@ -7,6 +7,15 @@
    method: (identifier) @func_name (#match? @func_name "^it$")
    )) @rspec.it
 
+((call
+   method: (identifier) @func_name (#match? @func_name "^expect$")
+   )) @rspec.expect
+
+
+((call
+   method: (identifier) @func_name (#match? @func_name "^(eq|be_empty|array_matching|match_exactly)$")
+   )) @rspec.matcher
+
 (module) @class.outer
 (singleton_class) @class.outer
 (singleton_method) @function.outer

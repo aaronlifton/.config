@@ -39,19 +39,9 @@ return {
     "stevearc/conform.nvim",
     optional = true,
     opts = function(_, opts)
-      -- opts.formatters_by_ft["markdown"] = { { "prettierd", "prettier" } }
-      -- opts.formatters_by_ft["markdown.mdx"] = { { "prettierd", "prettier" } }
-      opts.formatters_by_ft["markdown"] = { "dprint" }
-      opts.formatters_by_ft["markdown.mdx"] = { "dprint" }
+      opts.formatters_by_ft["markdown"] = { "dprint", "markdownlint-cli2", "markdown-toc" }
+      opts.formatters_by_ft["markdown.mdx"] = { "dprint", "markdownlint-cli2", "markdown-toc" }
       opts.formatters_by_ft["mdx"] = vim.list_slice(opts.formatters_by_ft["markdown.mdx"])
     end,
-  },
-  {
-    "neovim/nvim-lspconfig",
-    opts = {
-      servers = {
-        marksman = {},
-      },
-    },
   },
 }

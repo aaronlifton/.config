@@ -21,7 +21,6 @@ return {
   --       "gotests",
   --       "gotestsum",
   --       -- Markdown
-  --       "markdownlint",
   --       "markdownlint-cli2",
   --       "mdformat",
   --       -- Lua

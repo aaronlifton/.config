@@ -5,20 +5,34 @@ for i = 1, 9 do
   table.insert(keys, { "<leader>m" .. i, "<cmd>Grapple select index=" .. i .. "<CR>", desc = "File " .. i })
 end
 
-table.insert(keys, { "<leader>ma", "<cmd>Grapple tag<CR>", desc = "Add Mark" })
-table.insert(keys, { "<leader>mm", "<cmd>Grapple toggle_tags<CR>", desc = "Marks" })
+-- local chars = { "q", "w", "e", "r" }
+-- for idx, char in ipairs(chars) do 
+--   table.insert(keys, { "<leader>m" .. char, "<cmd>Grapple select index=" .. idx .. "<CR>", desc = "File " .. string.upper(char) })
+-- end
+
+table.insert(keys, { "<leader>ma", "<cmd>Grapple toggle<CR>", desc = "Toggle Mark" })
+table.insert(keys, { "<leader>M", "<cmd>Grapple toggle_tags<CR>", desc = "Marks" })
 table.insert(keys, { "<leader>mt", "<cmd>Telescope grapple tags<CR>", desc = "Marks (Telescope)" })
-table.insert(keys, { "<leader>mC", "<cmd>Grapple reset<CR>", desc = "Clear all Marks" })
-table.insert(keys, { "<leader>mc", "<cmd>Grapple untag<CR>", desc = "Clear current Mark" })
+table.insert(keys, { "<leader>mx", "<cmd>Grapple reset<CR>", desc = "Clear all Marks" })
 table.insert(keys, { "<leader>ms", "<cmd>Grapple toggle_scopes<CR>", desc = "Scopes" })
 table.insert(keys, { "<leader>mS", "<cmd>Grapple toggle_loaded<CR>", desc = "Loaded Scopes" })
 
-table.insert(keys, { "]k", "<cmd>Grapple cycle forward<CR>", desc = "Next Mark" })
-table.insert(keys, { "[k", "<cmd>Grapple cycle backward<CR>", desc = "Prev Mark" })
+-- table.insert(keys, { "]k", "<cmd>Grapple cycle forward<CR>", desc = "Next Mark" })
+-- table.insert(keys, { "[k", "<cmd>Grapple cycle backward<CR>", desc = "Prev Mark" })
 
-table.insert(keys, { "<C-A-l>", "<cmd>Grapple cycle forward<CR>", desc = "Next Mark" })
-table.insert(keys, { "<C-A-h>", "<cmd>Grapple cycle backward<CR>", desc = "Prev Mark" })
+-- table.insert(keys, { "<D-L>", "<cmd>Grapple cycle forward<CR>", desc = "Next Mark" })
+-- table.insert(keys, { "<D-H>", "<cmd>Grapple cycle backward<CR>", desc = "Prev Mark" })
 -- stylua: ignore end
+
+-- Harpoon style
+table.insert(keys, { "<D-H>", "<cmd>Grapple select index=1<cr>", desc = "File 1" })
+table.insert(keys, { "<D-J>", "<cmd>Grapple select index=2<cr>", desc = "File 2" })
+table.insert(keys, { "<D-K>", "<cmd>Grapple select index=3<cr>", desc = "File 3" })
+table.insert(keys, { "<D-L>", "<cmd>Grapple select index=4<cr>", desc = "File 4" })
+table.insert(keys, { "<c-s-n>", "<cmd>Grapple cycle_tags next<cr>", desc = "Go to next tag" })
+table.insert(keys, { "<c-s-p>", "<cmd>Grapple cycle_tags prev<cr>", desc = "Go to previous tag", nowait = true })
+-- table.insert(keys, { "<C-S-L>", "<cmd>Grapple cycle_tags next<cr>", desc = "Go to next tag" })
+-- table.insert(keys, { "<C-S-H>", "<cmd>Grapple cycle_tags prev<cr>", desc = "Go to previous tag" })
 
 return {
   {
@@ -28,9 +42,11 @@ return {
     keys = keys,
     config = function()
       require("grapple").setup()
-      LazyVim.on_load("telescope.nvim", function()
-        require("telescope").load_extension("grapple")
-      end)
+      if vim.g.lazyvim_picker == "telescope" then
+        LazyVim.on_load("telescope.nvim", function()
+          require("telescope").load_extension("grapple")
+        end)
+      end
     end,
   },
   -- {
@@ -61,6 +77,16 @@ return {
     end,
   },
   {
+    "echasnovski/mini.starter",
+    optional = true,
+    opts = function(_, opts)
+      local util = require("util.dashboard")
+      opts.items = vim.list_extend(opts.items, {
+        util.new_section("Marks 󰛢", "Grapple toggle_tags", "Telescope"),
+      })
+    end,
+  },
+  {
     "nvim-lualine/lualine.nvim",
     optional = true,
     opts = function(_, opts)
@@ -70,8 +96,9 @@ return {
   {
     "folke/which-key.nvim",
     opts = {
-      defaults = {
-        ["<leader>m"] = { name = "󰛢 marks" },
+      spec = {
+        mode = "n",
+        { "<leader>m", group = "󰛢 marks" },
       },
     },
   },

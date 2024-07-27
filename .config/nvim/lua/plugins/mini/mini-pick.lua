@@ -132,14 +132,14 @@ return {
         "<leader>PL",
         function()
           MiniExtra.pickers.lsp("declaration")
-          -- - Needs an explicit scope from a list of supported ones:
-          --     - "declaration".
-          --     - "definition".
-          --     - "document_symbol".
-          --     - "implementation".
-          --     - "references".
-          --     - "type_definition".
-          --     - "workspace_symbol".
+          -- Needs an explicit scope from a list of supported ones:
+          -- "declaration".
+          -- "definition".
+          -- "document_symbol".
+          -- "implementation".
+          -- "references".
+          -- "type_definition".
+          -- "workspace_symbol".
         end,
         desc = "LSP",
       },
@@ -206,18 +206,6 @@ return {
         end,
         desc = "Diagnostics",
       },
-      -- {
-      --   "<C-s>",
-      --   function(item)
-      --     if vim.fn.filereadable(item) == 0 then
-      --       return
-      --     end
-      --     vim.api.nvim_win_call(MiniPick.get_picker_state().windows.main, function()
-      --       vim.cmd("vsplit " .. item)
-      --     end)
-      --     return true
-      --   end,
-      -- },
     },
   },
 }

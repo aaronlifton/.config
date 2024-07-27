@@ -14,12 +14,6 @@ return {
       },
     },
     keys = {
-      -- {
-      --   "<leader>F",
-      --   function()
-      --     require("mini.files").open()
-      --   end,
-      -- },
       { "<leader>fm", false },
       { "<leader>fM", false },
       {

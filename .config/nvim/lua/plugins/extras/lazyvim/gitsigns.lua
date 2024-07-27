@@ -1,5 +1,8 @@
 return {
   "lewis6991/gitsigns.nvim",
+  enable = function()
+    return not LazyVim.has_extra("editor.mini-diff")
+  end,
   opts = {
     yadm = { enable = true },
     current_line_blame_opts = {

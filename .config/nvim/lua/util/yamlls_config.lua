@@ -34,6 +34,21 @@ M.get_yamlls_config = function()
           name = "SealedSecret",
           uri = "https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/bitnami.com/sealedsecret_v1alpha1.json",
         },
+        { name = "GitHub Action", uri = "http://json.schemastore.org/github-action" },
+        { name = "Ansible", uri = "http://json.schemastore.org/ansible-stable-2.9" },
+        { name = "Prettier", uri = "http://json.schemastore.org/prettierrc" },
+        { name = "Ansible Playbook", uri = "http://json.schemastore.org/ansible-playbook" },
+        { name = "Helm Chart", uri = "http://json.schemastore.org/chart" },
+        { name = "Dependabot", uri = "https://json.schemastore.org/dependabot-v2" },
+        { name = "GitLab CI", uri = "https://json.schemastore.org/gitlab-ci" },
+        {
+          name = "OpenAPI",
+          uri = "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/main/schemas/v3.1/schema.json",
+        },
+        {
+          name = "Docker Compose",
+          uri = "https://raw.githubusercontent.com/compose-spec/compose-spec/master/schema/compose-spec.json",
+        },
         -- schemas below are automatically loaded, but added
         -- them here so that they show up in the statusline
         {

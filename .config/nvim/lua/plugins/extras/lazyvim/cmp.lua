@@ -1,24 +1,8 @@
--- local border = function(hl)
---   return {
---     { "┌", hl },
---     { "─", hl },
---     { "┐", hl },
---     { "│", hl },
---     { "┘", hl },
---     { "─", hl },
---     { "└", hl },
---     { "│", hl },
---   }
--- end
-
 return {
   {
     "hrsh7th/nvim-cmp",
+    optional = true,
     dependencies = {
-      "hrsh7th/cmp-nvim-lsp",
-      "hrsh7th/cmp-buffer",
-      "hrsh7th/cmp-path",
-      "saadparwaiz1/cmp_luasnip",
       "hrsh7th/cmp-cmdline",
       "hrsh7th/cmp-nvim-lua",
       "ray-x/cmp-treesitter",
@@ -52,17 +36,13 @@ return {
         max_view_entries = 50,
       }
 
-      opts.sources = cmp.config.sources({
-        { name = "nvim_lsp", max_item_count = 15 },
-        { name = "codeium", priority = 100 },
-        { name = "copilot", priority = 100 },
-        { name = "cmp_ai", priority = 100 },
-        -- { name = "nvim_lua" },
-        { name = "treesitter" },
-        { name = "path" },
-        { name = "snippets" },
-      }, {
-        { name = "buffer" },
+      -- Debug default LazyVim sources
+      -- vim.api.nvim_echo({ { vim.inspect(opts.sources), "Normal" } }, true, {})
+
+      opts.sources = vim.list_extend(opts.sources, {
+        { name = "codeium", priority = 99, group_index = 1 },
+        { name = "treesitter", group_index = 1 },
+        { name = "nvim_lua", group_index = 1 },
       })
       opts.window = {
         completion = {
@@ -78,74 +58,91 @@ return {
           scrollbar = false,
         },
       }
-      opts.mapping = cmp.mapping.preset.insert({
-        ["<C-j>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-        ["<C-k>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-        -- Already set by LazyVim
-        ["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
-        ["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
-        ["<C-b>"] = cmp.mapping.scroll_docs(-4),
-        ["<C-f>"] = cmp.mapping.scroll_docs(4),
-        ["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
-        ["<CR>"] = cmp.mapping.confirm({
-          behavior = cmp.ConfirmBehavior.Insert,
-          select = true,
-        }),
-        ["<C-x>"] = cmp.mapping(
-          cmp.mapping.complete({
-            config = {
-              sources = cmp.config.sources({
-                { name = "cmp_ai" },
-              }),
-            },
-          }),
-          { "i" }
-        ),
 
-        -- Already set by LazyVim
-        ["<S-CR>"] = cmp.mapping.confirm({
-          behavior = cmp.ConfirmBehavior.Replace,
-          select = true,
-        }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
-        ["<C-CR>"] = function(fallback)
-          cmp.abort()
-          fallback()
-        end,
-        ["<Tab>"] = cmp.mapping(function(fallback)
-          if cmp.visible() then
-            -- You could replace select_next_item() with confirm({ select = true }) to get VS Code autocompletion behavior
-            -- cmp.select_next_item()
-            cmp.confirm({ select = true })
-            -- You could replace the expand_or_jumpable() calls with expand_or_locally_jumpable()
-            -- this way you will only jump inside the snippet region
-          elseif vim.snippet and vim.snippet.active({ direction = 1 }) then
-            -- vim.snippet.jump(1)
-            vim.schedule(function()
-              vim.snippet.jump(1)
-            end)
-          elseif neogen.jumpable() then
-            neogen.jump_next()
-          elseif has_words_before() then
-            cmp.complete()
-          else
-            fallback()
-          end
-        end, { "i", "s" }),
-        ["<S-Tab>"] = cmp.mapping(function(fallback)
-          if cmp.visible() then
-            cmp.select_prev_item()
-          elseif vim.snippet and vim.snippet.active({ direction = -1 }) then
-            -- vim.snippet.jump(-1)
-            vim.schedule(function()
-              vim.snippet.jump(-1)
-            end)
-          elseif neogen.jumpable(true) then
-            neogen.jump_prev()
-          else
-            fallback()
-          end
-        end, { "i", "s" }),
+      local cmdline_mapping = cmp.mapping.preset.cmdline({ ["<C-Space>"] = cmp.mapping.complete() })
+      cmp.setup.cmdline("/", {
+        mapping = cmdline_mapping,
+        sources = {
+          { name = "buffer" },
+        },
       })
+      -- cmp.setup.cmdline(":", {
+      --   mapping = cmdline_mapping,
+      --   sources = cmp.config.sources({
+      --     { name = "path" },
+      --   }, {
+      --     { name = "cmdline" },
+      --   }),
+      --   matching = { disallow_symbol_nonprefix_matching = false },
+      -- })
+
+      opts.mapping = vim.tbl_extend(
+        "force",
+        opts.mapping,
+        {
+          ["<C-j>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
+          ["<C-k>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+          ["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
+          --   ["<C-x>"] = cmp.mapping(
+          --     cmp.mapping.complete({
+          --       config = {
+          --         sources = cmp.config.sources({
+          --           { name = "cmp_ai" },
+          --         }),
+          --       },
+          --     }),
+          --     { "i" }
+          --   ),
+        }
+        -- cmp.mapping.preset.insert({
+        --   -- Already set by LazyVim
+        --   ["<S-CR>"] = cmp.mapping.confirm({
+        --     behavior = cmp.ConfirmBehavior.Replace,
+        --     select = true,
+        --   }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+        --   ["<C-CR>"] = function(fallback)
+        --     cmp.abort()
+        --     fallback()
+        --   end,
+        --   -- TODO: reconcile with /Users/alifton/.local/share/nvim/lazy/LazyVim/lua/lazyvim/plugins/coding.lua
+        --   -- ["<Tab>"] = cmp.mapping(function(fallback)
+        --   --   if cmp.visible() then
+        --   --     -- You could replace select_next_item() with confirm({ select = true }) to get VS Code autocompletion behavior
+        --   --     -- cmp.select_next_item()
+        --   --     cmp.confirm({ select = true })
+        --   --     -- You could replace the expand_or_jumpable() calls with expand_or_locally_jumpable()
+        --   --     -- this way you will only jump inside the snippet region
+        --   --   elseif vim.snippet and vim.snippet.active({ direction = 1 }) then
+        --   --     -- vim.snippet.jump(1)
+        --   --     vim.schedule(function()
+        --   --       vim.snippet.jump(1)
+        --   --     end)
+        --   --   elseif neogen.jumpable() then
+        --   --     neogen.jump_next()
+        --   --   elseif has_words_before() then
+        --   --     cmp.complete()
+        --   --   else
+        --   --     fallback()
+        --   --   end
+        --   -- end, { "i", "s" }),
+        --   -- ["<S-Tab>"] = cmp.mapping(function(fallback)
+        --   --   if cmp.visible() then
+        --   --     cmp.select_prev_item()
+        --   --   elseif vim.snippet and vim.snippet.active({ direction = -1 }) then
+        --   --     -- vim.snippet.jump(-1)
+        --   --     vim.schedule(function()
+        --   --       vim.snippet.jump(-1)
+        --   --     end)
+        --   --   elseif neogen.jumpable(true) then
+        --   --     neogen.jump_prev()
+        --   --   else
+        --   --     fallback()
+        --   --   end
+        --   -- end, { "i", "s" }),
+        -- })
+      )
+
+      return opts
     end,
   },
   {

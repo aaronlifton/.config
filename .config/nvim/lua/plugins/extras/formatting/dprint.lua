@@ -1,7 +1,25 @@
 local lsp_util = require("util.lsp")
+local conform_util = require("conform.util")
 local dprint_filenames = { "dprint.json", ".dprint.json", "dprint.jsonc", ".dprint.jsonc" }
 local notified = false
 local use_global_dprint_formatter = true
+local has_prettier_config = function()
+  return conform_util.root_file({
+    ".prettierrc",
+    ".prettierrc.json",
+    ".prettierrc.yml",
+    ".prettierrc.yaml",
+    ".prettierrc.json5",
+    ".prettierrc.js",
+    ".prettierrc.cjs",
+    ".prettierrc.mjs",
+    ".prettierrc.toml",
+    "prettier.config.js",
+    "prettier.config.cjs",
+    "prettier.config.mjs",
+    "package.json",
+  })
+end
 return {
   {
     "williamboman/mason.nvim",
@@ -32,7 +50,7 @@ return {
         condition = function(_, ctx)
           local dprint_available = conform.get_formatter_info("dprint", ctx.buf).available
           local biome_available = conform.get_formatter_info("biome", ctx.buf).available
-          return not biome_available and not dprint_available
+          return not biome_available and not dprint_available and has_prettier_config()
         end,
       }
       lsp_util.add_formatter_settings(opts, {
@@ -75,6 +93,11 @@ return {
         },
         prettier = prettier_settings,
         prettierd = prettier_settings,
+        eslint_d = {
+          condition = function(_, ctx)
+            return vim.fs.find({ "eslint.config.js", ".eslintrc.js" }, { upward = true })[1]
+          end,
+        },
       })
     end,
   },

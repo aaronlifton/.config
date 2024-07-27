@@ -83,10 +83,14 @@ return {
         show_codeium_status,
         on_click = function(num_clicks, mouse_button, mods)
           local data = { num_clicks = num_clicks, mouse_button = mouse_button, mods = mods }
-          vim.api.nvim_echo({ { "mods: " .. vim.inspect(data) } }, true, {})
-
-          if num_clicks == 1 and mouse_button == 1 and #mods == 0 then
-            vim.api.nvim_echo({ { "Codeium: " .. vim.fn["codeium#GetStatusString"]() } }, true, {})
+          vim.api.nvim_echo({ { vim.inspect(data) } }, false, {})
+          if num_clicks == 1 and mouse_button == "l" and not mods:match("%w") then
+            local status = vim.fn["codeium#GetStatusString"]()
+            local highlight = require("util.lualine").highlight_for_status(status)
+            vim.api.nvim_echo({
+              { "Codeium: ", "Normal" },
+              { status, highlight },
+            }, false, {})
           end
         end,
       })

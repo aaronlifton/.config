@@ -21,14 +21,15 @@ o.backspace = { "eol", "start", "indent" }
 -- o.breakindent = true
 o.clipboard:append({ "unnamed", "unnamedplus" })
 o.fillchars = { eob = " " }
-o.spellfile = "/Users/aaron/.config/nvim/spell/en.utf-8.add"
+o.spellfile = "/Users/$USER/.config/nvim/spell/en.utf-8.add"
 o.spelllang = "en_us" -- "en"
-o.sps = "file:/Users/aaron/.config/nvim/spell/sugg,best"
+o.sps = "file:/Users/$USER/.config/nvim/spell/sugg,best"
 o.startofline = true
 o.swapfile = false
 o.textwidth = 80
 o.termguicolors = true
 o.shell = "fish"
+o.relativenumber = true
 -- o.formatoptions = "jcrqlnt" -- "jcroqlnt" -- tcqj
 -- o.colorcolumn = "80"
 
@@ -40,8 +41,11 @@ g.gui_font_face = "Sauce Code Pro Nerd Font Mono"
 g.gui_font_size = 18
 g.custom_notifications = {}
 g.lazyvim_picker = "fzf" -- telescope
-g.lsp_goto_source = "glance"
-vim.treesitter.language.register("markdown", "neoai-output")
+g.lsp_goto_source = "fzf" -- glance
+-- g.lazyvim_ruby_lsp = "solargraph"
+g.lazyvim_ruby_lsp = "ruby_lsp"
+g.lazyvim_ruby_formatter = "rubocop"
+g.ruby_lsp_references_provider = "solargraph"
 
 -------------------------------------------------
 
@@ -49,9 +53,11 @@ vim.treesitter.language.register("markdown", "neoai-output")
 -- vim.env.XDG_CONFIG_HOME = vim.env.XDG_CONFIG_HOME or vim.env.HOME .. "/.config"
 -- vim.env.XDG_DATA_HOME = vim.env.XDG_DATA_HOME or vim.env.HOME .. "/.local/share"
 
-require("config.highlights").setup()
 require("config.neovide")
--- require("vendor.colorschemes.aurora").colorscheme()
+
+if vim.fn.executable("nvr") == 1 then
+  vim.env["GIT_EDITOR"] = "nvr -cc close -cc vsplit --remote-wait +'set bufhidden=wipe'"
+end
 
 -- suppress error messages from lang servers
 -- vim.notify = function(msg, log_level, _)

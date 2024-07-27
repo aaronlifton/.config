@@ -9,54 +9,56 @@ end
 local ac = vim.api.nvim_create_autocmd
 local ag = vim.api.nvim_create_augroup
 
--- LazyVim/lua/lazyvim/config/autocmds.lua:53
-local lazyvim_close_with_q_filetypes = {
+local close_with_q = {
+  -- LazyVim/lua/lazyvim/config/autocmds.lua:53
   "PlenaryTestPopup",
-  "help",
+  -- "help", -- Removed
   "lspinfo",
   "notify",
   "qf",
   "query",
-  "spectre_panel",
   "startuptime",
   "tsplayground",
   "neotest-output",
   "checkhealth",
   "neotest-summary",
   "neotest-output-panel",
+  "dbout",
+  "gitsigns.blame",
+  -- Added
   "toggleterm",
+  "grapple",
 }
-local to_close_with_esc_or_q = {
+local close_with_esc_or_q = {
   "neoai-input",
   "neoai-output",
   "chatgpt-input",
   "chatgpt-output",
 }
-local to_not_close_with_esc = {
-  "spectre_panel",
-}
-for _, ft in ipairs(lazyvim_close_with_q_filetypes) do
-  table.insert(to_close_with_esc_or_q, ft)
-end
--- vim.api.nvim_clear_autocmds({ group = "lazyvim_close_with_q" })
+vim.list_extend(close_with_esc_or_q, close_with_q)
+vim.api.nvim_clear_autocmds({ group = "lazyvim_close_with_q" })
 ac("FileType", {
   group = augroup("close_with_q"),
-  pattern = to_close_with_esc_or_q,
+  pattern = close_with_esc_or_q,
   callback = function(event)
     vim.bo[event.buf].buflisted = false
-    vim.keymap.set("n", "q", "<cmd>close<cr>", { buffer = event.buf, silent = true })
+    vim.keymap.set("n", "q", "<cmd>close<cr>", {
+      buffer = event.buf,
+      silent = true,
+      desc = "Quit buffer",
+    })
   end,
 })
 
 -- close some filetypes with <esc>, in addition to <q>
-ac("FileType", {
-  group = augroup("close_with_esc"),
-  pattern = to_close_with_esc_or_q,
-  callback = function(event)
-    vim.bo[event.buf].buflisted = false
-    vim.keymap.set("n", "<esc>", "<cmd>close<cr>", { buffer = event.buf, silent = true })
-  end,
-})
+-- ac("FileType", {
+--   group = augroup("close_with_esc"),
+--   pattern = to_close_with_esc_or_q,
+--   callback = function(event)
+--     vim.bo[event.buf].buflisted = false
+--     vim.keymap.set("n", "<esc>", "<cmd>close<cr>", { buffer = event.buf, silent = true })
+--   end,
+-- })
 
 -- Disable diagnostics in a .env file
 ac("BufRead", {
@@ -69,7 +71,6 @@ ac("BufRead", {
 ac("BufRead", {
   pattern = "*_spec.rb",
   callback = function()
-    -- local spec_pair = require("mini.ai").gen_spec.pair
     local ai = require("mini.ai")
     vim.b.miniai_config = {
       custom_textobjects = {
@@ -81,8 +82,47 @@ ac("BufRead", {
           a = { "@rspec.it" },
           i = { "@rspec.it" },
         }),
+        E = ai.gen_spec.treesitter({
+          a = { "@rspec.expect" },
+          i = { "@rspec.expect" },
+        }),
+        M = ai.gen_spec.treesitter({
+          a = { "@rspec.matcher" },
+          i = { "@rspec.matcher" },
+        }),
       },
     }
+    if LazyVim.is_loaded("nvim-treesitter") then
+      -- treesitter
+      require("nvim-treesitter.configs").setup({
+        textobjects = {
+          move = {
+            goto_next_start = {
+              ["]r"] = "@rspec.context",
+              ["]i"] = "@rspec.it",
+              -- ["]]"] = "@structure.outer",
+            },
+            goto_next_end = {
+              ["[I"] = "@rspec.it",
+              ["]R"] = "@rspec.context",
+              -- ["]["] = "@structure.outer",
+            },
+            goto_previous_start = {
+              ["[r"] = "@rspec.context",
+              ["[i"] = "@rspec.it",
+              -- ["[["] = "@structure.outer",
+            },
+            goto_previous_end = {
+              ["[R"] = "@rspec.context",
+              ["]I"] = "@rspec.it",
+              -- ["[]"] = "@structure.outer",
+            },
+          },
+        },
+      })
+    else
+      vim.api.nvim_echo({ { "nvim-treesitter not loaded", "Error" } }, true, {})
+    end
   end,
 })
 
@@ -133,7 +173,6 @@ ac("BufRead", {
 -- })
 
 -- Delete number column on terminals (floaterm)
--- Disabled: investigating terminal opening flash
 ac("TermOpen", {
   callback = function()
     vim.defer_fn(function()
@@ -179,6 +218,14 @@ ac({ "BufEnter" }, {
   end,
 })
 
+ac({ "BufNewFile", "BufRead" }, {
+  pattern = { "Tiltfile", "*.tiltfile" },
+  group = ag("tiltfile", { clear = true }),
+  callback = function()
+    vim.api.nvim_command(":set ft=tiltfile syntax=starlark")
+  end,
+})
+
 -- ac({ "FileType" }, {
 --   pattern = { "help" },
 --   group = ag("readme", { clear = true }),
@@ -190,46 +237,21 @@ ac({ "BufEnter" }, {
 --   end,
 -- })
 
--- INFO: This was causing the terminal flash
--- Disabled: investigating terminal opening flash
--- ac({ "BufLeave", "FocusLost", "InsertEnter", "CmdlineEnter", "WinLeave" }, {
---   pattern = "*",
---   group = numbertoggle,
---   callback = function()
---     local ft = vim.bo.ft
---     if ft == "floaterm" or ft == "toggleterm" or ft == "terminal" then
---       return
---     end
---     if vim.o.nu then
---       vim.opt.relativenumber = false
---       vim.cmd.redraw()
---     end
---   end,
--- })
-
--- TODO: Remove since not used since switched to native snippets
--- Use the more sane snippet session leave logic. Copied from:
--- https://github.com/L3MON4D3/LuaSnip/issues/258#issuecomment-1429989436
--- ac("ModeChanged", {
---   pattern = "*",
---   callback = function()
---     if not vim.g.vscode then
---       if
---         ((vim.v.event.old_mode == "s" and vim.v.event.new_mode == "n") or vim.v.event.old_mode == "i")
---         and require("luasnip").session.current_nodes[vim.api.nvim_get_current_buf()]
---         and not require("luasnip").session.jump_active
---       then
---         require("luasnip").unlink_current()
---       end
---     end
---   end,
--- })
-
 ac("ColorScheme", {
   pattern = "*",
   group = ag("fix_highlights", { clear = true }),
   callback = function()
     require("config.highlights").setup()
+  end,
+})
+
+-- Clear the quickfix window keymap set on BufEnter
+ac({ "BufEnter", "BufWinEnter" }, {
+  pattern = "qf",
+  callback = function()
+    vim.keymap.set("n", "<C-d>", function()
+      vim.fn.setqflist({})
+    end, { buffer = true })
   end,
 })
 
@@ -240,4 +262,32 @@ ac("ColorScheme", {
 -- 		vim.print(vim.inspect(event))
 -- 		vim.g.last_winid = event.win
 -- 	end,
+-- })
+
+-- local ag_view_activated = ag("view_activated", { clear = true })
+-- ac({ "BufWinLeave", "BufWritePost", "WinLeave" }, {
+--   group = ag_view_activated,
+--   desc = "Save view with mkview for real files",
+--   callback = function(event)
+--     if vim.b[event.buf].view_activated then
+--       vim.api.nvim_echo({ { "Saving view", "Special" } }, false, {})
+--       vim.cmd.mkview({ mods = { emsg_silent = true } })
+--     end
+--   end,
+-- })
+-- ac("BufWinEnter", {
+--   group = ag_view_activated,
+--   desc = "Try to load file view if available and enable view saving for real files",
+--   callback = function(event)
+--     if not vim.b[event.buf].view_activated then
+--       local filetype = vim.bo[event.buf].filetype
+--       local buftype = vim.bo[event.buf].buftype
+--       local ignore_filetypes = { "gitcommit", "gitrebase", "svg", "hgcommit" }
+--       if buftype == "" and filetype and filetype ~= "" and not vim.tbl_contains(ignore_filetypes, filetype) then
+--         vim.api.nvim_echo({ { "Loading view", "Special" } }, false, {})
+--         vim.b[event.buf].view_activated = true
+--         vim.cmd.loadview({ mods = { emsg_silent = true } })
+--       end
+--     end
+--   end,
 -- })

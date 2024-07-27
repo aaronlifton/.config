@@ -4,6 +4,10 @@ return {
     lazy = false,
     priority = 999,
     opts = {},
+    config = function(_, otps)
+      require("theme-loader").setup(otps)
+      require("config.highlights").setup()
+    end,
   },
   -- {
   --   "LazyVim/LazyVim",

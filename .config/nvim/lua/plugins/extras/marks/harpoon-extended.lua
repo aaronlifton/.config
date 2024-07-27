@@ -94,8 +94,9 @@ return {
   {
     "folke/which-key.nvim",
     opts = {
-      defaults = {
-        ["<leader>m"] = { name = "󰛢 marks" },
+      spec = {
+        mode = "n",
+        { "<leader>m", group = "󰛢 marks" },
       },
     },
   },
