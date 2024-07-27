@@ -1,6 +1,7 @@
 local inspect = require("inspect")
 local window = require("functions/window")
 local layout = require("functions/layout")
+hs.loadSpoon("ClipboardTool")
 
 function isAlmostEqualToCurWinFrame(geo)
 	local epsilon = 5
@@ -79,6 +80,8 @@ local function new_tab_next_to_current_tab_chrome()
 	end
 end
 
+local hyper = { "ctrl", "alt", "cmd" }
+
 hs.hotkey.bind("⌘⇧", "left", thunk_left_or_move)
 hs.hotkey.bind("⌘⇧", "right", thunk_right_or_move)
 hs.hotkey.bind("⌘⇧", "up", window.thunk_push({ height = 1 / 2 }))
@@ -123,3 +126,18 @@ hs.hotkey.bind({ "alt", "ctrl", "cmd" }, "Left", function()
 	local win = hs.window.focusedWindow()
 	win:moveOneScreenNorth(false, true, duration)
 end)
+
+-- Chars
+hs.hotkey.bind({ "ctrl" }, "escape", function()
+	hs.eventtap.keyStrokes("`")
+end)
+
+if spoon.ClipboardTool then
+	spoon.ClipboardTool.hist_size = 10
+	spoon.ClipboardTool.show_copied_alert = false
+	spoon.ClipboardTool.show_in_menubar = false
+	spoon.ClipboardTool:start()
+	spoon.ClipboardTool:bindHotkeys({
+		toggle_clipboard = { hyper, "v" },
+	})
+end
