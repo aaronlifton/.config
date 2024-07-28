@@ -4,7 +4,7 @@ if vim.fn.has("nvim-0.10") == 1 then
     event = "LazyFile",
     opts = {
       sources = {
-         terminal = {
+        terminal = {
           name = "",
         },
       },
@@ -17,7 +17,10 @@ else
     version = "*",
     dependencies = {
       "SmiteshP/nvim-navic",
-      "nvim-tree/nvim-web-devicons",
+      {
+        "nvim-tree/nvim-web-devicons",
+        optional = true,
+      },
     },
     event = "LazyFile",
     opts = {},

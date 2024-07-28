@@ -60,7 +60,7 @@ local live_grep_opts = {
 }
 return {
   { import = "lazyvim.plugins.extras.editor.fzf" },
-  { "nvim-telescope/telescope.nvim", enabled = true },
+  -- { "nvim-telescope/telescope.nvim", enabled = true },
   { import = "plugins.extras.telescope.urlview" },
   {
     "ibhagwan/fzf-lua",
@@ -260,6 +260,14 @@ return {
           util.fzf_zoxide()
         end,
         desc = "Zoxide",
+      },
+      {
+        "<leader>fZ",
+        function()
+          local util = require("util.fzf.zoxide")
+          util.fzf_zoxide2()
+        end,
+        desc = "Zoxide (Test)",
       },
       {
         "gR",

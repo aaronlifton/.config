@@ -8,7 +8,7 @@ local set_git_conflict_keymap = function(buf)
   vim.api.nvim_buf_set_keymap(buf, "n", "cx", "<Plug>(git-conflict-refresh)", { desc = "Git Conflict Refresh" })
   vim.api.nvim_buf_set_keymap(buf, "n", "[x", "<Plug>(git-conflict-prev-conflict)", { desc = "Prev Git Conflict" })
   vim.api.nvim_buf_set_keymap(buf, "n", "]x", "<Plug>(git-conflict-next-conflict)", { desc = "Next Git Conflict" })
-  toggled = treu
+  toggled = true
 end
 
 return {

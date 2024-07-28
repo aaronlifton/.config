@@ -16,8 +16,9 @@ return {
   {
     "folke/which-key.nvim",
     opts = {
-      defaults = {
-        ["<leader>gw"] = { name = "worktrees" },
+      spec = {
+        mode = "n",
+        { "<leader>gw", group = "worktrees", icon = { icon = "", color = "yellow" } },
       },
     },
   },

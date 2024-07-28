@@ -3,10 +3,9 @@ local lsp_util = require("util.lsp")
 return {
   {
     "williamboman/mason.nvim",
-    opts = function(_, opts)
-      opts.ensure_installed = opts.ensure_installed or {}
-      vim.list_extend(opts.ensure_installed, { "rustywind" })
-    end,
+    opts = {
+      ensure_installed = { "rustywind" },
+    },
   },
   {
     "stevearc/conform.nvim",
@@ -19,6 +18,14 @@ return {
         ["vue"] = { "rustywind" },
         ["html"] = { "rustywind" },
         ["astro"] = { "rustywind" },
+      })
+
+      lsp_util.add_formatter_settings(opts, {
+        rustywind = {
+          condition = function(_, ctx)
+            return vim.fs.find({ "tailwind.config.js" }, { path = ctx.filename, upward = true })[1]
+          end,
+        },
       })
     end,
   },

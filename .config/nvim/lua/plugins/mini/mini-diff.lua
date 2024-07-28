@@ -11,23 +11,27 @@ local git_read_stream = function(stream, feed)
   stream:read_start(callback)
 end
 
-local set_mini_diff_ref_text = function(buf_id, branch)
+--- Set the reference text for the buffer.
+---@param buf_id integer
+---@param branch string
+---@param yadm? boolean[]
+local set_mini_diff_ref_text = function(buf_id, branch, yadm)
   local buf_set_ref_text = vim.schedule_wrap(function(text)
     pcall(MiniDiff.set_ref_text, buf_id, text)
   end)
 
   -- NOTE: Do not cache buffer's name to react to its possible rename
-  local path = vim.api.nvim_buf_get_name(buf_id)
+  -- local path = vim.api.nvim_buf_get_name(buf_id)
+  local path = vim.loop.fs_realpath(vim.api.nvim_buf_get_name(buf_id))
   if path == "" then
     return buf_set_ref_text({})
   end
-  local cwd, basename = vim.fn.fnamemodify(path, ":h"), vim.fn.fnamemodify(path, ":t")
 
-  -- Set
+  local cwd, basename = vim.fn.fnamemodify(path, ":h"), vim.fn.fnamemodify(path, ":t")
   local stdout = vim.loop.new_pipe()
-  -- local spawn_opts = { args = { "show", ":0:./" .. basename }, cwd = cwd, stdio = { nil, stdout, nil } }
   local spawn_opts = { args = { "show", branch .. ":./" .. basename }, cwd = cwd, stdio = { nil, stdout, nil } }
 
+  ---@type uv.uv_process_t
   local process, stdout_feed = nil, {}
   local on_exit = function(exit_code)
     process:close()
@@ -48,7 +52,8 @@ local set_mini_diff_ref_text = function(buf_id, branch)
     buf_set_ref_text(text)
   end
 
-  process = vim.loop.spawn("git", spawn_opts, on_exit)
+  local exe = yadm and "yadm" or "git"
+  process = vim.loop.spawn(exe, spawn_opts, on_exit)
   git_read_stream(stdout, stdout_feed)
 end
 
@@ -163,8 +168,30 @@ return {
         "<leader>xH",
         function()
           vim.fn.setqflist(MiniDiff.export("qf"))
+          require("trouble").open({ mode = "quickfix", focus = false })
         end,
         desc = "Export hunks to quickfix",
+      },
+      {
+        "<leader>gdY",
+        function()
+          local current_buf = vim.api.nvim_get_current_buf()
+          local old_disable = MiniDiff.disable
+          MiniDiff.disable = function(buf_id)
+            if buf_id == current_buf then
+              return
+            end
+            old_disable(buf_id)
+          end
+          vim.api.nvim_buf_attach(current_buf, false, {
+            on_detach = function()
+              MiniDiff.disable = old_disable
+              MiniDiff.disable(current_buf)
+            end,
+          })
+          set_mini_diff_ref_text(current_buf, "main", true)
+        end,
+        desc = "MiniDiff (YADM)",
       },
     },
   },

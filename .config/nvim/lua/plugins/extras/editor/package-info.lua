@@ -8,11 +8,11 @@ return {
     opts = {},
     -- stylua: ignore
     keys = {
-      { "<leader>pwv", function() require('package-info').show({ force = true }) end, desc = "Show Package Versions" },
-      { "<leader>pwu", function() require('package-info').update() end, desc = "Update Package" },
-      { "<leader>pwr", function() require('package-info').delete() end, desc = "Remove Package" },
-      { "<leader>pwc", function() require('package-info').change_version() end, desc = "Change Package Version" },
-      { "<leader>pwi", function() require('package-info').install() end, desc = "Install New Dependency" },
+      { "<leader>Pwv", function() require('package-info').show({ force = true }) end, desc = "Show Package Versions" },
+      { "<leader>Pwu", function() require('package-info').update() end, desc = "Update Package" },
+      { "<leader>Pwr", function() require('package-info').delete() end, desc = "Remove Package" },
+      { "<leader>Pwc", function() require('package-info').change_version() end, desc = "Change Package Version" },
+      { "<leader>Pwi", function() require('package-info').install() end, desc = "Install New Dependency" },
     },
   },
   {
@@ -20,7 +20,7 @@ return {
     optional = true,
     -- stylua: ignore
     keys = {
-      { "<leader>pwp", "<cmd>FloatermNew --disposable --name=lazynpm --opener=edit --titleposition=center --height=0.85 --width=0.85 --cwd=<root> lazynpm<CR>", desc = "Lazynpm" },
+      { "<leader>Pwp", "<cmd>FloatermNew --disposable --name=lazynpm --opener=edit --titleposition=center --height=0.85 --width=0.85 --cwd=<root> lazynpm<CR>", desc = "Lazynpm" },
     },
   },
   {
@@ -28,8 +28,8 @@ return {
     opts = {
       spec = {
         mode = "n",
-        { "<leader>p", group = " packages/dependencies" },
-        { "<leader>pw", group = "web" },
+        { "<leader>P", group = "packages/dependencies", icon = " " },
+        { "<leader>Pw", group = "web", icon = "󰖟 " },
       },
     },
   },

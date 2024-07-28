@@ -1,4 +1,5 @@
 return {
+  { import = "lazyvim.plugins.extras.editor.leap" },
   {
     "ggandor/leap-spooky.nvim",
     dependencies = { "leap.nvim" },
@@ -26,7 +27,7 @@ return {
         -- if the unnamed register is in use.
         -- paste_on_remote_yank = false,
         paste_on_remote_yank = true,
-        extra_text_objects = { "iq", "aq", "if", "af", "ii", "ai" },
+        extra_text_objects = { "iq", "aq", "if", "af", "ii", "aa" },
       })
 
       -- Configure leap here since leap opts don't work
@@ -36,7 +37,7 @@ return {
         "([{",
         ")]}",
         "'\"`",
-        "1!",
+        "1p Backward to!",
         "2@",
         "3#",
         "4$",

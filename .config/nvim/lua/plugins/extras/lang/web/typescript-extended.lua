@@ -176,22 +176,21 @@ return {
           options = {
             persist_project_selection = true,
             enable_dynamic_test_discovery = true,
-            get_playwright_binary = function()
-              return "/users/aaron/code/venv/bin/playwright"
-            end,
+            -- get_playwright_binary = function()
+            --   return "/users/aaron/code/venv/bin/playwright"
+            -- end,
             filter_dir = function(name, rel_path, dir)
               -- Test is reserved for Vitest
               return name == "tests"
             end,
-            get_playwright_config = function()
-              return vim.loop.cwd() .. "/playwright.config.ts"
-            end,
+            -- get_playwright_config = function()
+            --   return vim.loop.cwd() .. "/playwright.config.ts"
+            -- end,
           },
         }),
       })
       opts.consumers = opts.consumers or {}
       vim.list_extend(opts.consumers, {
-        -- add to your list of consumers
         playwright = require("neotest-playwright.consumers").consumers,
       })
     end,
@@ -209,6 +208,7 @@ return {
     optional = true,
     ensure_installed = {
       "react",
+      "javascript",
       "typescript",
     },
   },

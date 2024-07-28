@@ -50,4 +50,24 @@ M.fzf_zoxide = function()
   fzf_lua.fzf_exec(sorted_results, opts)
 end
 
+function M.fzf_zoxide2()
+  local cwd = vim.fn.getcwd()
+  local cb = function(result)
+    local lines = {}
+    for s in result:gmatch("[^\r\n]+") do
+      table.insert(lines, s)
+    end
+    vim.api.nvim_echo({ { vim.inspect(lines), "Normal" } }, false, {})
+  end
+  vim.fn.jobstart({ "zoxide", "query", "-ls" }, {
+    cwd = cwd,
+    on_stdout = function(chan_id, data, name)
+      -- print(vim.inspect(data))
+      -- table.insert(parts, data)
+      -- print(parts)
+      cb(data)
+    end,
+  })
+end
+
 return M

@@ -12,57 +12,14 @@ return {
         },
       },
     },
-    --   -- stylua: ignore
+    -- stylua: ignore
     keys = {
-      {
-        "<F5>",
-        function()
-          require("dap").continue()
-        end,
-        desc = "Debug: Continue",
-      },
-      {
-        "<F6>",
-        function()
-          require("dap").step_over()
-        end,
-        desc = "Debug: Step over",
-      },
-      {
-        "<F7>",
-        function()
-          require("dap").step_into()
-        end,
-        desc = "Debug: Step into",
-      },
-      {
-        "<F8>",
-        function()
-          require("dap").step_out()
-        end,
-        desc = "Debug: Step out",
-      },
-      {
-        "<F9>",
-        function()
-          require("dap").toggle_breakpoint()
-        end,
-        desc = "Debug: Toggle breakpoint",
-      },
-      {
-        "<F10>",
-        function()
-          require("dap").set_breakpoint(vim.fn.input("Breakpoint condition: "))
-        end,
-        desc = "Breakpoint Condition",
-      },
-      {
-        "<leader>dx",
-        function()
-          require("dap.ui.widgets").scopes()
-        end,
-        desc = "Scopes",
-      },
+      { "<F5>", function() require("dap").continue() end, desc = "Debug: Continue" },
+      { "<F10>", function() require("dap").step_over() end, desc = "Debug: Step over" },
+      { "<F11>", function() require("dap").step_into() end, desc = "Debug: Step into" },
+      { "<F12>", function() require("dap").step_out() end, desc = "Debug: Step out" },
+      { "<F2>", function() require("dap").toggle_breakpoint() end, desc = "Debug: Toggle breakpoint" },
+      { "<S-F2>", function() require("dap").set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, desc = "Breakpoint Condition" },
     },
   },
   {

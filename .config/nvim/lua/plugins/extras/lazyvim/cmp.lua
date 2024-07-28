@@ -19,7 +19,7 @@ return {
         nvim_lsp = "(LSP)",
         nvim_lua = "(Lua)",
         cmp_yanky = "(Yanky)",
-        luasnip = "(Snippet)",
+        snippet = "(Snippet)",
         buffer = "(Buffer)",
         path = "(Path)",
       }
@@ -27,7 +27,7 @@ return {
         buffer = 1,
         path = 1,
         nvim_lsp = 0,
-        luasnip = 1,
+        -- nvim_lua = 1,
       }
       compare.lsp_scores = function(entry1, entry2)
         local diff

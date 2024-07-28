@@ -46,7 +46,7 @@ g.lsp_goto_source = "fzf" -- glance
 g.lazyvim_ruby_lsp = "ruby_lsp"
 g.lazyvim_ruby_formatter = "rubocop"
 g.ruby_lsp_references_provider = "solargraph"
-
+g.lazyvim_prettier_needs_config = true
 -------------------------------------------------
 
 -- vim.env.XDG_CACHE_HOME = vim.env.XDG_CACHE_HOME or vim.env.HOME .. "/.cache"

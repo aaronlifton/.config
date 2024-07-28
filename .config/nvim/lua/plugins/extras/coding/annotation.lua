@@ -2,16 +2,41 @@ return {
   { import = "lazyvim.plugins.extras.coding.neogen" },
   {
     "danymat/neogen",
-    opts = {
-      snippet_engine = "nvim",
+    keys = {
+      {
+        "<leader>cnt",
+        function()
+          require("neogen").generate({ type = "type" })
+        end,
+        desc = "Annotate Type",
+      },
+      {
+        "<leader>cnf",
+        function()
+          require("neogen").generate({ type = "func" })
+        end,
+        desc = "Annotate Function",
+      },
+      {
+        "<leader>cN",
+        function()
+          require("neogen").generate()
+        end,
+        desc = "Generate Annotations (Neogen)",
+      },
     },
-    -- stylua: ignore
-    -- keys = {
-    --   { "<leader>ad", function() require("neogen").generate() end, desc = "Default Annotation" },
-    --   { "<leader>aC", function() require("neogen").generate({ type = "class" }) end, desc = "Class" },
-    --   { "<leader>af", function() require("neogen").generate({ type = "func" }) end, desc = "Function" },
-    --   { "<leader>at", function() require("neogen").generate({ type = "type" }) end, desc = "Type" },
-    --   { "<leader>aF", function() require("neogen").generate({ type = "file" }) end, desc = "File" },
-    -- },
+  },
+  {
+    "folke/which-key.nvim",
+    opts = {
+      spec = {
+        mode = "n",
+        {
+          "<leader>cn",
+          group = "Annotate",
+          icon = { icon = LazyVim.config.icons.kinds["TypeParameter"], color = "orange" },
+        },
+      },
+    },
   },
 }

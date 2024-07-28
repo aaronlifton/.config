@@ -1,8 +1,10 @@
 return {
   {
     "nvim-pack/nvim-spectre",
+    build = false,
     cmd = "Spectre",
     opts = {
+      open_cmd = "noswapfile vnew",
       default = {
         find = {
           cmd = "rg",
@@ -11,6 +13,7 @@ return {
           cmd = "sd",
         },
       },
+      use_trouble_qf = true,
     },
     -- stylua: ignore
     keys = {
@@ -23,9 +26,12 @@ return {
     "folke/which-key.nvim",
     opts = {
       spec = {
-        mode = "n",
-        { "<leader>sr", group = "replace" },
+        { "<leader>sr", group = "replace", icon = " " },
       },
     },
+  },
+  {
+    "MagicDuck/grug-far.nvim",
+    enabled = false,
   },
 }

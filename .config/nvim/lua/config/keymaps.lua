@@ -351,6 +351,9 @@ map("n", "<leader>uA", function()
   require("util.ai").toggle(true)
 end, { desc = "ChatGPT" })
 
+-- Spelling
+-- map("n", "<leader>!", "zg", { desc = "Add Word to Dictionary" })
+-- map("n", "<leader>@", "zug", { desc = "Remove Word from Dictionary" })
 map("n", "zV", function()
   require("util.spell_dictionary").add_to_vale_dictionary()
 end, { desc = "Add to Vale dictionary" })

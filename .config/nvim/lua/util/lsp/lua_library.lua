@@ -99,7 +99,6 @@ return {
   -- "/Users/aaron/.local/share/nvim/lazy/nvim-treesitter-textobjects",
   -- "/Users/aaron/.local/share/nvim/lazy/nvim-ts-autotag",
   -- "/Users/aaron/.local/share/nvim/lazy/nvim-ts-context-commentstring",
-  -- "/Users/aaron/.local/share/nvim/lazy/nvim-web-devicons",
   -- "/Users/aaron/.local/share/nvim/lazy/persistence.nvim",
   -- "/Users/aaron/.local/share/nvim/lazy/playground",
   -- "/Users/aaron/.local/share/nvim/lazy/playground/after",

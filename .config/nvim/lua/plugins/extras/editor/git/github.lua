@@ -2,6 +2,7 @@ local prefix = "<leader>G"
 
 return {
   { import = "lazyvim.plugins.extras.util.octo" },
+  -- { import = "plugins.extras.lang.git-extended" },
   {
     "williamboman/mason.nvim",
     opts = function(_, opts)
@@ -18,32 +19,44 @@ return {
       { prefix .. "rc", "<cmd>OpenInGHFileLines<CR>", desc = "Open current line in web", mode = { "n", "x", "v" } },
     },
   },
+  -- {
+  --   "Rawnly/gist.nvim",
+  --   cmd = { "GistCreate", "GistCreateFromFile", "GistsList" },
+  --   dependencies = {
+  --     "samjwill/nvim-unception",
+  --     init = function()
+  --       vim.g.unception_block_while_host_edits = true
+  --     end,
+  --   },
+  --   opts = {},
+  --   keys = {
+  --     { prefix .. "gc", "<cmd>GistCreate<CR>", desc = "Create a Gist" },
+  --     { prefix .. "gf", "<cmd>GistCreateFromFile<CR>", desc = "Create a Gist from File" },
+  --     { prefix .. "gl", "<cmd>GistsList<CR>", desc = "List Gists" },
+  --   },
+  -- },
   {
     "folke/which-key.nvim",
     opts = {
       spec = {
         mode = "n",
-        { "<leader>G", group = " github" },
-        { "<leader>GR", group = "review" },
-        { "<leader>Ga", group = "assignee/reviewer" },
-        { "<leader>Gc", group = "comments" },
-        { "<leader>Ge", group = "reaction" },
-        { "<leader>Gi", group = "issues" },
-        { "<leader>Gl", group = "label" },
-        { "<leader>Gp", group = "pull requests" },
-        { "<leader>Gpm", group = "merge current PR" },
-        { "<leader>Gr", group = "repo" },
-        { "<leader>Gt", group = "threads" },
+        { prefix, group = "github", icon = " " },
+        { prefix .. "c", group = "comments" },
+        { prefix .. "t", group = "threads" },
+        { prefix .. "i", group = "issues" },
+        { prefix .. "p", group = "pull requests" },
+        { prefix .. "pm", group = "merge current PR" },
+        { prefix .. "r", group = "repo" },
+        { prefix .. "a", group = "assignee/reviewer" },
+        { prefix .. "l", group = "label" },
+        { prefix .. "e", group = "reaction" },
+        { prefix .. "R", group = "review" },
+        -- { prefix .. "g", group = "gist" },
       },
     },
   },
   {
     "pwntester/octo.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-telescope/telescope.nvim",
-      "nvim-tree/nvim-web-devicons",
-    },
     cmd = { "Octo" },
     opts = {
       use_diagnostic_signs = true,

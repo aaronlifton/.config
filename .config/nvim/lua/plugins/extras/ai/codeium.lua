@@ -1,4 +1,4 @@
-local codeium_ghost_text = true
+local codeium_ghost_text = false
 return {
   { import = "lazyvim.plugins.extras.coding.codeium", cond = not codeium_ghost_text },
   -- -- For ghost text

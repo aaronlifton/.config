@@ -38,10 +38,12 @@ return {
   {
     "stevearc/conform.nvim",
     optional = true,
-    opts = function(_, opts)
-      opts.formatters_by_ft["markdown"] = { "dprint", "markdownlint-cli2", "markdown-toc" }
-      opts.formatters_by_ft["markdown.mdx"] = { "dprint", "markdownlint-cli2", "markdown-toc" }
-      opts.formatters_by_ft["mdx"] = vim.list_slice(opts.formatters_by_ft["markdown.mdx"])
-    end,
+    opts = {
+      formatters_by_ft = {
+        ["markdown"] = { "dprint", "markdownlint-cli2", "markdown-toc" },
+        ["markdown.mdx"] = { "dprint", "markdownlint-cli2", "markdown-toc" },
+        ["mdx"] = { "dprint", "markdownlint-cli2", "markdown-toc" },
+      },
+    },
   },
 }
