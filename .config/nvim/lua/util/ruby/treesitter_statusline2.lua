@@ -1,5 +1,4 @@
---- treesitter statusline
-vim.b.treesitter_statusline_options = {
+return {
   type_patterns = { "class", "module" },
   separator = "",
   transform_fn = function(value, node)

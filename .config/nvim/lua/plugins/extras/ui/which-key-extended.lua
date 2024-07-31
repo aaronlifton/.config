@@ -28,6 +28,7 @@ return {
       { "<leader>l", group = "lazy" },
       { "<leader>cI", group = "AI Controls" },
       { "<leader>L", group = "Notepads", icon = { icon = "󰓩 ", color = "green" } },
+      -- { "<leader>cc", group = "Copy path", icon = { icon = "󰓩 " } },
       -- ---LazyVim
       -- { "<leader><tab>", group = "tabs" },
       -- { "<leader>b", group = "buffer" },

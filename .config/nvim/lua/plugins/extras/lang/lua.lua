@@ -3,42 +3,59 @@ return {
     "sam4llis/nvim-lua-gf",
   },
   {
+    "folke/lazydev.nvim",
+    optional = true,
+    opts = function(_, opts)
+      opts.library = vim.tbl_extend("keep", opts.library, {
+        -- "overseer.nvim",
+        -- "telescope.nvim",
+        -- "conform.nvim",
+        -- "copilot.lua",
+        -- "lualine.nvim",
+        -- "mason.nvim",
+        -- "mini.ai",
+        -- "model.nvim",
+        -- "noice.nvim",
+        -- "mason-lspconfig.nvim",
+        -- "lualine.nvim",
+        -- "mason.nvim",
+        { path = "LazyVim", words = { "LazyVim", "LazyKeysSpec" } },
+        { path = "fzf-lua", words = { "fzf" } },
+        { path = "nvim-lspconfig", words = { "lsp" } },
+        { path = "lazydev.nvim", words = { "lazydev" } },
+        { path = "neotest", words = { "neotest" } },
+        { path = "nvim-dap-ui", words = { "dap" } },
+        { path = "fzf-lua", words = { "fzf" } },
+        { path = "codeium.vim", words = { "codeium" } },
+        { path = "conform.nvim", words = { "conform" } },
+        { path = "copilot.lua", words = { "copilot" } },
+        { path = "mini.ai", words = { "mini%.ai" } },
+        { path = "model.nvim", words = { "model" } },
+        { path = "noice.nvim", words = { "noice" } },
+        { path = "nvim-cmp", words = { "cmp" } },
+        { path = "nvim-treesitter", words = { "TSNode", "TS%w" } },
+        { path = "overseer.nvim", words = { "overseer" } },
+        { path = "telescope.nvim", words = { "telescope" } },
+      })
+
+      return opts
+    end,
+  },
+  {
     "neovim/nvim-lspconfig",
-    dependencies = {
-      {
-        "folke/lazydev.nvim",
-        opts = {
-          ---@type lazydev.Library.spec[]
-          library = {
-            "overseer.nvim",
-            "telescope.nvim",
-            "fzf-lua",
-            "conform.nvim",
-            "copilot.lua",
-            "lualine.nvim",
-            "mason.nvim",
-            "mini.ai",
-            "model.nvim",
-            "noice.nvim",
-            "nvim-lspconfig",
-            "mason-lspconfig.nvim",
-            "lualine.nvim",
-            "mason.nvim",
-            { path = "lazydev.nvim", words = { "lazydev" } },
-            { path = "neotest", words = { "neotest" } },
-            { path = "nvim-dap-ui", words = { "dap" } },
-            { path = "fzf-lua", words = { "fzf" } },
-            { path = "codeium.vim", words = { "codeium" } },
-            { path = "conform.nvim", words = { "conform" } },
-            { path = "copilot.lua", words = { "copilot" } },
-            { path = "mini.ai", words = { "mini.ai" } },
-            { path = "model.nvim", words = { "model" } },
-            { path = "noice.nvim", words = { "noice" } },
-            { path = "nvim-cmp", words = { "cmp" } },
-            { path = "nvim-treesitter", words = { "TSNode", "TS%w" } },
-            { path = "nvim-treesitter", words = { "TSNode" } },
-            { path = "overseer.nvim", words = { "overseer" } },
-            { path = "telescope.nvim", words = { "telescope" } },
+    optional = true,
+    opts = {
+      servers = {
+        lua_ls = {
+          settings = {
+            Lua = {
+              hint = {
+                setType = true,
+              },
+              codeLens = {
+                enable = false,
+              },
+            },
           },
         },
       },

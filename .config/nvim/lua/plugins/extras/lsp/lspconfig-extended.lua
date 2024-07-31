@@ -1,7 +1,4 @@
-local lsp_util = require("util.lsp")
-
 return {
-  { "folke/lazydev.nvim", before = "neovim/nvim-lspconfig" },
   {
     "neovim/nvim-lspconfig",
     init = function()
@@ -21,10 +18,10 @@ return {
         function()
           local workspace_folders = vim.lsp.buf.list_workspace_folders()
           local printed = vim.inspect(workspace_folders)
-          local with_newlines = printed:gsub(",", "\n")
+          local with_newlines = printed:gsub(" ", "\n"):gsub(",", "\n")
           vim.api.nvim_echo(
             {
-              { "Workspace folders:", "Normal" },
+              { "Workspace folders:\n", "Normal" },
               { with_newlines, "Comment" },
             },
             true,
@@ -56,9 +53,7 @@ return {
         enabled = true,
       },
       codelens = {
-        -- only enabled for go, ts, js and lua.
-        -- seems to conflict with inlay hints for go.
-        enabled = false,
+        enabled = true,
       },
       servers = {
         texlab = {
@@ -74,9 +69,8 @@ return {
     opts = {
       spec = {
         mode = "n",
-        { "<leader>ci", group = "Lsp Info" },
-        { "<leader>cl", group = "Lsp Controls" },
-        -- { "<leader>cl", group = "Lsp Controls", icon = { icon = " ", color = "orange" } },
+        { "<leader>ci", group = "Lsp Info", icon = { icon = " ", color = "orange" } }, -- 
+        { "<leader>cl", group = "Lsp Controls", icon = " " },
       },
     },
   },

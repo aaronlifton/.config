@@ -1,6 +1,21 @@
 return {
   {
     "nvim-treesitter/nvim-treesitter",
+    dependencies = {
+      {
+        "andymass/vim-matchup",
+        enabled = false,
+        init = function()
+          vim.g.loaded_matchit = 1
+          vim.g.loaded_matchparen = 1
+          vim.g.matchup_matchparen_enabled = 0
+          -- disable middle-word (return) matching
+          vim.g.matchup_delim_noskips = 1
+          -- don't enable on startup
+          vim.g.matchup_delim_start_plaintext = 0
+        end,
+      },
+    },
     opts = {
       textobjects = {
         -- swap = {
@@ -27,25 +42,28 @@ return {
           goto_next_start = {
             ["]r"] = "@rspec.context",
             ["]i"] = "@rspec.it",
+            ["]O"] = "@rspec.describe",
             -- ["]]"] = "@structure.outer",
           },
           goto_next_end = {
-            ["[I"] = "@rspec.it",
+            ["]I"] = "@rspec.it",
             ["]R"] = "@rspec.context",
             -- ["]["] = "@structure.outer",
           },
           goto_previous_start = {
             ["[r"] = "@rspec.context",
             ["[i"] = "@rspec.it",
+            ["[O"] = "@rspec.describe",
             -- ["[["] = "@structure.outer",
           },
           goto_previous_end = {
             ["[R"] = "@rspec.context",
-            ["]I"] = "@rspec.it",
+            ["[I"] = "@rspec.it",
             -- ["[]"] = "@structure.outer",
           },
         },
       },
+      matchup = { enable = true },
       -- textsubjects = {
       --   enable = true,
       --   prev_selection = ",",

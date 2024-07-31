@@ -3,21 +3,16 @@ local theme = vim.g.colors_name
 
 M.setup = function()
   if theme == "tokyonight-moon" then
-    local c = pcall(require, theme .. ".colors")
-      or {
-        default = {
-          fg = "#c0caf5",
-          bg = "#24283b",
-          bg90 = "#1f2335",
-          bg80 = "#292e42",
-          bg70 = "#393c63",
-          bg60 = "#737aa2",
-          bg50 = "#9aa2f7",
-          bg40 = "#b4f9f8",
-          blue = "#7aa2f7",
-        },
-      }
-    vim.api.nvim_set_hl(0, "ColorColumn", { bg = c.default.bg })
+    local c = require("tokyonight.colors").styles["moon"]
+    vim.api.nvim_set_hl(0, "ColorColumn", { bg = c.bg })
+    -- Lightspeed-style Leap highlighting https://github.com/ggandor/leap.nvim?tab=readme-ov-file#extending-leap
+    -- vim.api.nvim_set_hl(0, "LeapBackdrop", { link = "Comment" }) -- or some grey
+    -- vim.api.nvim_set_hl(0, "LeapMatch", {
+    --   -- For light themes, set to 'black' or similar.
+    --   fg = "white",
+    --   bold = true,
+    --   nocombine = true,
+    -- })
   elseif theme == "cyberdream" then
     local U = require("util.colors")
     local C = require("cyberdream.colors")

@@ -46,5 +46,9 @@
   "import module": {
     "body": "local ${1:name} = require(\"${2:module}.${1:name}\")",
     "prefix": "import module"
+  },
+  "nvim_echo": {
+    "body": "vim.api.nvim_echo({ { ${1:string}, \"Normal\" } }, true, {})",
+    "prefix": "echo"
   }
 }

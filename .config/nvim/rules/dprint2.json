@@ -20,7 +20,6 @@
   "prettier": {
     "tabWidth": 2,
     "printWidth": 80,
-    "proseWrap": "always",
-    "associations": ["*.json"]
+    "proseWrap": "always"
   }
 }

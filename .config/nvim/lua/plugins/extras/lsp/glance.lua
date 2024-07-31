@@ -1,5 +1,13 @@
 return {
   "dnlhc/glance.nvim",
+  cond = vim.g.lsp_goto_source == "glance",
+  dependences = {
+    -- Ensure the lsp mappings are set before they are disabled below
+    {
+      "ibhagwan/fzf-lua",
+      optional = true,
+    },
+  },
   init = function()
     local keys = require("lazyvim.plugins.lsp.keymaps").get()
 

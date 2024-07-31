@@ -79,8 +79,8 @@ M.add_ruby_deps_command = function(client, bufnr)
       end
 
       vim.fn.setqflist(qf_list)
-      -- vim.cmd("copen")
-      require("trouble").open({ mode = "quickfix", focus = false })
+      vim.cmd("copen")
+      -- require("trouble").open({ mode = "quickfix", focus = false })
     end, bufnr)
   end, {
     nargs = "?",

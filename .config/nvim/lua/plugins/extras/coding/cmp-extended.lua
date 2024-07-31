@@ -1,3 +1,12 @@
+local function set_priority(sources, target_name, new_priority)
+  for _, source in ipairs(sources) do
+    if source.name == target_name then
+      source.priority = new_priority
+      break
+    end
+  end
+end
+
 return {
   {
     "hrsh7th/nvim-cmp",
@@ -99,6 +108,8 @@ return {
         new_item.dup = duplicates[entry.source.name] or 0
         return old_format(entry, new_item)
       end
+
+      set_priority(opts.sources, "codeium", 101)
 
       -- Index 4 is nvim_lsp
       -- table.insert(opts.sources, 2, { name = "codeium", priority = 100, group_index = 1 })

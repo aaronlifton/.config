@@ -10,14 +10,14 @@ return {
     -- auto_clean_after_session_restore = true,
     close_if_last_window = true,
     commands = {
-      parent_or_close = function(state)
-        local node = state.tree:get_node()
-        if (node.type == "directory" or node:has_children()) and node:is_expanded() then
-          state.commands.toggle_node(state)
-        else
-          require("neo-tree.ui.renderer").focus_node(state, node:get_parent_id())
-        end
-      end,
+      -- parent_or_close = function(state)
+      --   local node = state.tree:get_node()
+      --   if (node.type == "directory" or node:has_children()) and node:is_expanded() then
+      --     state.commands.toggle_node(state)
+      --   else
+      --     require("neo-tree.ui.renderer").focus_node(state, node:get_parent_id())
+      --   end
+      -- end,
       -- https://github.com/AstroNvim/AstroNvim/blob/34208f8fed7521380930cea3ec4f65f993fe22d2/lua/plugins/neo-tree.lua#L10
       copy_selector = function(state)
         local node = state.tree:get_node()

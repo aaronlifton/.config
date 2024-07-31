@@ -28,10 +28,6 @@ return {
       local MiniExtra = require("mini.extra")
       local custom_textobjects = {
         -- LazyVim uses: a,i,f,c,t,d,e,g,u,U,o
-        j = ai.gen_spec.treesitter({
-          a = { "@jsx_attribute.outer" },
-          i = { "@jsx_attribute.inner" },
-        }),
         C = ai.gen_spec.treesitter({ a = "@comment.outer", i = "@comment.outer" }),
         k = ai.gen_spec.treesitter({
           i = { "@assignment.lhs", "@key.inner" },

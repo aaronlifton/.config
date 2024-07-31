@@ -1,5 +1,6 @@
 return {
   "echasnovski/mini.starter",
+  optional = true,
   opts = function(_, opts)
     local logo = [[
                                                                    

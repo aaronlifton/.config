@@ -35,7 +35,7 @@ return {
       vim.api.nvim_create_autocmd("User", {
         pattern = "MiniFilesBufferCreate",
         callback = function(args)
-          local mini_utils = require("plugins.mini.utils")
+          local mini_utils = require("util.mini")
           local leap_util = require("util.leap")
           local keymap = vim.keymap
           local buf_id = args.data.buf_id

@@ -2,7 +2,9 @@ vim.keymap.set({ "n", "x" }, "]#", [[/^#\+ .*<CR>]], { desc = "Next Heading", bu
 vim.keymap.set({ "n", "x" }, "[#", [[?^#\+ .*<CR>]], { desc = "Prev Heading", buffer = true })
 
 vim.diagnostic.disable()
-vim.opt_local.spell = false
+vim.schedule_wrap(function()
+  vim.opt_local.spell = false
+end)
 
 local spec_pair = require("mini.ai").gen_spec.pair
 vim.b.miniai_config = {

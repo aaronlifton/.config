@@ -60,6 +60,7 @@ end
 return {
   {
     "echasnovski/mini.diff",
+    optional = true,
     -- Examples:
     -- - `vip` followed by `gh` / `gH` applies/resets hunks inside current paragraph.
     -- - vifgh stages hunk inside function, vifgH resets hunk inside function.

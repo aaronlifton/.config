@@ -1,5 +1,10 @@
-local use_latest = true
+if LazyVim.has("mini.animate") then
+  return {
+    import = "lazyvim.plugins.extras.ui.mini-animate",
+  }
+end
 
+local use_latest = true
 if use_latest then
   return {
     "declancm/cinnamon.nvim",

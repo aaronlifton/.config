@@ -184,15 +184,15 @@ end
 
 map("n", "zR", spell_reload, { noremap = true, silent = true })
 
-if LazyVim.has("baleia.nvim") then
-  map("n", "<leader>buc", function()
-    local bufname = vim.api.nvim_buf_get_name(vim.fn.bufnr())
-    if bufname == "LazyTerm" then
-      return
-    end
-    require("baleia").automatically(vim.fn.bufnr())
-  end)
-end
+-- if LazyVim.has("baleia.nvim") then
+--   map("n", "<leader>buc", function()
+--     local bufname = vim.api.nvim_buf_get_name(vim.fn.bufnr())
+--     if bufname == "LazyTerm" then
+--       return
+--     end
+--     require("baleia").automatically(vim.fn.bufnr())
+--   end)
+-- end
 
 function GetDiags()
   local diagnostics = vim.diagnostic.get(0)
@@ -296,13 +296,18 @@ require("config.keymaps.window")
 map("n", "<M-->", "<cmd>ChatGPT<CR>", { desc = "ChatGPT" })
 
 -- map("n", "<leader>ccp", ":let @+=expand('%:p')<cr>", { desc = "Copy path to clipboard" })
-map("n", "<leader>ccp", function()
+map("n", "<leader>cp", function()
   -- ":let @+=expand('%:p')<cr>"
   local current_path = vim.fn.expand("%:p")
   vim.api.nvim_echo({ { current_path, "Normal" } }, false, {})
   vim.cmd("let @+=expand('%:p')")
   -- vim.api.nvim_call_function('setreg', {'+', "test"})
 end, { desc = "Copy path to clipboard" })
+map("n", "<leader>cP", function()
+  local abs_path = vim.fn.expand("%:p")
+  local rel_path = vim.fn.fnamemodify(abs_path, ":~:.")
+  vim.api.nvim_call_function("setreg", { "+", rel_path })
+end, { desc = "Copy relative path to clipboard" })
 
 map("n", "<leader>cq", function()
   vim.diagnostic.open_float(nil, { source = true })
@@ -313,6 +318,16 @@ map("n", "<leader>Ln", function()
 end, { desc = "Toggle Notepad" })
 
 map("n", "<leader>gW", LazyVim.lazygit.browse, { desc = "Git Browse" })
+map("n", "<leader>gF", function()
+  local git_path = vim.api.nvim_buf_get_name(0)
+  LazyVim.lazygit.open({
+    args = { "-f", git_path },
+    size = {
+      height = 0.85,
+      width = 0.85,
+    },
+  })
+end, { desc = "File History (LazyGit)" })
 
 -- Float term
 map("n", "<C-S-/>", function()
@@ -342,10 +357,26 @@ map("t", "<C-S-/>", "<cmd>close<cr>", { desc = "Hide Terminal" })
 -- map("t", "<C-S-'>", "<cmd>close<cr>", { desc = "Hide Terminal" })
 --
 
-local leap_fns = require("config.keymaps.leap")
+local leap_fns = require("util.leap.treesitter")
 map("n", "<leader>j", leap_fns.leap_ts_parents, { desc = "Leap AST Parents" })
--- map("n", "<leader>glw", leap_fns.leap_spooky_viw, { desc = "Leap viw (Spooky)" })
--- map("n", "<leader>gld", leap_fns.leap_spooky_diw, { desc = "Leap diw (Spooky)" })
+
+local copy_path = require("util.treesitter.copy_path")
+vim.api.nvim_create_autocmd({ "FileType" }, {
+  pattern = { "json" },
+  callback = function(args)
+    vim.keymap.set("n", "<leader>ccj", function()
+      copy_path.copy_json_path({ register = "*" })
+    end, { desc = "Copy JSON Path", buffer = args.buf })
+  end,
+})
+-- vim.api.nvim_create_autocmd({ "FileType" }, {
+--   pattern = { "javascript", "typescript", "javascriptreact", "typescriptreact" },
+--   callback = function(args)
+--     vim.keymap.set("n", "<leader>ccj", function()
+--       copy_path.copy_javascript_path({ register = "*" })
+--     end, { buffer = args.buf })
+--   end,
+-- })
 
 map("n", "<leader>uA", function()
   require("util.ai").toggle(true)
@@ -447,10 +478,10 @@ map("n", "<leader>xC", function()
   vim.fn.setqflist({})
 end, { desc = "Clear Quickfix" })
 
-map("n", "[n", function()
+map("n", "[T", function()
   require("neotest").jump.prev({ status = "failed" })
 end, { silent = true, desc = "Prev Test Failure" })
-map("n", "]n", function()
+map("n", "]T", function()
   require("neotest").jump.next({ status = "failed" })
 end, { silent = true, desc = "Next Test Failure" })
 --------------------------------------------------------------------------------

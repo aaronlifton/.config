@@ -9,13 +9,46 @@ end
 -- for idx, char in ipairs(chars) do 
 --   table.insert(keys, { "<leader>m" .. char, "<cmd>Grapple select index=" .. idx .. "<CR>", desc = "File " .. string.upper(char) })
 -- end
-
 table.insert(keys, { "<leader>ma", "<cmd>Grapple toggle<CR>", desc = "Toggle Mark" })
+
 table.insert(keys, { "<leader>M", "<cmd>Grapple toggle_tags<CR>", desc = "Marks" })
-table.insert(keys, { "<leader>mt", "<cmd>Telescope grapple tags<CR>", desc = "Marks (Telescope)" })
+-- table.insert(keys, { "<leader>mt", "<cmd>Telescope grapple tags<CR>", desc = "Marks (Telescope)" })
 table.insert(keys, { "<leader>mx", "<cmd>Grapple reset<CR>", desc = "Clear all Marks" })
 table.insert(keys, { "<leader>ms", "<cmd>Grapple toggle_scopes<CR>", desc = "Scopes" })
 table.insert(keys, { "<leader>mS", "<cmd>Grapple toggle_loaded<CR>", desc = "Loaded Scopes" })
+table.insert(keys, {
+  "<leader>mt",
+  function()
+    local tags = require("grapple").tags()
+    local results = {}
+    local paths = {}
+    for i, tag in ipairs(tags) do
+        ---@class grapple.telescope.result
+        local result = {
+            i,
+            tag.path,
+            (tag.cursor or { 1, 0 })[1],
+            (tag.cursor or { 1, 0 })[2],
+        }
+
+        table.insert(results, result)
+        table.insert(paths, tag.path)
+    end
+
+    local fzf_lua = require("fzf-lua")
+    local opts = {
+      fzf_opts = {},
+      fzf_colors = true,
+      actions = {
+        ["default"] = function(selected)
+          vim.cmd("e " .. selected[1])
+        end,
+      },
+    }
+    fzf_lua.fzf_exec(paths, opts)
+  end,
+  desc = "Marks (Fzf)",
+})
 
 -- Harpoon style
 table.insert(keys, { "<D-H>", "<cmd>Grapple select index=1<cr>", desc = "File 1" })
@@ -96,7 +129,8 @@ return {
     opts = {
       spec = {
         mode = "n",
-        { "<leader>m", group = "󰛢 marks" },
+        { "<leader>m", group = "marks", icon = { icon = "󰛢", color = "white"} },
+        { "<leader>M", icon = { icon = "󰛢", color = "white"} },
       },
     },
   },

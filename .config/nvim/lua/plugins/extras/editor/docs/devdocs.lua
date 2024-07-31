@@ -1,18 +1,4 @@
 return {
-  -- {
-  --   name = "telescope_zeal",
-  --   url = "https://gitlab.com/ivan-cukic/nvim-telescope-zeal-cli.git",
-  --   opts = {
-  --     documentation_sets = {
-  --       cpp = { title = "C++ Reference" },
-  --       qt5 = { title = "Qt 5 Documentation" },
-  --       qt6 = { title = "Qt 6 Documentation" },
-  --     },
-  --   },
-  --   config = function(_, opts)
-  --     require("telescope_zeal").setup(opts)
-  --   end,
-  -- },
   {
     "luckasRanarison/nvim-devdocs",
     cmd = {
@@ -54,6 +40,7 @@ return {
         "rails-7.1",
         "ruby-3.3",
         "javascript",
+        "typescript",
         "lua-5.4",
         "fish-3.6",
         "git",

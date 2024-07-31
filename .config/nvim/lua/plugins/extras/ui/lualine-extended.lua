@@ -42,19 +42,7 @@ return {
 
     table.insert(opts.sections.lualine_x, 2, lsp)
     table.insert(opts.sections.lualine_x, 2, formatter)
-    -- table.insert(opts.sections.lualine_x, 2, linter)
-    table.insert(opts.sections.lualine_x, 2, {
-      linter,
-      on_click = function(num_clicks, mouse_button, mods)
-        local data = { num_clicks = num_clicks, mouse_button = mouse_button, mods = mods }
-        vim.api.nvim_echo({ { "mods: " .. vim.inspect(data) } }, true, {})
-        -- local linters = require("lint").linters_by_ft[vim.bo.filetype]
-        --
-        -- if num_clicks == 1 and mouse_button == 1 and #mods == 0 then
-        --   vim.api.nvim_echo({ { "Linters: " .. table.concat(linters, ", "), "Normal" } }, true, {})
-        -- end
-      end,
-    })
+    table.insert(opts.sections.lualine_x, 2, linter)
     opts.sections.lualine_y = { "progress" }
     opts.sections.lualine_z = {
       { "location", separator = "" },

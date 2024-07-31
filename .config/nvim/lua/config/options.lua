@@ -5,14 +5,13 @@
 local o = vim.opt
 local g = vim.g
 local b = vim.b
+local homepath = os.getenv("HOME")
 
 ---Get the full path to the LazyVim src dir
 ---@return string
 function _G.get_lazyvim_base_dir()
   return "~/.local/share/nvim/lazy/LazyVim"
 end
--- vim.cmd("set spell syntax=off")
--- vim.cmd("set nospell")
 
 o.autoindent = true
 o.breakindent = true
@@ -21,9 +20,9 @@ o.backspace = { "eol", "start", "indent" }
 -- o.breakindent = true
 o.clipboard:append({ "unnamed", "unnamedplus" })
 o.fillchars = { eob = " " }
-o.spellfile = "/Users/$USER/.config/nvim/spell/en.utf-8.add"
+o.spellfile = homepath .. "/.config/nvim/spell/en.utf-8.add"
 o.spelllang = "en_us" -- "en"
-o.sps = "file:/Users/$USER/.config/nvim/spell/sugg,best"
+o.sps = "file:" .. homepath .. "/.config/nvim/spell/sugg,best"
 o.startofline = true
 o.swapfile = false
 o.textwidth = 80

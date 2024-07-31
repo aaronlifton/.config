@@ -1,34 +1,25 @@
 return {
   {
-    "David-Kunz/gen.nvim",
+    "jellydn/gen.nvim",
     opts = {
-      model = "mistral", -- The default model to use.
-      host = "localhost", -- The host running the Ollama service.
-      port = "11434", -- The port on which the Ollama service is listening.
-      quit_map = "q", -- set keymap for close the response window
-      retry_map = "<c-r>", -- set keymap to re-send the current prompt
+      model = "codellama",
+      host = "localhost",
+      port = "11434",
+      display_mode = "split",
+      show_prompt = true,
+      show_model = true,
+      no_auto_close = false,
       init = function(options)
         pcall(io.popen, "ollama serve > /dev/null 2>&1 &")
       end,
-      -- Function to initialize Ollama
       command = function(options)
         local body = { model = options.model, stream = true }
         return "curl --silent --no-buffer -X POST http://"
           .. options.host
           .. ":"
           .. options.port
-          .. "/api/chat -d $body"
+          .. "/api/generate -d $body"
       end,
-      -- The command for the Ollama service. You can use placeholders $prompt, $model and $body (shellescaped).
-      -- This can also be a command string.
-      -- The executed command must return a JSON object with { response, context }
-      -- (context property is optional).
-      -- list_models = '<omitted lua function>', -- Retrieves a list of model names
-      display_mode = "float", -- The display mode. Can be "float" or "split".
-      show_prompt = false, -- Shows the prompt submitted to Ollama.
-      show_model = false, -- Displays which model you are using at the beginning of your chat session.
-      no_auto_close = false, -- Never closes the window automatically.
-      debug = false, -- Prints errors and the command which is run.
     },
     config = function(_, opts)
       local gen = require("gen")
@@ -42,13 +33,31 @@ return {
         extract = "```$filetype\n(.-)```",
       }
     end,
+    keys = {
+      { "<leader>aii", "<cmd>Gen<cr>", mode = { "n", "v" }, desc = "IA (Gen)" },
+      { "<leader>aig", "<cmd>Gen Generate<cr>", mode = { "n" }, desc = "Generate" },
+      { "<leader>aic", "<cmd>Gen Chat<cr>", mode = { "n" }, desc = "Chat" },
+      { "<leader>ais", "<cmd>Gen Summarize<cr>", mode = { "n", "v" }, desc = "Summarize" },
+      { "<leader>aia", "<cmd>Gen Ask<cr>", mode = { "v" }, desc = "Ask" },
+      { "<leader>aiH", "<cmd>Gen Change<cr>", mode = { "v" }, desc = "Change" },
+      { "<leader>aiG", "<cmd>Gen Enhance_Grammar_Spelling<cr>", mode = { "v" }, desc = "Enhance Grammar Spelling" },
+      { "<leader>aiw", "<cmd>Gen Enhance_Wording<cr>", mode = { "v" }, desc = "Enhance Wording" },
+      { "<leader>aiC", "<cmd>Gen Make_Concise<cr>", mode = { "v" }, desc = "Make Concise" },
+      { "<leader>ail", "<cmd>Gen Make_List<cr>", mode = { "v" }, desc = "Make List" },
+      { "<leader>ait", "<cmd>Gen Make_Table<cr>", mode = { "v" }, desc = "Make Table" },
+      { "<leader>air", "<cmd>Gen Review_Code<cr>", mode = { "v" }, desc = "Review Code" },
+      { "<leader>aie", "<cmd>Gen Enhance_Code<cr>", mode = { "v" }, desc = "Enhance Code" },
+      { "<leader>aih", "<cmd>Gen Change_Code<cr>", mode = { "v" }, desc = "Change Code" },
+      { "<leader>aif", "<cmd>Gen Fix_Code<cr>", mode = { "v" }, desc = "Fix Code" },
+      { "<leader>aiE", "<cmd>Gen Elaborate_Text<cr>", mode = { "v" }, desc = "Elaborate Text" },
+    },
   },
   {
     "folke/which-key.nvim",
     opts = {
       spec = {
         mode = { "n", "v" },
-        { "<leader>i", group = "AI (Gen)" },
+        { "<leader>ai", group = "AI (Gen)" },
       },
     },
   },

@@ -40,6 +40,11 @@ return {
           handlers = {
             ["textdocument/publishdiagnostics"] = require("util.lsp").publish_to_ts_error_translator,
           },
+          init_options = {
+            preferences = {
+              disableSuggestions = true,
+            },
+          },
           keys = {
             -- already defined by lazyvim:
             -- <leader>gd require("vtsls").commands.goto_source_definition(0)*
@@ -89,12 +94,12 @@ return {
   },
   {
     "nvim-treesitter/nvim-treesitter",
-    opts = function(_, opts)
-      vim.list_extend(opts.ensure_installed, {
+    opts = {
+      ensure_installed = {
         "javascript",
         "jsdoc",
-      })
-    end,
+      },
+    },
   },
   {
     "dmmulroy/tsc.nvim",
@@ -136,7 +141,7 @@ return {
       opts.adapters = opts.adapters or {}
       vim.list_extend(opts.adapters, {
         require("neotest-jest")({
-          jestCommand = "npm test --", -- "npx jest"
+          jestCommand = "TZ=utc npx jest",
           jestConfigFile = "jest.config.js",
           -- jestConfigFile = function(file)
           --   -- Find the jest config in monorepo projects
@@ -161,16 +166,16 @@ return {
           cwd = function()
             return vim.fn.getcwd()
           end,
-          filter_dir = function(name, rel_path, dir)
-            -- Tests is reserved for Playwright
-            return name ~= "tests" -- and name ~= "node_modules"
-          end,
-          extra_args = {
-            filter_dir = function(name, rel_path, dir)
-              -- Tests is reserved for Playwright
-              return name ~= "tests"
-            end,
-          },
+          -- filter_dir = function(name, rel_path, dir)
+          --   -- Tests is reserved for Playwright
+          --   return name ~= "tests" -- and name ~= "node_modules"
+          -- end,
+          -- extra_args = {
+          --   filter_dir = function(name, rel_path, dir)
+          --     -- Tests is reserved for Playwright
+          --     return name ~= "tests"
+          --   end,
+          -- },
         }),
         require("neotest-playwright").adapter({
           options = {
@@ -179,10 +184,10 @@ return {
             -- get_playwright_binary = function()
             --   return "/users/aaron/code/venv/bin/playwright"
             -- end,
-            filter_dir = function(name, rel_path, dir)
-              -- Test is reserved for Vitest
-              return name == "tests"
-            end,
+            -- filter_dir = function(name, rel_path, dir)
+            --   -- Test is reserved for Vitest
+            --   return name == "tests"
+            -- end,
             -- get_playwright_config = function()
             --   return vim.loop.cwd() .. "/playwright.config.ts"
             -- end,
@@ -214,91 +219,72 @@ return {
   },
   {
     "mfussenegger/nvim-dap",
-    opts = {
-      setup = {
-        vscode_js_debug = function()
-          -- local function get_js_debug()
-          --   local install_path = require("mason-registry").get_package("js-debug-adapter"):get_install_path()
-          --   return install_path .. "/js-debug/src/dapDebugServer.js"
-          -- end
+    optional = true,
+    opts = function(_, opts)
+      -- Lazyvim sets up pwa-node, but modern-neovim sets up additional adapters, so set them up here
+      local dap = require("dap")
+      for _, adapter in ipairs({
+        "pwa-chrome",
+        -- "pwa-msedge",
+        -- "node-terminal",
+        -- "pwa-extensionHost",
+      }) do
+        dap.adapters[adapter] = vim.tbl_deep_extend("force", {}, require("dap").adapters["pwa-node"])
+      end
 
-          -- Lazvim sets up pwa-node, but modern-neovim sets up additional adapters, so set them up here
-          for _, adapter in ipairs({
-            "pwa-chrome",
-            "pwa-msedge",
-            "node-terminal",
-            "pwa-extensionHost",
-          }) do
-            require("dap").adapters[adapter] = vim.tbl_deep_extend("force", {}, require("dap").adapters["pwa-node"])
-          end
-
-          -- Lazyvim already sets up pwa-node for ts and js, but not for Jest, so set that up
-          -- as well as pwa-chrome here
-          for _, language in ipairs({ "typescript", "javascript" }) do
-            require("dap").configurations[language] = {
-              {
-                type = "pwa-node",
-                request = "launch",
-                name = "Debug Jest Tests",
-                -- trace = true, -- include debugger info
-                runtimeExecutable = "node",
-                runtimeArgs = {
-                  "./node_modules/jest/bin/jest.js",
-                  "--runInBand",
-                },
-                rootPath = "${workspaceFolder}",
-                cwd = "${workspaceFolder}",
-                console = "integratedTerminal",
-                internalConsoleOptions = "neverOpen",
-              },
-              {
-                type = "pwa-chrome",
-                name = "Attach - Remote Debugging",
-                request = "attach",
-                program = "${file}",
-                cwd = vim.fn.getcwd(),
-                sourceMaps = true,
-                protocol = "inspector",
-                port = 9222, -- Start Chrome google-chrome --remote-debugging-port=9222
-                webRoot = "${workspaceFolder}",
-              },
-              {
-                type = "pwa-chrome",
-                name = "Launch Chrome",
-                request = "launch",
-                url = "http://localhost:5173", -- This is for Vite. Change it to the framework you use
-                webRoot = "${workspaceFolder}",
-                userDataDir = "${workspaceFolder}/.vscode/vscode-chrome-debug-userdatadir",
-              },
-            }
-          end
-
-          -- Lazyvim already sets up pwa-node for tsreact and jsreact, so set up pwa-chome
-          for _, language in ipairs({ "typescriptreact", "javascriptreact" }) do
-            require("dap").configurations[language] = {
-              {
-                type = "pwa-chrome",
-                name = "Attach - Remote Debugging",
-                request = "attach",
-                program = "${file}",
-                cwd = vim.fn.getcwd(),
-                sourceMaps = true,
-                protocol = "inspector",
-                port = 9222, -- Start Chrome google-chrome --remote-debugging-port=9222
-                webRoot = "${workspaceFolder}",
-              },
-              {
-                type = "pwa-chrome",
-                name = "Launch Chrome",
-                request = "launch",
-                url = "http://localhost:5173", -- This is for Vite. Change it to the framework you use
-                webRoot = "${workspaceFolder}",
-                userDataDir = "${workspaceFolder}/.vscode/vscode-chrome-debug-userdatadir",
-              },
-            }
-          end
-        end,
-      },
-    },
+      -- Setup chrome debugging
+      local js_filetypes = { "typescript", "javascript", "typescriptreact", "javascriptreact" }
+      for _, language in ipairs(js_filetypes) do
+        vim.list_extend(dap.configurations[language], {
+          {
+            type = "pwa-chrome",
+            name = "Attach - Remote Debugging",
+            request = "attach",
+            program = "${file}",
+            cwd = vim.fn.getcwd(),
+            sourceMaps = true,
+            protocol = "inspector",
+            port = 9222, -- Start Chrome google-chrome --remote-debugging-port=9222
+            webRoot = "${workspaceFolder}",
+          },
+          {
+            type = "pwa-chrome",
+            name = "Launch Chrome",
+            request = "launch",
+            url = "http://localhost:5173", -- This is for Vite. Change it to the framework you use
+            webRoot = "${workspaceFolder}",
+            userDataDir = "${workspaceFolder}/.vscode/vscode-chrome-debug-userdatadir",
+          },
+        })
+      end
+      -- -- Set up jest debugging
+      -- for _, language in ipairs({ "typescript", "javascript" }) do
+      --   vim.list_extend(dap.configurations[language], {
+      --     {
+      --       type = "pwa-node",
+      --       request = "launch",
+      --       name = "Debug Jest Tests",
+      --       -- trace = true, -- include debugger info
+      --       runtimeExecutable = "node",
+      --       runtimeArgs = {
+      --         "${workspaceFolder}/node_modules/.bin/jest",
+      --         -- "--runInBand",
+      --       },
+      --       args = {
+      --         "--projects",
+      --         "src/jest.config.rtl.js",
+      --         "${file}",
+      --         "--coverage",
+      --         "false",
+      --       },
+      --       sourceMaps = true,
+      --       rootPath = "${workspaceFolder}",
+      --       cwd = "${workspaceFolder}",
+      --       console = "integratedTerminal",
+      --       internalConsoleOptions = "neverOpen",
+      --     },
+      --   })
+      -- end
+    end,
   },
 }
