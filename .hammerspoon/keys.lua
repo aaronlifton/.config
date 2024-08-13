@@ -1,9 +1,10 @@
 local inspect = require("inspect")
 local window = require("functions/window")
 local layout = require("functions/layout")
+local logger = hs.logger.new("keys.lua", "debug")
 hs.loadSpoon("ClipboardTool")
 
-function isAlmostEqualToCurWinFrame(geo)
+function is_almost_equal_to_current_win_frame(geo)
 	local epsilon = 5
 	local curWin = hs.window.focusedWindow()
 	local curWinFrame = curWin:frame()
@@ -141,3 +142,41 @@ if spoon.ClipboardTool then
 		toggle_clipboard = { hyper, "v" },
 	})
 end
+
+-- Function keys
+-- stylua: ignore start
+local hotkeys = {
+	{ "1", "f1" },  { "2", "f2" },  { "3", "f3" },
+	{ "4", "f4" },  { "5", "f5" },  { "6", "f6" },
+	{ "7", "f7" },  { "8", "f8" },  { "9", "f9" },
+	{ "0", "f10" }, { "-", "f11" }, { "=", "f12" },
+}
+for _, values in ipairs(hotkeys) do
+	hs.hotkey.bind("⌘⇧", values[1], nil, function()
+		hs.eventtap.keyStroke({}, values[2])
+	end)
+end
+-- end
+-- fk_modal = hs.hotkey.modal.new({""}, "", nil)
+-- -- stylua: ignore end
+-- for _, values in ipairs(hotkeys) do
+-- 	fk_modal:bind("⌘⇧", values[1], nil, function()
+-- 		hs.eventtap.keyStroke({}, values[2])
+-- 	end)
+-- end
+-- fk_modal:enter()
+-- function application_watcher(appName, eventType, appObject)
+-- 	logger.d(appName)
+-- 	if eventType == hs.application.watcher.activated then
+-- 		if appName == "Kitty" then
+-- 			fk_modal:enter()
+-- 		end
+-- 	end
+-- 	if eventType == hs.application.watcher.deactivated then
+-- 		if appName == "kitty" then
+-- 			fk_modal.exit()
+-- 		end
+-- 	end
+-- end
+-- local appWatcher = hs.application.watcher.new(application_watcher)
+-- appWatcher:start()
