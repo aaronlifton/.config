@@ -1,3 +1,6 @@
 /session.conf
 /kitty.conf.bak
 .DS_Store
+/venv/
+/venv2/
+*.bk
