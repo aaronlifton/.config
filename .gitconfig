@@ -68,21 +68,33 @@
 	whitespace = red reverse
 [url "git@github.com:"]
   insteadOf = https://github.com/
+[delta]
+  ; navigate = true
+  ; features = catppuccin-macchiato
+  features = tokyonight_moon
+  side-by-side = false
+  true-color = always
 [core]
-	pager = diff-so-fancy | less --tabs=4 -RF
+  editor = nvim
+  pager = delta
+  ; excludesfile = ~/.config/git/ignore
 [interactive]
-	diffFilter = diff-so-fancy --patch
+	; diffFilter = diff-so-fancy --patch
+  diffFilter = delta --color-only
 [merge]
-	tool = bc
-[mergetool]
-	bc = trustExitCode
+  tool = nvimdiff
+  conflictstyle = diff3
 [diff]
-	; tool = vimdiff
-	tool = bc
-[difftool]
-	bc = trustExitCode
+  colorMoved = default
+[pull]
+  rebase = false
 [push]
 	autoSetupRemote = true
+	default = current
+[init]
+  defaultBranch = main
+[protocol "file"]
+  allow = always
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
