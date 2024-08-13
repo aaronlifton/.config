@@ -10,6 +10,6 @@ vsync = true
 maximized = false
 srgb = false
 idle = true
-neovim_bin = "/Users/aaron/.local/share/bob/nvim-bin/nvim"
+neovim_bin = "/Users/$USER/.local/share/bob/nvim-bin/nvim"
 frame = "full"
 title-hidden = true
