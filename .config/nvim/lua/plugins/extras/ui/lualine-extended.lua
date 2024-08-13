@@ -1,12 +1,18 @@
+local lsp_names = function()
+  local names = {}
+  for i, server in pairs(vim.lsp.get_active_clients({ bufnr = 0 })) do
+    table.insert(names, server.name)
+  end
+  return "[" .. table.concat(names, " ") .. "]"
+end
 local lsp = function()
   local buf_clients = vim.lsp.get_clients({ bufnr = 0 })
   if #buf_clients == 0 then
     return ""
   end
 
-  return " "
+  return " " .. " " .. lsp_names()
 end
-
 local formatter = function()
   local formatters = require("conform").list_formatters(0)
   if #formatters == 0 then
@@ -15,7 +21,6 @@ local formatter = function()
 
   return "󰛖 "
 end
-
 local linter = function()
   local linters = require("lint").linters_by_ft[vim.bo.filetype]
   if #linters == 0 then

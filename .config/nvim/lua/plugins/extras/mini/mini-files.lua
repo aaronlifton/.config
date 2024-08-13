@@ -1,4 +1,5 @@
 return {
+  { import = "lazyvim.plugins.extras.editor.mini-files" },
   {
     "echasnovski/mini.files",
     optional = true,
@@ -7,10 +8,9 @@ return {
         preview = true,
         width_nofocus = 30,
         width_preview = 60,
-        -- max_number = 2,
       },
       options = {
-        use_as_default_explorer = true,
+        use_as_default_explorer = false,
       },
     },
     keys = {
@@ -32,18 +32,30 @@ return {
       },
     },
     init = function()
+      -- vim.api.nvim_create_autocmd("User", {
+      --   pattern = "MiniFilesWindowOpen",
+      --   callback = function(args)
+      --     local win_id = args.data.win_id
+      --
+      --     -- Customize window-local settings
+      --     vim.wo[win_id].winblend = 50
+      --     local config = vim.api.nvim_win_get_config(win_id)
+      --     config.border, config.title_pos = "double", "right"
+      --     vim.api.nvim_win_set_config(win_id, config)
+      --   end,
+      -- })
       vim.api.nvim_create_autocmd("User", {
         pattern = "MiniFilesBufferCreate",
         callback = function(args)
           local mini_utils = require("util.mini")
-          local leap_util = require("util.leap")
-          local keymap = vim.keymap
+          -- local leap_util = require("util.leap")
+          -- local keymap = vim.keymap
           local buf_id = args.data.buf_id
           local map_split = mini_utils.map_split
           map_split(buf_id, "gs", "belowright horizontal")
           map_split(buf_id, "gv", "belowright vertical")
 
-          keymap.set("n", "J", leap_util.get_leap_for_buf(buf_id), { buffer = buf_id, desc = "Leap" })
+          -- keymap.set("n", "J", leap_util.get_leap_for_buf(buf_id), { buffer = buf_id, desc = "Leap" })
         end,
       })
     end,

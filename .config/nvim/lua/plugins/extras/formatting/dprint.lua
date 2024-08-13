@@ -1,55 +1,73 @@
-local lsp_util = require("util.lsp")
+-- local lsp_util = require("util.lsp")
 local dprint_filenames = { "dprint.json", ".dprint.json", "dprint.jsonc", ".dprint.jsonc" }
-local notified = false
-local use_global_dprint_formatter = true
+local json_formatters = { "prettierd", "prettier", "dprint", "biome", stop_after_first = true }
+local formatters = { "dprint", "biome", "prettierd", "prettier", stop_after_first = true }
+local use_global_dprint_formatter = false
+DprintNotified = false
+
 return {
   {
     "williamboman/mason.nvim",
     opts = { ensure_installed = { "dprint" } },
   },
   {
+    "neovim/nvim-lspconfig",
+    optional = true,
+    ---@class PluginLspOpts
+    opts = {
+      ---@type lspconfig.options
+      servers = {
+        dprint = {
+          filetypes = {
+            -- "javascript",
+            -- "typescript",
+            "typescriptreact",
+            "javascriptreact",
+            "astro",
+            "svelte",
+            "vue",
+            -- 'json',
+            -- 'jsonc',
+            "markdown",
+            -- 'python',
+            "toml",
+            -- 'rust',
+            -- 'roslyn',
+          },
+          on_new_config = function(new_config)
+            local buf = vim.api.nvim_get_current_buf()
+            new_config.enabled = require("conform").get_formatter_info("dprint", buf).available
+          end,
+        },
+      },
+    },
+  },
+  {
     "stevearc/conform.nvim",
-    opts = function(_, opts)
-      local conform = require("conform")
-
-      lsp_util.add_formatters(opts, {
-        ["jsonc"] = { "dprint" },
-        ["json"] = { "dprint" },
-        ["javascript"] = { "dprint" },
-        ["typescript"] = { "dprint" },
-        ["typescriptreact"] = { "dprint" },
-        ["javascriptreact"] = { "dprint" },
-        ["astro"] = { "dprint" },
-        ["svelte"] = { "dprint" },
-        ["vue"] = { "dprint" },
-      })
-
-      lsp_util.add_formatter_settings(opts, {
-        -- dprint runs biome itself, so always enable it unless it's a
-        -- prettier/eslint project (e.g. react native, remix, some nextjs
-        -- projects, etc.) if use_global_dprint_formatter is true, prefer to run
-        -- biome through dprint, as it's more performant
+    opts = {
+      formatters_by_ft = {
+        jsonc = json_formatters,
+        json = json_formatters,
+        -- javascript = formatters,
+        -- typescript = formatters,
+        typescriptreact = formatters,
+        javascriptreact = formatters,
+        astro = formatters,
+        svelte = formatters,
+        vue = formatters,
+      },
+      formatters = {
         dprint = {
           condition = function(_, ctx)
-            if use_global_dprint_formatter then
-              local has_prettier = conform.get_formatter_info("prettier", ctx.buf).available
-              local biome_available = conform.get_formatter_info("biome", ctx.buf).available
-              local has_eslint = LazyVim.lsp.get_clients({ name = "eslint", bufnr = buf })[1]
-              return not has_prettier and not has_eslint and not biome_available
-            else
-              local has_dprint = vim.fs.find(dprint_filenames, { upward = true })[1]
-              return has_dprint
-            end
+            return use_global_dprint_formatter
+              or vim.fs.find(dprint_filenames, { path = ctx.filename, upward = true })[1]
           end,
-          -- If use_global_dprint_formatter is false, prefer to use dprint's default config
-          -- prepend_args = { "-c", vim.fn.stdpath("config") .. "/rules/dprint.json" },
-          prepend_args = function(ctx)
-            -- Use a base dprint config for non-dprint projects, as dprint is the default formatter
+          prepend_args = function(_)
             local has_dprint = vim.fs.find(dprint_filenames, { upward = true })[1]
-            if not has_dprint then
-              if not notified then
+            if use_global_dprint_formatter and not has_dprint then
+              if not DprintNotified then
                 vim.api.nvim_echo({ { "Using dprint default config" } }, true, {})
-                notified = true
+                DprintNotified = true
               end
               return { "-c", vim.fn.stdpath("config") .. "/rules/dprint.json" }
             end
@@ -57,16 +75,10 @@ return {
         },
         biome = {
           condition = function(_, ctx)
-            -- dprint will run biome itself, so disable biome if dprint is used
-            -- as the defaut global formatter
-            if use_global_dprint_formatter then
-              return false
-            end
-            local has_biome = vim.fs.find({ "biome.json" }, { path = ctx.filename, upward = true })[1]
-            return has_biome
+            return vim.fs.find({ "biome.json" }, { path = ctx.filename, upward = true })[1]
           end,
         },
-      })
-    end,
+      },
+    },
   },
 }

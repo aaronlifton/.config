@@ -1,21 +1,21 @@
 return {
-  {
-    "someone-stole-my-name/yaml-companion.nvim",
-    dependencies = {
-      { "neovim/nvim-lspconfig" },
-      { "nvim-lua/plenary.nvim" },
-      { "nvim-telescope/telescope.nvim" },
-    },
-    opts = {},
-    config = function(_, opts)
-      if LazyVim.has("telescope") then
-        require("telescope").load_extension("yaml_schema")
-      end
-    end,
-    keys = {
-      { "<leader>sY", "<cmd>Telescope yaml_schema<cr>", desc = "YAML schemas" },
-    },
-  },
+  -- {
+  --   "someone-stole-my-name/yaml-companion.nvim",
+  --   dependencies = {
+  --     { "neovim/nvim-lspconfig" },
+  --     { "nvim-lua/plenary.nvim" },
+  --     { "nvim-telescope/telescope.nvim" },
+  --   },
+  --   opts = {},
+  --   config = function(_, opts)
+  --     if LazyVim.has("telescope") then
+  --       require("telescope").load_extension("yaml_schema")
+  --     end
+  --   end,
+  --   keys = {
+  --     { "<leader>sY", "<cmd>Telescope yaml_schema<cr>", desc = "YAML schemas" },
+  --   },
+  -- },
   {
     "neovim/nvim-lspconfig",
     optional = true,

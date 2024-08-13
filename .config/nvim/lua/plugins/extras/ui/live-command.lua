@@ -4,7 +4,7 @@ return {
     require("live-command").setup({
       commands = {
         Norm = { cmd = "norm" },
-        Execute = { cmd = "execute \"norm" },
+        Execute = { cmd = 'execute "norm' },
         Reg = {
           cmd = "norm",
           -- This will transform ":5Reg a" into ":norm 5@a"
@@ -13,7 +13,7 @@ return {
           end,
           range = "",
         },
-      }
+      },
     })
-  end
+  end,
 }

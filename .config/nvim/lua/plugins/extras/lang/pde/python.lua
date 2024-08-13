@@ -12,7 +12,7 @@ return {
   {
     "nvimtools/none-ls.nvim",
     opts = function(_, opts)
-      local nls = require "null-ls"
+      local nls = require("null-ls")
       table.insert(opts.sources, nls.builtins.formatting.black)
     end,
   },
@@ -36,7 +36,7 @@ return {
                 autoSearchPaths = true,
                 useLibraryCodeForTypes = true,
                 diagnosticMode = "openFilesOnly",
-                stubPath = vim.fn.stdpath "data" .. "/lazy/python-type-stubs/stubs",
+                stubPath = vim.fn.stdpath("data") .. "/lazy/python-type-stubs/stubs",
               },
             },
           },
@@ -44,7 +44,7 @@ return {
       },
       setup = {
         ruff_lsp = function()
-          local lsp_utils = require "plugins.lsp.utils"
+          local lsp_utils = require("plugins.lsp.utils")
           lsp_utils.on_attach(function(client, _)
             if client.name == "ruff_lsp" then
               -- Disable hover in favor of Pyright
@@ -53,7 +53,7 @@ return {
           end)
         end,
         pyright = function(_, _)
-          local lsp_utils = require "plugins.lsp.utils"
+          local lsp_utils = require("plugins.lsp.utils")
           lsp_utils.on_attach(function(client, bufnr)
             local map = function(mode, lhs, rhs, desc)
               if desc then
@@ -90,10 +90,10 @@ return {
     },
     opts = function(_, opts)
       vim.list_extend(opts.adapters, {
-        require "neotest-python" {
+        require("neotest-python")({
           dap = { justmycode = false },
           runner = "unittest",
-        },
+        }),
       })
     end,
   },

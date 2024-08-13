@@ -3,14 +3,14 @@ if not require("config").pde.rust then
 end
 
 local function get_codelldb()
-  local mason_registry = require "mason-registry"
-  local codelldb = mason_registry.get_package "codelldb"
+  local mason_registry = require("mason-registry")
+  local codelldb = mason_registry.get_package("codelldb")
   local extension_path = codelldb:get_install_path() .. "/extension/"
   local codelldb_path = extension_path .. "adapter/codelldb"
   local liblldb_path = ""
-  if vim.loop.os_uname().sysname:find "Windows" then
+  if vim.loop.os_uname().sysname:find("Windows") then
     liblldb_path = extension_path .. "lldb\\bin\\liblldb.dll"
-  elseif vim.fn.has "mac" == 1 then
+  elseif vim.fn.has("mac") == 1 then
     liblldb_path = extension_path .. "lldb/lib/liblldb.dylib"
   else
     liblldb_path = extension_path .. "lldb/lib/liblldb.so"
@@ -66,7 +66,7 @@ return {
       setup = {
         rust_analyzer = function(_, opts)
           local codelldb_path, liblldb_path = get_codelldb()
-          local lsp_utils = require "plugins.lsp.utils"
+          local lsp_utils = require("plugins.lsp.utils")
           lsp_utils.on_attach(function(client, bufnr)
             local map = function(mode, lhs, rhs, desc)
               if desc then
@@ -108,24 +108,24 @@ return {
             end,
           })
 
-          require("rust-tools").setup {
+          require("rust-tools").setup({
             tools = {
               hover_actions = { border = "solid" },
               on_initialized = function()
-                vim.cmd [[
+                vim.cmd([[
                   augroup RustLSP
                     autocmd CursorHold                      *.rs silent! lua vim.lsp.buf.document_highlight()
                     autocmd CursorMoved,InsertEnter         *.rs silent! lua vim.lsp.buf.clear_references()
                     autocmd BufEnter,CursorHold,InsertLeave *.rs silent! lua vim.lsp.codelens.refresh()
                   augroup END
-                ]]
+                ]])
               end,
             },
             server = opts,
             dap = {
               adapter = require("rust-tools.dap").get_codelldb_adapter(codelldb_path, liblldb_path),
             },
-          }
+          })
           return true
         end,
       },
@@ -157,7 +157,7 @@ return {
       },
     },
     opts = function(_, opts)
-      local cmp = require "cmp"
+      local cmp = require("cmp")
       opts.sources = cmp.config.sources(vim.list_extend(opts.sources, {
         { name = "crates" },
       }))
@@ -169,7 +169,7 @@ return {
       setup = {
         codelldb = function()
           local codelldb_path, _ = get_codelldb()
-          local dap = require "dap"
+          local dap = require("dap")
           dap.adapters.codelldb = {
             type = "server",
             port = "${port}",
@@ -207,7 +207,7 @@ return {
     },
     opts = function(_, opts)
       vim.list_extend(opts.adapters, {
-        require "neotest-rust",
+        require("neotest-rust"),
       })
     end,
   },

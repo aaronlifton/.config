@@ -138,8 +138,8 @@ map("i", "<C-e>", "<End>", { desc = "End Of Line" })
 map("n", "<M-v>", "cw<C-r>0<ESC>", { desc = "Change word under cursor with register 0" })
 
 -- Move to beginning/end of line
-map("n", "<M-l>", "$", { desc = "LAST CHARACTER OF LINE", noremap = true })
-map("n", "<M-h>", "_", { desc = "First character of Line" })
+map({ "n", "x", "o" }, "<M-l>", "$", { desc = "LAST CHARACTER OF LINE", noremap = true })
+map({ "n", "x", "o" }, "<M-h>", "_", { desc = "First character of Line" })
 
 -- Delete and change without yanking
 map({ "n", "x" }, "<M-d>", '"_d', { desc = "Delete without yanking" })
@@ -239,6 +239,19 @@ end, { desc = "Lazy Sync" })
 
 map("n", "<leader>cif", "<cmd>LazyFormatInfo<cr>", { desc = "Formatting" })
 map("n", "<leader>cic", "<cmd>ConformInfo<cr>", { desc = "Conform" })
+map("n", "<leader>ciF", function()
+  local format_util = require("lazyvim.util.format")
+  local str = ""
+  local buf = vim.api.nvim_get_current_buf()
+  for _, formatter in ipairs(format_util.resolve(buf)) do
+    if formatter.active then
+      for _, line in ipairs(formatter.resolved) do
+        str = str .. " " .. formatter.name .. "[" .. line .. "]"
+      end
+    end
+  end
+  vim.api.nvim_echo({ { str, "Normal" } }, true, {})
+end)
 local linters = function()
   local linters_attached = require("lint").linters_by_ft[vim.bo.filetype]
   local buf_linters = {}
@@ -268,46 +281,56 @@ map("n", "<leader>ciL", linters, { desc = "Lint" })
 map("n", "<leader>cir", "<cmd>LazyRoot<cr>", { desc = "Root" })
 
 --- Neotree
-map("n", "<M-e>", function()
-  local reveal_file = vim.fn.expand("%:p")
-  if reveal_file == "" then
-    reveal_file = vim.fn.getcwd()
-  else
-    local f = io.open(reveal_file, "r")
-    if f then
-      f.close(f)
-    else
-      reveal_file = vim.fn.getcwd()
-    end
-  end
-  require("neo-tree.command").execute({
-    action = "focus", -- OPTIONAL, this is the default value
-    source = "filesystem", -- OPTIONAL, this is the default value
-    position = "left", -- OPTIONAL, this is the default value
-    reveal_file = reveal_file, -- path to file or folder to reveal
-    reveal_force_cwd = true, -- change cwd without asking if needed
-  })
-end, { desc = "Open neo-tree at current file or working directory" })
+-- map("n", "<M-e>", function()
+--   local reveal_file = vim.fn.expand("%:p")
+--   if reveal_file == "" then
+--     reveal_file = vim.fn.getcwd()
+--   else
+--     local f = io.open(reveal_file, "r")
+--     if f then
+--       f.close(f)
+--     else
+--       reveal_file = vim.fn.getcwd()
+--     end
+--   end
+--   require("neo-tree.command").execute({
+--     action = "focus", -- OPTIONAL, this is the default value
+--     source = "filesystem", -- OPTIONAL, this is the default value
+--     position = "left", -- OPTIONAL, this is the default value
+--     reveal_file = reveal_file, -- path to file or folder to reveal
+--     reveal_force_cwd = true, -- change cwd without asking if needed
+--   })
+-- end, { desc = "Reveal in neo-tree" })
 
-map("n", "<M-E>", "<cmd>Neotree reveal_force_cwd<cr>", { desc = "Reveal in neo-tree at cwd" })
+map("n", "<M-e>", "<cmd>Neotree reveal_force_cwd<cr>", { desc = "Reveal current file in neo-tree at cwd" })
 
 require("config.keymaps.window")
 
 map("n", "<M-->", "<cmd>ChatGPT<CR>", { desc = "ChatGPT" })
 
 -- map("n", "<leader>ccp", ":let @+=expand('%:p')<cr>", { desc = "Copy path to clipboard" })
-map("n", "<leader>cp", function()
+map("n", "<leader>cpp", function()
   -- ":let @+=expand('%:p')<cr>"
   local current_path = vim.fn.expand("%:p")
   vim.api.nvim_echo({ { current_path, "Normal" } }, false, {})
   vim.cmd("let @+=expand('%:p')")
   -- vim.api.nvim_call_function('setreg', {'+', "test"})
 end, { desc = "Copy path to clipboard" })
-map("n", "<leader>cP", function()
+map("n", "<leader>cpr", function()
   local abs_path = vim.fn.expand("%:p")
   local rel_path = vim.fn.fnamemodify(abs_path, ":~:.")
   vim.api.nvim_call_function("setreg", { "+", rel_path })
 end, { desc = "Copy relative path to clipboard" })
+local file_line = function()
+  local abs_path = vim.fn.expand("%:p")
+  local rel_path = vim.fn.fnamemodify(abs_path, ":~:.")
+  local current_line = vim.fn.line(".")
+  return rel_path .. ":" .. tostring(current_line)
+end
+map("n", "<leader>cpl", function()
+  local path = file_line()
+  vim.api.nvim_call_function("setreg", { "+", path })
+end, { desc = "Copy relative path:line to clipboard" })
 
 map("n", "<leader>cq", function()
   vim.diagnostic.open_float(nil, { source = true })
@@ -337,50 +360,21 @@ map("n", "<C-S-/>", function()
     size = { width = 0.5, height = 0.75 },
     backdrop = 75,
     ctrl_hjkl = false,
+    --     margin = {
+    --       left = 100,
+    --       right = -100,
+    --     },
   } --[[@as LazyTermOpts]])
 end, { desc = "Float terminal" })
 map("t", "<C-S-/>", "<cmd>close<cr>", { desc = "Hide Terminal" })
--- map("n", "<C-S-'>", function()
---   -- vim.api.nvim_command("exe v:count0 2 .")
---   LazyVim.terminal({}, {
---     border = "rounded",
---     persistent = true,
---     size = { width = 0.5, height = 0.75 },
---     backdrop = 75,
---     ctrl_hjkl = false,
---     margin = {
---       left = 100,
---       right = -100,
---     },
---   } --[[@as LazyTermOpts]])
--- end, { desc = "Float terminal" })
--- map("t", "<C-S-'>", "<cmd>close<cr>", { desc = "Hide Terminal" })
---
 
-local leap_fns = require("util.leap.treesitter")
-map("n", "<leader>j", leap_fns.leap_ts_parents, { desc = "Leap AST Parents" })
+map("n", "<leader>j", function()
+  require("util.leap.treesitter").leap_ts_parents()
+end, { desc = "Leap AST Parents" })
 
-local copy_path = require("util.treesitter.copy_path")
-vim.api.nvim_create_autocmd({ "FileType" }, {
-  pattern = { "json" },
-  callback = function(args)
-    vim.keymap.set("n", "<leader>ccj", function()
-      copy_path.copy_json_path({ register = "*" })
-    end, { desc = "Copy JSON Path", buffer = args.buf })
-  end,
-})
--- vim.api.nvim_create_autocmd({ "FileType" }, {
---   pattern = { "javascript", "typescript", "javascriptreact", "typescriptreact" },
---   callback = function(args)
---     vim.keymap.set("n", "<leader>ccj", function()
---       copy_path.copy_javascript_path({ register = "*" })
---     end, { buffer = args.buf })
---   end,
--- })
-
-map("n", "<leader>uA", function()
+map("n", "<leader>aN", function()
   require("util.ai").toggle(true)
-end, { desc = "ChatGPT" })
+end, { desc = "Alpha2Pi - ChatGPT" })
 
 -- Spelling
 -- map("n", "<leader>!", "zg", { desc = "Add Word to Dictionary" })
@@ -461,13 +455,39 @@ map("n", "<leader>cId", function()
   }, true, {})
 end, { desc = "Turn off all AI" })
 
-map("n", "<leader>snn", "<cmd>Telescope notify<cr>", { desc = "Notify" })
-
 map("n", "zF", ":norm z=1<cr>", { desc = "Choose first spelling suggestion" })
 
 map("n", "]g", ":GitConflictNextConflict<cr>", { desc = "Next Git Conflict" })
 map("n", "[g", ":GitConflictPrevConflict<cr>", { desc = "Prev Git Conflict" })
 
+-- Windows Split
+-- map("n", "<leader>_", "<C-W>s", { desc = "Split Window Below", remap = true })
+-- map("n", "<leader>\\", "<C-W>v", { desc = "Split Window Right", remap = true })
+
+-- Kittens
+local kitten = require("util.kitty").kitten
+map("n", "<leader>tk", function()
+  local current_file_ext = vim.fn.expand("%:e")
+  if current_file_ext == "rb" then
+    kitten("kittens/side_command.kitten.py", { "bundle exec rspec", file_line() })
+  else
+    kitten(
+      "kittens/side_command.kitten.py",
+      { "npx jest --projects src/jest.config.rtl.js --colors --watch", vim.fn.expand("%:p") }
+      -- { env = { APP_ENV = "development", TZ = "utc" } }
+    )
+  end
+end, { desc = "Kitten - RSpec" })
+map("n", "<C-w>V", function()
+  kitten("kittens/side_command.kitten.py")
+end, { desc = "Kitten - Split Vertically" })
+map("n", "<M-C-S-Right>", function()
+  kitten("kittens/resize_window.kitten.py", { "right" })
+end, { desc = "Kitten - Resize Wider" })
+map("n", "<M-C-S-Left>", function()
+  kitten("kittens/resize_window.kitten.py", { "left" })
+end, { desc = "Kitten - Resize Narrower" })
+--------------------------------------------------------------------------------
 map("n", "<leader>fm", function()
   local module = vim.fn.input("Module: ")
   vim.cmd("Neotree focus filesystem left")
@@ -485,9 +505,8 @@ map("n", "]T", function()
   require("neotest").jump.next({ status = "failed" })
 end, { silent = true, desc = "Next Test Failure" })
 --------------------------------------------------------------------------------
--- Custom Telescope finders
--- if LazyVim.has("telescope") then
-local T = require("util.pickers.telescope.finders")
+-- Custom finders
+local T = require("util.fzf.finders")
 map("n", "<leader>flg", function()
   T.grep_lazyvim_files()
 end, { desc = "Grep lazyvim files" })

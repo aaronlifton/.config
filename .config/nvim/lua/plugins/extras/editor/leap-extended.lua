@@ -1,3 +1,5 @@
+local paste_on_remote_yank = false
+
 return {
   { import = "lazyvim.plugins.extras.editor.leap" },
   {
@@ -12,12 +14,6 @@ return {
         mode = { "n", "x", "o" },
         desc = "Treesitter Select (Leap)",
       },
-      -- {
-      --   "<M-C-S-S>",
-      --   'V<cmd>lua require("leap.treesitter").select()<cr><esc>',
-      --   mode = { "n", "x", "o" },
-      --   desc = "Treesitter Select (Leap)",
-      -- },
       {
         "<M-s>",
         'V<cmd>lua require("leap.treesitter").select()<cr>',
@@ -26,6 +22,7 @@ return {
       },
       {
         "g<C-r>",
+        -- "gR",
         function()
           require("leap.remote").action()
         end,
@@ -33,63 +30,65 @@ return {
         desc = "Leap Remote",
       },
       -- {
-      --   "gB",
+      --   "gV",
       --   function()
       --     require("leap.remote").action({ input = "V" })
       --   end,
       --   mode = { "n", "o" },
       --   desc = "Leap Remote",
       -- },
-      -- {
-      --   "x",
-      --   "<Plug>(leap-forward-till)",
-      --   mode = { "x", "o" },
-      --   desc = "Leap Forward Till",
-      -- },
-      -- {
-      --   "X",
-      --   "<Plug>(leap-backward-till)",
-      --   mode = { "x", "o" },
-      --   desc = "Leap Backward Till",
-      -- },
-      -- {
-      --   "<C-S-X>",
-      --   "<Plug>(leap-backward-to)",
-      --   mode = { "n", "x", "o" },
-      --   desc = "Leap Backward To",
-      -- },
     },
     opts = {
       equivalence_classes = { " \t\r\n", "([{", ")]}", "'\"`" },
     },
     -- config = function(_, opts)
-    init = function()
-      -- Use the traversal keys to repeat the previous motion without explicitly
-      -- invoking Leap.
-      require("leap.user").set_repeat_keys("<enter>", "<backspace>")
-      -- vim.keymap.set({'n', 'x', 'o'}, 'ga',  function ()
-      --   local sk = vim.deepcopy(require('leap').opts.special_keys)
-      --   -- The items in `special_keys` can be both strings or tables - the
-      --   -- shortest workaround might be the below one:
-      --   sk.next_target = vim.fn.flatten(vim.list_extend({'a'}, {sk.next_target}))
-      --   sk.prev_target = vim.fn.flatten(vim.list_extend({'A'}, {sk.prev_target}))
-      --
-      --   require('leap.treesitter').select { opts = { special_keys = sk } }
-      -- end)
+    --   LazyVim default config
+    --   local leap = require("leap")
+    --   for k, v in pairs(opts) do
+    --     leap.opts[k] = v
+    --   end
+    --   leap.add_default_mappings(true)
+    --   Uncomment these lines to keep the evil-snipe mappings
+    --   vim.keymap.del({ "x", "o" }, "x")
+    --   vim.keymap.del({ "x", "o" }, "X")
+    -- end,
+    -- init = function()
+    config = function(_, opts)
+      -- LazyVim default config
+      local leap = require("leap")
+      for k, v in pairs(opts) do
+        leap.opts[k] = v
+      end
+      leap.add_default_mappings(true)
+      vim.keymap.del({ "x", "o" }, "x")
+      vim.keymap.del({ "x", "o" }, "X")
 
-      -- vim.api.nvim_create_augroup("LeapRemote", {})
-      -- vim.api.nvim_create_autocmd("User", {
-      --   pattern = "RemoteOperationDone",
-      --   group = "LeapRemote",
-      --   callback = function(event)
-      --     -- Do not paste if some special register was in use.
-      --     vim.cmd("normal! zz")
-      --     vim.api.nvim_echo({ { event.data.register, "Normal" } }, false, {})
-      --     if vim.v.operator == "y" and event.data.register == '"' then
-      --       vim.cmd("normal! p"
-      --     end
-      --   end,
-      -- })
+      require("leap.user").set_repeat_keys("<enter>", "<backspace>")
+      vim.keymap.set({ "n", "x", "o" }, "ga", function()
+        local sk = vim.deepcopy(require("leap").opts.special_keys)
+        -- The items in `special_keys` can be both strings or tables - the
+        -- shortest workaround might be the below one:
+        sk.next_target = vim.fn.flatten(vim.list_extend({ "a" }, { sk.next_target }))
+        sk.prev_target = vim.fn.flatten(vim.list_extend({ "A" }, { sk.prev_target }))
+
+        require("leap.treesitter").select({ opts = { special_keys = sk } })
+      end)
+
+      if paste_on_remote_yank then
+        vim.api.nvim_create_augroup("LeapRemote", {})
+        vim.api.nvim_create_autocmd("User", {
+          pattern = "RemoteOperationDone",
+          group = "LeapRemote",
+          callback = function(event)
+            -- Do not paste if some special register was in use.
+            -- vim.cmd("normal! zz")
+            vim.api.nvim_echo({ { event.data.register, "Normal" } }, false, {})
+            if vim.v.operator == "y" and event.data.register == "+" then -- '"'
+              vim.cmd("normal! p")
+            end
+          end,
+        })
+      end
 
       -- stylua: ignore
       local default_text_objects = {
@@ -97,7 +96,8 @@ return {
         'i>', 'i<', 'it', 'i{', 'i}', 'iB', 'i"', 'i\'', 'i`',
         'aw', 'aW', 'as', 'ap', 'a[', 'a]', 'a(', 'a)', 'ab',
         'a>', 'a<', 'at', 'a{', 'a}', 'aB', 'a"', 'a\'', 'a`',
-        'af', 'if', 'aa', 'ia', 'ii', 'ai', 'iL', 'aL'
+        'af', 'if', 'aa', 'ia', 'ii', 'ai', 'iL', 'aL', 'iq',
+        'aq'
       }
       -- Create remote versions of all native text objects by inserting `r`
       -- into the middle (`iw` becomes `irw`, etc.):
@@ -106,21 +106,28 @@ return {
           require("leap.remote").action({ input = tobj })
         end)
       end
-
-      -- LazyVim default
-      -- local leap = require("leap")
-      -- for k, v in pairs(opts) do
-      --   leap.opts[k] = v
-      -- end
-      -- leap.add_default_mappings(true)
-      -- vim.keymap.del({ "x", "o" }, "x")
-      -- vim.keymap.del({ "x", "o" }, "X")
+      vim.keymap.set({ "x", "o" }, "irr", function()
+        require("leap.remote").action({ input = "iL" })
+      end)
+      vim.keymap.set({ "x", "o" }, "arr", function()
+        require("leap.remote").action({ input = "aL" })
+      end)
+      vim.keymap.set({ "x", "o" }, "rr", function()
+        require("leap.remote").action({ input = "aL" })
+      end)
 
       -- evil-snipe
       -- vim.keymap.set({ "x", "o" }, "x", "<Plug>(leap-forward-till)")
       -- vim.keymap.set({ "x", "o" }, "X", "<Plug>(leap-backward-till)")
     end,
   },
+  -- {
+  --   "ggandor/flit.nvim",
+  --   optional = true,
+  --   opts = {
+  --     clever_repeat = true,
+  --   },
+  -- },
   -- {
   --   "ggandor/leap-spooky.nvim",
   --   dependencies = { "leap.nvim" },

@@ -1,14 +1,25 @@
-local toggled = false
+-- stylua: ignore start
+local keys = {
+  { "co", "<Plug>(git-conflict-ours)",          { desc = "Choose Their Changes" } },
+  { "ct", "<Plug>(git-conflict-theirs)",        { desc = "Choose Our Changes" } },
+  { "cb", "<Plug>(git-conflict-both)",          { desc = "Choose Both changes" } },
+  { "c0", "<Plug>(git-conflict-none)",          { desc = "Choose None" } },
+  { "cx", "<Plug>(git-conflict-refresh)",       { desc = "Git Conflict Refresh" } },
+  { "[x", "<Plug>(git-conflict-prev-conflict)", { desc = "Prev Git Conflict" } },
+  { "]x", "<Plug>(git-conflict-next-conflict)", { desc = "Next Git Conflict" } },
+}
+-- stylua: ignore end
 ---@param buf number
 local set_git_conflict_keymap = function(buf)
-  vim.api.nvim_buf_set_keymap(buf, "n", "co", "<Plug>(git-conflict-ours)", { desc = "Choose Their Changes" })
-  vim.api.nvim_buf_set_keymap(buf, "n", "ct", "<Plug>(git-conflict-theirs)", { desc = "Choose Our Changes" })
-  vim.api.nvim_buf_set_keymap(buf, "n", "cb", "<Plug>(git-conflict-both)", { desc = "Choose Both changes" })
-  vim.api.nvim_buf_set_keymap(buf, "n", "c0", "<Plug>(git-conflict-none)", { desc = "Choose None" })
-  vim.api.nvim_buf_set_keymap(buf, "n", "cx", "<Plug>(git-conflict-refresh)", { desc = "Git Conflict Refresh" })
-  vim.api.nvim_buf_set_keymap(buf, "n", "[x", "<Plug>(git-conflict-prev-conflict)", { desc = "Prev Git Conflict" })
-  vim.api.nvim_buf_set_keymap(buf, "n", "]x", "<Plug>(git-conflict-next-conflict)", { desc = "Next Git Conflict" })
-  toggled = true
+  for _, key in ipairs(keys) do
+    vim.api.nvim_buf_set_keymap(buf, "n", key[1], key[2], key[3])
+  end
+end
+
+local clear_keymaps = function(buf)
+  for _, key in ipairs(keys) do
+    vim.api.nvim_buf_del_keymap(buf, "n", key[1])
+  end
 end
 
 return {
@@ -50,7 +61,9 @@ return {
     config = function(_, opts)
       require("git-conflict").setup(opts)
 
+      local group = vim.api.nvim_create_augroup("GitConflictKeymap", { clear = true })
       vim.api.nvim_create_autocmd("User", {
+        group = group,
         pattern = "GitConflictDetected",
         callback = function()
           vim.notify("Conflict detected in " .. vim.fn.expand("<afile>"))
@@ -58,20 +71,13 @@ return {
 
           set_git_conflict_keymap(buf)
 
-          vim.keymap.set("n", "<leader>uG", function()
-            if toggled then
-              vim.api.nvim_buf_del_keymap(buf, "n", "co")
-              vim.api.nvim_buf_del_keymap(buf, "n", "ct")
-              vim.api.nvim_buf_del_keymap(buf, "n", "cb")
-              vim.api.nvim_buf_del_keymap(buf, "n", "c0")
-              vim.api.nvim_buf_del_keymap(buf, "n", "cx")
-              vim.api.nvim_buf_del_keymap(buf, "n", "[x")
-              vim.api.nvim_buf_del_keymap(buf, "n", "]x")
-              toggled = false
-            else
-              set_git_conflict_keymap(buf)
-            end
-          end, { desc = "Disable Git Conflict keymap", buffer = true })
+          vim.api.nvim_create_autocmd("BufLeave", {
+            buffer = buf,
+            once = true,
+            callback = function()
+              clear_keymaps(buf)
+            end,
+          })
         end,
       })
     end,

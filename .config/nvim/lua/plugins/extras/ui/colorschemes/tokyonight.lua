@@ -1,8 +1,10 @@
 return {
   "folke/tokyonight.nvim",
+  optional = true,
+  lazy = true,
   name = "tokyonight",
   opts = {
-    style = "storm", -- The theme comes in three styles, `storm`, `moon`, a darker variant `night` and `day`
+    style = "moon", -- The theme comes in three styles, `storm`, `moon`, a darker variant `night` and `day`
     light_style = "day", -- The theme is used when the background is set to light
     transparent = false, -- Enable this to disable setting the background color
     -- transparent = true,
@@ -36,5 +38,4 @@ return {
     --- function will be called with a Highlights and ColorScheme table
     on_highlights = function(highlights, colors) end,
   },
-  lazy = false,
 }

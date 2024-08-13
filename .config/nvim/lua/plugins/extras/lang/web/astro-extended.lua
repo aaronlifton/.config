@@ -1,3 +1,18 @@
+-- https://joschua.io/posts/2023/06/22/set-up-nvim-for-astro/
+LazyVim.on_very_lazy(function()
+  vim.filetype.add({
+    astro = "astro",
+  })
+end)
+local inlay_hints_settings = {
+  parameterNames = { enabled = "all" },
+  parameterTypes = { enabled = true },
+  variableTypes = { enabled = true },
+  propertyDeclarationTypes = { enabled = true },
+  functionLikeReturnTypes = { enabled = true },
+  enumMemberValues = { enabled = true },
+}
+
 return {
   { import = "lazyvim.plugins.extras.lang.astro" },
   { import = "plugins.extras.lang.web.typescript-extended" },
@@ -29,13 +44,12 @@ return {
   },
   {
     "mfussenegger/nvim-lint",
-    opts = function(_, opts)
-      local lsp_util = require("util.lsp")
-      lsp_util.add_linters(opts, {
-        -- astro uses eslint instead of biome because eslint has astro rules
-        ["astro"] = { "eslint" },
-      })
-    end,
+    optional = true,
+    opts = {
+      linters_by_ft = {
+        astro = { "eslint" },
+      },
+    },
   },
   {
     "luckasRanarison/nvim-devdocs",

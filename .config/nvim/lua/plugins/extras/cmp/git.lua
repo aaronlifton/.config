@@ -1,4 +1,8 @@
-local cmp = require("cmp")
+local filetypes = {
+  "gitcommit",
+  "octo",
+  "NeogitCommitMessage",
+}
 
 return {
   "hrsh7th/nvim-cmp",
@@ -7,9 +11,17 @@ return {
     opts = {},
   },
   opts = function(_, opts)
-    cmp.setup.filetype("gitcommit", {
+    require("cmp_git").setup({
+      filetypes = filetypes,
+      github = {
+        hosts = { "git.synack.com" },
+      },
+    })
+
+    local cmp = require("cmp")
+    cmp.setup.filetype(filetypes, {
       sources = cmp.config.sources({
-        { name = "git" }, -- You can specify the `git` source if [you were installed it](https://github.com/petertriho/cmp-git).
+        { name = "git" },
       }, {
         { name = "buffer" },
       }),

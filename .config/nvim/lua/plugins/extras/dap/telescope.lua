@@ -1,6 +1,6 @@
 return {
   "nvim-telescope/telescope-dap.nvim",
-  cond = LazyVim.has("nvim-dap") and LazyVim.pick.picker.name == "telescope",
+  cond = vim.g.lazyvim_picker == "telescope" and LazyVim.has("nvim-dap"),
   config = function()
     require("lazyvim.util").on_load("telescope.nvim", function()
       require("telescope").load_extension("dap")

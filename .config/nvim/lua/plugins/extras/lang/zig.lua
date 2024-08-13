@@ -1,14 +1,16 @@
 return {
   {
     "nvim-treesitter/nvim-treesitter",
-    opts = function(_, opts)
-      if type(opts.ensure_installed) == "table" then
-        vim.list_extend(opts.ensure_installed, { "zig" })
-      end
-    end,
+    optional = true,
+    opts = {
+      ensure_installed = {
+        "zig",
+      },
+    },
   },
   {
     "neovim/nvim-lspconfig",
+    optional = true,
     opts = {
       servers = {
         zls = {},
@@ -17,10 +19,13 @@ return {
   },
   {
     "williamboman/mason.nvim",
-    opts = function(_, opts)
-      opts.ensure_installed = opts.ensure_installed or {}
-      vim.list_extend(opts.ensure_installed, { "zls", "codelldb" })
-    end,
+    optional = true,
+    opts = {
+      ensure_installed = {
+        "zls",
+        "codelldb",
+      },
+    },
   },
   {
     "nvim-neotest/neotest",
@@ -70,9 +75,11 @@ return {
   },
   {
     "stevearc/conform.nvim",
-    opts = function(_, opts)
-      opts.formatters_by_ft.zig = opts.formatters_by_ft.zig or {}
-      table.insert(opts.formatters_by_ft.zig, "zigfmt")
-    end,
+    optional = true,
+    opts = {
+      formatters_by_ft = {
+        zig = { "zigfmt" },
+      },
+    },
   },
 }

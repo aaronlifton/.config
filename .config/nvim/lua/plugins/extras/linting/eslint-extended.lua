@@ -9,30 +9,46 @@ return {
   },
   {
     "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        eslint = {},
+      },
+    },
+    -- opts = function(_, opts)
+    --   local root = LazyVim.root()
+    --   local eslint_settings_options = {}
+    --   if root then
+    --     local has_config = vim.fs.find({ ".eslintrc.js" }, { path = ctx.filename, upward = true })[1]
+    --
+    --     eslint_settings_options = { overrideConfigFile = root .. "/.eslintrc.js" }
+    --   end
+    --
+    --   return vim.tbl_deep_extend("force", opts, {
+    --     ---@type lspconfig.options
+    --     servers = {
+    --       eslint = {
+    --         -- https://github.com/Microsoft/vscode-eslint#settings-options
+    --         settings = {
+    --           quiet = false,
+    --           options = eslint_settings_options,
+    --         },
+    --       },
+    --     },
+    --   })
+    -- end,
+  },
+  {
+    "stevearc/conform.nvim",
+    optional = true,
     opts = function(_, opts)
-      local root = LazyVim.root()
-      return vim.tbl_deep_extend("force", opts, {
-        ---@type lspconfig.options
-        servers = {
-          eslint = {
-            -- https://github.com/Microsoft/vscode-eslint#settings-options
-            settings = {
-              quiet = true,
-              options = {
-                overrideConfigFile = root .. "/.eslintrc.js",
-              },
-            },
-          },
-        },
-      })
+      -- opts.formatters_by_ft["javascript"] = { "eslint_d" }
+      opts.formatters_by_ft["javascript"] = {}
     end,
   },
   {
     "stevearc/conform.nvim",
+    optional = true,
     opts = {
-      -- formatters_by_ft = {
-      --   ["javascript"] = { { "eslint_d" } },
-      -- },
       formatters = {
         eslint = {
           prepend_args = function()

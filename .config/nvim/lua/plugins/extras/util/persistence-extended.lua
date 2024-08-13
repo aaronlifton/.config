@@ -1,5 +1,4 @@
 local isActive = true
-local p = require("persistence")
 
 return {
   "folke/persistence.nvim",
@@ -7,7 +6,7 @@ return {
     {
       "<leader>qS",
       function()
-        p.save()
+        require("persistence").save()
         vim.notify("Session saved", vim.log.levels.INFO, { title = "Persistence" })
       end,
       desc = "Save Session",
@@ -15,6 +14,7 @@ return {
     -- stylua: ignore start
     { "<leader>qt",
       function()
+        local p = require("persistence")
         if isActive then
           p.stop()
           isActive = false

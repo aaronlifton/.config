@@ -18,7 +18,7 @@ return {
   {
     "nvimtools/none-ls.nvim",
     opts = function(_, opts)
-      local nls = require "null-ls"
+      local nls = require("null-ls")
       table.insert(opts.sources, nls.builtins.formatting.stylua)
     end,
   },
@@ -51,7 +51,7 @@ return {
       },
       setup = {
         lua_ls = function(_, _)
-          local lsp_utils = require "plugins.lsp.utils"
+          local lsp_utils = require("plugins.lsp.utils")
           lsp_utils.on_attach(function(client, buffer)
             -- stylua: ignore
             if client.name == "lua_ls" then
@@ -66,20 +66,21 @@ return {
   -- Debugging
   {
     "mfussenegger/nvim-dap",
+    optional = true,
     dependencies = {
       { "jbyuki/one-small-step-for-vimkind" },
     },
     opts = {
       setup = {
         osv = function(_, _)
-          local dap = require "dap"
+          local dap = require("dap")
           dap.configurations.lua = {
             {
               type = "nlua",
               request = "attach",
               name = "Attach to running Neovim instance",
               host = function()
-                local value = vim.fn.input "Host [127.0.0.1]: "
+                local value = vim.fn.input("Host [127.0.0.1]: ")
                 if value ~= "" then
                   return value
                 end
@@ -94,7 +95,7 @@ return {
           }
 
           dap.adapters.nlua = function(callback, config)
-            callback { type = "server", host = config.host, port = config.port }
+            callback({ type = "server", host = config.host, port = config.port })
           end
         end,
       },
@@ -107,7 +108,7 @@ return {
     },
     opts = function(_, opts)
       vim.list_extend(opts.adapters, {
-        require "neotest-plenary",
+        require("neotest-plenary"),
       })
     end,
   },

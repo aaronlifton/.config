@@ -150,7 +150,13 @@ return {
     },
     opts = {},
     config = function(_, opts)
-      require("neoai").setup(vim.tbl_extend("force", opts, {}))
+      require("neoai").setup(opts)
+
+      vim.filetype.add({
+        extension = {
+          ["neoai-output"] = "markdown",
+        },
+      })
       vim.treesitter.language.register("markdown", "neoai-output")
     end,
   },

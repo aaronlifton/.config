@@ -16,39 +16,6 @@ table.insert(keys, { "<leader>M", "<cmd>Grapple toggle_tags<CR>", desc = "Marks"
 table.insert(keys, { "<leader>mx", "<cmd>Grapple reset<CR>", desc = "Clear all Marks" })
 table.insert(keys, { "<leader>ms", "<cmd>Grapple toggle_scopes<CR>", desc = "Scopes" })
 table.insert(keys, { "<leader>mS", "<cmd>Grapple toggle_loaded<CR>", desc = "Loaded Scopes" })
-table.insert(keys, {
-  "<leader>mt",
-  function()
-    local tags = require("grapple").tags()
-    local results = {}
-    local paths = {}
-    for i, tag in ipairs(tags) do
-        ---@class grapple.telescope.result
-        local result = {
-            i,
-            tag.path,
-            (tag.cursor or { 1, 0 })[1],
-            (tag.cursor or { 1, 0 })[2],
-        }
-
-        table.insert(results, result)
-        table.insert(paths, tag.path)
-    end
-
-    local fzf_lua = require("fzf-lua")
-    local opts = {
-      fzf_opts = {},
-      fzf_colors = true,
-      actions = {
-        ["default"] = function(selected)
-          vim.cmd("e " .. selected[1])
-        end,
-      },
-    }
-    fzf_lua.fzf_exec(paths, opts)
-  end,
-  desc = "Marks (Fzf)",
-})
 
 -- Harpoon style
 table.insert(keys, { "<D-H>", "<cmd>Grapple select index=1<cr>", desc = "File 1" })
@@ -61,6 +28,7 @@ table.insert(keys, { "<C-S-H>", "<cmd>Grapple cycle backward<CR>", desc = "Prev 
 -- table.insert(keys, { "[k", "<cmd>Grapple cycle backward<CR>", desc = "Prev Mark" })
 -- table.insert(keys, { "<c-s-n>", "<cmd>Grapple cycle_tags next<cr>", desc = "Next Mark" })
 -- table.insert(keys, { "<c-s-p>", "<cmd>Grapple cycle_tags prev<cr>", desc = "Prev Mark" })
+-- stylua: ignore end
 
 return {
   {
@@ -129,8 +97,8 @@ return {
     opts = {
       spec = {
         mode = "n",
-        { "<leader>m", group = "marks", icon = { icon = "󰛢", color = "white"} },
-        { "<leader>M", icon = { icon = "󰛢", color = "white"} },
+        { "<leader>m", group = "marks", icon = { icon = "󰛢", color = "white" } },
+        { "<leader>M", icon = { icon = "󰛢", color = "white" } },
       },
     },
   },

@@ -1,23 +1,9 @@
-local html_filetypes = {
-  "html",
-  "javascriptreact",
-  "javascript.jsx",
-  "typescriptreact",
-  "typescript.tsx",
-  -- "css",
-  "eruby",
-  -- "less",
-  -- "sass",
-  -- "scss",
-  "svelte",
-  -- "pug",
-  "vue",
-  "astro",
-}
+local stylelint = "stylelint"
 
 return {
   {
     "nvim-treesitter/nvim-treesitter",
+    optional = true,
     opts = {
       ensure_installed = {
         "html",
@@ -28,11 +14,24 @@ return {
   },
   {
     "neovim/nvim-lspconfig",
+    optional = true,
     opts = {
       servers = {
-        emmet_language_server = {},
+        emmet_language_server = {
+          filetypes = { "html", "javascript" },
+        },
         -- emmet_ls = {
-        --   filetypes = html_filetypes,
+        --   filetypes = {
+        --     "html",
+        --     "javascriptreact",
+        --     "javascript.jsx",
+        --     "typescriptreact",
+        --     "typescript.tsx",
+        --     "eruby",
+        --     "svelte",
+        --     "vue",
+        --     "astro",
+        --   },
         --   init_options = {
         --     html = {
         --       options = {
@@ -50,9 +49,7 @@ return {
             compatibleVendorPrefixes = "ignore",
             vendorPrefix = "ignore",
             unknownVendorSpecificProperties = "ignore",
-
             -- unknownProperties = "ignore", -- duplicate with stylelint
-
             duplicateProperties = "warning",
             emptyRules = "warning",
             importStatement = "warning",
@@ -75,6 +72,7 @@ return {
   },
   {
     "williamboman/mason.nvim",
+    optional = true,
     opts = {
       ensure_installed = {
         "emmet-language-server",
@@ -89,24 +87,22 @@ return {
   },
   {
     "mfussenegger/nvim-lint",
-    opts = function(_, opts)
-      local lsp_util = require("util.lsp")
-
-      local stylelint = "stylelint"
-      lsp_util.add_linters(opts, {
-        ["html"] = { "htmlhint" },
-        ["css"] = { stylelint },
-        ["scss"] = { stylelint },
-        ["less"] = { stylelint },
-        ["sugarss"] = { stylelint },
-        ["vue"] = { stylelint },
-        ["wxss"] = { stylelint },
-        ["javascript"] = { stylelint },
-        ["javascriptreact"] = { stylelint },
-        ["typescript"] = { stylelint },
-        ["typescriptreact"] = { stylelint },
-      })
-    end,
+    optional = true,
+    opts = {
+      linters_by_ft = {
+        html = { "htmlhint" },
+        css = { stylelint },
+        scss = { stylelint },
+        less = { stylelint },
+        sugarss = { stylelint },
+        vue = { stylelint },
+        wxss = { stylelint },
+        -- javascript = { stylelint },
+        -- javascriptreact = { stylelint },
+        -- typescript = { stylelint },
+        -- typescriptreact = { stylelint },
+      },
+    },
   },
   {
     "luckasRanarison/nvim-devdocs",
@@ -117,35 +113,40 @@ return {
       "sass",
     },
   },
-  {
-    "nvim-cmp",
-    dependencies = {
-      -- codeium
-      {
-        "dcampos/cmp-emmet-vim",
-        keys = {
-          {
-            "<c-y>",
-            mode = "i",
-            desc = "Emmet expansion in insert mode (you probably need to type `<c-y>,`)",
-          },
-        },
-        dependencies = {
-          {
-            "mattn/emmet-vim",
-            -- config = function()
-            --   -- expand emmet snippet with <c-y>,
-            --   vim.g.user_emmet_leader_key = "<C-y>"
-            -- end,
-          },
-        },
-      },
-    },
-    ---@param opts cmp.ConfigSchema
-    opts = function(_, opts)
-      table.insert(opts.sources, 1, {
-        name = "emmet_vim",
-      })
-    end,
-  },
+  -- Replaced by emmet_language_server
+  -- {
+  --   "nvim-cmp",
+  --   optional = true,
+  --   dependencies = {
+  --     -- codeium
+  --     {
+  --       "dcampos/cmp-emmet-vim",
+  --       enabled = false,
+  --       keys = {
+  --         {
+  --           "<c-y>",
+  --           mode = "i",
+  --           desc = "Emmet expansion in insert mode (you probably need to type `<c-y>,`)",
+  --         },
+  --       },
+  --       dependencies = {
+  --         {
+  --           "mattn/emmet-vim",
+  --           -- config = function()
+  --           --   -- expand emmet snippet with <c-y>,
+  --           --   vim.g.user_emmet_leader_key = "<C-y>"
+  --           -- end,
+  --         },
+  --       },
+  --     },
+  --   },
+  --   ---@param opts cmp.ConfigSchema
+  --   opts = function(_, opts)
+  --     if LazyVim.has("cmp-emmet-vim") then
+  --       table.insert(opts.sources, 1, {
+  --         name = "emmet_vim",
+  --       })
+  --     end
+  --   end,
+  -- },
 }

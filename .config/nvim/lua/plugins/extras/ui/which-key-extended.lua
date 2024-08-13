@@ -1,6 +1,9 @@
 return {
   "folke/which-key.nvim",
   opts = {
+    triggers = {
+      { "<auto>", mode = "nixsoc" },
+    },
     icons = {
       group = "",
       rules = {
@@ -8,9 +11,9 @@ return {
         -- { pattern = "main", icon = " ", color = "orange" },
       },
     },
-    layout = {
-      align = "center",
-    },
+    -- layout = {
+    --   align = "center",
+    -- },
     defaults = {},
     spec = {
       mode = { "n" },
@@ -28,7 +31,7 @@ return {
       { "<leader>l", group = "lazy" },
       { "<leader>cI", group = "AI Controls" },
       { "<leader>L", group = "Notepads", icon = { icon = "󰓩 ", color = "green" } },
-      -- { "<leader>cc", group = "Copy path", icon = { icon = "󰓩 " } },
+      { "<leader>cp", group = "Copy path", icon = { icon = "󰓩 " } },
       -- ---LazyVim
       -- { "<leader><tab>", group = "tabs" },
       -- { "<leader>b", group = "buffer" },

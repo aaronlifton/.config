@@ -1,3 +1,5 @@
+local formatters = { "biome", "prettierd", "prettier", stop_after_first = true }
+local json_formatters = { "prettierd", "prettier", "biome", stop_after_first = true }
 return {
   {
     "williamboman/mason.nvim",
@@ -15,28 +17,25 @@ return {
   },
   {
     "stevearc/conform.nvim",
-    opts = function(_, opts)
-      local lsp_util = require("util.lsp")
-
-      lsp_util.add_formatters(opts, {
-        ["jsonc"] = { "biome" },
-        ["json"] = { "biome" },
-        ["javascript"] = { "biome" },
-        ["typescript"] = { "biome" },
-        ["typescriptreact"] = { "biome" },
-        ["javascriptreact"] = { "biome" },
-        ["astro"] = { "biome" },
-        ["svelte"] = { "biome" },
-        ["vue"] = { "biome" },
-      })
-
-      lsp_util.add_formatter_settings(opts, {
+    opts = {
+      formatters_by_ft = {
+        jsonc = json_formatters,
+        json = json_formatters,
+        javascript = formatters,
+        typescript = formatters,
+        typescriptreact = formatters,
+        javascriptreact = formatters,
+        astro = formatters,
+        svelte = formatters,
+        vue = formatters,
+      },
+      formatters = {
         biome = {
           condition = function(_, ctx)
             return vim.fs.find({ "biome.json" }, { path = ctx.filename, upward = true })[1]
           end,
         },
-      })
-    end,
+      },
+    },
   },
 }

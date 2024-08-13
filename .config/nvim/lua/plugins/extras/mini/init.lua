@@ -1,12 +1,13 @@
 return {
-  {
-    "echasnovski/mini.nvim",
-    config = function()
-      require("mini.extra").setup()
-      -- require("mini.move").setup()
-      -- require("mini.colors").setup()
-    end,
-  },
+  -- {
+  --   "echasnovski/mini.nvim",
+  --   vscode = true,
+  --   config = function()
+  --     require("mini.extra").setup()
+  --     -- require("mini.move").setup()
+  --     -- require("mini.colors").setup()
+  --   end,
+  -- },
   { import = "plugins.extras.mini.mini-files" },
   { import = "plugins.extras.mini.mini-ai" },
   { import = "plugins.extras.mini.mini-diff" },

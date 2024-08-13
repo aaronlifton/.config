@@ -1,8 +1,13 @@
 std = "neovim"
 
-[lints]
+[rules]
 global_usage = "allow"
-multiple_statements = "allow"
+if_same_then_else = "allow"
 incorrect_standard_library_use = "allow"
 mixed_table = "allow"
-# if_same_then_else = "allow"
+multiple_statements = "allow"
+
+[globals]
+LazyVim = { any = true }
+MiniExtra = { any = true }
+MiniDiff = { any = true }

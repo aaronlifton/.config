@@ -1,8 +1,7 @@
 return {
   -- https://github.com/marko-cerovac/material.nvim
   "marko-cerovac/material.nvim",
-  -- enabled = false,
-  lazy = false,
+  lazy = true,
   name = "material",
   opts = {
     style = "darker", -- darker, lighter, oceanic, palenight, deep ocean
@@ -20,7 +19,7 @@ return {
         floating_windows = false, -- Enable contrast for floating windows
         cursor_line = false, -- Enable darker background for the cursor line
         -- non_current_windows = true, -- Enable contrasted background for non-current windows
-        filetypes = { "markdown", "mdx" }, -- Specify which filetypes get the contrasted (darker) background
+        filetypes = { "markdown", "markdown.mdx" }, -- Specify which filetypes get the contrasted (darker) background
       },
       styles = { -- Give comments style such as bold, italic, underline etc.
         --   comments = { [[ italic = true ]] },

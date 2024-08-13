@@ -1,25 +1,43 @@
-local lsp_util = require("util.lsp")
 local stylelint = "stylelint"
+local root_patterns = {
+  ".stylelintrc",
+  ".stylelintrc.cjs",
+  ".stylelintrc.js",
+  ".stylelintrc.json",
+  ".stylelintrc.yaml",
+  ".stylelintrc.yml",
+  "stylelint.config.cjs",
+  "stylelint.config.js",
+}
 
 return {
   {
     "williamboman/mason.nvim",
-    opts = function(_, opts)
-      opts.ensure_installed = opts.ensure_installed or {}
-      vim.list_extend(opts.ensure_installed, { stylelint })
-    end,
+    opts = {
+      ensure_installed = {
+        "stylelint",
+      },
+    },
   },
   {
     "mfussenegger/nvim-lint",
-    opts = function(_, opts)
-      lsp_util.add_linters(opts, {
-        ["html"] = { "stylelint" },
-        ["css"] = { "stylelint" },
-        ["scss"] = { "stylelint" },
-        ["sass"] = { "stylelint" },
-        ["less"] = { "stylelint" },
-      })
-    end,
+    optional = true,
+    opts = {
+      linters_by_ft = {
+        css = { stylelint },
+        html = { stylelint },
+        scss = { stylelint },
+        sass = { stylelint },
+        less = { stylelint },
+      },
+      linters = {
+        stylelint = {
+          condition = function(ctx)
+            return vim.fs.find(root_patterns, { path = ctx.filename, upward = true })[1]
+          end,
+        },
+      },
+    },
   },
   {
     "neovim/nvim-lspconfig",
@@ -30,6 +48,7 @@ return {
         ---@type lspconfig.options.stylelint_lsp
         -- stylelint_lsp = nil,
         stylelint_lsp = {
+          -- filetypes_exclude = { "javascript" },
           filetypes = {
             "html",
             "css",

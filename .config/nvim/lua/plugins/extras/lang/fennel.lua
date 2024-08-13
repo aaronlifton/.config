@@ -31,11 +31,10 @@ return {
   },
   {
     "nvim-treesitter/nvim-treesitter",
-    opts = function(_, opts)
-      if type(opts.ensure_installed) == "table" then
-        vim.list_extend(opts.ensure_installed, { "fennel" })
-      end
-    end,
+    optional = true,
+    opts = {
+      ensure_installed = { "fennel" },
+    },
   },
   {
     "williamboman/mason.nvim",

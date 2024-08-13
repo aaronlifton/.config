@@ -9,8 +9,8 @@ return {
   },
   {
     "stevearc/conform.nvim",
-    opts = function(_, opts)
-      lsp_util.add_formatters(opts, {
+    opts = {
+      formatters_by_ft = {
         ["javascript"] = { "rustywind" },
         ["javascriptreact"] = { "rustywind" },
         ["typescript"] = { "rustywind" },
@@ -18,15 +18,14 @@ return {
         ["vue"] = { "rustywind" },
         ["html"] = { "rustywind" },
         ["astro"] = { "rustywind" },
-      })
-
-      lsp_util.add_formatter_settings(opts, {
+      },
+      formatters = {
         rustywind = {
           condition = function(_, ctx)
             return vim.fs.find({ "tailwind.config.js" }, { path = ctx.filename, upward = true })[1]
           end,
         },
-      })
-    end,
+      },
+    },
   },
 }

@@ -1,4 +1,4 @@
-if LazyVim.has("mini.animate") then
+if vim.g.animation_provider == "mini.animate" then
   return {
     import = "lazyvim.plugins.extras.ui.mini-animate",
   }
@@ -11,9 +11,8 @@ if use_latest then
     event = "VeryLazy",
     config = function()
       require("cinnamon").setup({
-        options = {
-          delay = 5,
-        },
+        -- keymaps = { extra = true },
+        options = { delay = 5 },
       })
 
       local keymaps = {

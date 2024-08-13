@@ -52,15 +52,6 @@ function M.gem_version(gemname)
     return
   end
 
-  -- local version = nil
-  --
-  -- for line in io.lines(gemfile) do
-  --   if string.find(line, "%s+" .. gemname .. " %(") then
-  --     version = string.match(line, "%((.-)%)")
-  --     break
-  --   end
-  -- end
-
   local cmd = string.format(
     [[bundle info %s  | awk -F'[( )]' '{for(i=1;i<=NF;i++) if ($i ~ /^[0-9]+\.[0-9]+\.[0-9]+$/) print $i}']],
     gemname

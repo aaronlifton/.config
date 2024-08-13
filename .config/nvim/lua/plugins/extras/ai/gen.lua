@@ -34,7 +34,7 @@ return {
       }
     end,
     keys = {
-      { "<leader>aii", "<cmd>Gen<cr>", mode = { "n", "v" }, desc = "IA (Gen)" },
+      { "<leader>aii", "<cmd>Gen<cr>", mode = { "n", "v" }, desc = "Choose" },
       { "<leader>aig", "<cmd>Gen Generate<cr>", mode = { "n" }, desc = "Generate" },
       { "<leader>aic", "<cmd>Gen Chat<cr>", mode = { "n" }, desc = "Chat" },
       { "<leader>ais", "<cmd>Gen Summarize<cr>", mode = { "n", "v" }, desc = "Summarize" },

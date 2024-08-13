@@ -1,40 +1,24 @@
-local tailwind_filetypes = {
-  "astro",
-  "svelte",
-  "vue",
-  "html",
-  "css",
-  "scss",
-  "less",
-  "styl",
-  "javascript",
-  "typescript",
-  "javascriptreact",
-  "javascript.jsx",
-  "typescriptreact",
-  "typescript.tsx",
-  "jsx",
-  "tsx",
-  "slim",
-  "ex",
-  "exs",
-  "heex",
-  "gotmpl",
-  "templ",
-  "rust",
-  "rs",
-}
+local use_tailwind = false
+if not use_tailwind then
+  return {
+    "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+        tailwindcss = {
+          filetypes = {
+            "astro",
+            "astro-markdown",
+            "svelte",
+          },
+        },
+      },
+    },
+  }
+end
 
 return {
   { import = "lazyvim.plugins.extras.lang.tailwind" },
-  { import = "plugins.extras.ui.inline-fold" },
-  {
-    "williamboman/mason.nvim",
-    opts = function(_, opts)
-      opts.ensure_installed = opts.ensure_installed or {}
-      vim.list_extend(opts.ensure_installed, { "stylelint" })
-    end,
-  },
+  -- { import = "plugins.extras.ui.inline-fold" },
   {
     "MaximilianLloyd/tw-values.nvim",
     keys = {
@@ -54,7 +38,22 @@ return {
     opts = {
       servers = {
         tailwindcss = {
-          filetypes_include = tailwind_filetypes,
+          filetypes_exclude = {
+            -- "markdown",
+            "erb",
+            "eruby",
+            "haml",
+            "handlebars",
+            "hbs",
+            "html",
+            "mustache",
+            "css",
+            "less",
+            "sass",
+            "scss",
+            "javascript",
+            "typescript",
+          },
         },
       },
     },

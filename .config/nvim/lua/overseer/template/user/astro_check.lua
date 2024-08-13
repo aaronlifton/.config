@@ -1,8 +1,3 @@
-local overseer = require("overseer")
--- overseer.add_template_hook({ name = "cargo clean" }, function(task_defn, util)
---   util.remove_component(task_defn, "on_complete_notify")
--- end)
-
 ---@type overseer.TemplateFileDefinition
 return {
   name = "astro_check",

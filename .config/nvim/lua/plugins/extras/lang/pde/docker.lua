@@ -5,16 +5,15 @@ end
 return {
   {
     "nvim-treesitter/nvim-treesitter",
-    opts = function(_, opts)
-      if type(opts.ensure_installed) == "table" then
-        vim.list_extend(opts.ensure_installed, { "dockerfile" })
-      end
-    end,
+    optional = true,
+    opts = {
+      ensure_installed = { "dockerfile" },
+    },
   },
   {
     "nvimtools/none-ls.nvim",
     opts = function(_, opts)
-      local nls = require "null-ls"
+      local nls = require("null-ls")
       opts.sources = opts.sources or {}
       vim.list_extend(opts.sources, {
         nls.builtins.diagnostics.hadolint,
@@ -30,6 +29,7 @@ return {
   },
   {
     "neovim/nvim-lspconfig",
+    optional = true,
     opts = {
       servers = {
         dockerls = {},
@@ -39,12 +39,13 @@ return {
   },
   {
     "telescope.nvim",
+    optional = true,
     dependencies = {
       {
         "lpoto/telescope-docker.nvim",
         opts = {},
         config = function(_, opts)
-          require("telescope").load_extension "docker"
+          require("telescope").load_extension("docker")
         end,
         keys = {
           { "<leader>fd", "<Cmd>Telescope docker<CR>", desc = "Docker" },

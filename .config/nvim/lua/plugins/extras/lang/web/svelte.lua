@@ -1,3 +1,10 @@
+LazyVim.on_very_lazy(function()
+  vim.filetype.add({
+    extension = {
+      svelte = "svelte",
+    },
+  })
+end)
 return {
   { import = "lazyvim.plugins.extras.lang.svelte" },
   {

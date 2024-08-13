@@ -1,25 +1,50 @@
-local lsp_util = require("util.lsp")
-local gems_util = require("util.ruby.gems")
-local system_util = require("util.system")
+-- local gems_util = require("util.ruby.gems")
+local rubocop_provider = "rubocop" -- "ruby_lsp"
+local add_ruby_deps_command = false
 
-local ruby_lsp_path = function()
-  vim.api.nvim_exec(":! type -p ruby-lsp", true)
+-- https://github.com/Shopify/ruby-lsp/blob/4f7ce060de3257c35028ccb70e1854da952cdb95/vscode/package.json#L231
+local enabledFeatures = {
+  "codeActions",
+  -- "diagnostics", -- doesn't support custom Rubocop config
+  "documentHighlights",
+  "documentLink",
+  "documentSymbols",
+  "foldingRanges",
+  -- "formatting", -- doesn't support custom Rubocop config
+  "hover",
+  "inlayHint",
+  -- "onTypeFormatting",
+  "selectionRanges",
+  "semanticHighlighting",
+  "completion",
+  "codeLens",
+  "definition",
+  "workspaceSymbol",
+  "signatureHelp",
+  "typeHierarchy",
+}
+
+if rubocop_provider == "ruby_lsp" then
+  vim.list_extend(enabledFeatures, {
+    "diagnostics",
+    "formatting",
+    -- "onTypeFormatting",
+  })
 end
 
 return {
   { import = "lazyvim.plugins.extras.lang.ruby" },
   {
     "williamboman/mason.nvim",
-    opts = function(_, opts)
-      opts.ensure_installed = opts.ensure_installed or {}
-      vim.list_extend(opts.ensure_installed, {
+    opts = {
+      ensure_installed = {
         "solargraph",
         "rubocop",
         "ruby-lsp",
         "cucumber-language-server",
         "sorbet",
-      })
-    end,
+      },
+    },
   },
   {
     "tpope/vim-rails",
@@ -101,14 +126,12 @@ return {
       servers = {
         standardrb = {
           on_new_config = function(new_config)
-            new_config.enabled = gems_util.in_bundle("standard")
+            new_config.enabled = require("util.ruby.gems").in_bundle("standard")
           end,
         },
-        -- rubocop = {
-        --   on_new_config = function(new_config)
-        --     new_config.enabled = not gems_util.has_ruby_lsp() and gems_util.has_rubocop()
-        --   end,
-        -- },
+        rubocop = {
+          enabled = rubocop_provider ~= "ruby_lsp",
+        },
         sorbet = {
           -- init_options = { documentFormatting = false, codeAction = true },
           on_new_config = function(new_config)
@@ -116,34 +139,8 @@ return {
           end,
         },
         ruby_lsp = {
-          -- cmd = { "bundle", "exec", "ruby-lsp" },
-          cmd = { "/Users/" .. system_util.user() .. "/.asdf/shims/ruby-lsp" },
-          filetypes = { "ruby" },
-          root_dir = require("lspconfig.util").root_pattern("Gemfile", ".git"),
           init_options = {
-            -- https://github.com/Shopify/ruby-lsp/blob/4f7ce060de3257c35028ccb70e1854da952cdb95/vscode/package.json#L231
-            enabledFeatures = {
-              "codeActions",
-              -- "diagnostics", -- doesn't support custom Rubocop config
-              "documentHighlights",
-              "documentLink",
-              "documentSymbols",
-              "foldingRanges",
-              -- "formatting", -- doesn't support custom Rubocop config
-              "hover",
-              "inlayHint",
-              -- "onTypeFormatting",
-              "selectionRanges",
-              "semanticHighlighting",
-              "completion",
-              "codeLens",
-              "definition",
-              "workspaceSymbol",
-              "signatureHelp",
-              "typeHierarchy",
-            },
-            --   -- when auto, formatter will detect formatter from bundle
-            --   formatter = "auto",
+            enabledFeatures = enabledFeatures,
           },
           settings = {
             rubyLsp = {
@@ -151,17 +148,14 @@ return {
             },
           },
           on_new_config = function(new_config)
-            -- if vim.g.lazyvim_ruby_lsp ~= "ruby_lsp" or not gems_util.has_ruby_lsp() then
-            --   new_config.enabled = false
-            -- end
             -- ruby-lsp-rubyfmt needs formatter to be set to rubyfmt
             -- https://github.com/jscharf/ruby-lsp-rubyfmt/blob/b28e16e9b847f70dc1ee2012296fda92cb30e7f5/README.md?plain=1#L41
-            if gems_util.in_bundle("ruby-lsp-rubyfmt") then
+            if require("util.ruby.gems").in_bundle("ruby-lsp-rubyfmt") then
               new_config.init_options.formatter = "rubyfmt"
             end
           end,
           on_attach = function(client, buffer)
-            require("util.lsp.ruby").add_ruby_deps_command(client, buffer)
+            if add_ruby_deps_command then require("util.lsp.ruby").add_ruby_deps_command(client, buffer) end
           end,
         },
         cucumber_language_server = {
@@ -182,7 +176,7 @@ return {
 
           require("lspconfig").sorbet.setup(vim.tbl_extend("force", {
             -- cmd = {"srb", "tc", "--typed", "true", "--enable-all-experimental-lsp-features", "--lsp", "--disable-watchman",},
-            cmd = { "srb", "tc", "--lsp" }, -- optionally "bundle" exec", "--disable-watchman"
+            cmd = { "srb", "tc", "--lsp" }, -- optionally "bundle", "exec", "--disable-watchman"
             filetypes = { "ruby" },
             root_dir = function(fname)
               return sorbet_root_pattern(fname)
@@ -194,6 +188,7 @@ return {
   },
   {
     "mfussenegger/nvim-lint",
+    optional = true,
     opts = {
       linters_by_ft = {
         ruby = { "rubocop" },
@@ -201,6 +196,19 @@ return {
       },
       linters = {
         rubocop = {
+          -- cmd = "bundle",
+          -- args = {
+          --   "exec",
+          --   "rubocop",
+          --   "--format",
+          --   "json",
+          --   "--force-exclusion",
+          --   "--server",
+          --   "--stdin",
+          --   function()
+          --     return vim.api.nvim_buf_get_name(0)
+          --   end,
+          -- },
           prepend_args = function()
             local hostname = require("util.system").hostname()
             if hostname == "ali-d7jf7y.local" then
@@ -211,12 +219,12 @@ return {
             end
           end,
           condition = function(ctx)
-            return gems_util.has_rubocop()
+            return require("util.ruby.gems").has_rubocop()
           end,
         },
         standardrb = {
           condition = function(ctx)
-            return gems_util.in_bundle("standard")
+            return require("util.ruby.gems").in_bundle("standard")
           end,
         },
       },
@@ -231,6 +239,18 @@ return {
       },
       formatters = {
         rubocop = {
+          -- command = "bundle",
+          -- args = {
+          --   "exec",
+          --   "rubocop",
+          --   "--server",
+          --   "-a",
+          --   "-f",
+          --   "quiet",
+          --   "--stderr",
+          --   "--stdin",
+          --   "$FILENAME",
+          -- },
           prepend_args = function()
             local hostname = require("util.system").hostname()
             if hostname == "ali-d7jf7y.local" then
@@ -242,12 +262,12 @@ return {
           end,
           condition = function(ctx)
             -- Ruby LSP contains rubocop diagnostics itself
-            return gems_util.has_rubocop()
+            return require("util.ruby.gems").has_rubocop()
           end,
         },
         rubyfmt = {
           condition = function(ctx)
-            return gems_util.in_bundle("ruby-lsp-rubyfmt")
+            return require("util.ruby.gems").in_bundle("ruby-lsp-rubyfmt")
           end,
         },
       },
@@ -273,132 +293,4 @@ return {
       },
     },
   },
-  {
-    "suketa/nvim-dap-ruby",
-    optional = true,
-    config = function()
-      local dap = require("dap")
-      require("dap-ruby").setup()
-      -- https://github.com/emilford/dotfiles/blob/5417799b5048eaab5098745734254d4508399778/.config/nvim/lua/plugins/nvim-dap.lua#L169
-      -- https://github.com/SolaWing/vim-config/blob/3eb6f3e6db34413c02e922e607ac913760747c96/bundle-config/debugger/ruby.lua#L62
-      dap.configurations["ruby.rspec"] = {
-        {
-          type = "ruby",
-          name = "RSpec: Run current line",
-          bundle = "bundle",
-          request = "attach",
-          command = "rspec",
-          script = "${file}",
-          port = 38698,
-          server = "127.0.0.1",
-          options = {
-            source_filetype = "ruby",
-          },
-          localfs = true,
-          waiting = 1000,
-          current_line = true,
-        },
-      }
-    end,
-  },
 }
-
--- {
---   "otavioschwanck/tmux-awesome-manager.nvim",
---   optional = true,
---   event = "VeryLazy",
---   config = function()
---     local tmux_term = require("tmux-awesome-manager.src.term")
---     local wk = require("which-key")
---
---     wk.register({
---       r = {
---         -- name = 'Rails',
---         R = tmux_term.run_wk({
---           cmd = "bundle exec rails s",
---           name = "Rails Server",
---           visit_first_call = false,
---           open_as = "separated_session",
---           session_name = "My Terms",
---         }),
---         r = require("tmux-awesome-manager.src.term").run_wk({ cmd = "bundle exec rails c", name = "Rails Console", open_as = "window" }),
---         b = tmux_term.run_wk({
---           cmd = "bundle install",
---           name = "Bundle Install",
---           open_as = "pane",
---           close_on_timer = 2,
---           visit_first_call = false,
---           focus_when_call = false,
---         }),
---         t = tmux_term.run_wk({
---           cmd = "bundle exec rails test",
---           name = "Run all minitests",
---           open_as = "pane",
---           close_on_timer = 2,
---           visit_first_call = false,
---           focus_when_call = false,
---         }),
---         g = tmux_term.run_wk({
---           cmd = "bundle exec rails generate %1",
---           name = "Rails Generate",
---           questions = {
---             {
---               question = "Rails generate: ",
---               required = true,
---               open_as = "pane",
---               close_on_timer = 4,
---               visit_first_call = false,
---               focus_when_call = false,
---             },
---           },
---         }),
---         d = tmux_term.run_wk({
---           cmd = "bundle exec rails destroy %1",
---           name = "Rails Destroy",
---           questions = {
---             {
---               question = "Rails destroy: ",
---               required = true,
---               open_as = "pane",
---               close_on_timer = 4,
---               visit_first_call = false,
---               focus_when_call = false,
---             },
---           },
---         }),
---       },
---     }, { prefix = "<leader>", silent = true })
---   end,
--- },
--- Use neotest instead
--- {
---   "weizheheng/ror.nvim",
---   config = function()
---     require("ror").setup({
---       test = {
---         message = {
---           -- These are the default title for nvim-notify
---           file = "Running test file...",
---           line = "Running single test...",
---         },
---         coverage = {
---           -- To customize replace with the hex color you want for the highlight
---           -- guibg=#354a39
---           up = "DiffAdd",
---           -- guibg=#4a3536
---           down = "DiffDelete",
---         },
---         notification = {
---           -- Using timeout false will replace the progress notification window
---           -- Otherwise, the progress and the result will be a different notification window
---           timeout = false,
---         },
---         pass_icon = "✅",
---         fail_icon = "❌",
---       },
---     })
---   end,
---   keys = {
---     { "<Leader>Rc", ":lua require('ror.commands').list_commands()<CR>" },
---   },
--- },

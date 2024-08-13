@@ -1,14 +1,12 @@
-local lsp_util = require("util.lsp")
 -- TODO: https://github.com/ngalaiko/tree-sitter-go-template
 
 return {
   { import = "lazyvim.plugins.extras.lang.go" },
   {
     "williamboman/mason.nvim",
-    opts = function(_, opts)
-      opts.ensure_installed = opts.ensure_installed or {}
-      vim.list_extend(opts.ensure_installed, { "golangci-lint" })
-    end,
+    opts = {
+      ensure_installed = { "golangci-lint" },
+    },
   },
   {
     "nvimtools/none-ls.nvim",
@@ -16,10 +14,9 @@ return {
     dependencies = {
       {
         "williamboman/mason.nvim",
-        opts = function(_, opts)
-          opts.ensure_installed = opts.ensure_installed or {}
-          vim.list_extend(opts.ensure_installed, { "gomodifytags", "impl" })
-        end,
+        opts = {
+          ensure_installed = { "gomodifytags", "impl" },
+        },
       },
     },
     opts = function(_, opts)
@@ -90,13 +87,14 @@ return {
   },
   {
     "mfussenegger/nvim-lint",
-    opts = function(_, opts)
-      lsp_util.add_linters(opts, {
-        ["go"] = { "golangcilint" },
-        ["gomod"] = { "golangcilint" },
-        ["gowork"] = { "golangcilint" },
-      })
-    end,
+    optional = true,
+    opts = {
+      linters_by_ft = {
+        go = { "golangcilint" },
+        gomod = { "golangcilint" },
+        gowork = { "golangcilint" },
+      },
+    },
   },
   {
     "luckasRanarison/nvim-devdocs",

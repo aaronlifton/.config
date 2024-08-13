@@ -1,9 +1,7 @@
 local mini_ai_git_signs = function()
   local bufnr = vim.api.nvim_get_current_buf()
   local gitsigns_cache = require("gitsigns.cache").cache[bufnr]
-  if not gitsigns_cache then
-    return
-  end
+  if not gitsigns_cache then return end
   local hunks = gitsigns_cache.hunks
   hunks = vim.tbl_map(function(hunk)
     local from_line = hunk.added.start
@@ -22,6 +20,16 @@ end
 return {
   {
     "echasnovski/mini.ai",
+    dependencies = {
+      {
+        "echasnovski/mini.nvim",
+        lazy = true,
+        vscode = true,
+        config = function()
+          require("mini.extra").setup()
+        end,
+      },
+    },
     optional = true,
     opts = function(_, opts)
       local ai = require("mini.ai")

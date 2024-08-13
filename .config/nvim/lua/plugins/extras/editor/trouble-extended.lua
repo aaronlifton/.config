@@ -1,8 +1,9 @@
 return {
   "folke/trouble.nvim",
+  optional = true,
   opts = {
-    auto_close = true,
-    focus = true,
+    -- auto_close = true,
+    -- focus = true,
     keys = {
       e = "jump",
       l = "fold_open",

@@ -1,6 +1,7 @@
 return {
   {
     "nvim-treesitter/nvim-treesitter",
+    optional = true,
     opts = {
       ensure_installed = {
         "bash",
@@ -26,6 +27,7 @@ return {
   },
   {
     "mfussenegger/nvim-lint",
+    optional = true,
     opts = {
       linters_by_ft = {
         bash = { "shellcheck" },

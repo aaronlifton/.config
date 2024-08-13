@@ -1,9 +1,7 @@
-local cp = require("catppuccin.palettes").get_palette("macchiato") -- Import your favorite catppuccin colors
-
 return {
   {
     "catppuccin/nvim",
-    lazy = false,
+    lazy = true,
     name = "catppuccin",
     opts = {
       styles = {
@@ -11,105 +9,29 @@ return {
       },
       background = {
         light = "latte",
-        dark = "mocha",
+        dark = "macchiato",
       },
       term_colors = true,
       custom_highlights = function()
+        local palette = require("catppuccin.palettes").get_palette("macchiato")
         return {
-          -- FloatermBorder = { fg = cp.base },
-          -- TelescopeMatching = { fg = cp.blue },
-          -- TelescopeSelection = { fg = cp.text, bg = cp.surface0, bold = true },
-          -- TelescopePromptPrefix = { bg = cp.surface0 },
-          -- TelescopePromptNormal = { bg = cp.surface0 },
-          -- TelescopeResultsNormal = { bg = cp.mantle },
-          -- TelescopePreviewNormal = { bg = cp.mantle },
-          -- TelescopePromptBorder = { bg = cp.surface0, fg = cp.surface0 },
-          -- TelescopeResultsBorder = { bg = cp.mantle, fg = cp.mantle },
-          -- TelescopePreviewBorder = { bg = cp.mantle, fg = cp.mantle },
-          -- TelescopePromptTitle = { bg = cp.red, fg = cp.mantle },
-          -- TelescopeResultsTitle = { fg = cp.mantle },
-          -- TelescopePreviewTitle = { bg = cp.green, fg = cp.mantle },
-          DiffChange = { fg = cp.blue, bg = cp.mantle },
-          -- nvim-dots
-
-          -- For base configs
-          -- NormalFloat = { fg = cp.text, bg = cp.mantle },
-          -- FloatBorder = {
-          --   fg = cp.mantle,
-          --   bg = cp.mantle,
-          -- },
-          -- CursorLineNr = { fg = cp.green },
-          --
-          -- -- For native lsp configs
-          -- DiagnosticVirtualTextError = { bg = cp.none },
-          -- DiagnosticVirtualTextWarn = { bg = cp.none },
-          -- DiagnosticVirtualTextInfo = { bg = cp.none },
-          -- DiagnosticVirtualTextHint = { bg = cp.none },
-          -- LspInfoBorder = { link = "FloatBorder" },
-          --
-          -- -- For mason.nvim
-          -- MasonNormal = { link = "NormalFloat" },
-          --
-          -- -- For indent-blankline
-          -- IblIndent = { fg = cp.surface0 },
-          -- IblScope = { fg = cp.surface2, style = { "bold" } },
-          --
-          -- -- For nvim-cmp and wilder.nvim
-          Pmenu = { fg = cp.overlay2, bg = cp.base },
-          PmenuBorder = { fg = cp.surface1, bg = cp.base },
-          PmenuSel = { bg = cp.green, fg = cp.base },
-          CmpItemAbbr = { fg = cp.overlay2 },
-          CmpItemAbbrMatch = { fg = cp.blue, style = { "bold" } },
-          CmpDoc = { link = "NormalFloat" },
-          CmpDocBorder = {
-            fg = cp.mantle,
-            bg = cp.mantle,
-          },
-
-          -- For fidget
-          FidgetTask = { bg = cp.none, fg = cp.surface2 },
-          FidgetTitle = { fg = cp.blue, style = { "bold" } },
-          --
-          -- -- For nvim-notify
-          -- NotifyBackground = { bg = cp.base },
-          --
-          -- -- For trouble.nvim
-          -- TroubleNormal = { bg = cp.base },
-          --
-          -- -- For telescope.nvim
-          -- TelescopeMatching = { fg = cp.lavender },
-          -- TelescopeResultsDiffAdd = { fg = cp.green },
-          -- TelescopeResultsDiffChange = { fg = cp.yellow },
-          -- TelescopeResultsDiffDelete = { fg = cp.red },
-          --
-          -- -- For glance.nvim
-          -- GlanceWinBarFilename = { fg = cp.subtext1, style = { "bold" } },
-          -- GlanceWinBarFilepath = { fg = cp.subtext0, style = { "italic" } },
-          -- GlanceWinBarTitle = { fg = cp.teal, style = { "bold" } },
-          -- GlanceListCount = { fg = cp.lavender },
-          -- GlanceListFilepath = { link = "Comment" },
-          -- GlanceListFilename = { fg = cp.blue },
-          -- GlanceListMatch = { fg = cp.lavender, style = { "bold" } },
-          -- GlanceFoldIcon = { fg = cp.green },
-          --
-          -- -- For nvim-treehopper
-          -- TSNodeKey = {
-          --   fg = cp.peach,
-          --   bg = cp.base,
-          --   style = { "bold", "underline" },
-          -- },
-          --
-          -- -- For treesitter
-          -- ["@keyword.return"] = { fg = cp.pink, style = {} },
-          -- ["@error.c"] = { fg = cp.none, style = {} },
-          -- ["@error.cpp"] = { fg = cp.none, style = {} },
+          FloatermBorder = { fg = palette.base },
+          TelescopeMatching = { fg = palette.blue },
+          TelescopeSelection = { fg = palette.text, bg = palette.surface0, bold = true },
+          TelescopePromptPrefix = { bg = palette.surface0 },
+          TelescopePromptNormal = { bg = palette.surface0 },
+          TelescopeResultsNormal = { bg = palette.mantle },
+          TelescopePreviewNormal = { bg = palette.mantle },
+          TelescopePromptBorder = { bg = palette.surface0, fg = palette.surface0 },
+          TelescopeResultsBorder = { bg = palette.mantle, fg = palette.mantle },
+          TelescopePreviewBorder = { bg = palette.mantle, fg = palette.mantle },
+          TelescopePromptTitle = { bg = palette.red, fg = palette.mantle },
+          TelescopeResultsTitle = { fg = palette.mantle },
+          TelescopePreviewTitle = { bg = palette.green, fg = palette.mantle },
         }
       end,
       integrations = {
-        aerial = true,
-        alpha = true,
-        flash = true,
-        navic = { enabled = true, custom_bg = "lualine" },
+        alpha = false,
         cmp = true,
         barbecue = {
           dim_dirname = true, -- directory name is dimmed by default
@@ -118,22 +40,20 @@ return {
           alt_background = false,
         },
         colorful_winsep = {
-          enabled = true,
+          enabled = false,
           color = "lavender",
         },
         dap = true,
         dap_ui = true,
-        dashboard = true,
+        dashboard = false,
         diffview = true,
-        dropbar = { enabled = true, color_mode = true },
-        -- flash = true,
-        fidget = true,
-        headlines = true,
-        -- gitgutter = true,
+        leap = true,
+        flash = false,
+        headlines = false,
         gitsigns = true,
-        -- harpoon = false,
+        grug_far = true,
+        harpoon = false,
         illuminate = true,
-        -- indent_blankline = { enabled = true },
         indent_blankline = {
           enabled = true,
           scope_color = "lavender", -- catppuccin color (eg. `lavender`) Default: text
@@ -142,15 +62,6 @@ return {
         mason = true,
         markdown = true,
         mini = true,
-        -- native_lsp = {
-        --   enabled = true,
-        --   underlines = {
-        --     errors = { "undercurl" },
-        --     hints = { "undercurl" },
-        --     warnings = { "undercurl" },
-        --     information = { "undercurl" },
-        --   },
-        -- },
         native_lsp = {
           enabled = true,
           virtual_text = {
@@ -169,24 +80,22 @@ return {
             background = true,
           },
         },
-        leap = true,
-        lsp_trouble = false,
-        -- navic = { enabled = false, custom_bg = "lualine" },
+        lsp_trouble = true,
+        navic = { enabled = false, custom_bg = "lualine" },
         neotest = true,
         neogit = true,
         neotree = true,
         notify = true,
         noice = true,
-        ufo = true,
+        ufo = false,
         overseer = true,
         octo = true,
-        -- rainbow_delimiters = true,
+        rainbow_delimiters = true,
         semantic_tokens = true,
         telescope = {
           enabled = true,
-          style = "nvchad",
         },
-        -- symbols_outline = false,
+        symbols_outline = false,
         treesitter = true,
         treesitter_context = true,
         which_key = true,
@@ -195,17 +104,70 @@ return {
   },
   {
     "akinsho/bufferline.nvim",
-    opts = {
-      highlights = require("catppuccin.groups.integrations.bufferline").get({
+    optional = true,
+    opts = function(_, opts)
+      local palette = require("catppuccin.palettes").get_palette("macchiato")
+      opts.highlights = require("catppuccin.groups.integrations.bufferline").get({
         styles = { "italic", "bold" },
         custom = {
           all = {
-            fill = { bg = cp.mantle },
-            background = { bg = cp.mantle },
+            fill = {
+              bg = palette.mantle,
+            },
+            separator_selected = {
+              bg = palette.base,
+              fg = palette.mantle,
+            },
+            separator = {
+              bg = palette.mantle,
+              fg = palette.mantle,
+            },
+            tab_separator = {
+              bg = palette.mantle,
+              fg = palette.mantle,
+            },
+            tab_selected = {
+              bg = palette.base,
+            },
+            tab_separator_selected = {
+              bg = palette.base,
+              fg = palette.mantle,
+            },
           },
         },
-      }),
-    },
+      })
+    end,
+    -- opts = {
+    --   highlights = require("catppuccin.groups.integrations.bufferline").get({
+    --     styles = { "italic", "bold" },
+    --     custom = {
+    --       all = {
+    --         fill = {
+    --           bg = palette.mantle,
+    --         },
+    --         separator_selected = {
+    --           bg = palette.base,
+    --           fg = palette.mantle,
+    --         },
+    --         separator = {
+    --           bg = palette.mantle,
+    --           fg = palette.mantle,
+    --         },
+    --         tab_separator = {
+    --           bg = palette.mantle,
+    --           fg = palette.mantle,
+    --         },
+    --         tab_selected = {
+    --           bg = palette.base,
+    --         },
+    --         tab_separator_selected = {
+    --           bg = palette.base,
+    --           fg = palette.mantle,
+    --         },
+    --       },
+    --     },
+    --   }),
+    -- },
   },
   {
     "rasulomaroff/reactive.nvim",
@@ -215,9 +177,15 @@ return {
     },
   },
   {
-    "nvim-lualine/lualine.nvim",
-    options = {
-      theme = "catppuccin",
+    "rachartier/tiny-devicons-auto-colors.nvim",
+    optional = true,
+    opts = {
+      colors = palette,
+      factors = {
+        lightness = 0.9,
+        chroma = 1,
+        hue = 0.7,
+      },
     },
   },
 }

@@ -12,11 +12,13 @@ local ag = vim.api.nvim_create_augroup
 local close_with_q = {
   -- LazyVim/lua/lazyvim/config/autocmds.lua:53
   "PlenaryTestPopup",
+  "grug-far",
   -- "help", -- Removed
   "lspinfo",
   "notify",
   "qf",
   "query",
+  "spectre_panel",
   "startuptime",
   "tsplayground",
   "neotest-output",
@@ -132,18 +134,18 @@ ac({ "BufNewFile", "BufRead" }, {
     vim.diagnostic.disable(0)
   end,
 })
-
-local numbertoggle = ag("numbertoggle", { clear = true })
--- Toggle between relative/absolute line numbers
-ac({ "BufEnter", "FocusGained", "InsertLeave", "CmdlineLeave", "WinEnter" }, {
-  pattern = "*",
-  group = numbertoggle,
-  callback = function()
-    if vim.o.nu and vim.api.nvim_get_mode().mode ~= "i" then
-      vim.opt.relativenumber = true
-    end
-  end,
-})
+--
+-- local numbertoggle = ag("numbertoggle", { clear = true })
+-- -- Toggle between relative/absolute line numbers
+-- ac({ "BufEnter", "FocusGained", "InsertLeave", "CmdlineLeave", "WinEnter" }, {
+--   pattern = "*",
+--   group = numbertoggle,
+--   callback = function()
+--     if vim.o.nu and vim.api.nvim_get_mode().mode ~= "i" then
+--       vim.opt.relativenumber = true
+--     end
+--   end,
+-- })
 
 ac({ "BufEnter" }, {
   pattern = { "*.md", "help" },
@@ -196,6 +198,24 @@ ac({ "BufEnter", "BufWinEnter" }, {
     end, { buffer = true })
   end,
 })
+
+ac({ "FileType" }, {
+  pattern = { "json" },
+  callback = function(args)
+    vim.keymap.set("n", "<leader>cpj", function()
+      require("util.treesitter.copy_path").copy_json_path({ register = "*" })
+    end, { desc = "Copy JSON Path", buffer = args.buf })
+  end,
+})
+
+-- ac({ "FileType" }, {
+--   pattern = { "javascript", "typescript", "javascriptreact", "typescriptreact" },
+--   callback = function(args)
+--     vim.keymap.set("n", "<leader>ccj", function()
+--       copy_path.copy_javascript_path({ register = "*" })
+--     end, { buffer = args.buf })
+--   end,
+-- })
 
 -- ac("WinLeave", {
 -- 	pattern = "*",

@@ -18,12 +18,19 @@ return {
         desc = "Annotate Function",
       },
       {
-        "<leader>cN",
+        "<leader>cnc",
         function()
-          require("neogen").generate()
+          require("neogen").generate({ type = "class" })
         end,
-        desc = "Generate Annotations (Neogen)",
+        desc = "Annotate Function",
       },
+      -- {
+      --   "<leader>cN",
+      --   function()
+      --     require("neogen").generate()
+      --   end,
+      --   desc = "Generate Annotations (Neogen)",
+      -- },
     },
   },
   {
@@ -34,7 +41,7 @@ return {
         {
           "<leader>cn",
           group = "Annotate",
-          icon = { icon = LazyVim.config.icons.kinds["TypeParameter"], color = "orange" },
+          icon = { icon = LazyVim.config.icons.kinds["TypeParameter"], color = "orange" }, -- " "
         },
       },
     },
