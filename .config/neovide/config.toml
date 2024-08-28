@@ -4,11 +4,11 @@
 # idle = false
 # no-multigrid = true
 # frame = "full"
-wsl = false
-no-multigrid = false
+# wsl = false
+no-multigrid = true
 vsync = true
 maximized = false
-srgb = false
+srgb = true
 idle = true
 neovim_bin = "/Users/$USER/.local/share/bob/nvim-bin/nvim"
 frame = "full"

@@ -5,36 +5,34 @@
 prepend_keymap = [
   { on = [
     "<C-s>",
-  ], exec = '''shell "$SHELL" --block --confirm''', desc = "Open shell here" },
+  ], run = '''shell "$SHELL" --block --confirm''', desc = "Open shell here" },
+  { on = [
+    "f",
+  ], run = "plugin jump-to-char", desc = "Jump to char" },
+  { on  = [
+    "O"
+  ], run = 'shell --block --confirm "nvim $@"', desc = "Open in Neovim" },
 ]
 
 append_keymap = [
   { on = [
     "e",
-  ], exec = "open", desc = "Open the selected files" },
+  ], run = "open", desc = "Open the selected files" },
   { on = [
     "E",
-  ], exec = "open --interactive", desc = "Open the selected files interactively" },
+  ], run = "open --interactive", desc = "Open the selected files interactively" },
   { on = [
     "g",
     "n",
-  ], exec = "cd ~/.config/nvim", desc = "Go to the nvim directory" },
+  ], run = "cd ~/.config/nvim", desc = "Go to the nvim directory" },
   { on = [
     "g",
     "h",
-  ], exec = "cd ~/.config", desc = "Go to ~/.config" },
+  ], run = "cd ~/.config", desc = "Go to ~/.config" },
   { on = [
     "g",
     "c",
-  ], exec = "cd ~/Code", desc = "Go to the code directory" },
-  { on = [
-    "g",
-    "d",
-  ], exec = "cd ~/Code/dotfiles", desc = "Go to the imported dotfiles directory" },
-  { on = [
-    "g",
-    "b",
-  ], exec = "cd ~/Code/astro/fullstack-dev-blog", desc = "Go to the astro blog directory" },
+  ], run = "cd ~/Code", desc = "Go to the code directory" },
   # { on = [
   #   "g",
   #   "i",
@@ -55,4 +53,4 @@ append_keymap = [
 
 [input]
 
-prepend_keymap = [{ on = ["<Esc>"], exec = "close", desc = "Cancel input" }]
+prepend_keymap = [{ on = ["<Esc>"], run = "close", desc = "Cancel input" }]

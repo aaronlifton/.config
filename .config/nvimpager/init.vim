@@ -9,7 +9,8 @@ noremap <buffer> q :q<cr>
 
 " set runtimepath+=~/.config/nvim/start/vim-solarized8
 " set runtimepath+=~/.config/nvim/start/vim-highlightedyank
-set runtimepath+=~/.local/share/nvim/lazy/everforest
+set runtimepath+=~/.local/share/nvim/lazy/tokyonight.nvim
+" set runtimepath+=~/.local/share/nvim/lazy/catppuccin/
 set runtimepath+=~/.config/nvimpager/themes
 set runtimepath+=~/.config/nvimpager/colorscheme-preview.vim
 
@@ -18,7 +19,8 @@ set ignorecase smartcase
 
 set background=dark
 set termguicolors
-colorscheme everforest
+colorscheme tokyonight-moon
+" colorscheme catppuccin-macchiato
 
 map Q <Nop>
 
