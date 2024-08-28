@@ -5,7 +5,7 @@ local browser = require("functions/browser")
 config_watcher.watch_config_and_reload()
 
 require("keys")
-require("yabai")
+-- require("yabai")
 
 local hyper = hs.hotkey.modal.new({}, nil)
 
