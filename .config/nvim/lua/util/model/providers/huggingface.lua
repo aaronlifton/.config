@@ -34,13 +34,18 @@ function M.request_completion(handlers, params, options)
       ["Content-Type"] = "application/json",
     },
   }, {
+    on_other = function(msg)
+      echo("other", msg)
+    end,
     on_message = function(msg)
+      echo("data", msg)
       local item = util.json.decode(msg.data)
 
       if item == nil then
         handlers.on_error(msg.data, "json parse error")
         return
       end
+      echo("item", item)
 
       if item.token == nil then
         if item[1] ~= nil and item[1].generated_text ~= nil then

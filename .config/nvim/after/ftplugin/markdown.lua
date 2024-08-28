@@ -2,9 +2,19 @@ vim.keymap.set({ "n", "x" }, "]#", [[/^#\+ .*<CR>]], { desc = "Next Heading", bu
 vim.keymap.set({ "n", "x" }, "[#", [[?^#\+ .*<CR>]], { desc = "Prev Heading", buffer = true })
 
 vim.diagnostic.disable()
-vim.schedule_wrap(function()
-  vim.opt_local.spell = false
-end)
+vim.opt_local.spell = false
+-- vim.schedule_wrap(function()
+--   vim.cmd("lua vim.opt_local.spell = false")
+-- end)
+
+-- stylua: ignore start
+if LazyVim.has("markdowny.nvim") then
+  vim.keymap.set("v", "<C-b>", function() require('markdowny').bold() end, { buffer = 0 })
+  vim.keymap.set("v", "<C-i>", function() require('markdowny').italic() end, { buffer = 0 })
+  vim.keymap.set("v", "<C-k>", function() require('markdowny').link() end, { buffer = 0 })
+  vim.keymap.set("v", "<C-e>", function() require('markdowny').code() end, { buffer = 0 })
+end
+-- stylua: ignore end
 
 local spec_pair = require("mini.ai").gen_spec.pair
 vim.b.miniai_config = {

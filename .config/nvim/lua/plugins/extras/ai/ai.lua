@@ -1,35 +1,4 @@
-local ui_util = require("util.ui")
 return {
-  {
-    "tzachar/cmp-ai",
-    enabled = false,
-    dependencies = "nvim-lua/plenary.nvim",
-    config = function(_, opts)
-      local cmp_ai = require("cmp_ai.config")
-
-      -- CODESTRAL_API_KEY=Q5G7tjYkGKdCXnHX7oohUwOIB4vom863
-      -- https://github.com/tzachar/cmp-ai
-      -- https://codestral.mistral.ai/v1/fim/completions
-      -- https://codestral.mistral.ai/v1/chat/completions
-      cmp_ai:setup({
-        max_lines = 1000,
-        provider = "Codestral",
-        -- provider_options = {
-        --   model = "codestral-latest",
-        -- },
-        notify = true,
-        notify_callback = function(msg)
-          vim.notify(msg)
-        end,
-        run_on_every_keystroke = true,
-        ignored_file_types = {
-          -- default is not to ignore
-          -- uncomment to ignore in lua:
-          -- lua = true
-        },
-      })
-    end,
-  },
   {
     "huggingface/hfcc.nvim",
     event = "InsertEnter",
@@ -95,7 +64,6 @@ return {
   },
   {
     "mthbernardes/codeexplain.nvim",
-    enabled = true,
     cmd = "CodeExplain",
     build = function()
       vim.cmd([[silent UpdateRemotePlugins]])

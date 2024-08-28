@@ -31,7 +31,7 @@ map("n", "<leader>u<tab>", function()
 end, { desc = "Toggle Tabline" })
 
 -- toggle colorcolumn
-map("n", "<leader>um", function()
+map("n", "<leader>u|", function()
   local col = vim.o.colorcolumn
   if col == "" then
     vim.o.colorcolumn = "81"
@@ -100,9 +100,7 @@ map("n", "<leader>f<tab>", function()
       return tabnr .. is_current .. cwd .. table.concat(bufs, ", ")
     end,
   }, function(tabid)
-    if tabid ~= nil then
-      vim.cmd(tabid .. "tabnext")
-    end
+    if tabid ~= nil then vim.cmd(tabid .. "tabnext") end
   end)
 end, { desc = "Tabs" })
 
@@ -308,29 +306,31 @@ require("config.keymaps.window")
 
 map("n", "<M-->", "<cmd>ChatGPT<CR>", { desc = "ChatGPT" })
 
+local path_util = require("util.path")
 -- map("n", "<leader>ccp", ":let @+=expand('%:p')<cr>", { desc = "Copy path to clipboard" })
 map("n", "<leader>cpp", function()
-  -- ":let @+=expand('%:p')<cr>"
-  local current_path = vim.fn.expand("%:p")
-  vim.api.nvim_echo({ { current_path, "Normal" } }, false, {})
-  vim.cmd("let @+=expand('%:p')")
-  -- vim.api.nvim_call_function('setreg', {'+', "test"})
-end, { desc = "Copy path to clipboard" })
+  -- -- ":let @+=expand('%:p')<cr>"
+  -- local current_path = vim.fn.expand("%:p")
+  -- vim.api.nvim_echo({ { current_path, "Normal" } }, false, {})
+  -- vim.cmd("let @+=expand('%:p')")
+  -- -- vim.api.nvim_call_function('setreg', {'+', "test"})
+  path_util.copy_abs_path()
+end, { desc = "Copy path to clipboard", silent = true })
 map("n", "<leader>cpr", function()
-  local abs_path = vim.fn.expand("%:p")
-  local rel_path = vim.fn.fnamemodify(abs_path, ":~:.")
-  vim.api.nvim_call_function("setreg", { "+", rel_path })
-end, { desc = "Copy relative path to clipboard" })
-local file_line = function()
-  local abs_path = vim.fn.expand("%:p")
-  local rel_path = vim.fn.fnamemodify(abs_path, ":~:.")
-  local current_line = vim.fn.line(".")
-  return rel_path .. ":" .. tostring(current_line)
-end
+  path_util.copy_rel_path()
+end, { desc = "Copy relative path to clipboard", silent = true })
 map("n", "<leader>cpl", function()
-  local path = file_line()
-  vim.api.nvim_call_function("setreg", { "+", path })
-end, { desc = "Copy relative path:line to clipboard" })
+  path_util.copy_rel_file_line()
+end, { desc = "Copy relative path:line to clipboard", silent = true })
+map("n", "<leader>cpL", function()
+  path_util.copy_abs_file_line()
+end, { desc = "Copy absolute path:line to clipboard", silent = true })
+map("n", "<leader>cpv", function()
+  path_util.echo_abs_path()
+end, { desc = "Echo absolute path", silent = true })
+map("n", "<leader>cpV", function()
+  path_util.echo_rel_path()
+end, { desc = "Echo relative path", silent = true })
 
 map("n", "<leader>cq", function()
   vim.diagnostic.open_float(nil, { source = true })
@@ -367,6 +367,31 @@ map("n", "<C-S-/>", function()
   } --[[@as LazyTermOpts]])
 end, { desc = "Float terminal" })
 map("t", "<C-S-/>", "<cmd>close<cr>", { desc = "Hide Terminal" })
+map("n", "<M-S-Bslash>", function()
+  local buf = vim.api.nvim_get_current_buf()
+  local bufname = vim.api.nvim_buf_get_name(buf)
+  -- if bufname:match("yazi") then
+  --   vim.cmd("q")
+  --   return
+  -- end
+  local cwd = vim.fn.getcwd()
+  if bufname then
+    local path = vim.loop.fs_realpath(bufname)
+    cwd = vim.fn.fnamemodify(path, ":h")
+  end
+
+  LazyVim.terminal({ "yazi", cwd }, {
+    border = "rounded",
+    persistent = true,
+    size = { width = 0.75, height = 0.75 },
+    backdrop = 75,
+    ctrl_hjkl = false,
+    env = {
+      -- EDITOR = "nvr -cc close -cc vsplit +'set bufhidden=wipe'",
+      EDITOR = "nvr -cc close +'set bufhidden=wipe'",
+    },
+  })
+end, { desc = "Yazi" })
 
 map("n", "<leader>j", function()
   require("util.leap.treesitter").leap_ts_parents()
@@ -402,9 +427,7 @@ map("n", "<leader>gT", function()
   if git_util.is_git_repo() then
     local commit_date = vim.fn.system("git log -1 --format=%cd --date=unix " .. filename)
     local commit_date_str = vim.fn.strftime("%c", commit_date)
-    if commit_date ~= "" then
-      date = commit_date_str .. " (Commit Time)"
-    end
+    if commit_date ~= "" then date = commit_date_str .. " (Commit Time)" end
   end
   date = date or modified_date_str .. " (Modified Time)"
   vim.api.nvim_echo({ { date, "Title" } }, true, {})
@@ -436,6 +459,14 @@ map("n", "go", "<Cmd>call append(line('.'), repeat([''], v:count1))<CR>", { desc
 -- Insert Mode
 map({ "c", "i", "t" }, "<M-BS>", "<C-w>", { desc = "Delete Word" })
 
+-- Goto definition in vsplit
+map(
+  "n",
+  "<C-w><C-f>",
+  "<cmd>vsplit | lua vim.lsp.buf.definition()<cr>",
+  { desc = "Goto Definition (vsplit)", silent = true }
+)
+
 -- Codeium is <leader>cI2
 map("n", "<leader>cI1", "<cmd>Copilot toggle<cr>", { desc = "Toggle Copilot" })
 map("n", "<leader>cI3", function()
@@ -443,6 +474,7 @@ map("n", "<leader>cI3", function()
   require("copilot").disable()
   vim.api.nvim_command("LLMToggleAutoSuggest")
 end, { desc = "Toggle Copilot/Codeium to HFCC" })
+map("n", "<leader>cI3", "Copilot enable", { desc = "Enable Copilot" })
 map("n", "<leader>cId", function()
   vim.api.nvim_command("CodeiumDisable")
   vim.api.nvim_command("Copilot disable")
@@ -456,9 +488,6 @@ map("n", "<leader>cId", function()
 end, { desc = "Turn off all AI" })
 
 map("n", "zF", ":norm z=1<cr>", { desc = "Choose first spelling suggestion" })
-
-map("n", "]g", ":GitConflictNextConflict<cr>", { desc = "Next Git Conflict" })
-map("n", "[g", ":GitConflictPrevConflict<cr>", { desc = "Prev Git Conflict" })
 
 -- Windows Split
 -- map("n", "<leader>_", "<C-W>s", { desc = "Split Window Below", remap = true })
@@ -498,12 +527,18 @@ map("n", "<leader>xC", function()
   vim.fn.setqflist({})
 end, { desc = "Clear Quickfix" })
 
-map("n", "[T", function()
+map("n", "[X", function()
   require("neotest").jump.prev({ status = "failed" })
 end, { silent = true, desc = "Prev Test Failure" })
-map("n", "]T", function()
+map("n", "]X", function()
   require("neotest").jump.next({ status = "failed" })
 end, { silent = true, desc = "Next Test Failure" })
+map("n", "[S", function()
+  require("neotest").jump.prev({ status = "passed" })
+end, { silent = true, desc = "Prev Test Success" })
+map("n", "]S", function()
+  require("neotest").jump.next({ status = "passed" })
+end, { silent = true, desc = "Next Test Success" })
 --------------------------------------------------------------------------------
 -- Custom finders
 local T = require("util.fzf.finders")

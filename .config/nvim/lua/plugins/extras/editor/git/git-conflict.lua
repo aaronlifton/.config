@@ -1,3 +1,4 @@
+local prefix = "<leader>gC"
 -- stylua: ignore start
 local keys = {
   { "co", "<Plug>(git-conflict-ours)",          { desc = "Choose Their Changes" } },
@@ -17,6 +18,10 @@ local set_git_conflict_keymap = function(buf)
 end
 
 local clear_keymaps = function(buf)
+  if not vim.api.nvim_buf_is_valid(buf) then return end
+
+  if not vim.bo[buf].buflisted then return end
+
   for _, key in ipairs(keys) do
     vim.api.nvim_buf_del_keymap(buf, "n", key[1])
   end
@@ -41,15 +46,15 @@ return {
     },
     version = "*",
     keys = {
-      { "<leader>gCt", "<cmd>GitConflictChooseTheirs<cr>", desc = "Choose Their Changes" },
-      { "<leader>gCo", "<cmd>GitConflictChooseOurs<cr>", desc = "Choose Our Changes" },
-      { "<leader>gCb", "<cmd>GitConflictChooseBoth<cr>", desc = "Choose Both changes" },
-      { "<leader>gCl", "<cmd>GitConflictListQf<cr>", desc = "Git Conflict Quicklist" },
-      { "<leader>gCr", "<cmd>GitConflictRefresh<cr>", desc = "Git Conflict Refresh" },
-      { "[x", "<cmd>GitConflictPrevConflict<cr>", desc = "Prev Git Conflict" },
-      { "]x", "<cmd>GitConflictNextConflict<cr>", desc = "Next Git Conflict" },
+      { prefix .. "t", "<cmd>GitConflictChooseTheirs<cr>", desc = "Choose Their Changes" },
+      { prefix .. "o", "<cmd>GitConflictChooseOurs<cr>", desc = "Choose Our Changes" },
+      { prefix .. "b", "<cmd>GitConflictChooseBoth<cr>", desc = "Choose Both changes" },
+      { prefix .. "l", "<cmd>GitConflictListQf<cr>", desc = "Git Conflict Quicklist" },
+      { prefix .. "r", "<cmd>GitConflictRefresh<cr>", desc = "Git Conflict Refresh" },
+      { "[g", "<cmd>GitConflictPrevConflict<cr>", desc = "Prev Git Conflict" },
+      { "]g", "<cmd>GitConflictNextConflict<cr>", desc = "Next Git Conflict" },
       {
-        "<leader>gCR",
+        prefix .. "R",
         function()
           require("git-conflict").setup()
           vim.api.nvim_command("GitConflictRefresh")
@@ -87,7 +92,8 @@ return {
     opts = {
       spec = {
         mode = "n",
-        { "<leader>gC", group = "conflicts", icon = { icon = "", color = "red" } },
+        -- { prefix, group = "conflicts", icon = { icon = "", color = "red" } },
+        { prefix, group = "conflicts", icon = { icon = " ", color = "red" } },
       },
     },
   },

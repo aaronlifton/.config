@@ -1,14 +1,32 @@
 return {
   "folke/which-key.nvim",
   opts = {
+    -- preset = "helix",
     triggers = {
       { "<auto>", mode = "nixsoc" },
     },
     icons = {
       group = "",
       rules = {
+        -- /Users/alifton/.local/share/nvim/lazy/mini.icons/lua/mini/icons.lua:1853
         { pattern = "main", cat = "filetype", name = "git" },
         -- { pattern = "main", icon = " ", color = "orange" },
+        { plugin = "overseer.nvim", icon = "󰑮 ", color = "orange" },
+        { pattern = "overseer", icon = "󰑮 ", color = "orange" },
+        { plugin = "refactoring.nvim", icon = " ", color = "orange" },
+        -- { plugin = "refactoring.nvim", icon = " ", color = "orange" },-- 󰴒
+        { plugin = "multicursors.nvim", icon = "󱊁 ", color = "white" }, -- 󰙅 󱢓 
+        { pattern = "%f[%a]twilight", icon = "󱅻 ", color = "purple" },
+        { pattern = "Git Branches", icon = "󰊢 ", color = "orange" },
+        { pattern = "%f[%a]branches", icon = "󰊢 ", color = "orange" },
+        -- { pattern = "Git Blame Line", icon = " ", color = "orange" },
+        { pattern = "%f[%a]blame", icon = " ", color = "orange" },
+        { pattern = "blame.nvim", icon = " ", color = "orange" },
+        { pattern = "Blame View", icon = " ", color = "orange" },
+        -- { pattern = "openai", icon = "", color = "white" },
+        { pattern = "%f[%a]gemini", icon = "󰊭 ", color = "white" },
+        { pattern = "%f[%a]rails", icon = " ", color = "red" },
+        { pattern = "%f[%a]keywords", icon = " ", color = "white" },
       },
     },
     -- layout = {

@@ -1,3 +1,5 @@
+local prefix = "<leader>ai"
+
 return {
   {
     "jellydn/gen.nvim",
@@ -34,22 +36,22 @@ return {
       }
     end,
     keys = {
-      { "<leader>aii", "<cmd>Gen<cr>", mode = { "n", "v" }, desc = "Choose" },
-      { "<leader>aig", "<cmd>Gen Generate<cr>", mode = { "n" }, desc = "Generate" },
-      { "<leader>aic", "<cmd>Gen Chat<cr>", mode = { "n" }, desc = "Chat" },
-      { "<leader>ais", "<cmd>Gen Summarize<cr>", mode = { "n", "v" }, desc = "Summarize" },
-      { "<leader>aia", "<cmd>Gen Ask<cr>", mode = { "v" }, desc = "Ask" },
-      { "<leader>aiH", "<cmd>Gen Change<cr>", mode = { "v" }, desc = "Change" },
-      { "<leader>aiG", "<cmd>Gen Enhance_Grammar_Spelling<cr>", mode = { "v" }, desc = "Enhance Grammar Spelling" },
-      { "<leader>aiw", "<cmd>Gen Enhance_Wording<cr>", mode = { "v" }, desc = "Enhance Wording" },
-      { "<leader>aiC", "<cmd>Gen Make_Concise<cr>", mode = { "v" }, desc = "Make Concise" },
-      { "<leader>ail", "<cmd>Gen Make_List<cr>", mode = { "v" }, desc = "Make List" },
-      { "<leader>ait", "<cmd>Gen Make_Table<cr>", mode = { "v" }, desc = "Make Table" },
-      { "<leader>air", "<cmd>Gen Review_Code<cr>", mode = { "v" }, desc = "Review Code" },
-      { "<leader>aie", "<cmd>Gen Enhance_Code<cr>", mode = { "v" }, desc = "Enhance Code" },
-      { "<leader>aih", "<cmd>Gen Change_Code<cr>", mode = { "v" }, desc = "Change Code" },
-      { "<leader>aif", "<cmd>Gen Fix_Code<cr>", mode = { "v" }, desc = "Fix Code" },
-      { "<leader>aiE", "<cmd>Gen Elaborate_Text<cr>", mode = { "v" }, desc = "Elaborate Text" },
+      { prefix .. "i", "<cmd>Gen<cr>", mode = { "n", "v" }, desc = "Choose" },
+      { prefix .. "g", "<cmd>Gen Generate<cr>", mode = { "n" }, desc = "Generate" },
+      { prefix .. "c", "<cmd>Gen Chat<cr>", mode = { "n" }, desc = "Chat" },
+      { prefix .. "s", "<cmd>Gen Summarize<cr>", mode = { "n", "v" }, desc = "Summarize" },
+      { prefix .. "a", "<cmd>Gen Ask<cr>", mode = { "v" }, desc = "Ask" },
+      { prefix .. "H", "<cmd>Gen Change<cr>", mode = { "v" }, desc = "Change" },
+      { prefix .. "G", "<cmd>Gen Enhance_Grammar_Spelling<cr>", mode = { "v" }, desc = "Enhance Grammar Spelling" },
+      { prefix .. "w", "<cmd>Gen Enhance_Wording<cr>", mode = { "v" }, desc = "Enhance Wording" },
+      { prefix .. "C", "<cmd>Gen Make_Concise<cr>", mode = { "v" }, desc = "Make Concise" },
+      { prefix .. "l", "<cmd>Gen Make_List<cr>", mode = { "v" }, desc = "Make List" },
+      { prefix .. "t", "<cmd>Gen Make_Table<cr>", mode = { "v" }, desc = "Make Table" },
+      { prefix .. "r", "<cmd>Gen Review_Code<cr>", mode = { "v" }, desc = "Review Code" },
+      { prefix .. "e", "<cmd>Gen Enhance_Code<cr>", mode = { "v" }, desc = "Enhance Code" },
+      { prefix .. "h", "<cmd>Gen Change_Code<cr>", mode = { "v" }, desc = "Change Code" },
+      { prefix .. "f", "<cmd>Gen Fix_Code<cr>", mode = { "v" }, desc = "Fix Code" },
+      { prefix .. "E", "<cmd>Gen Elaborate_Text<cr>", mode = { "v" }, desc = "Elaborate Text" },
     },
   },
   {
@@ -57,7 +59,7 @@ return {
     opts = {
       spec = {
         mode = { "n", "v" },
-        { "<leader>ai", group = "AI (Gen)" },
+        { prefix, group = "AI (Gen)", icon = { icon = "󱚦 ", color = "green" } },
       },
     },
   },

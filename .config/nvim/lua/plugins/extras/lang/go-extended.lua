@@ -9,6 +9,24 @@ return {
     },
   },
   {
+    "mfussenegger/nvim-lint",
+    optional = true,
+    opts = {
+      linters_by_ft = {
+        go = { "golangcilint" },
+        gomod = { "golangcilint" },
+        gowork = { "golangcilint" },
+      },
+    },
+  },
+  {
+    "luckasRanarison/nvim-devdocs",
+    optional = true,
+    ensure_installed = {
+      "go",
+    },
+  },
+  {
     "nvimtools/none-ls.nvim",
     optional = true,
     dependencies = {
@@ -39,6 +57,7 @@ return {
   },
   {
     "ray-x/go.nvim",
+    enabled = false,
     dependencies = {
       "ray-x/guihua.lua",
       "neovim/nvim-lspconfig",
@@ -84,24 +103,6 @@ return {
         },
       })
     end,
-  },
-  {
-    "mfussenegger/nvim-lint",
-    optional = true,
-    opts = {
-      linters_by_ft = {
-        go = { "golangcilint" },
-        gomod = { "golangcilint" },
-        gowork = { "golangcilint" },
-      },
-    },
-  },
-  {
-    "luckasRanarison/nvim-devdocs",
-    optional = true,
-    ensure_installed = {
-      "go",
-    },
   },
   -- {
   --   "yanskun/gotests.nvim",

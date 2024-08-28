@@ -1,3 +1,4 @@
+local use_glow = false
 return {
   {
     "luckasRanarison/nvim-devdocs",
@@ -15,6 +16,7 @@ return {
     keys = {
       { "<leader>sE", "<cmd>DevdocsOpen<cr>", desc = "Devdocs" },
       { "<leader>se", "<cmd>DevdocsOpenCurrent<cr>", desc = "Devdocs Current" },
+      { "<leader>se", "<cmd>DevdocsOpenCurrent<cr>", desc = "Devdocs Current" },
     },
     opts = {
       dir_path = vim.fn.stdpath("data") .. "/devdocs", -- installation directory
@@ -26,12 +28,13 @@ return {
         border = "rounded",
       },
       wrap = false, -- text wrap, only applies to floating window
-      previewer_cmd = nil, -- for example: "glow"
-      cmd_args = {}, -- example using glow: { "-s", "dark", "-w", "80" }
+      previewer_cmd = use_glow and "glow" or nil, -- for example: "glow"
+      cmd_args = { "-s", "~/.config/themes/glow/tokyo_night.json", "-w", "80" }, -- example using glow: { "-s", "dark", "-w", "80" }
       cmd_ignore = {}, -- ignore cmd rendering for the listed docs
-      picker_cmd = false, -- use cmd previewer in picker preview
-      picker_cmd_args = {}, -- example using glow: { "-s", "dark", "-w", "50" }
+      picker_cmd = true, -- use cmd previewer in picker preview
+      picker_cmd_args = { "-p" }, -- example using glow: { "-s", "dark", "-w", "50" }
       after_open = function(bufnr)
+        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true), "n", true)
         vim.api.nvim_buf_set_keymap(bufnr, "n", "q", ":close<CR>", {})
       end,
       ensure_installed = {

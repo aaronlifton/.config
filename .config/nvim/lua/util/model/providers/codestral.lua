@@ -14,26 +14,30 @@ local M = {
       endpoint = "fim"
       params.endpoint = nil
     end
+    local api_key, base_url
+    if params.model == "codestral-mamba-latest" then
+      api_key = util.env("MISTRAL_API_KEY")
+      base_url = "https://api.mistral.ai/v1/"
+    else
+      base_url = "https://codestral.mistral.ai/v1/"
+      api_key = util.env("CODESTRAL_API_KEY")
+    end
 
     return sse.curl_client({
-      url = "https://codestral.mistral.ai/v1/" .. endpoint .. "/completions",
+      url = base_url .. endpoint .. "/completions",
       headers = {
         ["Content-Type"] = "application/json",
         ["Accept"] = "application/json",
-        ["Authorization"] = "Bearer " .. util.env("CODESTRAL_API_KEY"),
+        ["Authorization"] = "Bearer " .. api_key,
       },
       body = vim.tbl_deep_extend("force", {}, params, { stream = true }),
     }, {
       on_message = function(msg, raw)
         local data = util.json.decode(msg.data)
 
-        if data == nil then
-          return
-        end
+        if data == nil then return end
 
-        if data.object == "chat.completion.chunk" then
-          handler.on_partial(data.choices[1].delta.content)
-        end
+        if data.object == "chat.completion.chunk" then handler.on_partial(data.choices[1].delta.content) end
       end,
       on_error = handler.on_error,
       on_other = handler.on_error,
@@ -43,3 +47,11 @@ local M = {
 }
 
 return M
+-- ❯ curl --location "https://api.mistral.ai/v1/chat/completions" \
+--            --header 'Content-Type: application/json' \
+--            --header 'Accept: application/json' \
+--            --header "Authorization: Bearer $MISTRAL_API_KEY" \
+--            --data '{
+--       "model": "codestral-mamba-latest",
+--       "messages": [{"role": "user", "content": "Write a function for fibonacci"}]
+-- }'

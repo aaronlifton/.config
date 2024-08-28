@@ -1,6 +1,4 @@
-if not vim.g.neovide then
-  return {}
-end
+if not vim.g.neovide then return {} end
 
 local map = vim.keymap.set
 --------------------------------------------------------------------------------
@@ -11,9 +9,9 @@ local map = vim.keymap.set
 -- vim.g.gui_font_face = "MesloLGLDZ Nerd Font Mono"
 -- vim.o.guifont = "Berkeley Mono Trial:h16"
 -- 1
-vim.o.guifont = "MonoLisa Nerd Font Mono:h16" -- 15
-vim.g.gui_font_face = "MonoLisa Nerd Font Mono"
-vim.g.neovide_scale_factor = 1.0
+-- vim.o.guifont = "MonoLisa Nerd Font Mono:h16" -- 15
+-- vim.g.gui_font_face = "MonoLisa Nerd Font Mono"
+-- vim.g.neovide_scale_factor = 1.0
 -- 2
 -- vim.g.gui_font_face = "GeistMono Nerd Font Mono"
 -- vim.o.guifont = "GeistMono Nerd Font Mono:h16"
@@ -26,6 +24,10 @@ vim.g.neovide_scale_factor = 1.0
 -- 5
 -- vim.g.gui_font_face = "Iosevka SS08"
 -- vim.o.guifont = "Iosevka SS08 Light:h18:#e-subpixelantialias"
+-- 6
+vim.g.gui_font_face = "JetBrainsMono Nerd Font"
+vim.g.gui_font_size = 14
+vim.o.guifont = "JetBrainsMono Nerd Font:h14"
 --------------------------------------------------------------------------------
 
 RefreshGuiFont = function()

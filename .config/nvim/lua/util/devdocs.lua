@@ -1,69 +1,188 @@
----@class  util.devdocs
----@field get_filepath fun(alias:string):string
+local path = require("plenary.path")
 local M = {}
+local dir_path = vim.fn.stdpath("data") .. "/devdocs"
+DATA_DIR = path:new(dir_path)
+DOCS_DIR = DATA_DIR:joinpath("docs")
+INDEX_PATH = DATA_DIR:joinpath("index.json")
 
-local open = function(entry, bufnr, float)
-	vim.api.nvim_buf_set_option(bufnr, "modifiable", false) if not float then vim.api.nvim_set_current_buf(bufnr) else local win = nil local last_win = state.get("last_win") local float_opts = { row = 20, col = 40,
-			zindex = 10,
-		}
+---if we have a pattern to search for, only consider lines after the pattern
+---@param lines string[]
+---@param pattern? string
+---@param next_pattern? string
+---@return string[]
+M.filter_doc = function(lines, pattern, next_pattern)
+  if not pattern then return lines end
 
-		if last_win and vim.api.nvim_win_is_valid(last_win) then
-			win = last_win
-			vim.api.nvim_win_set_buf(win, bufnr)
-		else
-			win = vim.api.nvim_open_win(bufnr, true, float_opts)
-			state.set("last_win", win)
-		end
+  -- https://stackoverflow.com/a/34953646/516188
+  local function create_pattern(text)
+    return text:gsub("([^%w])", "%%%1")
+  end
 
-		vim.wo[win].wrap = config.options.wrap
-		vim.wo[win].linebreak = config.options.wrap
-		vim.wo[win].nu = false
-		vim.wo[win].relativenumber = false
-		vim.wo[win].conceallevel = 3
-    print(vim.vo[win])
-	end
+  local filtered_lines = {}
+  local found = false
+  local pattern_lines = vim.split(pattern, "\n")
+  local search_pattern = create_pattern(pattern_lines[1]) -- only search the first line
+  local next_search_pattern = nil
 
-	local ignore = vim.tbl_contains(config.options.cmd_ignore, entry.alias)
+  if next_pattern then
+    local next_pattern_lines = vim.split(next_pattern, "\n")
+    next_search_pattern = create_pattern(next_pattern_lines[1]) -- only search the first line
+  end
 
-	if config.options.previewer_cmd and not ignore then
-		M.render_cmd(bufnr)
-	else
-		vim.bo[bufnr].ft = "markdown"
-	end
+  for _, line in ipairs(lines) do
+    if found and next_search_pattern then
+      if line:match(next_search_pattern) then break end
+    end
+    if line:match(search_pattern) then found = true end
+    if found then table.insert(filtered_lines, line) end
+  end
 
-	vim.bo[bufnr].keywordprg = ":DevdocsKeywordprg"
+  if not found then return lines end
 
-	state.set("last_buf", bufnr)
-	keymaps.set_keymaps(bufnr, entry)
-	config.options.after_open(bufnr)
+  return filtered_lines
 end
----@param alias string
-function M.get_filepath(alias)
-  local entries = require("nvim-devdocs.list").get_doc_entries({ "lua-5.4" })
-  local operations = require("nvim-devdocs.operations")
-  local entry = entries[1]
+
+function M.read_entry(entry)
   local splited_path = vim.split(entry.path, ",")
   local file = splited_path[1]
   local file_path = DOCS_DIR:joinpath(entry.alias, file .. ".md")
-  local callback = function(lines)
+  local content = file_path:read()
+  local pattern = splited_path[2]
+  local next_pattern = nil
 
-  end
+  if entry.next_path ~= nil then next_pattern = vim.split(entry.next_path, ",")[2] end
 
-  file_path:_read_async(vim.schedule_wrap(function(content)
-    local pattern = splited_path[2]
-    -- __AUTO_GENERATED_PRINT_VAR_START__
-    print([==[ pattern:]==], vim.inspect(pattern)) -- __AUTO_GENERATED_PRINT_VAR_END__
-    local next_pattern = nil
-
-    if entry.next_path ~= nil then
-      next_pattern = vim.split(entry.next_path, ",")[2]
-    end
-    -- __AUTO_GENERATED_PRINT_VAR_START__
-    print([==[ next_pattern:]==], vim.inspect(next_pattern)) -- __AUTO_GENERATED_PRINT_VAR_END__
-
-    lines = vim.split(content, "\n")
-    callback(lines)
-  end))
+  local lines = vim.split(content, "\n")
+  local filtered_lines = M.filter_doc(lines, pattern, next_pattern)
+  return filtered_lines
 end
 
-return M
+local builtin = require("fzf-lua.previewer.builtin")
+local fzf = require("fzf-lua")
+local fzf_utils = require("fzf-lua.utils")
+
+M.init = function()
+  if M.entries and #M.entries > 0 then return end
+  M.entries = M.get_doc_entries({ "lua-5.4", "jest" })
+end
+
+M.read_index = function()
+  if not INDEX_PATH:exists() then return end
+  local buf = INDEX_PATH:read()
+  return vim.fn.json_decode(buf)
+end
+
+M.cache = {}
+M.get_doc_entries = function(aliases)
+  local entries = {}
+  local index = M.read_index()
+
+  if not index then return end
+
+  for _, alias in pairs(aliases) do
+    if index[alias] then
+      local current_entries = index[alias].entries
+
+      for idx, doc_entry in ipairs(current_entries) do
+        local next_path = nil
+        local entries_count = #current_entries
+
+        if idx < entries_count then next_path = current_entries[idx + 1].path end
+
+        local entry = {
+          name = doc_entry.name,
+          path = doc_entry.path,
+          link = doc_entry.link,
+          alias = alias,
+          next_path = next_path,
+        }
+
+        M.cache[entry.alias .. " " .. entry.name] = entry
+        table.insert(entries, entry)
+      end
+    end
+  end
+
+  return entries
+end
+M.last_preview = nil
+function M.previewer()
+  local previewer = builtin.buffer_or_file:extend()
+
+  function previewer:new(o, opts, fzf_win)
+    previewer.super.new(self, o, opts, fzf_win)
+    self.title = "Devdocs"
+    setmetatable(self, previewer)
+    return self
+  end
+
+  function previewer:parse_entry(entry_str)
+    -- local res = vim.tbl_filter(function(e)
+    --   return e.name == entry_str
+    -- end, M.entries)
+    local entry = entry_str:match("^%s*(.-)%s*$")
+    local res = M.cache[entry]
+    assert(res, "No entry found for " .. entry_str)
+    return M.read_entry(res)
+  end
+
+  function previewer:populate_preview_buf(entry_str)
+    local buf = self:get_tmp_buffer()
+    local lines = self:parse_entry(entry_str)
+    assert(lines, "No message found for entry: " .. entry_str)
+
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+    vim.bo[buf].filetype = "markdown"
+    M.last_preview = self:get_tmp_buffer()
+    vim.api.nvim_buf_set_lines(M.last_preview, 0, -1, false, lines)
+    vim.bo[M.last_preview].filetype = "markdown"
+
+    -- vim.bo[buf].wrap = true
+
+    ---@type FzfWin
+    local win = self.win
+    self:set_preview_buf(buf)
+    win:update_title(" Devdocs ")
+    win:update_scrollbar()
+  end
+
+  return previewer
+end
+
+---@param opts? table<string, any>
+function M.open(opts)
+  opts = vim.tbl_deep_extend("force", opts or {}, {
+    prompt = false,
+    winopts = {
+      title = " Devdocs ",
+      title_pos = "center",
+      preview = {
+        title = " Devdocs ",
+        title_pos = "center",
+        wrap = "wrap",
+      },
+    },
+    previewer = M.previewer(),
+    fzf_opts = {
+      ["--no-multi"] = "",
+      -- ["--with-nth"] = "2..",
+    },
+    actions = {
+      default = function(name)
+        vim.cmd("vsplit")
+        local win = vim.api.nvim_get_current_win()
+        vim.api.nvim_win_set_buf(win, M.last_preview)
+        vim.api.nvim_set_option_value("wrap", true, { win = win })
+      end,
+    },
+  })
+  local lines = vim.tbl_map(function(entry)
+    return string.format(" %-15s %15s", fzf_utils.ansi_codes.yellow(entry.alias), fzf_utils.ansi_codes.blue(entry.name))
+  end, M.entries)
+  return fzf.fzf_exec(lines, opts)
+end
+
+return function()
+  M.init()
+  return M.open
+end

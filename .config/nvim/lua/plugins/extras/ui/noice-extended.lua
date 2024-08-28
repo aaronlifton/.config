@@ -26,7 +26,17 @@ return {
         filter = {
           event = "lsp",
           kind = "progress",
-          find = "Processing reference",
+          find = "Processing",
+        },
+        opts = {
+          skip = true,
+        },
+      },
+      {
+        filter = {
+          event = "lsp",
+          kind = "progress",
+          find = "semantic token",
         },
         opts = {
           skip = true,
@@ -34,8 +44,24 @@ return {
       },
     })
     opts.presets.lsp_doc_border = true
-    opts.presets.bottom_search = false
+    -- opts.presets.bottom_search = false
+    opts.popupmenu = { backend = "cmp" }
+
+    if vim.g.lazyvim_picker == "fzf" then
+      require("noice.commands").pick = function()
+        require("noice.integrations.fzf").open({})
+      end
+    end
   end,
+  keys = {
+    {
+      "<leader>snt",
+      function()
+        require("noice.integrations.fzf").open({})
+      end,
+      desc = "Noice Picker (Telescope/FzfLua)",
+    },
+  },
 }
 
 -- return {

@@ -16,6 +16,14 @@ return {
   { import = "lazyvim.plugins.extras.coding.copilot" },
   { import = "lazyvim.plugins.extras.coding.copilot-chat" },
   {
+    "CopilotC-Nvim/CopilotChat.nvim",
+    optional = true,
+    build = "make tiktoken",
+    keys = {
+      { "<C-x>", "<cmd>CopilotChatStop<cr>", ft = "copilot-chat", desc = "Stop" },
+    },
+  },
+  {
     "zbirenbaum/copilot.lua",
     optional = true,
     -- event = "InsertEnter",
@@ -43,9 +51,7 @@ return {
         opts.suggestion = { enabled = false }
         -- It is recommended to disable copilot.lua's suggestion and panel modules, as they can interfere with completions properly appearing in copilot-cmp. To do so, simply place the following in your copilot.lua config:
         opts.panel = { enabled = false }
-        if panel_enabled then
-          opts.panel = { enabled = true, auto_refresh = true }
-        end
+        if panel_enabled then opts.panel = { enabled = true, auto_refresh = true } end
         -- opts.panel = { enabled = true, auto_refresh = true }
         -- opts.cmp = {
         --   enabled = true,

@@ -63,9 +63,7 @@ return {
             local root = require("lazyvim.util.root").get()
 
             for _, config in ipairs(configs) do
-              if vim.fn.filereadable(root .. "/" .. config) == 1 then
-                return true
-              end
+              if vim.fn.filereadable(root .. "/" .. config) == 1 then return true end
             end
 
             new_config.enabled = false
@@ -168,7 +166,8 @@ return {
       opts.adapters = opts.adapters or {}
       vim.list_extend(opts.adapters, {
         require("neotest-jest")({
-          jestCommand = "npm run test:unit --", -- "npx jest"
+          -- jestCommand = "npm run test:unit --",
+          jestCommand = "npx jest",
           jestConfigFile = "jest.config.js",
           -- jestConfigFile = function(file)
           --   -- Find the jest config in monorepo projects
@@ -231,19 +230,17 @@ return {
     },
   },
   -- {
-  --   "David-Kunz/jester",
-  --   opts = {
-  --     dap = {
-  --       type = "node",
-  --     },
-  --   },
-  --   config = function(_, opts)
-  --     require("jester").setup(opts)
-  --   end,
-  -- },
-  -- {
   --   "mfussenegger/nvim-dap",
   --   optional = true,
+  --   dependencies = {
+  --     {
+  --       "williamboman/mason.nvim",
+  --       opts = function(_, opts)
+  --         opts.ensure_installed = opts.ensure_installed or {}
+  --         table.insert(opts.ensure_installed, "chrome-debug-adapter")
+  --       end,
+  --     },
+  --   },
   --   opts = function(_, opts)
   --     -- Lazyvim sets up pwa-node, but modern-neovim sets up additional adapters, so set them up here
   --     local dap = require("dap")
@@ -278,6 +275,21 @@ return {
   --           url = "http://localhost:5173", -- This is for Vite. Change it to the framework you use
   --           webRoot = "${workspaceFolder}",
   --           userDataDir = "${workspaceFolder}/.vscode/vscode-chrome-debug-userdatadir",
+  --         },
+  --         {
+  --           type = "pwa-node",
+  --           request = "launch",
+  --           name = "Debug Jest Tests",
+  --           -- trace = true, -- include debugger info
+  --           runtimeExecutable = "node",
+  --           runtimeArgs = {
+  --             "./node_modules/jest/bin/jest.js",
+  --             "--runInBand",
+  --           },
+  --           rootPath = "${workspaceFolder}",
+  --           cwd = "${workspaceFolder}",
+  --           console = "integratedTerminal",
+  --           internalConsoleOptions = "neverOpen",
   --         },
   --       })
   --     end

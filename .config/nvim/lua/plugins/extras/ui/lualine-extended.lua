@@ -7,27 +7,25 @@ local lsp_names = function()
 end
 local lsp = function()
   local buf_clients = vim.lsp.get_clients({ bufnr = 0 })
-  if #buf_clients == 0 then
-    return ""
-  end
+  if #buf_clients == 0 then return "" end
 
   return " " .. " " .. lsp_names()
 end
 local formatter = function()
   local formatters = require("conform").list_formatters(0)
-  if #formatters == 0 then
-    return ""
-  end
+  if #formatters == 0 then return "" end
 
   return "󰛖 "
 end
 local linter = function()
   local linters = require("lint").linters_by_ft[vim.bo.filetype]
-  if #linters == 0 then
-    return ""
-  end
+  if #linters == 0 then return "" end
 
   return "󱉶 "
+end
+
+local starship = function()
+  return require("util.lualine.starship")()
 end
 
 return {
@@ -48,6 +46,7 @@ return {
     table.insert(opts.sections.lualine_x, 2, lsp)
     table.insert(opts.sections.lualine_x, 2, formatter)
     table.insert(opts.sections.lualine_x, 2, linter)
+    -- table.insert(opts.sections.lualine_x, 2, starship)
     opts.sections.lualine_y = { "progress" }
     opts.sections.lualine_z = {
       { "location", separator = "" },

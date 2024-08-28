@@ -1,6 +1,7 @@
 -- LazyVim.on_very_lazy(function()
 --   vim.treesitter.language.register("markdown", "mdx")
 -- end)
+local first = require("util.conform").first
 return {
   { import = "lazyvim.plugins.extras.lang.markdown" },
   {
@@ -32,10 +33,18 @@ return {
     },
   },
   {
+    "antonk52/markdowny.nvim",
+    ft = { "markdown", "txt" },
+    opts = {
+      filetypes = { "markdown", "txt" },
+    },
+  },
+  {
     "MeanderingProgrammer/markdown.nvim",
     optional = true,
     opts = {
-      preset = "lazy",
+      -- preset = "lazy",
+      file_types = { "markdown", "norg", "rmd", "org", "mchat" },
     },
   },
   {
@@ -52,19 +61,8 @@ return {
       end
     end,
     init = function()
-      if vim.fn.executable("npx") then
-        vim.g.mkdp_filetypes = { "markdown" }
-      end
+      if vim.fn.executable("npx") then vim.g.mkdp_filetypes = { "markdown" } end
     end,
-  },
-  {
-    "epwalsh/obsidian.nvim",
-    optional = true,
-    opts = {
-      ui = {
-        enable = false,
-      },
-    },
   },
   {
     "luckasRanarison/nvim-devdocs",
@@ -78,8 +76,12 @@ return {
     optional = true,
     opts = {
       formatters_by_ft = {
-        ["markdown"] = { "dprint", "markdownlint-cli2", "markdown-toc" },
-        ["markdown.mdx"] = { "dprint", "markdownlint-cli2", "markdown-toc" },
+        markdown = function(bufnr)
+          return { first(bufnr, "prettierd", "prettier", "dprint"), "markdownlint-cli2", "markdown-toc" }
+        end,
+        ["markdown.mdx"] = function(bufnr)
+          return { first(bufnr, "prettierd", "prettier", "dprint"), "markdownlint-cli2", "markdown-toc" }
+        end,
       },
     },
   },

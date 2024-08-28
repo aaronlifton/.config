@@ -13,10 +13,10 @@ function _G.get_lazyvim_base_dir()
 end
 o.autoindent = true
 o.breakindent = true
-o.background = "dark"
+-- o.background = "dark"
 o.backspace = { "eol", "start", "indent" }
 -- o.breakindent = true
-o.clipboard:append({ "unnamed", "unnamedplus" })
+-- o.clipboard:append({ "unnamed", "unnamedplus" })
 o.fillchars = { eob = " " }
 o.spellfile = config_path .. "/spell/en.utf-8.add"
 o.spelllang = "en_us" -- "en"
@@ -48,6 +48,7 @@ g.codeium_ghost_text = false
 g.highlight_provider = "nvim-highlight-colors" -- "mini.hipatterns"
 g.markdown_previewer = "markdown-preview" -- "peek"
 g.animation_provider = "cinnamon" -- "mini.animate"
+g.icon_size = "normal" -- "small"
 -------------------------------------------------
 
 -- vim.env.XDG_CACHE_HOME = vim.env.XDG_CACHE_HOME or vim.env.HOME .. "/.cache"

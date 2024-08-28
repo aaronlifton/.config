@@ -1,20 +1,21 @@
+local prefix = "<leader>cl"
 return {
   {
     "neovim/nvim-lspconfig",
     init = function()
       local keys = require("lazyvim.plugins.lsp.keymaps").get()
 
-      keys[#keys + 1] = { "<leader>cl", false }
+      keys[#keys + 1] = { prefix, false }
       keys[#keys + 1] = { "<leader>cil", "<cmd>LspInfo<cr>", desc = "Lsp" }
-      keys[#keys + 1] = { "<leader>clr", "<cmd>LspRestart<cr>", desc = "Restart Lsp" }
-      keys[#keys + 1] = { "<leader>cls", "<cmd>LspStart<cr>", desc = "Start Lsp" }
-      keys[#keys + 1] = { "<leader>clS", "<cmd>LspStop<cr>", desc = "Stop Lsp" }
+      keys[#keys + 1] = { prefix .. "r", "<cmd>LspRestart<cr>", desc = "Restart Lsp" }
+      keys[#keys + 1] = { prefix .. "s", "<cmd>LspStart<cr>", desc = "Start Lsp" }
+      keys[#keys + 1] = { prefix .. "S", "<cmd>LspStop<cr>", desc = "Stop Lsp" }
 
       -- stylua: ignore start
-      keys[#keys + 1] = { "<leader>clR", function() vim.lsp.buf.remove_workspace_folder() end, desc = "Remove workspace" }
-      keys[#keys + 1] = { "<leader>cla", function() vim.lsp.buf.add_workspace_folder() end, desc = "Add workspace" }
+      keys[#keys + 1] = { prefix .. "R", function() vim.lsp.buf.remove_workspace_folder() end, desc = "Remove workspace" }
+      keys[#keys + 1] = { prefix .. "a", function() vim.lsp.buf.add_workspace_folder() end, desc = "Add workspace" }
       keys[#keys + 1] = {
-        "<leader>cll",
+        prefix .. "l",
         function()
           local workspace_folders = vim.lsp.buf.list_workspace_folders()
           local printed = vim.inspect(workspace_folders)
@@ -35,6 +36,7 @@ return {
     opts = {
       diagnostics = {
         virtual_text = {
+          -- prefix = "icons",
           float = {
             border = {
               { "┌", "FloatBorder" },
@@ -69,8 +71,8 @@ return {
     opts = {
       spec = {
         mode = "n",
-        { "<leader>ci", group = "Lsp Info", icon = { icon = " ", color = "orange" } }, -- 
-        { "<leader>cl", group = "Lsp Controls", icon = " " },
+        { "<leader>ci", group = "Lsp Info", icon = " " }, -- 
+        { prefix, group = "Lsp Controls", icon = " " },
       },
     },
   },

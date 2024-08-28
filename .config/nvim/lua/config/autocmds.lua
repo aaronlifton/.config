@@ -208,6 +208,20 @@ ac({ "FileType" }, {
   end,
 })
 
+ac({ "FileType" }, {
+  pattern = { "markdown" },
+  callback = function(args)
+    vim.opt_local.spell = false
+  end,
+})
+
+ac({ "FileType" }, {
+  pattern = { "mchat" },
+  callback = function(args)
+    require("render-markdown").enable()
+  end,
+})
+
 -- ac({ "FileType" }, {
 --   pattern = { "javascript", "typescript", "javascriptreact", "typescriptreact" },
 --   callback = function(args)

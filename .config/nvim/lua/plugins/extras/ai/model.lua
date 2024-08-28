@@ -57,10 +57,10 @@ return {
         desc = "Paste file into context",
       },
       -- { "<leader>ag", "", "+gemini" },
-      { "<leader>agc", "<cmd>Model commit2<cr>",            desc = "Generate commit (Gemini)" },
-      { "<leader>agv", "<cmd>Model commit:openai<cr>",      desc = "Generate commit (OpenAI)" },
+      { "<leader>agc", "<cmd>Model commit2<cr>", desc = "Generate commit (Gemini)" },
+      { "<leader>agv", "<cmd>Model commit:openai<cr>", desc = "Generate commit (OpenAI)" },
       { "<leader>agb", "<cmd>Model ConventionalCommit<cr>", desc = "Generate commit2 (OpenAI)" },
-      { "<C-m>c",      "<cmd>Model codestral:fim<cr>",      desc = "Complete (Codestral FIM)" },
+      { "<C-m>c", "<cmd>Model codestral:fim<cr>", desc = "Complete (Codestral FIM)" },
     },
 
     -- To override defaults add a config field and call setup()
@@ -118,6 +118,8 @@ return {
 
       -- Override elixir-tools :M/:Mix command
       vim.api.nvim_command("command! M Model")
+
+      vim.treesitter.language.register("markdown", "mchat")
 
       -- Setup ruby embeddings functions
       require("util.model.store.ruby")

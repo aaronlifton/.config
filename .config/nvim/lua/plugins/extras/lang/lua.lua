@@ -3,6 +3,8 @@ return {
     "sam4llis/nvim-lua-gf",
     lazy = true,
   },
+  -- { "LuaCATS/luassert", name = "luassert-types", lazy = true },
+  { "LuaCATS/busted", name = "busted-types", lazy = true },
   {
     "folke/lazydev.nvim",
     optional = true,
@@ -25,6 +27,8 @@ return {
         { path = "nvim-treesitter", words = { "TSNode", "TS%w" } },
         { path = "overseer.nvim", words = { "overseer%." } },
         { path = "edgy.nvim", words = { "edgy%." } },
+        -- { path = "luassert-types/library", words = { "assert" } },
+        { path = "busted-types/library", words = { "describe" } },
       })
     end,
   },
@@ -37,26 +41,26 @@ return {
       },
     },
   },
-  {
-    "neovim/nvim-lspconfig",
-    optional = true,
-    opts = {
-      servers = {
-        lua_ls = {
-          settings = {
-            Lua = {
-              hint = {
-                setType = true,
-              },
-              codeLens = {
-                enable = false,
-              },
-            },
-          },
-        },
-      },
-    },
-  },
+  -- {
+  --   "neovim/nvim-lspconfig",
+  --   optional = true,
+  --   opts = {
+  --     servers = {
+  --       lua_ls = {
+  --         settings = {
+  --           Lua = {
+  --             hint = {
+  --               setType = true,
+  --             },
+  --             codeLens = {
+  --               enable = false,
+  --             },
+  --           },
+  --         },
+  --       },
+  --     },
+  --   },
+  -- },
   {
     "stevearc/conform.nvim",
     optional = true,
@@ -72,6 +76,16 @@ return {
     opts = {
       linters_by_ft = {
         lua = { "selene" },
+      },
+      linters = {
+        selene = {
+          prepend_args = { "--config", vim.fn.stdpath("config") .. "/selene.toml" },
+          condition = function(ctx)
+            local root = LazyVim.root.get({ normalize = true })
+            if root ~= vim.uv.cwd() then return false end
+            return vim.fs.find({ "selene.toml" }, { path = ctx.filename, upward = true })[1]
+          end,
+        },
       },
     },
   },

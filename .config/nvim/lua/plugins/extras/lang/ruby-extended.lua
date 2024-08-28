@@ -139,8 +139,10 @@ return {
           end,
         },
         ruby_lsp = {
+          -- cmd = { vim.fn.expand("~/.asdf/shims/ruby-lsp") },
           init_options = {
             enabledFeatures = enabledFeatures,
+            enableExperimentalFeatures = true,
           },
           settings = {
             rubyLsp = {

@@ -39,6 +39,11 @@ M.kinds = {
   Unit = "",
   Value = "",
   Variable = "󰀫",
+  -- cmp.ai
+  HF = "",
+  OpenAI = "",
+  Codestral = "",
+  Bard = "",
 }
 
 return M

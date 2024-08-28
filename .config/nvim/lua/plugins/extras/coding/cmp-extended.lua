@@ -1,6 +1,10 @@
 local function is_visible(cmp)
   return cmp.core.view:visible() or vim.fn.pumvisible() == 1
 end
+local function has_words_before()
+  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+  return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+end
 local function set_priority(sources, target_name, new_priority)
   for _, source in ipairs(sources) do
     if source.name == target_name then
@@ -9,6 +13,26 @@ local function set_priority(sources, target_name, new_priority)
     end
   end
 end
+
+local ai_icons = { HF = "", OpenAI = "", Codestral = "", Bard = "" }
+local format = function(entry, item)
+  local icons = LazyVim.config.icons.kinds
+  if icons[item.kind] then item.kind = icons[item.kind] .. item.kind end
+
+  local widths = {
+    abbr = vim.g.cmp_widths and vim.g.cmp_widths.abbr or 40,
+    menu = vim.g.cmp_widths and vim.g.cmp_widths.menu or 30,
+  }
+
+  for key, width in pairs(widths) do
+    if item[key] and vim.fn.strdisplaywidth(item[key]) > width then
+      item[key] = vim.fn.strcharpart(item[key], 0, width - 1) .. "…"
+    end
+  end
+
+  return item
+end
+
 local astrovim_style = false
 local follow_cursor = false
 
@@ -17,7 +41,7 @@ return {
     "hrsh7th/nvim-cmp",
     optional = true,
     dependencies = {
-      -- "hrsh7th/cmp-cmdline",
+      { "hrsh7th/cmp-cmdline", lazy = true },
       { "hrsh7th/cmp-nvim-lua", lazy = true },
       -- "ray-x/cmp-treesitter",
       -- "tzachar/cmp-ai",
@@ -29,7 +53,6 @@ return {
       local cmp = require("cmp")
       local compare = require("cmp.config.compare")
       local copilot = require("copilot.suggestion")
-      local has_words_before = require("util.editor").has_words_before
       local auto_select = true
       local source_names = {
         nvim_lsp = "(LSP)",
@@ -60,12 +83,12 @@ return {
       -- opts.sorting.comparators = {
       --   -- compare.lsp_scores,
       --   --   -- Defaults
-      --   --   compare.offset,
+      --   --   compare.offset,-- Items closer to cursor will have lower priority
       --   --   compare.exact,
       --   --   -- compare.scopes,
       --   --   compare.score,
       --   --   compare.recently_used,
-      --   --   compare.locality,
+      --   --   compare.locality, -- Items closer to cursor will have higher priority, conflicts with `offset`
       --   --   compare.kind,
       --   --   -- compare.sort_text,
       --   --   compare.length,
@@ -217,25 +240,34 @@ return {
         }
       end
 
-      local cmdline_mapping =
-        cmp.mapping.preset.cmdline({ ["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }) })
+      local search_mapping = cmp.mapping.preset.cmdline({
+        ["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
+        ["<CR>"] = cmp.mapping(
+          cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Insert }),
+          { "i", "c" }
+        ),
+      })
+      local cmdline_mapping = cmp.mapping.preset.cmdline({
+        ["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
+      })
       cmp.setup.cmdline({ "/", "?" }, {
-        mapping = cmdline_mapping,
+        mapping = search_mapping,
         sources = {
           { name = "buffer" },
         },
         completion = { autocomplete = false },
       })
-      -- cmp.setup.cmdline(":", {
-      --   mapping = cmdline_mapping,
-      --   sources = cmp.config.sources({
-      --     { name = "path" },
-      --   }, {
-      --     { name = "cmdline" },
-      --   }),
-      --   completion = { autocomplete = false },
-      --   matching = { disallow_symbol_nonprefix_matching = false, disallow_fuzzy_matching = true },
-      -- })
+      cmp.setup.cmdline(":", {
+        mapping = cmdline_mapping,
+        sources = cmp.config.sources({
+          { name = "path" },
+        }, {
+          { name = "cmdline" },
+          { name = "noice_popupmenu" },
+        }),
+        completion = { autocomplete = false },
+        matching = { disallow_symbol_nonprefix_matching = false, disallow_fuzzy_matching = true },
+      })
 
       -- cmp.setup.filetype("gitcommit", {
       --   sources = cmp.config.sources({
@@ -251,13 +283,12 @@ return {
         ["<C-k>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
         ["<C-u>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
         ["<C-d>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
-        ["<S-CR>"] = LazyVim.cmp.confirm({ select = false, behavior = cmp.ConfirmBehavior.Replace }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
         ["<Tab>"] = cmp.mapping(function(fallback)
           if copilot.is_visible() then
             copilot.accept()
           elseif is_visible(cmp) then
             cmp.select_next_item()
-          elseif vim.api.nvim_get_mode().mode ~= "c" and vim.snippet and vim.snippet.active({ direction = 1 }) then
+          elseif vim.api.nvim_get_mode().mode ~= "c" and vim.snippet.active({ direction = 1 }) then
             vim.schedule(function()
               vim.snippet.jump(1)
             end)
@@ -270,7 +301,7 @@ return {
         ["<S-Tab>"] = cmp.mapping(function(fallback)
           if is_visible(cmp) then
             cmp.select_prev_item()
-          elseif vim.api.nvim_get_mode().mode ~= "c" and vim.snippet and vim.snippet.active({ direction = -1 }) then
+          elseif vim.api.nvim_get_mode().mode ~= "c" and vim.snippet.active({ direction = -1 }) then
             vim.schedule(function()
               vim.snippet.jump(-1)
             end)
@@ -278,16 +309,6 @@ return {
             fallback()
           end
         end, { "i", "s" }),
-        --   ["<C-x>"] = cmp.mapping(
-        --     cmp.mapping.complete({
-        --       config = {
-        --         sources = cmp.config.sources({
-        --           { name = "cmp_ai" },
-        --         }),
-        --       },
-        --     }),
-        --     { "i" }
-        --   ),
       })
 
       if not auto_select then

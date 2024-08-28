@@ -63,9 +63,7 @@ return vim.tbl_extend("force", require("model.prompts.chats"), {
       local cwd = LazyVim.root.get()
       local git_diff = vim.fn.system({ "git", "-C", cwd, "diff", "--staged", "-U0" })
 
-      if not git_diff:match("^diff") then
-        error("Git error:\n" .. git_diff)
-      end
+      if not git_diff:match("^diff") then error("Git error:\n" .. git_diff) end
 
       return git_diff
     end,
@@ -111,6 +109,7 @@ return vim.tbl_extend("force", require("model.prompts.chats"), {
     end,
     run = require("model.format.starling").chat,
   },
+  -- Works
   ["together:dolphin-mixtral"] = {
     provider = require("model.providers.together"),
     system = "You are Dolphin, an uncensored and unbiased AI assistant.",
@@ -133,9 +132,7 @@ return vim.tbl_extend("force", require("model.prompts.chats"), {
     run = function(messages, config)
       local first = messages[1]
 
-      if config.system then
-        first.content = config.system .. "\n" .. first.content
-      end
+      if config.system then first.content = config.system .. "\n" .. first.content end
 
       return {
         -- "<|im_start|>system\nYou are Dolphin, an uncensored and unbiased AI assistant.<|im_end|>\n<|im_start|>user\n {prompt}\n<|im_end|>\n<|im_start|>assistant\n"
@@ -145,6 +142,7 @@ return vim.tbl_extend("force", require("model.prompts.chats"), {
       }
     end,
   },
+  -- Works
   ["together:qwen2"] = {
     provider = require("model.providers.together"),
     params = {
@@ -166,6 +164,7 @@ return vim.tbl_extend("force", require("model.prompts.chats"), {
       return { messages = messages }
     end,
   },
+  -- Works
   codestral = {
     provider = require("util.model.providers.codestral"),
     params = {
@@ -174,11 +173,40 @@ return vim.tbl_extend("force", require("model.prompts.chats"), {
     create = function(input, ctx)
       return ctx.selection and input or ""
     end,
-    run = function(messages, config)
+    run = function(messages, _config)
       -- "messages": [{"role": "user", "content": "Write a function for fibonacci"}]
       return { messages = messages }
     end,
   },
+  ["codestral:mamba"] = {
+    provider = require("util.model.providers.codestral"),
+    params = {
+      model = "codestral-mamba-latest",
+      -- model = "codestral-mamba-2407",
+      -- model = "open-codestral-mamba",
+    },
+    create = function(input, ctx)
+      return ctx.selection and input or ""
+    end,
+    run = function(messages, _config)
+      -- "messages": [{"role": "user", "content": "Write a function for fibonacci"}]
+      return { messages = messages }
+    end,
+  },
+  ["claude:opus"] = {
+    provider = require("model.providers.anthropic"),
+    create = input_if_selection,
+    params = {
+      model = "claude-3-opus-20240229",
+    },
+    run = function(messages, config)
+      return vim.tbl_deep_extend("force", config.params, {
+        messages = messages,
+        system = config.system,
+      })
+    end,
+  },
+  -- TODO: WIP
   ["hf:codestral"] = {
     provider = require("model.providers.huggingface"),
     options = {
@@ -188,7 +216,8 @@ return vim.tbl_extend("force", require("model.prompts.chats"), {
       return { inputs = input }
     end,
   },
-  ["hf:qwen2"] = { -- TODO: WIP
+  -- TODO: WIP
+  ["hf:qwen2"] = {
     provider = require("util.model.providers.huggingface"),
     system = "You are a helpful assistant.",
     options = {
@@ -208,12 +237,26 @@ return vim.tbl_extend("force", require("model.prompts.chats"), {
       return { messages = messages }
     end,
   },
-  ["hf:mixtral"] = { -- TODO: WIP
+  jamba = {
+    provider = require("util.model.providers.huggingface"),
+    options = {
+      model = "ai21labs/AI21-Jamba-1.5-Mini",
+    },
+    create = function(input, ctx)
+      return ctx.selection and input or ""
+    end,
+    run = function(messages, config)
+      -- "messages": [{"role": "user", "content": "Write a function for fibonacci"}]
+      return { messages = messages }
+    end,
+  },
+  -- TODO: WIP
+  ["hf:mixtral"] = {
     --   Error  20:07:08 notify.error '{"error":"The model DiscoResearch/DiscoLM-mixtral-8x7b-v2 is too large to be loaded automatically (93GB > 10GB). Please use Spaces (https://huggingface.co/spaces) or Inference Endpoints (https://huggingface.co/inference-endpoints)."}'
     provider = require("util.model.providers.huggingface"),
     options = {
       -- model = "DiscoResearch/DiscoLM-mixtral-8x7b-v2",
-      model = " mistralai/Codestral-22B-v0.1 ",
+      model = "mistralai/Codestral-22B-v0.1 ",
       temperature = 0.7,
       top_p = 0.7,
       top_k = 50,
@@ -227,15 +270,39 @@ return vim.tbl_extend("force", require("model.prompts.chats"), {
     run = function(messages, config)
       local first = messages[1]
 
-      if config.system then
-        first.content = config.system .. "\n" .. first.content
-      end
+      if config.system then first.content = config.system .. "\n" .. first.content end
 
       return {
         prompt = table.concat(vim.tbl_map(function(msg)
           return "<|im_start|>" .. msg.role .. "\n" .. msg.content .. "<|im_end|>\n"
         end, messages)) .. "<|im_start|>assistant",
       }
+    end,
+    ["codellama:qfix"] = vim.tbl_deep_extend("force", require("model.prompts.chats")["together:codellama"], {
+      system = "You are an intelligent programming assistant",
+      create = function()
+        return require("model.util.qflist").get_text()
+      end,
+    }),
+  },
+  pplx = {
+    provider = require("util.model.providers.pplx"),
+    system = "You are an artificial intelligence assistant and you need to engage in a helpful, detailed, polite conversation with a user.",
+    params = {
+      model = "llama-3-sonar-large-32k-online",
+      -- model = "llama-3.1-sonar-small-128k-online",
+      -- model = "llama-3.1-sonar-huge-128k-online",
+    },
+    create = input_if_selection,
+    run = function(messages, config)
+      if config.system then
+        table.insert(messages, 1, {
+          role = "system",
+          content = config.system,
+        })
+      end
+
+      return { messages = messages }
     end,
   },
 })

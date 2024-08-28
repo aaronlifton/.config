@@ -1,4 +1,4 @@
-ac("BufRead", {
+vim.api.nvim_create_autocmd("BufRead", {
   pattern = "*.go",
   callback = function()
     local ai = require("mini.ai")

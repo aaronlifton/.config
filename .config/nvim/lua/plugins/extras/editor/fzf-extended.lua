@@ -49,13 +49,14 @@ local live_grep_opts = {
     ["alt-u"] = toggle_flag("--iglob=*.lua --iglob=!*{test,spec}*"),
     ["alt-j"] = toggle_flag("--iglob=*.{js,ts,tsx} --iglob=!*{test,spec}*"),
     ["alt-o"] = toggle_flag("--iglob=*.{js,ts,tsx} --iglob=**test**"),
+    ["alt-1"] = toggle_flag("--iglob=**{test,spec}**"),
+    ["alt-2"] = toggle_flag("--iglob=!**{test,spec}**"),
+    ["alt-3"] = toggle_flag("--iglob=*.{js,ts,tsx}"),
+    ["alt-4"] = toggle_flag("--iglob=*.rb"),
     ["alt-r"] = toggle_flag("--iglob=*.rb --iglob=!*{test,spec}/"),
     ["alt-y"] = toggle_flag("--iglob=!{test,spec}/"),
     ["alt-t"] = toggle_flag("--iglob=*{spec,test}*.{lua,js,ts,tsx,rb}"),
     ["alt-s"] = toggle_flag("--iglob=spec/**/*.rb"),
-    ["alt-v"] = function()
-      require("fzf-lua.actions").toggle_hidden()
-    end,
     ["alt-x"] = function()
       local buf = vim.api.nvim_get_current_buf()
       local leap = require("util.leap").get_leap_for_buf(buf)
@@ -71,15 +72,18 @@ return {
   {
     "ibhagwan/fzf-lua",
     optional = true,
-    -- Submitted issue: https://github.com/ibhagwan/fzf-lua/issues/1368
-    -- commit = "0c7cd0169cb8433f4f3b102bf6d4c0c7e0a20446",
     opts = function(_, opts)
       local config = require("fzf-lua.config")
-      opts.files.actions["alt-v"] = opts.files.actions["alt-h"]
-      opts.files.actions["alt-h"] = nil
-      opts.grep.actions["alt-v"] = opts.grep.actions["alt-h"]
-      opts.grep.actions["alt-h"] = nil
+      -- opts.files.actions["alt-v"] = opts.files.actions["alt-h"]
+      -- opts.files.actions["alt-h"] = nil
+      -- opts.grep.actions["alt-v"] = opts.grep.actions["alt-h"]
+      -- opts.grep.actions["alt-h"] = nil
       config.defaults.keymap.builtin["<F7>"] = "toggle-fullscreen"
+      -- local prev_ui_select = opts.ui_select
+      -- opts.ui_select = function(fzf_opts, items)
+      --   vim.notify(("kind %s"):format(fzf_opts.kind))
+      --   prev_ui_select(fzf_opts, items)
+      -- end
     end,
     keys = {
       --stylua: ignore start
@@ -103,6 +107,7 @@ return {
       { "<leader>fz", function() require("util.fzf.zoxide").fzf_zoxide() end, desc = "Zoxide"},
       { "<leader>fZ", function() require("util.fzf.zoxide").fzf_zoxide2() end, desc = "Zoxide (Test)"},
       { "<leader>sL", function() require("fzf-lua").lsp_finder({}) end, desc = "LSP Finder" },
+      { "<leader>ga", function() require("fzf-lua").git_branches({}) end, desc = "Git Branches" },
       --stylua: ignore end
       {
         "<leader>sF",
@@ -166,6 +171,113 @@ return {
         desc = "Custom Completion",
       },
       {
+        "<leader>sA",
+        function()
+          local open = require("util.devdocs")()
+          open()
+        end,
+      },
+      {
+        "<leader>sz",
+        function()
+          local function get_tmp_buffer()
+            local tmp_buf = vim.api.nvim_create_buf(false, true)
+            vim.bo[tmp_buf].bufhidden = "wipe"
+            return tmp_buf
+          end
+          vim.ui.input({
+            prompt = "Language",
+          }, function(input)
+            -- split new by /
+            local new = string.gsub(input, "/", " ")
+            local lang, query = string.match(new, "(%S+)%s(%S+)")
+            local output = vim.fn.system("dedoc search " .. lang .. " " .. query)
+            local lines = {}
+            for s in output:gmatch("[^\r\n]+") do
+              table.insert(lines, s)
+            end
+            local tmpbuf = get_tmp_buffer()
+            vim.api.nvim_buf_set_lines(tmpbuf, 0, -1, false, lines)
+            vim.bo[tmpbuf].filetype = "markdown"
+            local float = require("lazy.util").float({
+              buf = tmpbuf,
+              size = { width = 0.6, height = 0.6 },
+            })
+            local function get_entry(n)
+              local entry = lines[n + 2]
+              local lines = {}
+              for s in entry:gmatch("%S+") do
+                table.insert(lines, s)
+              end
+              second_word = string.gsub(lines[2], ",", "")
+              local output = vim.fn.system("dedoc open " .. lang .. " " .. second_word)
+              local newlines = {}
+              for s in output:gmatch("[^\r\n]+") do
+                table.insert(newlines, s)
+              end
+              local tmpbuf = get_tmp_buffer()
+              local tmpbuf = vim.api.nvim_create_buf(true, true)
+              -- vim.api.nvim_buf_set_lines(tmpbuf, 0, -1, false, newlines)
+              vim.bo[tmpbuf].filetype = "markdown"
+              float:close()
+              vim.cmd("vsplit")
+              local win = vim.api.nvim_get_current_win()
+              vim.api.nvim_win_set_buf(win, tmpbuf)
+              vim.cmd("r !" .. "dedoc open " .. lang .. " " .. second_word)
+              -- local buf = vim.api.nvim_get_current_buf()
+              vim.bo[tmpbuf].filetype = "markdown"
+              vim.cmd("normal! ggdd")
+            end
+
+            for i = 1, #lines do
+              vim.keymap.set("n", tostring(i), function()
+                get_entry(i)
+              end, { buffer = tmpbuf, noremap = true, silent = true })
+            end
+
+            -- vim.ui.input({
+            --   prompt = "Query",
+            -- }, function(query)
+            --   vim.notify("https://devdocs.io/" .. new .. "/" .. query)
+            --   -- vim.fn.system("open " .. "https://devdocs.io/" .. query)
+            -- end)
+          end)
+        end,
+
+        -- local choices = {
+        --   "bash",
+        --   "jest",
+        --   "lua-5.4",
+        --   "python-3.9",
+        --   "python-3.11",
+        --   "python-3.12",
+        --   "rails-7.1",
+        --   "react",
+        --   "ruby-3.3",
+        -- }
+        -- require("fzf-lua").fzf_exec(choices, {
+        --   actions = {
+        --     ["enter"] = function(sel, _opts)
+        --       vim.fn.notify(sel)
+        --       -- vim.system("open " .. "https://devdocs.io/" .. sel)
+        --     end,
+        --   },
+        --   -- @param selected: the selected entry or entries
+        --   -- @param opts: fzf-lua caller/provider options
+        --   -- @param line: originating buffer completed line
+        --   -- @param col: originating cursor column location
+        --   -- @return newline: will replace the current buffer line
+        --   -- @return newcol?: optional, sets the new cursor column
+        --   -- complete = function(selected, opts, line, col)
+        --   --   local newline = line:sub(1, col) .. selected[1]
+        --   --   -- set cursor to EOL, since `nvim_win_set_cursor`
+        --   --   -- is 0-based we have to lower the col value by 1
+        --   --   return newline, #newline - 1
+        --   -- end,
+        -- })
+        desc = "Custom Completion",
+      },
+      {
         "<leader>sZ",
         function()
           require("fzf-lua").fzf_exec({ 1, 2, 3, 4 }, {
@@ -194,9 +306,7 @@ return {
             local next_char = ts_util.get_cword_next_char()
             vim.api.nvim_echo({ { next_char, "Comment" } }, false, {})
             search_term = " " .. search_term
-            if next_char == "(" then
-              search_term = search_term .. "("
-            end
+            if next_char == "(" then search_term = search_term .. "(" end
           end
 
           local current_file = vim.fn.expand("%:t")
@@ -215,6 +325,8 @@ return {
           local fzf_utils = require("fzf-lua.utils")
           local tags = require("grapple").tags()
           local entries = {}
+          if not tags then return end
+
           for i, tag in ipairs(tags) do
             local idx = i
             local path = tag.path
@@ -257,6 +369,13 @@ return {
           fzf_lua.fzf_exec(entries, opts)
         end,
         desc = "Marks (Fzf)",
+      },
+      {
+        "<leader>gR",
+        function()
+          require("util.git").open_recently_commited(10)
+        end,
+        desc = "Recently commited",
       },
     },
   },

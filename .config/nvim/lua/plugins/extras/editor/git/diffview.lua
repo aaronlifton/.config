@@ -1,18 +1,22 @@
+local prefix = "<leader>gC"
+local prefix2 = "<leader>gH"
+local prefix3 = "<leader>gD"
+
 return {
   {
     "sindrets/diffview.nvim",
     keys = {
-      { "<leader>gHh", "<cmd>DiffviewFileHistory<CR>", desc = "Diff File History" },
-      { "<leader>gHm", "<cmd>DiffviewFileHistory master<CR>", desc = "Diff File History (master)" },
-      { "<leader>gHM", "<cmd>DiffviewFileHistory main<CR>", desc = "Diff File History (main)" },
-      { "<leader>gHh", ":'<,'>DiffviewFileHistory", desc = "Diff View (Selection)", mode = "v" },
-      { "<leader>gDh", "<cmd>DiffviewOpen<CR>", desc = "Diff View" },
-      { "<leader>gDH", "<cmd>DiffviewOpen HEAD~1<CR>", desc = "Diff View (HEAD~1)" },
-      { "<leader>gDm", "<cmd>DiffviewOpen master<CR>", desc = "Diff View (master)" },
-      { "<leader>gDM", "<cmd>DiffviewOpen main<CR>", desc = "Diff View (main)" },
-      { "<leader>gDd", "<cmd>DiffviewOpen development<CR>", desc = "Diff View (development)" },
+      { prefix2 .. "h", "<cmd>DiffviewFileHistory<CR>", desc = "Diff File History" },
+      { prefix2 .. "m", "<cmd>DiffviewFileHistory master<CR>", desc = "Diff File History (master)" },
+      { prefix2 .. "M", "<cmd>DiffviewFileHistory main<CR>", desc = "Diff File History (main)" },
+      { prefix2 .. "h", ":'<,'>DiffviewFileHistory", desc = "Diff View (Selection)", mode = "v" },
+      { prefix3 .. "h", "<cmd>DiffviewOpen<CR>", desc = "Diff View" },
+      { prefix3 .. "H", "<cmd>DiffviewOpen HEAD~1<CR>", desc = "Diff View (HEAD~1)" },
+      { prefix3 .. "m", "<cmd>DiffviewOpen master<CR>", desc = "Diff View (master)" },
+      { prefix3 .. "M", "<cmd>DiffviewOpen main<CR>", desc = "Diff View (main)" },
+      { prefix3 .. "d", "<cmd>DiffviewOpen development<CR>", desc = "Diff View (development)" },
       {
-        "<leader>gDx",
+        prefix3 .. "x",
         function()
           local input = vim.fn.input("compare: ")
           vim.api.nvim_command("DiffviewOpen " .. input)
@@ -20,7 +24,7 @@ return {
         desc = "Diff View (pick)",
       },
       {
-        "<leader>gDf",
+        prefix3 .. "f",
         function()
           local input = vim.fn.input("compare: ")
           local path = vim.fn.expand("%p")
@@ -32,10 +36,10 @@ return {
       -- { "<leader>gd", "<cmd>DiffviewFileHistory<CR>", desc = "Diff File History" },
       -- { "<leader>gF", "<cmd>DiffviewFileHistory master<CR>", desc = "Diff File History (master)" },
       -- { "<leader>gF", ":'<,'>DiffviewFileHistory", desc = "Diff View (Selection)", mode = "v" },
-      -- { "<leader>gD", "<cmd>DiffviewOpen<CR>", desc = "Diff View Open" },
+      -- { prefix3, "<cmd>DiffviewOpen<CR>", desc = "Diff View Open" },
       -- { "<leader>gM", "<cmd>DiffviewOpen master<CR>", desc = "Diff View (master)" },
       -- { "<leader>gm", "<cmd>DiffviewOpen master -- " .. vim.fn.expand("%") .. "<CR>", desc = "Diff View (master)" },
-      -- { "<leader>gH", "<cmd>DiffviewOpen HEAD~1<CR>", desc = "Diff View (HEAD~1)" },
+      -- { prefix2, "<cmd>DiffviewOpen HEAD~1<CR>", desc = "Diff View (HEAD~1)" },
     },
     opts = function(_, opts)
       local actions = require("diffview.actions")
@@ -56,24 +60,24 @@ return {
       opts.keymaps = {
         --stylua: ignore
         view = {
-          { "n", "<leader>gCo",  actions.conflict_choose("ours"),        { desc = "Choose the OURS version of a conflict" } },
-          { "n", "<leader>gCt",  actions.conflict_choose("theirs"),      { desc = "Choose the THEIRS version of a conflict" } },
-          { "n", "<leader>gCb",  actions.conflict_choose("base"),        { desc = "Choose the BASE version of a conflict" } },
-          { "n", "<leader>gCa",  actions.conflict_choose("all"),         { desc = "Choose all the versions of a conflict" } },
-          { "n", "<leader>gCx",  actions.conflict_choose("none"),        { desc = "Delete the conflict region" } },
-          { "n", "<leader>gCO",  actions.conflict_choose_all("ours"),    { desc = "Choose the OURS version of a conflict for the whole file" } },
-          { "n", "<leader>gCT",  actions.conflict_choose_all("theirs"),  { desc = "Choose the THEIRS version of a conflict for the whole file" } },
-          { "n", "<leader>gCB",  actions.conflict_choose_all("base"),    { desc = "Choose the BASE version of a conflict for the whole file" } },
-          { "n", "<leader>gCA",  actions.conflict_choose_all("all"),     { desc = "Choose all the versions of a conflict for the whole file" } },
-          { "n", "<leader>gCX",  actions.conflict_choose_all("none"),    { desc = "Delete the conflict region for the whole file" } },
+          { "n", prefix .. "o",  actions.conflict_choose("ours"),        { desc = "Choose the OURS version of a conflict" } },
+          { "n", prefix .. "t",  actions.conflict_choose("theirs"),      { desc = "Choose the THEIRS version of a conflict" } },
+          { "n", prefix .. "b",  actions.conflict_choose("base"),        { desc = "Choose the BASE version of a conflict" } },
+          { "n", prefix .. "a",  actions.conflict_choose("all"),         { desc = "Choose all the versions of a conflict" } },
+          { "n", prefix .. "x",  actions.conflict_choose("none"),        { desc = "Delete the conflict region" } },
+          { "n", prefix .. "O",  actions.conflict_choose_all("ours"),    { desc = "Choose the OURS version of a conflict for the whole file" } },
+          { "n", prefix .. "T",  actions.conflict_choose_all("theirs"),  { desc = "Choose the THEIRS version of a conflict for the whole file" } },
+          { "n", prefix .. "B",  actions.conflict_choose_all("base"),    { desc = "Choose the BASE version of a conflict for the whole file" } },
+          { "n", prefix .. "A",  actions.conflict_choose_all("all"),     { desc = "Choose all the versions of a conflict for the whole file" } },
+          { "n", prefix .. "X",  actions.conflict_choose_all("none"),    { desc = "Delete the conflict region for the whole file" } },
         },
         --stylua: ignore
         file_panel = {
-          { "n", "<leader>gCO",     actions.conflict_choose_all("ours"),    { desc = "Choose the OURS version of a conflict for the whole file" } },
-          { "n", "<leader>gCT",     actions.conflict_choose_all("theirs"),  { desc = "Choose the THEIRS version of a conflict for the whole file" } },
-          { "n", "<leader>gCB",     actions.conflict_choose_all("base"),    { desc = "Choose the BASE version of a conflict for the whole file" } },
-          { "n", "<leader>gCA",     actions.conflict_choose_all("all"),     { desc = "Choose all the versions of a conflict for the whole file" } },
-          { "n", "<leader>gCX",     actions.conflict_choose_all("none"),    { desc = "Delete the conflict region for the whole file" } },
+          { "n", prefix .. "O",     actions.conflict_choose_all("ours"),    { desc = "Choose the OURS version of a conflict for the whole file" } },
+          { "n", prefix .. "T",     actions.conflict_choose_all("theirs"),  { desc = "Choose the THEIRS version of a conflict for the whole file" } },
+          { "n", prefix .. "B",     actions.conflict_choose_all("base"),    { desc = "Choose the BASE version of a conflict for the whole file" } },
+          { "n", prefix .. "A",     actions.conflict_choose_all("all"),     { desc = "Choose all the versions of a conflict for the whole file" } },
+          { "n", prefix .. "X",     actions.conflict_choose_all("none"),    { desc = "Delete the conflict region for the whole file" } },
         },
       }
     end,
@@ -83,8 +87,9 @@ return {
     opts = {
       spec = {
         mode = "n",
-        { "<leader>gD", group = "Diff View Open" },
-        { "<leader>gH", group = "Diff File History" },
+        -- { prefix, group = "conflicts", icon = { icon = " ", color = "red" } },
+        { prefix3, group = "Diff View Open" },
+        { prefix2, group = "Diff File History" },
       },
     },
   },

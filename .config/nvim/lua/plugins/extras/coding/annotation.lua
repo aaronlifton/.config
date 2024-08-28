@@ -1,24 +1,26 @@
+local prefix = "<leader>cn"
+
 return {
   { import = "lazyvim.plugins.extras.coding.neogen" },
   {
     "danymat/neogen",
     keys = {
       {
-        "<leader>cnt",
+        prefix .. "t",
         function()
           require("neogen").generate({ type = "type" })
         end,
         desc = "Annotate Type",
       },
       {
-        "<leader>cnf",
+        prefix .. "f",
         function()
           require("neogen").generate({ type = "func" })
         end,
         desc = "Annotate Function",
       },
       {
-        "<leader>cnc",
+        prefix .. "c",
         function()
           require("neogen").generate({ type = "class" })
         end,
@@ -39,9 +41,9 @@ return {
       spec = {
         mode = "n",
         {
-          "<leader>cn",
+          prefix,
           group = "Annotate",
-          icon = { icon = LazyVim.config.icons.kinds["TypeParameter"], color = "orange" }, -- " "
+          icon = { icon = LazyVim.config.icons.kinds["TypeParameter"], color = "white" }, -- " "
         },
       },
     },

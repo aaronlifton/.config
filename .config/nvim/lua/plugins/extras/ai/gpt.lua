@@ -1,4 +1,7 @@
 local actions_config_path = vim.fn.stdpath("config") .. "/lua/config/gpt/actions"
+local gen_prefix = "<leader>ag"
+local mod_prefix = "<leader>am"
+local analyze_prefix = "<leader>an"
 
 return {
   { "nvim-telescope/telescope.nvim", enabled = true },
@@ -122,30 +125,30 @@ return {
       --
       -- Experimental <leader>a +ai mapping
       -- { "<leader>ac", "", "󰚩 ChatGPT"},
-      { "<leader>ac", "<cmd>ChatGPT<CR>", desc = "Toggle Chat (ChatGPT)" },
-      { "<leader>ae", "<cmd>ChatGPTEditWithInstruction<CR>", desc = "Edit (ChatGPT)", mode = { "n", "v" } },
       -- { "<leader>af", "<cmd>ChatGPTRun fix_bugs<CR>", desc = "Fix Bugs", mode = { "n", "v" } },
       -- { "<leader>ax", "<cmd>ChatGPTRun explain_code<CR>", desc = "Explain Code", mode = { "n", "v" } },
       -- { "<leader>al", "<cmd>ChatGPTRun code_readability_analysis<CR>", desc = "Code Readability Analysis", mode = { "n", "v" },  },
-      -- { "<leader>ag", "<cmd>ChatGPTRun grammar_correction<CR>", desc = "Grammar Correction", mode = { "n", "v" } },
+      -- { prefix .. "", "<cmd>ChatGPTRun grammar_correction<CR>", desc = "Grammar Correction", mode = { "n", "v" } },
       -- { "<leader>ak", "<cmd>ChatGPTRun keywords<CR>", desc = "Keywords", mode = { "n", "v" } },
       -- { "<leader>ao", "<cmd>ChatGPTRun optimize_code<CR>", desc = "Optimize Code", mode = { "n", "v" } },
       -- { "<leader>ar", "<cmd>ChatGPTRun roxygen_edit<CR>", desc = "Roxygen Edit", mode = { "n", "v" } },
       -- { "<leader>aT", "<cmd>ChatGPTRun translate<CR>", desc = "Translate", mode = { "n", "v" } },
       --
-      { "<leader>agt", "<cmd>ChatGPTRun add_tests<CR>", desc = "Generate tests (GPT)", mode = { "n", "v" } },
-      { "<leader>agd", "<cmd>ChatGPTRun docstring<CR>", desc = "Generate docstring (GPT)", mode = { "n", "v" } },
-      { "<leader>ags", "<cmd>ChatGPTRun summarize<CR>", desc = "Generate summary (GPT)", mode = { "n", "v" } },
-      { "<leader>agy", "<cmd>ChatGPTRun GenType<cr>", desc = "Generate type documentation (GPT)", mode = {"n", "v"} },
-      { "<leader>agra", "<cmd>ChatGPTRun WriteRailsMethod<cr>", desc = "Generate method", mode = { "n", "v" } },
-      { "<leader>agrt", "<cmd>ChatGPTRun WriteRSpecTests<cr>", desc = "Generate RSpec tests", mode = {"n", "v"} },
+      { "<leader>ac", "<cmd>ChatGPT<CR>", desc = "Toggle Chat (ChatGPT)" },
+      { "<leader>ae", "<cmd>ChatGPTEditWithInstruction<CR>", desc = "Edit (ChatGPT)", mode = { "n", "v" } },
+      { gen_prefix .. "t", "<cmd>ChatGPTRun add_tests<CR>", desc = "Generate tests (GPT)", mode = { "n", "v" } },
+      { gen_prefix .. "d", "<cmd>ChatGPTRun docstring<CR>", desc = "Generate docstring (GPT)", mode = { "n", "v" } },
+      { gen_prefix .. "s", "<cmd>ChatGPTRun summarize<CR>", desc = "Generate summary (GPT)", mode = { "n", "v" } },
+      { gen_prefix .. "y", "<cmd>ChatGPTRun GenType<cr>", desc = "Generate type documentation (GPT)", mode = {"n", "v"} },
+      { gen_prefix .. "ra", "<cmd>ChatGPTRun WriteRailsMethod<cr>", desc = "Generate method", mode = { "n", "v" } },
+      { gen_prefix .. "rt", "<cmd>ChatGPTRun WriteRSpecTests<cr>", desc = "Generate RSpec tests", mode = {"n", "v"} },
       -- Modify
-      { "<leader>amo", "<cmd>ChatGPTRun optimize_code<CR>", desc = "Optimize Code", mode = { "n", "v" } },
-      { "<leader>amf", "<cmd>ChatGPTRun fix_bugs<CR>", desc = "Fix Bugs", mode = { "n", "v" } },
+      { mod_prefix .. "o", "<cmd>ChatGPTRun optimize_code<CR>", desc = "Optimize Code", mode = { "n", "v" } },
+      { mod_prefix .. "f", "<cmd>ChatGPTRun fix_bugs<CR>", desc = "Fix Bugs", mode = { "n", "v" } },
       -- Analyze 
-      { "<leader>ank", "<cmd>ChatGPTRun keywords<CR>", desc = "Extract Keywords", mode = { "n", "v" } },
-      { "<leader>ane", "<cmd>ChatGPTRun explain_code<CR>", desc = "Explain Code", mode = { "n", "v" } },
-      { "<leader>anr", "<cmd>ChatGPTRun code_readability_analysis<CR>", desc = "Analyze Code Readability", mode = { "n", "v" },  },
+      { analyze_prefix .. "k", "<cmd>ChatGPTRun keywords<CR>", desc = "Extract Keywords", mode = { "n", "v" } },
+      { analyze_prefix .. "e", "<cmd>ChatGPTRun explain_code<CR>", desc = "Explain Code", mode = { "n", "v" } },
+      { analyze_prefix .. "r", "<cmd>ChatGPTRun code_readability_analysis<CR>", desc = "Analyze Code Readability", mode = { "n", "v" },  },
     },
   },
   {
@@ -153,13 +156,10 @@ return {
     opts = {
       spec = {
         mode = "n",
-        { "<leader>ag", group = "󰚩 Generate" },
-        { "<leader>agr", group = "󰚩 Rails" },
-        { "<leader>am", group = "󰚩 Modify" },
-        { "<leader>an", group = "󰚩 Analyze" },
-        { "<leader>ch", group = "󰚩 ChatGPT" },
-        { "<leader>chr", group = "󰚩 Rails" },
-        -- { "<leader>a", { group = "+󰚩 AI" },
+        { gen_prefix .. "", group = "Generate" },
+        { gen_prefix .. "r", group = "Rails" },
+        { mod_prefix .. "", group = "Modify" },
+        { analyze_prefix .. "", group = "Analyze" },
       },
     },
   },

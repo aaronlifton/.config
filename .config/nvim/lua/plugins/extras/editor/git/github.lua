@@ -59,7 +59,7 @@ return {
     cmd = { "Octo" },
     opts = {
       use_diagnostic_signs = true,
-      default_to_projects_v2 = false,
+      suppress_missing_scope = { projects_v2 = true },
       mappings = {},
     },
     keys = {
