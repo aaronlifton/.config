@@ -20,6 +20,14 @@ return {
     },
   },
   {
+    "stevearc/conform.nvim",
+    opts = {
+      formatters_by_ft = {
+        go = { "gofmt" },
+      },
+    },
+  },
+  {
     "luckasRanarison/nvim-devdocs",
     optional = true,
     ensure_installed = {

@@ -18,6 +18,7 @@ return {
       },
     },
     opts = {
+      indent = { enable = true, disable = { "go" } },
       textobjects = {
         -- swap = {
         --   enable = true,
