@@ -738,3 +738,7 @@ zF
 smartscan
 lua-5.4/!
 className
+backticks
+avante
+fzf
+rg

@@ -259,6 +259,7 @@ return {
               return {
                 "-c",
                 ".rubocop_ci.yml",
+                -- "-A"
               }
             end
           end,

@@ -42,6 +42,15 @@ return {
           skip = true,
         },
       },
+      {
+        filter = {
+          event = "notify",
+          find = "textDocument/codeLens",
+        },
+        opts = {
+          skip = true,
+        },
+      },
     })
     opts.presets.lsp_doc_border = true
     -- opts.presets.bottom_search = false

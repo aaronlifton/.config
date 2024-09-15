@@ -21,6 +21,7 @@
     "lazyvim.plugins.extras.util.mini-hipatterns",
     "lazyvim.plugins.extras.util.startuptime",
     "plugins.extras.ai.ai",
+    "plugins.extras.ai.avante",
     "plugins.extras.ai.cmp-ai",
     "plugins.extras.ai.codeium",
     "plugins.extras.ai.copilot",

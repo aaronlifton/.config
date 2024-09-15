@@ -23,6 +23,10 @@ end or function(name, opts)
   return require("fzf-lua")[name](opts)
 end
 
+local default_grep_rg_opts = "--column --line-number --no-heading --color=always --smart-case " .. "--max-columns=4096"
+local rg_opts = default_grep_rg_opts .. [[ -g '!*dist/*.js' -g '!*.min.js' -g '!-.min.js' -e]]
+local default_find_fd_opts = [[-type f -not -path '*/\.git/*' -printf '%P\n']]
+local fd_opts = default_find_fd_opts .. " --exclude '*dist/*.js' --exclude '*.min.*' --exclude '*-min.*'"
 local live_grep_opts = {
   rg_glob = true,
   -- rg_glob_fn = function(query)
@@ -34,6 +38,7 @@ local live_grep_opts = {
   --   -- If no separator is detected will return the original query
   --   return (regex or query), flags
   -- end,
+  rg_opts = rg_opts,
   git_icons = false,
   actions = {
     -- LazyVim mapping:
@@ -88,7 +93,7 @@ return {
     keys = {
       --stylua: ignore start
       { "<leader><space>", LazyVim.pick("files", { git_icons = false}), desc = "Find Files (Root Dir)" },
-      { "<leader>ff", LazyVim.pick("files", { git_icons = false }), desc = "Find Files (Root Dir)" },
+      { "<leader>ff", LazyVim.pick("files", { git_icons = false, fd_opts = fd_opts }), desc = "Find Files (Root Dir)" },
       { "<leader>fF", LazyVim.pick("files", { root = false, git_icons = false }), desc = "Find Files (cwd)" },
       { "<leader>su", function() pick("grep_cword", live_grep_opts) end, desc = "Word (Root Dir)", mode = "n" },
       { "<leader>su", function() pick("grep_visual", live_grep_opts) end, desc = "Selection (Root Dir)", mode = "v" },
@@ -135,10 +140,12 @@ return {
                 return string.sub(path, 1, start + 12) -- if there is no next slash, return everything up to "node_modules/"
               end
             else
-              return "Not a path within a node_modules folder"
+              vim.api.nvim_echo({ { "Not a path within a node_modules folder", "Normal" } }, false, {})
+              return false
             end
           end
-          pick("live_grep", { cwd = get_module_path(cwd) })()
+          local path = get_module_path(cwd)
+          if path then pick("live_grep", { cwd = path })() end
         end,
       },
       {

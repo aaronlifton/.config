@@ -14,9 +14,7 @@ local get_git_diff = function(system_cmd)
   if not git_diff:match("^diff") then
     git_diff = vim.fn.system({ "git", "diff" })
 
-    if not git_diff:match("^diff") then
-      error("diff empty:\n" .. git_diff)
-    end
+    if not git_diff:match("^diff") then error("diff empty:\n" .. git_diff) end
   end
 
   return git_diff
@@ -139,9 +137,7 @@ return vim.tbl_extend("force", starter_prompts, {
     builder = function()
       local git_diff = vim.fn.system({ "git", "diff", "--staged" })
 
-      if not git_diff:match("^diff") then
-        error("Git error:\n" .. git_diff)
-      end
+      if not git_diff:match("^diff") then error("Git error:\n" .. git_diff) end
 
       return {
         messages = {
@@ -186,15 +182,11 @@ return vim.tbl_extend("force", starter_prompts, {
       local words = {}
       for word in git_diff:gmatch("%S+") do
         table.insert(words, word)
-        if #words >= 7000 then
-          break
-        end
+        if #words >= 7000 then break end
       end
       git_diff = table.concat(words, " ")
 
-      if not git_diff:match("^diff") then
-        error("Git error:\n" .. git_diff)
-      end
+      if not git_diff:match("^diff") then error("Git error:\n" .. git_diff) end
       return {
         contents = {
           {
@@ -217,9 +209,7 @@ return vim.tbl_extend("force", starter_prompts, {
     builder = function()
       local git_diff = vim.fn.system({ "git", "diff", "--staged" })
 
-      if not git_diff:match("^diff") then
-        error("Git error:\n" .. git_diff)
-      end
+      if not git_diff:match("^diff") then error("Git error:\n" .. git_diff) end
       return {
         contents = {
           {
@@ -232,7 +222,7 @@ return vim.tbl_extend("force", starter_prompts, {
                   .. "The subcategory should alawys be in parens after the main category, like chore(subcategory). "
                   .. "Focus on changes in the src folder."
                   .. "When encountering svg files, only consider the filename. "
-                  .. "For each line in the longer description, start it with a *."
+                  .. "Make the commit mention concise and conventional, but add short descriptions of the changes as bullet points."
                   .. "Staged git diff: ```\n"
                   .. git_diff
                   .. "\n```",
@@ -243,6 +233,28 @@ return vim.tbl_extend("force", starter_prompts, {
       }
     end,
     -- request_completion = gemini_builder.request_completion,
+  },
+  commit3 = {
+    provider = openai,
+    mode = mode.INSERT,
+    builder = function()
+      local git_diff = vim.fn.system({ "git", "diff", "--staged" })
+
+      if not git_diff:match("^diff") then error("Git error:\n" .. git_diff) end
+
+      return {
+        messages = {
+          {
+            role = "user",
+            content = "Write a terse commit message according to the Conventional Commits specification. Try to stay below 80 characters total. "
+              .. "Return only text with no surrounding backticks. "
+              .. "Staged git diff: ```\n"
+              .. git_diff
+              .. "\n```",
+          },
+        },
+      }
+    end,
   },
   ["to spanish"] = {
     provider = openai,

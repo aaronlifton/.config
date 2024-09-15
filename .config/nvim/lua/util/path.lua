@@ -42,32 +42,25 @@ end
 
 M.copy_abs_path = function()
   local abs_path = M.current_abs_path()
+  M.echo(abs_path)
   M.set_clipboard(abs_path)
 end
 
 M.copy_rel_path = function()
   local rel_path = M.current_rel_path()
+  M.echo(rel_path)
   M.set_clipboard(rel_path)
 end
 
 M.copy_rel_file_line = function()
   local file_line = M.rel_file_line()
+  M.echo(file_line)
   M.set_clipboard(file_line)
 end
 
 M.copy_abs_file_line = function()
   local file_line = M.abs_file_line()
   M.set_clipboard(file_line)
-end
-
-M.echo_abs_path = function()
-  local abs_path = M.current_abs_path()
-  M.echo(abs_path)
-end
-
-M.echo_rel_path = function()
-  local rel_path = M.current_rel_path()
-  M.echo(rel_path)
 end
 
 return M
