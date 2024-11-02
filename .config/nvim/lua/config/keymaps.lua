@@ -605,3 +605,9 @@ map("n", "<leader>uR", function()
     require("lint").try_lint()
   end
 end, { desc = "Toggle secondary ruby linter" })
+
+map({ "n", "v" }, "<leader>13", function()
+  local selection = require("util.selection").get_selection3()
+  local lines = require("model.util").buf.text(selection)
+  vim.api.nvim_echo({ { vim.inspect({ selection = selection, lines = lines }), "Normal" } }, true, {})
+end, { desc = "Test fn" })

@@ -16,6 +16,33 @@ local function get_selection_lines()
   end
 end
 
+M.get_selection2 = function()
+  local vpos = vim.fn.getpos("v")
+  local cursor = vim.api.nvim_win_get_cursor(0)
+  local start = { row = cursor[1], col = cursor[2] }
+  local stop = { row = vpos[2] + 1, col = vpos[3] }
+  -- vim.api.nvim_echo({ { vim.inspect({ start = start, stop = stop }), "Normal" } }, true, {})
+
+  return {
+    start = start,
+    stop = stop,
+  }
+end
+
+--- 0-based index for row and col
+M.get_selection3 = function()
+  local vpos = vim.fn.getpos("v")
+  local cursor = vim.api.nvim_win_get_cursor(0)
+  local start = { row = cursor[1] - 1, col = cursor[2] }
+  local stop = { row = vpos[2] - 1, col = vpos[3] }
+  -- vim.api.nvim_echo({ { vim.inspect({ start = start, stop = stop }), "Normal" } }, true, {})
+
+  return {
+    start = start,
+    stop = stop,
+  }
+end
+
 -- TODO: compare with model.nvim/lua/model/util/init.lua:340
 --- Get the current selection text and range, with common indentation removed
 --- @return { selection: string, start_line: number, end_line: number }

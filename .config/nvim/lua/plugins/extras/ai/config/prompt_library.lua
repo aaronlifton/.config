@@ -257,39 +257,19 @@ return vim.tbl_extend("force", starter_prompts, {
       }
     end,
   },
-  ["convertToRtl"] = {
-    provider = anthropic,
-    mode = mode.REPLACE,
-    -- request_completion = gemini_builder.request_completion,
-    params = {
-      max_tokens = 8192,
-      model = "claude-3-5-sonnet-latest",
-      system = "You are an expert programmer. Provide code which should go between the before and after blocks of code. Respond only with a markdown code block. Use comments within the code if explanations are necessary.",
-    },
-    transform = extract.markdown_code,
-    builder = function()
-      local format = require("model.format.claude")
-      local input_context = require("util.model.context"):whole_file_context()
-      local input = "Convert this enzyme test to RTL"
-      -- return format.build_replace(input, context)
-      return format.build_replace(input, input_context)
-    end,
-  },
   ["convertToRtl:selection"] = {
     provider = anthropic,
     mode = mode.REPLACE,
-    -- request_completion = gemini_builder.request_completion,
     params = {
       max_tokens = 8192,
       model = "claude-3-5-sonnet-latest",
       system = "You are an expert programmer. Provide code which should go between the before and after blocks of code. Respond only with a markdown code block. Use comments within the code if explanations are necessary.",
     },
     transform = extract.markdown_code,
-    builder = function()
+    builder = function(input, context)
       local format = require("model.format.claude")
-      local input2 = "Convert this enzyme test to RTL. Don't create new tests, just convert the existing ones."
-      local ctx = require("util.model.context"):context(true, input2)
-      return format.build_replace(ctx.input, ctx.context)
+      context.args = "Convert this enzyme test to RTL. Don't create new expectations, just convert the existing ones."
+      return format.build_replace(input, context)
     end,
   },
 })

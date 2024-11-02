@@ -67,6 +67,10 @@ return {
           "()()%f[%w%p][%w%p]+()[ \t]*()",
         } },
         h = LazyVim.has("gitsigns") and mini_ai_git_signs or nil,
+        -- Match the strart and end of a markdown code fence
+        ["`"] = {
+          { "^%s*```%s*()[^`].-()```%s*$" },
+        },
         -- Word, ignoring punctuation and digits
         -- w = { "()()%f[%w_][%w_]+()[ \t]*()" },
         -- Word, with camelCase support (supports only Latin alphabet) TestTest
