@@ -42,12 +42,12 @@
 	lp = "log --graph --oneline --all"
 	logba = "!git log --pretty="format:%at %H" | sort -g | cut -d' ' -f2);"
 	pager = "diff-so-fancy | less --tabs=4 -RF"
-	excludesfile = ~/.gitignore_global
-	editor = nvim2
+	; excludesfile = ~/.gitignore_global
+	editor = nvim
 	last = log -1 HEAD
 	latest = show --name-only --oneline HEAD
-	down = pull --rebase origin master
-	up = push -u origin master
+	down = pull --rebase origin main
+	up = push -u origin main
 	save = "!git add -A; git commit ."
 	uptags = push --follow-tags
 	downtags = fetch --tags

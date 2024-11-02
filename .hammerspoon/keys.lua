@@ -4,27 +4,30 @@ local layout = require("functions/layout")
 local logger = hs.logger.new("keys.lua", "debug")
 hs.loadSpoon("ClipboardTool")
 
-function is_almost_equal_to_current_win_frame(geo)
-	local epsilon = 5
-	local curWin = hs.window.focusedWindow()
-	local curWinFrame = curWin:frame()
-	if
-		math.abs(curWinFrame.x - geo.x) < epsilon
-		and math.abs(curWinFrame.y - geo.y) < epsilon
-		and math.abs(curWinFrame.w - geo.w) < epsilon
-		and math.abs(curWinFrame.h - geo.h) < epsilon
-	then
-		return true
-	else
-		return false
-	end
-end
+-- local function is_almost_equal_to_current_win_frame(geo)
+-- 	local epsilon = 5
+-- 	local curWin = hs.window.focusedWindow()
+-- 	local curWinFrame = curWin:frame()
+-- 	if
+-- 		math.abs(curWinFrame.x - geo.x) < epsilon
+-- 		and math.abs(curWinFrame.y - geo.y) < epsilon
+-- 		and math.abs(curWinFrame.w - geo.w) < epsilon
+-- 		and math.abs(curWinFrame.h - geo.h) < epsilon
+-- 	then
+-- 		return true
+-- 	else
+-- 		return false
+-- 	end
+-- end
 
 local function bind_with_restore(mod_keys, key, thunk)
 	hs.hotkey.bind(mod_keys, key, function()
 		local current_window = hs.window.focusedWindow()
 		local current_frame = current_window:frame()
 		local window_id = current_window:id()
+		if not window_id then
+			return
+		end
 
 		local restorable_frame = window.restorable_frames[window_id]
 		if restorable_frame then
@@ -54,9 +57,9 @@ hs.hotkey.bind("⌘⇧", "down", window.thunk_push({ top = 1 / 8, left = 1 / 8, 
 -- half screens
 local function thunk_left_or_move()
 	if not window.push({ left = 0, width = 1 / 2 }) then
-		local window = hs.window.focusedWindow()
-		local screen = window:screen():previous()
-		window:moveToScreen(screen)
+		local focused_window = hs.window.focusedWindow()
+		local screen = focused_window:screen():previous()
+		focused_window:moveToScreen(screen)
 
 		window.push({ left = 1 / 2, width = 1 / 2 })
 	end
@@ -64,20 +67,11 @@ end
 
 local function thunk_right_or_move()
 	if not window.push({ left = 1 / 2, width = 1 / 2 }) then
-		local window = hs.window.focusedWindow()
-		local screen = window:screen():next()
-		window:moveToScreen(screen)
+		local focused_window = hs.window.focusedWindow()
+		local screen = focused_window:screen():next()
+		focused_window:moveToScreen(screen)
 
 		window.push({ left = 0, width = 1 / 2 })
-	end
-end
-
-local function new_tab_next_to_current_tab_chrome()
-	local window = hs.window.focusedWindow()
-	local app = window:application()
-	if app.bundleID() == "com.google.Google" then
-		logger.d(inspect(app:getMenuItems()))
-		-- app.selectMenuItem()
 	end
 end
 
@@ -111,8 +105,11 @@ hs.hotkey.bind("⌘⌥", "e", window.thunk_push({ width = 2 / 3 }))
 hs.hotkey.bind("⌘⌥", "r", window.thunk_push({ left = 1 / 3, width = 2 / 3 }))
 
 -- center 2/3
-hs.hotkey.bind("⌘⌥", "c", window.thunk_push({ left = 1 / 6, top = 1 / 6, width = 2 / 3, height = 2 / 3 }))
+hs.hotkey.bind("ctrl⇧", "c", window.thunk_push({ left = 1 / 6, top = 1 / 6, width = 2 / 3, height = 2 / 3 }))
+-- center 2/3 tall
 hs.hotkey.bind("⌘⇧⌥", "c", window.thunk_push({ left = 1 / 6, width = 2 / 3 }))
+-- center 1/2
+hs.hotkey.bind("⌘⌥", "c", window.thunk_push({ left = 1 / 4, top = 1 / 6, width = 1 / 2, height = 2 / 3 }))
 
 -- Chrome
 -- hs.hotkey.bind("⌃⌥⌘", "t", new_tab_next_to_current_tab_chrome)
@@ -131,6 +128,13 @@ end)
 -- Chars
 hs.hotkey.bind({ "ctrl" }, "escape", function()
 	hs.eventtap.keyStrokes("`")
+end)
+hs.hotkey.bind({ "alt" }, "escape", function()
+	hs.eventtap.keyStroke({ "ctrl" }, "escape")
+end)
+
+hs.hotkey.bind({ "shift" }, "escape", function()
+	hs.eventtap.keyStrokes("~")
 end)
 
 if spoon.ClipboardTool then

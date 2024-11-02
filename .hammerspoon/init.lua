@@ -2,11 +2,18 @@ local logger = require("functions/logger")
 local config_watcher = require("functions/config_watcher")
 local browser = require("functions/browser")
 
+hs.loadSpoon("EmmyLua")
 config_watcher.watch_config_and_reload()
 
 require("keys")
 -- require("yabai")
 
+--- Hyper key
+---@class hyper: hs.hotkey.modal
+---@field pressed fun()
+---@field released fun()
+---@field enter fun()
+---@field exit fun()
 local hyper = hs.hotkey.modal.new({}, nil)
 
 hyper.pressed = function()
@@ -29,7 +36,7 @@ hs.hotkey.bind({}, "f19", hyper.pressed, hyper.released)
 -- local cocKey = {"ctrl", "alt", "cmd"}
 -- local hyper = "⇧⌃⌥⌘"
 -- local hyper = { "ctrl", "shift", "alt", "cmd" }
-local hyper = { "ctrl", "alt", "cmd", "shift" }
+local hyperKey = { "ctrl", "alt", "cmd", "shift" }
 -- local super = {'ctrl', 'alt', 'cmd'}
 
 --hs.loadSpoon("MinimizedWindowsMenu")
@@ -40,19 +47,19 @@ local hyper = { "ctrl", "alt", "cmd", "shift" }
 --    :setLogLevel("debug")
 --    :start()
 --:bindHotkeys({
---    showmenu =   {hyper, "space"}
+--    showmenu =   {hyperKey, "space"}
 --})
 
 hs.window.animationDuration = 0.0
-hs.hotkey.bind(hyper, "tab", function()
+hs.hotkey.bind(hyperKey, "tab", function()
 	local windows = hs.window.orderedWindows()
 	if #windows > 1 then
-		window = windows[2]
+		local window = windows[2]
 		window:focus():raise()
 	end
 end)
 
-hs.hotkey.bind(hyper, "9", function()
+hs.hotkey.bind(hyperKey, "9", function()
 	hs.application.launchOrFocus("System Preferences")
 end)
 -- hs.hotkey.bind("cmd", "q", function()
@@ -62,22 +69,22 @@ end)
 -- hs.loadSpoon("TilingWindowManager")
 -- 		:setLogLevel("debug")
 -- 		:bindHotkeys({
--- 			tile = { hyper, "t" },
--- 			incMainRatio = { hyper, "p" },
--- 			decMainRatio = { hyper, "o" },
--- 			incMainWindows = { hyper, "i" },
--- 			decMainWindows = { hyper, "u" },
--- 			focusNext = { hyper, "k" },
--- 			focusPrev = { hyper, "j" },
--- 			swapNext = { hyper, "l" },
--- 			swapPrev = { hyper, "h" },
--- 			toggleFirst = { hyper, "return" },
--- 			tall = { hyper, "y" },
--- 			talltwo = { hyper, "m" },
--- 			fullscreen = { hyper, "e" },
--- 			wide = { hyper, "-" },
--- 			display = { hyper, "d" },
--- 			float = { hyper, "f" },
+-- 			tile = { hyperKey, "t" },
+-- 			incMainRatio = { hyperKey, "p" },
+-- 			decMainRatio = { hyperKey, "o" },
+-- 			incMainWindows = { hyperKey, "i" },
+-- 			decMainWindows = { hyperKey, "u" },
+-- 			focusNext = { hyperKey, "k" },
+-- 			focusPrev = { hyperKey, "j" },
+-- 			swapNext = { hyperKey, "l" },
+-- 			swapPrev = { hyperKey, "h" },
+-- 			toggleFirst = { hyperKey, "return" },
+-- 			tall = { hyperKey, "y" },
+-- 			talltwo = { hyperKey, "m" },
+-- 			fullscreen = { hyperKey, "e" },
+-- 			wide = { hyperKey, "-" },
+-- 			display = { hyperKey, "d" },
+-- 			float = { hyperKey, "f" },
 -- 		})
 -- 		:start({
 -- 			menubar = true,

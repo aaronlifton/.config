@@ -1,0 +1,25 @@
+lastupdatecheck: 0
+recentrepos:
+    - /Users/alifton/.local/share/nvim/lazy/model.nvim
+    - /Users/alifton/.local/share/nvim/lazy/parrot.nvim
+    - /Users/alifton/.local/share/nvim/lazy/mini.ai
+    - /Users/alifton/.local/share/nvim/lazy/avante.nvim
+    - /Users/alifton/.local/share/nvim/lazy/mini.nvim
+    - /Users/alifton/synack/synack
+    - /Users/alifton/synack/frontend_client
+    - /Users/alifton/.local/share/nvim/lazy/fzf-lua
+    - /Users/alifton/.local/share/nvim/lazy/nvim-treesitter-context
+    - /Users/alifton/.local/share/nvim/lazy/LazyVim
+    - /Users/alifton/.local/share/nvim/lazy/lazy.nvim
+    - /Users/alifton/synack/asset-v2
+    - /Users/alifton/synack/frontend_boss
+startuppopupversion: 5
+lastversion: 0.42.0
+customcommandshistory: []
+hidecommandlog: false
+ignorewhitespaceindiffview: false
+diffcontextsize: 3
+localbranchsortorder: recency
+remotebranchsortorder: alphabetical
+gitlogorder: topo-order
+gitlogshowgraph: when-maximised
