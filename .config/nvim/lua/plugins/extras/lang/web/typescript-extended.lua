@@ -201,7 +201,7 @@ return {
             --   return "/users/aaron/code/venv/bin/playwright"
             -- end,
             -- get_playwright_config = function()
-            --   return vim.loop.cwd() .. "/playwright.config.ts"
+            --   return vim.uv.cwd() .. "/playwright.config.ts"
             -- end,
           },
         }),

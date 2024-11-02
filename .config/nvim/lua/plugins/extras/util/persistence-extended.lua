@@ -4,7 +4,7 @@ return {
   "folke/persistence.nvim",
   keys = {
     {
-      "<leader>qS",
+      "<leader>qk",
       function()
         require("persistence").save()
         vim.notify("Session saved", vim.log.levels.INFO, { title = "Persistence" })

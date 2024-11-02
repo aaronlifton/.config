@@ -60,4 +60,42 @@ function Context:test()
   }
 end
 
+function Context:whole_file_context()
+  local buf = vim.api.nvim_get_current_buf()
+  local first_row = 0
+  local first_col = 0
+  local last_row = vim.api.nvim_buf_line_count(buf)
+  local last_col = vim.api.nvim_buf_get_lines(buf, last_row - 1, last_row, true)[1]:len()
+  local selection = {
+    ["start"] = { row = first_row, col = first_col },
+    ["stop"] = { row = last_row, col = last_col },
+  }
+  local context = {
+    selection = selection,
+    -- before_range = {
+    --   ["start"] = { row = 0, col = 0 },
+    --   ["stop"] = selection.start,
+    -- },
+    -- after_range = {
+    --   ["start"] = selection.stop,
+    --   ["stop"] = { row = -1, col = -1 },
+    -- },
+  }
+  local source = require("model.core.input").get_source(false)
+  local input_context = require("model.core.input").get_input_context(source, {})
+  input_context = vim.tbl_deep_extend("force", input_context, { context = context })
+  return input_context.context
+end
+
+--- Returns context needed for prompt builders
+---@param want_visual_selection boolean
+---@param args string[]
+---@return {input: string, context: InputContext}
+function Context:context(want_visual_selection, args)
+  want_visual_selection = want_visual_selection or false
+  args = args or nil
+  local source = require("model.core.input").get_source(want_visual_selection)
+  return require("model.core.input").get_input_context(source, args)
+end
+
 return Context

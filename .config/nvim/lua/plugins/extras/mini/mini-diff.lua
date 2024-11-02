@@ -22,13 +22,13 @@ local set_mini_diff_ref_text = function(buf_id, branch, yadm)
 
   -- NOTE: Do not cache buffer's name to react to its possible rename
   -- local path = vim.api.nvim_buf_get_name(buf_id)
-  local path = vim.loop.fs_realpath(vim.api.nvim_buf_get_name(buf_id))
+  local path = vim.uv.fs_realpath(vim.api.nvim_buf_get_name(buf_id))
   if path == "" then
     return buf_set_ref_text({})
   end
 
   local cwd, basename = vim.fn.fnamemodify(path, ":h"), vim.fn.fnamemodify(path, ":t")
-  local stdout = vim.loop.new_pipe()
+  local stdout = vim.uv.new_pipe()
   local spawn_opts = { args = { "show", branch .. ":./" .. basename }, cwd = cwd, stdio = { nil, stdout, nil } }
 
   ---@type uv.uv_process_t
@@ -53,7 +53,7 @@ local set_mini_diff_ref_text = function(buf_id, branch, yadm)
   end
 
   local exe = yadm and "yadm" or "git"
-  process = vim.loop.spawn(exe, spawn_opts, on_exit)
+  process = vim.uv.spawn(exe, spawn_opts, on_exit)
   git_read_stream(stdout, stdout_feed)
 end
 

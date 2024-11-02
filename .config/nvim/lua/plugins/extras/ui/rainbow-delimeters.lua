@@ -2,20 +2,14 @@ local function init_strategy(threshold)
   return function()
     -- Disable on very large files
     local line_count = vim.api.nvim_buf_line_count(0)
-    if line_count > 7500 then
-      return nil
-    end
+    if line_count > 7500 then return nil end
 
     -- Disable on parser error
     local errors = 200
     vim.treesitter.get_parser():for_each_tree(function(lt)
-      if lt:root():has_error() and errors >= 0 then
-        errors = errors - 1
-      end
+      if lt:root():has_error() and errors >= 0 then errors = errors - 1 end
     end)
-    if errors < 0 then
-      return nil
-    end
+    if errors < 0 then return nil end
 
     return line_count > threshold and require("rainbow-delimiters").strategy["global"]
       or require("rainbow-delimiters").strategy["local"]
@@ -35,6 +29,12 @@ return {
         lua = init_strategy(500),
         vimdoc = init_strategy(300),
         vim = init_strategy(300),
+      },
+      blacklist = {
+        "markdown",
+        "markdown.mdx",
+        "mchat",
+        "log",
       },
       query = {
         [""] = "rainbow-delimiters",

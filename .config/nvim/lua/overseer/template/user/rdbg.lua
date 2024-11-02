@@ -9,8 +9,8 @@ return {
     local file_line = file_path_rel .. ":" .. tostring(current_line)
 
     -- rdbg -n --open --port 38698 -c -- bundle exec rspec spec/controllers/web_api/client/listings_controller_spec.rb:1327
-    -- local stdout = vim.loop.new_pipe(false)
-    -- handle, pid_or_err = vim.loop.spawn("rdbg", {
+    -- local stdout = vim.uv.new_pipe(false)
+    -- handle, pid_or_err = vim.uv.spawn("rdbg", {
     --   args = { "-n", "--open", "--port", "38698", "-c", "--", "bundle", "exec", "rspec", file_line },
     --   stdio = { nil, stdout },
     -- }, function(code, signal) -- on exit

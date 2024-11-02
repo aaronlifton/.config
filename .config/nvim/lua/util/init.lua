@@ -7,8 +7,8 @@
 ---@field editor util.editor
 ---@field table util.table
 ---@field ui util.ui
----@field pickers util.pickers
 ---@field system util.system
+---@field selection util.selection
 local M = {
   git = require("util.git"),
   leap = require("util.leap"),
@@ -17,8 +17,8 @@ local M = {
   editor = require("util.editor"),
   table = require("util.table"),
   ui = require("util.ui"),
-  pickers = require("util.pickers"),
   system = require("util.system"),
+  selection = require("util.selection"),
 }
 
 ---@param extra string

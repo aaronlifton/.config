@@ -4,7 +4,7 @@
 --   local extension_path = codelldb:get_install_path() .. "/extension/"
 --   local codelldb_path = extension_path .. "adapter/codelldb"
 --   local liblldb_path = ""
---   if vim.loop.os_uname().sysname:find("Windows") then
+--   if vim.uv.os_uname().sysname:find("Windows") then
 --     liblldb_path = extension_path .. "lldb\\bin\\liblldb.dll"
 --   elseif vim.fn.has("mac") == 1 then
 --     liblldb_path = extension_path .. "lldb/lib/liblldb.dylib"
@@ -24,7 +24,6 @@ return {
 
       opts.formatters_by_ft.rust = opts.formatters_by_ft.rust or {}
       table.insert(opts.formatters_by_ft.rust, "rustfmt")
-      -- return opts
     end,
   },
   {
@@ -48,19 +47,17 @@ return {
        { "<leader>prr", function() require("crates").open_repository() end, desc = "Repo" },
        { "<leader>prd", function() require("crates").open_documentation() end, desc = "Documentation" },
        { "<leader>prc", function() require("crates").open_crates_io() end, desc = "Crates.io" },
-    },
-    keys = {
-      {
-        "K",
-        function()
-          if vim.fn.expand("%:t") == "Cargo.toml" and require("crates").popup_available() then
-            require("crates").show_popup()
-          else
-            vim.lsp.buf.hover()
-          end
-        end,
-        desc = "Show Crate Documentation",
-      },
+       {
+         "K",
+         function()
+           if vim.fn.expand("%:t") == "Cargo.toml" and require("crates").popup_available() then
+             require("crates").show_popup()
+           else
+             vim.lsp.buf.hover()
+           end
+         end,
+         desc = "Show Crate Documentation",
+       },
     },
     opts = function(_, opts)
       -- TODO: remove when LazyVim's crates.nvim config is updated

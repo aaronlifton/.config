@@ -5,20 +5,33 @@ return {
   version = false, -- set this if you want to always pull the latest change
   --- @type avante.Config
   opts = {
-    provider = "claude",
-    claude = {
-      endpoint = "https://api.anthropic.com",
-      model = "claude-3-5-sonnet-20240620",
-      temperature = 0,
-      max_tokens = 4096,
-    },
+    -- Defaults
+    -- provider = "claude",
+    -- auto_suggestions_provider = "claude",
+    -- claude = {
+    --   endpoint = "https://api.anthropic.com",
+    --   model = "claude-3-5-sonnet-20241022",
+    --   temperature = 0,
+    --   max_tokens = 4096,
+    -- },
     mappings = {
       ask = "<leader>ata",
       edit = "<leader>ate",
       refresh = "<leader>atr",
+      chat = "<leader>atc",
     },
     hints = {
       enabled = false,
+    },
+    windows = {
+      ---@type "right" | "left" | "top" | "bottom"
+      position = "right", -- the position of the sidebar
+      wrap = true, -- similar to vim.o.wrap
+      width = 45, -- default % based on available width
+      sidebar_header = {
+        align = "center", -- left, center, right for title
+        rounded = true,
+      },
     },
   },
   -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
@@ -65,6 +78,14 @@ return {
 
     local mappings = {
       {
+        "<M-->",
+        function()
+          require("avante.api").ask()
+        end,
+        desc = "avante: ask",
+        mode = { "n", "v" },
+      },
+      {
         opts.mappings.ask,
         function()
           require("avante.api").ask()
@@ -87,6 +108,14 @@ return {
         end,
         desc = "avante: edit",
         mode = { "n", "v" },
+      },
+      {
+        opts.mappings.chat,
+        function()
+          vim.cmd("AvanteChat")
+        end,
+        desc = "avante: chat",
+        mode = { "n" },
       },
     }
     mappings = vim.tbl_filter(function(m)

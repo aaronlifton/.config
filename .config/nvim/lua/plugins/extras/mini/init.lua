@@ -13,6 +13,7 @@ return {
   { import = "plugins.extras.mini.mini-diff" },
   { import = "plugins.extras.mini.mini-starter" },
   { import = "plugins.extras.mini.mini-align" },
+  { import = "plugins.extras.mini.mini-pairs" },
   -- { import = "plugins.extras.mini.mini-animate" },
   -- { import = "plugins.extras.mini.mini-hipatterns" },
   -- { import = "plugins.extras.mini.mini-icons" },

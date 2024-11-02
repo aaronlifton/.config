@@ -1,5 +1,11 @@
+LazyVim.on_very_lazy(function()
+  vim.filetype.add({
+    yml = "yaml",
+  })
+end)
+
 -- local gems_util = require("util.ruby.gems")
-local rubocop_provider = "rubocop" -- "ruby_lsp"
+local rubocop_provider = "ruby_lsp" -- "rubocop"
 local add_ruby_deps_command = false
 
 -- https://github.com/Shopify/ruby-lsp/blob/4f7ce060de3257c35028ccb70e1854da952cdb95/vscode/package.json#L231
@@ -17,9 +23,9 @@ local enabledFeatures = {
   "selectionRanges",
   "semanticHighlighting",
   "completion",
-  "codeLens",
+  -- "codeLens",
   "definition",
-  "workspaceSymbol",
+  -- "workspaceSymbol",
   "signatureHelp",
   "typeHierarchy",
 }
@@ -28,7 +34,7 @@ if rubocop_provider == "ruby_lsp" then
   vim.list_extend(enabledFeatures, {
     "diagnostics",
     "formatting",
-    -- "onTypeFormatting",
+    "onTypeFormatting",
   })
 end
 
@@ -142,13 +148,42 @@ return {
           -- cmd = { vim.fn.expand("~/.asdf/shims/ruby-lsp") },
           init_options = {
             enabledFeatures = enabledFeatures,
-            enableExperimentalFeatures = true,
-          },
-          settings = {
-            rubyLsp = {
-              bundleGemfile = ".lsp/Gemfile",
+            experimentalFeaturesEnabled = true,
+            -- bundleGemfile = ".lsp/Gemfile",
+            indexing = {
+              excludedPatterns = { "**/test/**/*.rb", "**/spec/**/*.rb" }, -- "**/*_spec.rb"
+              -- includedPatterns = { "**/bin/**/*" },
+              excludedGems = {
+                "libv8-node",
+                "google-api-client",
+                "grpc",
+                "mini_racer",
+                "nokogiri",
+                "brakeman",
+                "rbtrace",
+                "faker",
+                "aws-sdk-s3",
+                "google-protobuf",
+                "google-cloud-pubsub",
+                "rubocop",
+                "google-iam",
+                "caxlsx",
+                "rubycritic",
+                "rubocop-ast",
+                "rubocop-capybara",
+                "rubocop-faker",
+                "rubocop-performance",
+                "rubocop-rails",
+                "rubocop-rake",
+                "rubocop-rspec",
+                "rubocop-thread_safety",
+              },
+              -- excludedMagicComments = { "compiled:true" },
             },
           },
+          -- settings = {
+          --   rubyLsp = {},
+          -- },
           on_new_config = function(new_config)
             -- ruby-lsp-rubyfmt needs formatter to be set to rubyfmt
             -- https://github.com/jscharf/ruby-lsp-rubyfmt/blob/b28e16e9b847f70dc1ee2012296fda92cb30e7f5/README.md?plain=1#L41
@@ -221,7 +256,8 @@ return {
             end
           end,
           condition = function(ctx)
-            return require("util.ruby.gems").has_rubocop()
+            return vim.g.enable_secondary_ruby_linter
+              or (rubocop_provider ~= "ruby_lsp" and require("util.ruby.gems").has_rubocop())
           end,
         },
         standardrb = {
@@ -259,18 +295,19 @@ return {
               return {
                 "-c",
                 ".rubocop_ci.yml",
+                "--force-exclusion",
                 -- "-A"
               }
             end
           end,
           condition = function(ctx)
             -- Ruby LSP contains rubocop diagnostics itself
-            return require("util.ruby.gems").has_rubocop()
+            return rubocop_provider ~= "ruby_lsp" and require("util.ruby.gems").has_rubocop()
           end,
         },
         rubyfmt = {
           condition = function(ctx)
-            return require("util.ruby.gems").in_bundle("ruby-lsp-rubyfmt")
+            return rubocop_provider ~= "ruby_lsp" and require("util.ruby.gems").in_bundle("ruby-lsp-rubyfmt")
           end,
         },
       },

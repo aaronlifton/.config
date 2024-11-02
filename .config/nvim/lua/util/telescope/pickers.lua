@@ -60,7 +60,7 @@ M.actions = transform_mod({
   set_folders = function(prompt_bufnr)
     local current_input = action_state.get_current_line()
     local data = {}
-    scan.scan_dir(vim.loop.cwd(), {
+    scan.scan_dir(vim.uv.cwd(), {
       hidden = true,
       only_dirs = true,
       respect_gitignore = true,

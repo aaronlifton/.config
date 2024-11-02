@@ -16,7 +16,42 @@ return {
       { prefix .. "ro", "<cmd>OpenInGHRepo<CR>", desc = "Open git repo in web", mode = { "n" } },
       { prefix .. "rf", "<cmd>OpenInGHFile<CR>", desc = "Open git file in web", mode = { "n" } },
       { prefix .. "rc", "<cmd>OpenInGHFileLines<CR>", desc = "Open current line in web", mode = { "n", "x", "v" } },
+      {
+        prefix .. "ry",
+        "<cmd>OpenInGHCopyFileLines<CR>",
+        desc = "Copy github current line",
+        mode = { "n", "x", "v" },
+      },
+      {
+        prefix .. "rY",
+        "<cmd>OpenInGHCopyFileLines!<CR>",
+        desc = "Copy github current line (main)",
+        mode = { "n", "x", "v" },
+      },
     },
+    init = function()
+      local openingh = require("openingh")
+
+      vim.api.nvim_create_user_command("OpenInGHCopyFileLines", function(opts)
+        local url, branch
+        if opts.bang then
+          branch = "main"
+        else
+          branch = vim.fn.system("git rev-parse --abbrev-ref HEAD")
+        end
+        if opts.range == 0 then -- Nothing was selected
+          url = openingh.get_file_url(openingh.priority.BRANCH, branch, opts.line1)
+        else -- Current line or block was selected
+          url = openingh.get_file_url(openingh.priority.BRANCH, branch, opts.line1, opts.line2)
+        end
+
+        vim.fn.setreg("+", url)
+      end, {
+        range = true,
+        bang = true,
+        nargs = "*",
+      })
+    end,
   },
   -- {
   --   "Rawnly/gist.nvim",

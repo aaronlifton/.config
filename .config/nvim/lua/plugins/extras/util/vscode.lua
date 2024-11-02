@@ -1,6 +1,4 @@
-if not vim.g.vscode then
-  return {}
-end
+if not vim.g.vscode then return {} end
 
 -- local vscode = require("vscode-neovim")
 local map = vim.keymap.set
@@ -66,7 +64,6 @@ vim.api.nvim_create_autocmd("User", {
     map("n", "<leader>cr", vscode_action("editor.action.rename"))
     map("n", "<leader>co", vscode_action("editor.action.organizeImports"))
     map("n", "<leader>cf", vscode_action("editor.action.formatDocument"))
-    map("n", "<leader>ss", vscode_action("workbench.action.gotoSymbol"))
     map("n", "<leader>sS", vscode_action("workbench.action.showAllSymbols"))
     -- refactor
     map("n", "<leader>cR", vscode_action("editor.action.refactor"))
@@ -112,7 +109,9 @@ vim.api.nvim_create_autocmd("User", {
     -- search
     map("n", "<leader><space>", "<cmd>Find<cr>")
     map("n", "<leader>ff", "<cmd>Find<cr>")
-    map("n", "<leader>/", vscode_action("workbench.action.findInFiles"))
+    -- LazyVim defaults
+    -- map("n", "<leader>/", [[<cmd>lua require('vscode').action('workbench.action.findInFiles')<cr>]])
+    -- map("n", "<leader>ss", [[<cmd>lua require('vscode').action('workbench.action.gotoSymbol')<cr>]])
     map("n", "<leader>sg", vscode_action("workbench.action.findInFiles"))
     map("n", "<leader>sc", vscode_action("workbench.action.showCommands"))
     -- ui

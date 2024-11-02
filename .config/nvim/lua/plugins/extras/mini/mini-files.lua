@@ -26,7 +26,7 @@ return {
       {
         "<leader>fJ",
         function()
-          require("mini.files").open(vim.loop.cwd(), true)
+          require("mini.files").open(vim.uv.cwd(), true)
         end,
         desc = "Explorer (Current Directory)",
       },

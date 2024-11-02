@@ -24,9 +24,11 @@ end or function(name, opts)
 end
 
 local default_grep_rg_opts = "--column --line-number --no-heading --color=always --smart-case " .. "--max-columns=4096"
-local rg_opts = default_grep_rg_opts .. [[ -g '!*dist/*.js' -g '!*.min.js' -g '!-.min.js' -e]]
-local default_find_fd_opts = [[-type f -not -path '*/\.git/*' -printf '%P\n']]
-local fd_opts = default_find_fd_opts .. " --exclude '*dist/*.js' --exclude '*.min.*' --exclude '*-min.*'"
+local rg_opts = default_grep_rg_opts .. [[ -g '!**/dist/**.js*' -g '!*{-,.}min.js' -e]]
+local rg_opts_pcre2 = default_grep_rg_opts .. [[ --pcre2 ]]
+-- local default_find_opts = [[-type f -not -path '*/\.git/*' -printf '%P\n']]
+local default_fd_opts = "--color=never --type f --hidden --follow --exclude .git"
+local fd_opts = default_fd_opts .. " --exclude '*dist*.js' --exclude '*.min.*' --exclude '*-min.*'"
 local live_grep_opts = {
   rg_glob = true,
   -- rg_glob_fn = function(query)
@@ -62,6 +64,7 @@ local live_grep_opts = {
     ["alt-y"] = toggle_flag("--iglob=!{test,spec}/"),
     ["alt-t"] = toggle_flag("--iglob=*{spec,test}*.{lua,js,ts,tsx,rb}"),
     ["alt-s"] = toggle_flag("--iglob=spec/**/*.rb"),
+    ["alt-5"] = toggle_flag("--iglob=!**{umd,cjs,esm}**"),
     ["alt-x"] = function()
       local buf = vim.api.nvim_get_current_buf()
       local leap = require("util.leap").get_leap_for_buf(buf)
@@ -105,6 +108,7 @@ return {
       { "<leader>sW", function() pick("grep_visual", vim.tbl_extend("force", live_grep_opts, { rg_glob = false, root = false })) end, desc = "Selection (cwd)", mode = "v" },
       { "<leader>sB", "<cmd>lua LazyVim.pick('lgrep_curbuf')()<CR>", desc = "Buffer (Live Grep)", mode = "n" },
       { "<leader>sg", function() pick("live_grep_glob", live_grep_opts_with_reset) end, desc = "Grep (Root Dir)" },
+      { "<leader>sP", function() pick("live_grep_glob", { rg_opts = rg_opts_pcre2, silent = true }) end, desc = "Grep (pcre2)" },
       { "<leader>sG", function() pick("live_grep_glob", vim.tbl_extend("force", live_grep_opts_with_reset, { root = false })) end, desc = "Grep (cwd)" },
       { "<leader>sN", function() pick("live_grep", { cwd = "./node_modules" }) end, desc = "Grep (node_modules)" },
       { "<leader>fM", function() pick("files", { cwd = "./node_modules" }) end, desc = "Find Files (node_modules)" },

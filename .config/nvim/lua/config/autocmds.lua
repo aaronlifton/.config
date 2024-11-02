@@ -26,7 +26,7 @@ local close_with_q = {
   "neotest-summary",
   "neotest-output-panel",
   "dbout",
-  "gitsigns.blame",
+  "gitsigns-blame",
   -- Added
   "toggleterm",
   "grapple",
@@ -219,6 +219,21 @@ ac({ "FileType" }, {
   pattern = { "mchat" },
   callback = function(args)
     require("render-markdown").enable()
+  end,
+})
+
+ac({ "FileType" }, {
+  pattern = { "log" },
+  callback = function(args)
+    vim.opt_local.spell = false
+    vim.diagnostic.disable(0)
+  end,
+})
+
+ac({ "TabLeave" }, {
+  callback = function()
+    local tabpage = vim.api.nvim_get_current_tabpage()
+    vim.g.last_tabpage = tabpage
   end,
 })
 

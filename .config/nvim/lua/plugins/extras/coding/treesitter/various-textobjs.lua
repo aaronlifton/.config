@@ -39,7 +39,11 @@
 
 return {
   "chrisgrieser/nvim-various-textobjs",
-  opts = { useDefaultKeymaps = false },
+  opts = {
+    useDefaultKeymaps = false,
+    lookForwardSmall = 5, -- default 5
+    lookForwardBig = 50, -- default 15
+  },
   -- stylua: ignore
   keys = {
     { "im", ft = { "markdown", "toml" }, mode = { "o", "x" }, function() require("various-textobjs").mdlink("inner") end, desc = "Markdown Link" },

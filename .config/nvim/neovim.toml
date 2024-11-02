@@ -5,6 +5,9 @@ name = "neovim"
 [vim]
 any = true
 
+[LazyVim]
+any = true
+
 [jit]
 any = true
 

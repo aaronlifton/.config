@@ -8,7 +8,7 @@ local function get_codelldb()
   local extension_path = codelldb:get_install_path() .. "/extension/"
   local codelldb_path = extension_path .. "adapter/codelldb"
   local liblldb_path = ""
-  if vim.loop.os_uname().sysname:find("Windows") then
+  if vim.uv.os_uname().sysname:find("Windows") then
     liblldb_path = extension_path .. "lldb\\bin\\liblldb.dll"
   elseif vim.fn.has("mac") == 1 then
     liblldb_path = extension_path .. "lldb/lib/liblldb.dylib"

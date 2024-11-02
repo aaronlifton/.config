@@ -41,6 +41,25 @@ return {
       },
     },
   },
+  {
+    "neovim/nvim-lspconfig",
+    optional = true,
+    opts = {
+      servers = {
+        lua_ls = {
+          settings = {
+            Lua = {
+              workspace = {
+                library = {
+                  string.format("%s/.hammerspoon/Spoons/EmmyLua.spoon/annotations", os.getenv("HOME")),
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
   -- {
   --   "neovim/nvim-lspconfig",
   --   optional = true,
@@ -79,10 +98,16 @@ return {
       },
       linters = {
         selene = {
-          prepend_args = { "--config", vim.fn.stdpath("config") .. "/selene.toml" },
+          -- prepend_args = { "--config", vim.fn.stdpath("config") .. "/selene.toml" },
           condition = function(ctx)
-            local root = LazyVim.root.get({ normalize = true })
-            if root ~= vim.uv.cwd() then return false end
+            -- Disable unless the file is in the root of the project
+            -- local root = LazyVim.root.get({ normalize = true })
+            -- if root ~= vim.uv.cwd() then return false end
+
+            -- Disable unless editing nvim config
+            local config = vim.fn.stdpath("config")
+            if config ~= vim.uv.cwd() then return false end
+
             return vim.fs.find({ "selene.toml" }, { path = ctx.filename, upward = true })[1]
           end,
         },

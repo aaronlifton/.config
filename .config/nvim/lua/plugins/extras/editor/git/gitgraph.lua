@@ -52,5 +52,8 @@ return {
         end, { desc = "Graph" })
       end,
     })
+    vim.api.nvim_create_user_command("GitGraph", function()
+      require("gitgraph").draw({}, { all = true, max_count = 5000 })
+    end, { desc = "GitGraph" })
   end,
 }

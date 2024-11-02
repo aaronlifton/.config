@@ -57,12 +57,13 @@ end, { desc = "Last Window" })
 -- })
 
 map("n", "<leader>wh", function()
-  vim.api.nvim_command("HighestWindow")
+  require("util.ui").switch_to_highest_window()
 end)
 
 -- maximize the height of the current window  using builtin lua neovim api
 map("n", "<leader>wg", function()
-  local max_win_height = vim.api.nvim_get_option("lines") - 5
+  local win = vim.api.nvim_get_current_win()
+  local max_win_height = vim.api.nvim_get_option_value("lines", { win = win }) - 5
   vim.api.nvim_command(":set ma")
   for _ = 1, (max_win_height / 2) do
     vim.api.nvim_command(':exe "norm \\<c-w>+"')

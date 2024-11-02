@@ -6,9 +6,7 @@ M.list_win_configs = function()
   local win_configs = {}
   for _, win in ipairs(wins) do
     local buf = vim.api.nvim_win_get_buf(win)
-    if vim.bo[buf].ft ~= "nofile" then
-      win_configs[win] = vim.api.nvim_win_get_config(win)
-    end
+    if vim.bo[buf].ft ~= "nofile" then win_configs[win] = vim.api.nvim_win_get_config(win) end
   end
   return win_configs
 end
@@ -63,18 +61,14 @@ function M.leftmost_wins()
   end, editor_bufs)
   local leftwins = {}
   for _, win in ipairs(editor_wins) do
-    if M.is_leftmost_window(win) and win ~= -1 then
-      table.insert(leftwins, win)
-    end
+    if M.is_leftmost_window(win) and win ~= -1 then table.insert(leftwins, win) end
   end
   return leftwins
 end
 
 function M.goto_leftmost_win()
   local leftwins = M.leftmost_wins()
-  if #leftwins == 0 then
-    return
-  end
+  if #leftwins == 0 then return end
   vim.api.nvim_set_current_win(leftwins[1])
 end
 
@@ -90,10 +84,13 @@ function M.switch_to_highest_window()
     end
   end
 
-  vim.cmd("echo 'highest window is " .. highest_win .. " with zindex " .. highest_zindex .. "'")
+  vim.api.nvim_echo({
+    { "Highest window\n", "Title" },
+    { "Window: " .. highest_win .. "\n", "Normal" },
+    { "Zindex: " .. highest_zindex, "Normal" },
+  }, false, {})
   vim.api.nvim_set_current_win(highest_win)
 end
-vim.cmd("command! HighestWindow lua require('util.ui').switch_to_highest_window()")
 
 ---@param hl string
 function M.square_border(hl)

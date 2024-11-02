@@ -155,6 +155,18 @@ return {
           end,
           ["'"] = "copy_absolute_path",
           ['"'] = "copy_relative_path",
+          ["G"] = {
+            function(state)
+              local node = state.tree:get_node()
+              local path = node:get_id()
+              local fs_stat = vim.uv.fs_stat(path)
+              if fs_stat and fs_stat.type == "file" then
+                path = vim.fn.fnamemodify(path, ":h")
+              end
+              LazyVim.pick("files", { cwd = path })
+            end,
+            desc = "Grep in dir"
+          },
           unpack(astrovim_style and {
             ["[b"] = "prev_source",
             ["]b"] = "next_source",

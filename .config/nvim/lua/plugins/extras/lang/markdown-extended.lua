@@ -21,6 +21,7 @@ return {
       { "o", "o<cmd>AutolistNewBullet<cr>", mode = { "n" } },
       { "O", "O<cmd>AutolistNewBulletBefore<cr>", mode = { "n" } },
       { "<CR>", "<cmd>AutolistToggleCheckbox<cr><CR>", mode = { "n" } },
+      { "<S-CR>", "<cmd>AutolistToggleCheckbox<cr><CR>", mode = { "n" } },
       -- { "<C-r>", "<cmd>AutolistRecalculate<cr>", mode = { "n" } },
 
       { "].", "<cmd>AutolistCycleNext<cr>", mode = { "n" }, desc = "Next List Type" },
@@ -40,7 +41,7 @@ return {
     },
   },
   {
-    "MeanderingProgrammer/markdown.nvim",
+    "MeanderingProgrammer/render-markdown.nvim",
     optional = true,
     opts = {
       -- preset = "lazy",

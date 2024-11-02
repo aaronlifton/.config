@@ -1,7 +1,9 @@
 local model = require("model")
 local mode = require("model").mode
+local extract = require("model.prompts.extract")
 local openai = require("model.providers.openai")
 local gemini = require("model.providers.gemini")
+local anthropic = require("model.providers.anthropic")
 local starter_prompts = require("model.prompts.starters")
 local gemini_builder = require("plugins.extras.ai.config.models.gemini.builder")
 
@@ -31,7 +33,6 @@ return vim.tbl_extend("force", starter_prompts, {
         messages = {
           {
             role = "user",
-            -- content = "Your mission is to convert given code to a nodejs-code. Don't describe or hinting the code. Only clean code. Here is the code to convert: ``` "
             content = "Convert the following code to NodeJS code. Only return code and don't describe it. Here is the code to convert: ``` "
               .. code
               .. " ```",
@@ -127,30 +128,6 @@ return vim.tbl_extend("force", starter_prompts, {
       }
     end,
   },
-  ["commit:openai"] = {
-    provider = openai,
-    system = "You are an expert programmer and git user.",
-    mode = mode.INSERT,
-    params = {
-      model = "gpt-4-0125-preview", -- gpt-4o
-    },
-    builder = function()
-      local git_diff = vim.fn.system({ "git", "diff", "--staged" })
-
-      if not git_diff:match("^diff") then error("Git error:\n" .. git_diff) end
-
-      return {
-        messages = {
-          {
-            role = "user",
-            content = "Write a terse commit message according to the Conventional Commits specification. Try to stay below 80 characters total. Dont surround the commit message with backticks. Staged git diff: ```\n"
-              .. git_diff
-              .. "\n```",
-          },
-        },
-      }
-    end,
-  },
   ["codestral:fim"] = {
     provider = require("util.model.providers.codestral"),
     mode = mode.INSERT,
@@ -168,11 +145,11 @@ return vim.tbl_extend("force", starter_prompts, {
       return { prompt = ctx.lines_before }
     end,
   },
-  ["DiffExplain:development"] = {
+  ["DiffExplain:main"] = {
     provider = gemini,
     mode = mode.BUFFER,
     builder = function()
-      local git_diff = vim.fn.system({ "git", "--no-pager", "diff", "--staged", "development" })
+      local git_diff = vim.fn.system({ "git", "--no-pager", "diff", "--staged", "main" })
       vim.api.nvim_echo({ { "Length of diff:\n", "Title" }, { tostring(#git_diff), "Number" } }, true, {})
       -- local word_count = 0
       -- for _ in git_diff:gmatch("%S+") do
@@ -203,9 +180,10 @@ return vim.tbl_extend("force", starter_prompts, {
       }
     end,
   },
-  commit2 = {
+  ["commit:gemini"] = {
     provider = gemini,
     mode = mode.INSERT,
+    -- request_completion = gemini_builder.request_completion,
     builder = function()
       local git_diff = vim.fn.system({ "git", "diff", "--staged" })
 
@@ -232,9 +210,32 @@ return vim.tbl_extend("force", starter_prompts, {
         },
       }
     end,
-    -- request_completion = gemini_builder.request_completion,
   },
-  commit3 = {
+  ["commit:openai"] = {
+    provider = openai,
+    system = "You are an expert programmer and git user.",
+    mode = mode.INSERT,
+    params = {
+      model = "gpt-4o", -- gpt-4-0125-preview
+    },
+    builder = function()
+      local git_diff = vim.fn.system({ "git", "diff", "--staged" })
+
+      if not git_diff:match("^diff") then error("Git error:\n" .. git_diff) end
+
+      return {
+        messages = {
+          {
+            role = "user",
+            content = "Write a terse commit message according to the Conventional Commits specification. Try to stay below 80 characters total. Dont surround the commit message with backticks. Staged git diff: ```\n"
+              .. git_diff
+              .. "\n```",
+          },
+        },
+      }
+    end,
+  },
+  ["commit-conventional:openai"] = {
     provider = openai,
     mode = mode.INSERT,
     builder = function()
@@ -256,58 +257,39 @@ return vim.tbl_extend("force", starter_prompts, {
       }
     end,
   },
-  ["to spanish"] = {
-    provider = openai,
-    hl_group = "SpecialComment",
-    builder = function(input)
-      return {
-        messages = {
-          {
-            role = "system",
-            content = "Translate to Spanish",
-          },
-          {
-            role = "user",
-            content = input,
-          },
-        },
-      }
-    end,
+  ["convertToRtl"] = {
+    provider = anthropic,
     mode = mode.REPLACE,
-  },
-  ["to javascript"] = {
-    provider = openai,
-    builder = function(input, ctx)
-      return {
-        messages = {
-          {
-            role = "system",
-            content = "Convert the code to javascript",
-          },
-          {
-            role = "user",
-            content = input,
-          },
-        },
-      }
+    -- request_completion = gemini_builder.request_completion,
+    params = {
+      max_tokens = 8192,
+      model = "claude-3-5-sonnet-latest",
+      system = "You are an expert programmer. Provide code which should go between the before and after blocks of code. Respond only with a markdown code block. Use comments within the code if explanations are necessary.",
+    },
+    transform = extract.markdown_code,
+    builder = function()
+      local format = require("model.format.claude")
+      local input_context = require("util.model.context"):whole_file_context()
+      local input = "Convert this enzyme test to RTL"
+      -- return format.build_replace(input, context)
+      return format.build_replace(input, input_context)
     end,
   },
-  ["to rap"] = {
-    provider = openai,
-    hl_group = "Title",
-    builder = function(input)
-      return {
-        messages = {
-          {
-            role = "system",
-            content = "Explain the code in 90's era rap lyrics",
-          },
-          {
-            role = "user",
-            content = input,
-          },
-        },
-      }
+  ["convertToRtl:selection"] = {
+    provider = anthropic,
+    mode = mode.REPLACE,
+    -- request_completion = gemini_builder.request_completion,
+    params = {
+      max_tokens = 8192,
+      model = "claude-3-5-sonnet-latest",
+      system = "You are an expert programmer. Provide code which should go between the before and after blocks of code. Respond only with a markdown code block. Use comments within the code if explanations are necessary.",
+    },
+    transform = extract.markdown_code,
+    builder = function()
+      local format = require("model.format.claude")
+      local input2 = "Convert this enzyme test to RTL. Don't create new tests, just convert the existing ones."
+      local ctx = require("util.model.context"):context(true, input2)
+      return format.build_replace(ctx.input, ctx.context)
     end,
   },
 })

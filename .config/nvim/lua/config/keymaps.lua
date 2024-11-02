@@ -40,6 +40,15 @@ map("n", "<leader>u|", function()
   end
 end, { desc = "Toggle colorcolumn" })
 
+map("n", "<leader>u<PageUp>", function()
+  local col = vim.o.colorcolumn
+  if col == "" then
+    vim.o.colorcolumn = "101"
+  else
+    vim.o.colorcolumn = ""
+  end
+end, { desc = "Toggle colorcolumn" })
+
 -- toggle formatexpr to format paragraphs
 map("n", "<leader>uM", function()
   if o.formatexpr == "" then
@@ -103,6 +112,14 @@ map("n", "<leader>f<tab>", function()
     if tabid ~= nil then vim.cmd(tabid .. "tabnext") end
   end)
 end, { desc = "Tabs" })
+map("n", "<leader><tab>\\", function()
+  if vim.g.last_tabpage == nil then return end
+  local tabpages = vim.api.nvim_list_tabpages()
+  for _, tab in ipairs(tabpages) do
+    if tab == vim.g.last_tabpage then return vim.api.nvim_set_current_tabpage(vim.g.last_tabpage) end
+  end
+  vim.g.last_tabpage = nil
+end, { desc = "Alt Tab" })
 
 map({ "n", "x" }, "gw", "*N", { desc = "Search word under cursor" })
 
@@ -179,7 +196,6 @@ map("n", "<leader>fo", ":!open " .. vim.fn.expand("%:p:h") .. "<cr>", { noremap 
 local function spell_reload()
   vim.cmd(":mkspell! %")
 end
-
 map("n", "zR", spell_reload, { noremap = true, silent = true })
 
 -- if LazyVim.has("baleia.nvim") then
@@ -235,6 +251,7 @@ map("n", "<leader>ls", function()
   lazy.sync()
 end, { desc = "Lazy Sync" })
 
+-- Linter and formatter info
 map("n", "<leader>cif", "<cmd>LazyFormatInfo<cr>", { desc = "Formatting" })
 map("n", "<leader>cic", "<cmd>ConformInfo<cr>", { desc = "Conform" })
 map("n", "<leader>ciF", function()
@@ -304,8 +321,10 @@ map("n", "<M-e>", "<cmd>Neotree reveal_force_cwd<cr>", { desc = "Reveal current 
 
 require("config.keymaps.window")
 
-map("n", "<M-->", "<cmd>ChatGPT<CR>", { desc = "ChatGPT" })
+-- Disabled in favor of Avante/Parrot
+-- map("n", "<M-->", "<cmd>ChatGPT<CR>", { desc = "ChatGPT" })
 
+-- Path utils
 local path_util = require("util.path")
 -- map("n", "<leader>ccp", ":let @+=expand('%:p')<cr>", { desc = "Copy path to clipboard" })
 map("n", "<leader>cpp", function()
@@ -330,10 +349,7 @@ map("n", "<leader>cq", function()
   vim.diagnostic.open_float(nil, { source = true })
 end, { desc = "Line Diagnostics (Source)" })
 
-map("n", "<leader>Ln", function()
-  require("util.notepad").launch_notepad()
-end, { desc = "Toggle Notepad" })
-
+-- Lazygit
 map("n", "<leader>gW", LazyVim.lazygit.browse, { desc = "Git Browse" })
 map("n", "<leader>gF", function()
   local git_path = vim.api.nvim_buf_get_name(0)
@@ -346,7 +362,7 @@ map("n", "<leader>gF", function()
   })
 end, { desc = "File History (LazyGit)" })
 
--- Float term
+-- Terminals
 map("n", "<C-S-/>", function()
   LazyVim.terminal({}, {
     border = "rounded",
@@ -370,7 +386,7 @@ map("n", "<M-S-Bslash>", function()
   -- end
   local cwd = vim.fn.getcwd()
   if bufname then
-    local path = vim.loop.fs_realpath(bufname)
+    local path = vim.uv.fs_realpath(bufname)
     cwd = vim.fn.fnamemodify(path, ":h")
   end
 
@@ -387,13 +403,20 @@ map("n", "<M-S-Bslash>", function()
   })
 end, { desc = "Yazi" })
 
+-- Custom leap functions
 map("n", "<leader>j", function()
   require("util.leap.treesitter").leap_ts_parents()
 end, { desc = "Leap AST Parents" })
 
+-- Custom AI chat
 map("n", "<leader>aN", function()
   require("util.ai").toggle(true)
 end, { desc = "Alpha2Pi - ChatGPT" })
+
+-- Custom notepad
+map("n", "<leader>Ln", function()
+  require("util.notepad").launch_notepad()
+end, { desc = "Toggle Notepad" })
 
 -- Spelling
 -- map("n", "<leader>!", "zg", { desc = "Add Word to Dictionary" })
@@ -402,6 +425,7 @@ map("n", "zV", function()
   require("util.spell_dictionary").add_to_vale_dictionary()
 end, { desc = "Add to Vale dictionary" })
 
+-- TreeSJ
 map("n", "gS", function()
   require("treesj").toggle({ split = { recursive = false } })
 end, { desc = "SplitJoin" })
@@ -412,6 +436,7 @@ map("n", "gJ", function()
   require("treesj").join()
 end, { desc = "Join" })
 
+-- Git modified date
 map("n", "<leader>gT", function()
   local filename = vim.fn.expand("%")
   local modified_date = vim.fn.getftime(filename)
@@ -459,6 +484,13 @@ map(
   "<C-w><C-f>",
   "<cmd>vsplit | lua vim.lsp.buf.definition()<cr>",
   { desc = "Goto Definition (vsplit)", silent = true }
+)
+-- Goto definition in new tab
+map(
+  "n",
+  "<C-w>g<Tab>",
+  "<cmd>tab split | lua vim.lsp.buf.definition()<cr>",
+  { desc = "Goto Definition (tab)", silent = true }
 )
 
 -- Codeium is <leader>cI2
@@ -510,7 +542,8 @@ end, { desc = "Kitten - Resize Wider" })
 map("n", "<M-C-S-Left>", function()
   kitten("kittens/resize_window.kitten.py", { "left" })
 end, { desc = "Kitten - Resize Narrower" })
---------------------------------------------------------------------------------
+
+-- Finders
 map("n", "<leader>fm", function()
   local module = vim.fn.input("Module: ")
   vim.cmd("Neotree focus filesystem left")
@@ -521,6 +554,7 @@ map("n", "<leader>xC", function()
   vim.fn.setqflist({})
 end, { desc = "Clear Quickfix" })
 
+-- Neotest
 map("n", "[X", function()
   require("neotest").jump.prev({ status = "failed" })
 end, { silent = true, desc = "Prev Test Failure" })
@@ -533,7 +567,7 @@ end, { silent = true, desc = "Prev Test Success" })
 map("n", "]S", function()
   require("neotest").jump.next({ status = "passed" })
 end, { silent = true, desc = "Next Test Success" })
---------------------------------------------------------------------------------
+
 -- Custom finders
 local T = require("util.fzf.finders")
 map("n", "<leader>flg", function()
@@ -554,3 +588,20 @@ end, { desc = "Find config files" })
 -- map("n", "<leader>flI", function()
 --   T.grep_inspiration_files({ layout_strategy = "center" })
 -- end)
+
+-- Diff utils
+local diff_util = require("util.diff")
+map("n", "<leader>uD", function()
+  diff_util.compare_windows()
+end, { desc = "Diff windows" })
+
+map("n", "<leader>uR", function()
+  if vim.g.enable_secondary_ruby_linter then
+    vim.g.enable_secondary_ruby_linter = false
+    vim.api.nvim_echo({ { "Disabled secondary ruby linter", "Normal" } }, true, {})
+  else
+    vim.g.enable_secondary_ruby_linter = true
+    vim.api.nvim_echo({ { "Enabled secondary ruby linter", "Normal" } }, true, {})
+    require("lint").try_lint()
+  end
+end, { desc = "Toggle secondary ruby linter" })

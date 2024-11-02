@@ -50,16 +50,17 @@ return {
         mode = "n",
         desc = "Paste file into context",
       },
-      {
-        "<C-m>l",
-        ":Telescope model mchat<cr>",
-        mode = "n",
-        desc = "Paste file into context",
-      },
+      -- {
+      --   "<C-m>l",
+      --   ":Telescope model mchat<cr>",
+      --   mode = "n",
+      --   desc = "Paste file into context",
+      -- },
       -- { "<leader>ag", "", "+gemini" },
-      { "<leader>agc", "<cmd>Model commit2<cr>", desc = "Generate commit (Gemini)" },
+      { "<leader>agc", "<cmd>Model commit:gemini<cr>", desc = "Generate commit (Gemini)" },
       { "<leader>agv", "<cmd>Model commit:openai<cr>", desc = "Generate commit (OpenAI)" },
-      { "<leader>agb", "<cmd>Model ConventionalCommit<cr>", desc = "Generate commit2 (OpenAI)" },
+      { "<leader>agb", "<cmd>Model commit-conventional:openai<cr>", desc = "Generate conventional commit (OpenAI)" },
+      { "<leader>agd", "<cmd>Model DiffExplain:main<cr>", desc = "Generate diff explanation (Gemini)" },
       { "<C-m>c", "<cmd>Model codestral:fim<cr>", desc = "Complete (Codestral FIM)" },
     },
 
@@ -108,10 +109,9 @@ return {
             { desc = "Generate git message", buffer = true, silent = true }
           )
           vim.api.nvim_echo({ { "Git commit message generator enabled", "Title" } }, true, {})
-          wk.register({
-            ["<C-m>g"] = {
-              c = { ":Model commit<cr>", "Generate git message", noremap = true },
-            },
+          wk.add({
+            { "<C-m>", group = "AI (Model)" },
+            { "<C-m>g", ":Model commit<cr>", desc = "Generate git message" },
           })
         end,
       })
@@ -122,7 +122,16 @@ return {
       vim.treesitter.language.register("markdown", "mchat")
 
       -- Setup ruby embeddings functions
-      require("util.model.store.ruby")
+      -- require("util.model.store.ruby")
     end,
+  },
+  {
+    "folke/which-key.nvim",
+    optional = true,
+    opts = {
+      spec = {
+        { "<C-m>", group = "AI (Model)", icon = " " },
+      },
+    },
   },
 }

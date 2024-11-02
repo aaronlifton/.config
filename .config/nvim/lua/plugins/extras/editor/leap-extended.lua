@@ -112,6 +112,7 @@ return {
       vim.keymap.set({ "x", "o" }, "arr", function()
         require("leap.remote").action({ input = "aL" })
       end)
+      -- This conflicts with inc-rename (<cr>)
       vim.keymap.set({ "x", "o" }, "rr", function()
         require("leap.remote").action({ input = "aL" })
       end)

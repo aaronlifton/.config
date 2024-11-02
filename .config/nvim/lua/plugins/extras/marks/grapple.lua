@@ -17,6 +17,17 @@ table.insert(keys, { "<leader>M", "<cmd>Grapple toggle_tags<CR>", desc = "Marks"
 table.insert(keys, { prefix .. "x", "<cmd>Grapple reset<CR>", desc = "Clear all Marks" })
 table.insert(keys, { prefix .. "s", "<cmd>Grapple toggle_scopes<CR>", desc = "Scopes" })
 table.insert(keys, { prefix .. "S", "<cmd>Grapple toggle_loaded<CR>", desc = "Loaded Scopes" })
+table.insert(keys, { prefix .. "p", function() require("grapple").prune({ limit = "1d"}) end, desc = "Prune (1d)" })
+table.insert(keys, {
+  prefix .. "P",
+  function()
+    vim.ui.select({ "120s", "15m", "6h", "1d", "7d", "30d", "All" }, { prompt = "Prune" }, function(choice)
+      if choice == "All" then choice = nil end
+      require("grapple").prune({ limit = choice })
+    end)
+  end,
+  desc = "Prune",
+})
 
 -- Harpoon style
 table.insert(keys, { "<D-H>", "<cmd>Grapple select index=1<cr>", desc = "File 1" })
@@ -44,6 +55,23 @@ return {
       scope = "git_branch",
       win_opts = {
         border = "rounded",
+        footer = "", -- disable footer
+      },
+      scopes = {
+        {
+          name = "help",
+          fallback = "global",
+          resolver = function()
+            local data = vim.fn.stdpath("data") --[[@as string]]
+            local cellar = "/opt/homebrew/Cellar/neovim/%d+.%d+.%d+_%d+/"
+            local current_file = vim.api.nvim_buf_get_name(0)
+            local _helpfile, found = current_file:gsub(data, "")
+            if found == 1 then return "help", data end
+            _helpfile, found = current_file:gsub(cellar, "")
+            if found == 1 then return "help", cellar end
+            -- return id, path, err
+          end,
+        },
       },
     },
     config = function(_, opts)
