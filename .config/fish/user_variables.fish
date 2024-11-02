@@ -30,13 +30,17 @@ fish_add_path /usr/sbin # for chown
 # Python
 fish_add_path /Users/$USER/Code/venv/bin
 
+# XDG
+set -gx XDG_CONFIG_HOME "$HOME/.config"
+
 set -x LUA_PATH '/opt/homebrew/lib/luarocks/rocks-5.4/?.lua;/opt/homebrew/Cellar/luarocks/3.9.2/share/lua/5.4/?.lua;/opt/homebrew/share/lua/5.4/?.lua;/opt/homebrew/share/lua/5.4/?/init.lua;/opt/homebrew/lib/lua/5.4/?.lua;/opt/homebrew/lib/lua/5.4/?/init.lua;./?.lua;./?/init.lua;/Users/$USER/.luarockw/share/lua/5.4/?.lua;/Users/$USER/.luarocks/share/lua/5.4/?/init.lua;/Users/$USER/.luarockw/share/lua/5.1/?.lua;/Users/$USER/.luarocks/share/lua/5.1/?/init.lua;'
 # set -x LUA_PATH '/Users/$USER/.local/share/nvim/site/pack/packer/opt/packer.nvim/?.lua;' $LUA_PATH
 set -x LUA_CPATH '/opt/homebrew/lib/lua/5.4/?.so;/opt/homebrew/lib/lua/5.4/loadall.so;./?.so;/Users/$USER/.luarocks/lib/lua/5.4/?.so'
 
 # so compilers can find postgres
-set -x LDFLAGS "-L/opt/homebrew/opt/postgresql@16/lib"
-set -x LDFLAGS "-L/opt/homebrew/opt/llvm/lib/c++ -Wl,-rpath,/opt/homebrew/opt/llvm/lib/c++ -L/opt/homebrew/opt/llvm/lib " $LDFLAGS
+set -lx POSTGRES_LDFLAG "-L/opt/homebrew/opt/postgresql@16/lib"
+set -lx LLVM_LDFLAG "-L/opt/homebrew/opt/llvm/lib/c++ -Wl,-rpath/opt/homebrew/opt/llvm/lib/c++ -L/opt/homebrew/opt/llvm/lib"
+# set -x LDFLAGS $LLVM_LDFLAG $POSTGRES_LDFLAG
 #               -L/opt/homebrew/opt/llvm/lib/c++ -Wl,-rpath,/opt/homebrew/opt/llvm/lib/c++ -L/opt/homebrew/opt/llvm/lib, -L/opt/homebrew/opt/llvm/lib/c++ -Wl,-rpath,/opt/homebrew/opt/llvm/lib/c++ -L/opt/homebrew/opt/llvm/lib, -L/opt/homebrew/opt/postgresql@16/lib
 set -x CPPFLAGS "-I/opt/homebrew/opt/llvm/include,-I/opt/homebrew/opt/postgresql@16/include"
 
@@ -83,8 +87,7 @@ set -gx CMAKE_MAKE_PROGRAM /opt/homebrew/bin/cmake
 # set -gx OBSIDIAN_VAULT_PATH "/Users/$USER/Documents/$USERs Vault"
 # set -gx OBSIDIAN_VAULT_CONFIG_PATH $OBSIDIAN_VAULT_PATH/.obsidian
 set -gx FONT_PATH /Users/$USER/Library/Fonts
-# set -gx EDITOR nvim
-set -gx EDITOR nvim2
+set -gx EDITOR nvim
 # set -gx TMUXINATION_LAYOUTS "/Users/$USER/.config/tmuxinator/layouts"
 # set -gx TLDR_CONFIG_1AATH "/Users/$USER/Library/Application Support/tealdeer/pages"
 set -gx OLLAMA_API_HOST "http://localhost:11434" # "https://api.ollama.com"

@@ -47,3 +47,19 @@ abbr -a --position anywhere -- --fwm --files-with-matches
 abbr -a !! --position anywhere --function last_history_item
 abbr 4dirs --set-cursor=! "$(string join \n -- 'for dir in */' 'cd $dir' '!' 'cd ..' 'end')"
 abbr -a L --position anywhere --set-cursor "% | less"
+
+abbr --add ber bundle exec rspec
+abbr --add njest APP_ENV=development TZ=UTC npx jest --projects src/jest.config.rtl.js --watch --color --silent
+abbr --add lsd-size lsd --human-readable --size=short --blocks=size,name -Sr
+
+# Nvim AI
+abbr --add chat-gemini nvim -o1 -c \"Mchat gemini\"
+abbr --add chat-pplx nvim -o1 -c \"Mchat pplx\"
+
+# Jest
+abbr --add jest-researcher TZ=UTC npx jest --projects jest.config.rtl.js --watch
+abbr --add jest-researcher-enz TZ=UTC npx jest --projects jest.config.enz.js --coverage=false --watch
+abbr --add jest-client TZ=UTC APP_ENV=development npx jest --projects src/jest.config.rtl.js --watch
+abbr --add jest-client-enz TZ=UTC APP_ENV=development npx jest --projects src/jest.config.js --coverage=false --watch
+# Cucumber
+abbr --add cucumber-e2e LOG_LEVEL=debug BROWSER=chromium:headless npx cucumber-js --tags
