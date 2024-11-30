@@ -95,14 +95,15 @@ hs.hotkey.bind("⌘⌥", "d", window.thunk_push({ width = 2 / 3 }))
 hs.hotkey.bind("⌘⌥", "f", window.thunk_push({ width = 2 / 3, left = 1 / 3 }))
 
 -- third screens
-hs.hotkey.bind("⌘⌥", "d", window.thunk_push({ top = 0, left = 0, width = 1 / 3 }))
+hs.hotkey.bind("⌘⌥", "d", window.thunk_push({ top = 0, left = 0, width = 1 / 3 })) -- interferes with hiding dock
 hs.hotkey.bind("⌘⌥", "f", window.thunk_push({ top = 0, left = 1 / 3, width = 1 / 3 }))
 hs.hotkey.bind("⌘⌥", "g", window.thunk_push({ left = 2 / 3, width = 1 / 3 }))
 
 -- 2/3 and 1/3
 hs.hotkey.bind("⌘⌥", "e", window.thunk_push({ width = 2 / 3 }))
--- hs.hotkey.bind("⌘⌥", "t", window.thunk_push({ left = 2 / 3, width = 1 / 3 }))
 hs.hotkey.bind("⌘⌥", "r", window.thunk_push({ left = 1 / 3, width = 2 / 3 }))
+hs.hotkey.bind("⌘⌥", "t", window.thunk_push({ left = 2 / 3, width = 1 / 3 }))
+hs.hotkey.bind("⌘⌥", "y", window.thunk_push({ left = (1 / 8) + 0.01, width = (7 / 8) - 0.01 }))
 
 -- center 2/3
 hs.hotkey.bind("ctrl⇧", "c", window.thunk_push({ left = 1 / 6, top = 1 / 6, width = 2 / 3, height = 2 / 3 }))
@@ -138,7 +139,8 @@ hs.hotkey.bind({ "shift" }, "escape", function()
 end)
 
 if spoon.ClipboardTool then
-	spoon.ClipboardTool.hist_size = 10
+	-- spoon.ClipboardTool.hist_size = 10
+	spoon.ClipboardTool.hist_size = 50
 	spoon.ClipboardTool.show_copied_alert = false
 	spoon.ClipboardTool.show_in_menubar = false
 	spoon.ClipboardTool:start()
@@ -160,6 +162,9 @@ for _, values in ipairs(hotkeys) do
 		hs.eventtap.keyStroke({}, values[2])
 	end)
 end
+
+-- require("functions/control_escape")
+
 -- end
 -- fk_modal = hs.hotkey.modal.new({""}, "", nil)
 -- -- stylua: ignore end
