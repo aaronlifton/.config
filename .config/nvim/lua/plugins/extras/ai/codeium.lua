@@ -1,18 +1,20 @@
 return {
-  { import = "lazyvim.plugins.extras.coding.codeium", cond = not vim.g.codeium_ghost_text },
-  {
-    "Exafunction/codeium.nvim",
-    optional = true,
-    cond = not vim.g.codeium_ghost_text,
-    opts = {
-      enable_chat = true,
-    },
-  },
+  { import = "lazyvim.plugins.extras.ai.codeium" },
+  -- {
+  --   "Exafunction/codeium.nvim",
+  --   optional = true,
+  --   cond = not vim.g.ai_cmp,
+  --   opts = {
+  --     enable_chat = true,
+  --   },
+  -- },
   -- For ghost text, use codeium.vim instead of codeium.nvim
+  -- NOTE: Has been replaced by codeium.nvim with enable_cmp_source = false
   {
     "Exafunction/codeium.vim",
     event = "InsertEnter",
-    cond = vim.g.codeium_ghost_text,
+    enabled = false,
+    -- cond = vim.g.ai_cmp,
     config = function()
       local cmp = require("cmp")
       cmp.event:on("menu_opened", function()
@@ -71,29 +73,29 @@ return {
       vim.keymap.set("n", "<leader>cI2", "<cmd>CodeiumToggle<cr>", { desc = "Toggle Codeium" })
     end,
   },
-  vim.g.codeium_ghost_text and {
-    "nvim-lualine/lualine.nvim",
-    optional = true,
-    event = "VeryLazy",
-    opts = function(_, opts)
-      local icon = require("lazyvim.config").icons.kinds.Codeium
-      local function show_codeium_status()
-        return icon .. vim.fn["codeium#GetStatusString"]()
-      end
-
-      table.insert(opts.sections.lualine_x, 2, {
-        show_codeium_status,
-        on_click = function(num_clicks, mouse_button, mods)
-          if num_clicks == 1 and mouse_button == "l" and not mods:match("%w") then
-            local status = vim.fn["codeium#GetStatusString"]()
-            local highlight = require("util.lualine").highlight_for_status(status)
-            vim.api.nvim_echo({
-              { "Codeium: ", "Normal" },
-              { status, highlight },
-            }, false, {})
-          end
-        end,
-      })
-    end,
-  } or {},
+  -- vim.g.ai_cmp and {
+  --   "nvim-lualine/lualine.nvim",
+  --   optional = true,
+  --   event = "VeryLazy",
+  --   opts = function(_, opts)
+  --     local icon = require("lazyvim.config").icons.kinds.Codeium
+  --     local function show_codeium_status()
+  --       return icon .. vim.fn["codeium#GetStatusString"]()
+  --     end
+  --
+  --     table.insert(opts.sections.lualine_x, 2, {
+  --       show_codeium_status,
+  --       on_click = function(num_clicks, mouse_button, mods)
+  --         if num_clicks == 1 and mouse_button == "l" and not mods:match("%w") then
+  --           local status = vim.fn["codeium#GetStatusString"]()
+  --           local highlight = require("util.lualine").highlight_for_status(status)
+  --           vim.api.nvim_echo({
+  --             { "Codeium: ", "Normal" },
+  --             { status, highlight },
+  --           }, false, {})
+  --         end
+  --       end,
+  --     })
+  --   end,
+  -- } or {},
 }

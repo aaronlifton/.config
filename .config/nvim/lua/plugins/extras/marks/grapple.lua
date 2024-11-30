@@ -138,3 +138,6 @@ return {
     },
   },
 }
+
+-- Inspo
+-- https://github.com/Subjective/dotfiles/blob/ef31a6214b063582ee99bd639c9bc945481965fd/.config/nvim/lua/plugins/motion.lua#L108

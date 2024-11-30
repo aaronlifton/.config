@@ -1,3 +1,6 @@
+local gen_prefix = "<leader>ag"
+-- local mod_prefix = "<leader>am"
+--
 return {
   {
     "gsuuon/model.nvim",
@@ -12,55 +15,65 @@ return {
     end,
     ft = "mchat",
     keys = {
-      {
-        "<C-m>a",
-        ":M<cr>",
-        mode = "n",
-        desc = "Run a completion prompt",
-      },
-      {
-        "<C-m><space>",
-        ":Mchat<cr>",
-        mode = "n",
-        desc = "Open a chat buffer",
-      },
+      -- Chat keymaps
+      { "<C-m>a", ":M<cr>", mode = "n", desc = "Run a completion prompt" },
+      { "<C-m><space>", ":Mchat<cr>", mode = "n", desc = "Open a chat buffer" },
       { "<C-m>d", ":Mdelete<cr>", mode = "n", desc = "Delete" },
       { "<C-m>s", ":Mselect<cr>", mode = "n", desc = "Select" },
-      {
-        "<C-m>ma",
-        ":MCadd<cr>",
-        mode = "n",
-        desc = "Add the current file into context",
-      },
-      {
-        "<C-m>md",
-        ":MCremove<cr>",
-        mode = "n",
-        desc = "Remove the current file into context",
-      },
-      {
-        "<C-m>mD",
-        ":MCclear<cr>",
-        mode = "n",
-        desc = "Clear the current context",
-      },
-      {
-        "<C-m>mp",
-        ":MCpaste<cr>",
-        mode = "n",
-        desc = "Paste file into context",
-      },
-      -- {
-      --   "<C-m>l",
-      --   ":Telescope model mchat<cr>",
-      --   mode = "n",
-      --   desc = "Paste file into context",
-      -- },
+      { "<C-m>ma", ":MCadd<cr>", mode = "n", desc = "Add the current file into context" },
+      { "<C-m>md", ":MCremove<cr>", mode = "n", desc = "Remove the current file into context" },
+      { "<C-m>mD", ":MCclear<cr>", mode = "n", desc = "Clear the current context" },
+      { "<C-m>mp", ":MCpaste<cr>", mode = "n", desc = "Paste file into context" },
+      -- { "<C-m>l", ":Telescope model mchat<cr>", mode = "n", desc = "Paste file into context" },
+      -- Editor keymaps
       -- { "<leader>ag", "", "+gemini" },
-      { "<leader>agc", "<cmd>Model commit:gemini<cr>", desc = "Generate commit (Gemini)" },
-      { "<leader>agv", "<cmd>Model commit:openai<cr>", desc = "Generate commit (OpenAI)" },
-      { "<leader>agb", "<cmd>Model commit-conventional:openai<cr>", desc = "Generate conventional commit (OpenAI)" },
-      { "<leader>agd", "<cmd>Model DiffExplain:main<cr>", desc = "Generate diff explanation (Gemini)" },
+      { gen_prefix .. "c", "<cmd>Model commit:gemini<cr>", desc = "Generate commit (Gemini)" },
+      { gen_prefix .. "v", "<cmd>Model commit:openai<cr>", desc = "Generate commit (OpenAI)" },
+      {
+        gen_prefix .. "b",
+        "<cmd>Model commit-conventional:openai<cr>",
+        desc = "Generate conventional commit (OpenAI)",
+      },
+      { gen_prefix .. "d", "<cmd>Model DiffExplain:main<cr>", desc = "Generate diff explanation (Gemini)" },
+      {
+        "<leader>ac",
+        function()
+          -- vim.cmd(":tab Mchat claude")
+          vim.cmd(":tab Mchat claude:cache")
+        end,
+        desc = "Toggle Chat (Claude Sonnet (Cache))",
+      },
+      {
+        "<M-9>",
+        function()
+          vim.cmd(":vsplit | Mchat claude")
+        end,
+        desc = "Toggle Chat (Claude Sonnet)",
+      },
+      {
+        "<M-8>",
+        function()
+          vim.cmd(":vsplit | Mchat gemini:flash")
+        end,
+        desc = "Toggle Chat (Gemini Flash)",
+      },
+      {
+        "<leader>ae",
+        function()
+          -- local prompt = vim.fn.input("Prompt: ")
+          local nui = require("util.nui.input")
+          nui.cursor_input("Prompt", function(value)
+            -- local start_line = vim.fn.line("'<")
+            -- local end_line = vim.fn.line("'>")
+            -- vim.cmd(string.format("%d,%dModel %s", start_line, end_line, "anthropic:claude-code"))
+
+            vim.cmd(("'<,'>Model %s %s"):format("anthropic:claude-code", value))
+            -- vim.cmd("Model anthropic:claude-code " .. value)
+          end, { size = { width = 40, height = 2 } })
+        end,
+        mode = { "n", "v" },
+        desc = "Edit Code (Claude Sonnet)",
+      },
       { "<C-m>c", "<cmd>Model codestral:fim<cr>", desc = "Complete (Codestral FIM)" },
     },
 

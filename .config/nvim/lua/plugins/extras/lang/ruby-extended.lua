@@ -4,13 +4,21 @@ LazyVim.on_very_lazy(function()
   })
 end)
 
--- local gems_util = require("util.ruby.gems")
-local rubocop_provider = "ruby_lsp" -- "rubocop"
+local has_rubocop_config = function()
+  local buf = vim.api.nvim_get_current_buf()
+  local filename = vim.api.nvim_buf_get_name(buf)
+  return vim.fs.find(".rubocop.yml", { path = filename, upward = true })
+end
+
+local use_ruby_lsp_rubocop = false
 local add_ruby_deps_command = false
 
 -- https://github.com/Shopify/ruby-lsp/blob/4f7ce060de3257c35028ccb70e1854da952cdb95/vscode/package.json#L231
 local enabledFeatures = {
   "codeActions",
+  -- "codeLens", -- adds "Run/Debug Test" lenses and ruby-lsp-rails "Go to Controller Action Route"
+  "completion",
+  "definition",
   -- "diagnostics", -- doesn't support custom Rubocop config
   "documentHighlights",
   "documentLink",
@@ -19,22 +27,45 @@ local enabledFeatures = {
   -- "formatting", -- doesn't support custom Rubocop config
   "hover",
   "inlayHint",
-  -- "onTypeFormatting",
+  -- "onTypeFormatting", -- replacement for endwise
   "selectionRanges",
   "semanticHighlighting",
-  "completion",
-  -- "codeLens",
-  "definition",
-  -- "workspaceSymbol",
   "signatureHelp",
   "typeHierarchy",
+  "workspaceSymbol",
 }
-
-if rubocop_provider == "ruby_lsp" then
+local excludedGems = {
+  "libv8-node",
+  "google-api-client",
+  "grpc",
+  "mini_racer",
+  "nokogiri",
+  "brakeman",
+  "rbtrace",
+  "faker",
+  "aws-sdk-s3",
+  "google-protobuf",
+  "google-cloud-pubsub",
+  "rubocop",
+  "google-iam",
+  "caxlsx",
+  "rubycritic",
+  "rubocop-ast",
+  "rubocop-capybara",
+  "rubocop-faker",
+  "rubocop-performance",
+  "rubocop-rails",
+  "rubocop-rake",
+  "rubocop-rspec",
+  "rubocop-thread_safety",
+}
+if use_ruby_lsp_rubocop then
+  -- Without these 2 features, the initialization options 'linters' and
+  -- 'formatters' are ignored.
   vim.list_extend(enabledFeatures, {
     "diagnostics",
     "formatting",
-    "onTypeFormatting",
+    -- "onTypeFormatting",
   })
 end
 
@@ -46,6 +77,7 @@ return {
       ensure_installed = {
         "solargraph",
         "rubocop",
+        -- "rubocop@1.50.2", -- Before, run `:MasonUninstall rubocop`
         "ruby-lsp",
         "cucumber-language-server",
         "sorbet",
@@ -135,9 +167,10 @@ return {
             new_config.enabled = require("util.ruby.gems").in_bundle("standard")
           end,
         },
-        rubocop = {
-          enabled = rubocop_provider ~= "ruby_lsp",
-        },
+        -- NOTE: already disabled in LazyVim/lua/lazyvim/plugins/extras/lang/ruby.lua
+        -- rubocop = {
+        --   enabled = not use_ruby_lsp_rubocop,
+        -- },
         sorbet = {
           -- init_options = { documentFormatting = false, codeAction = true },
           on_new_config = function(new_config)
@@ -146,44 +179,35 @@ return {
         },
         ruby_lsp = {
           -- cmd = { vim.fn.expand("~/.asdf/shims/ruby-lsp") },
+          -- NOTE: https://shopify.github.io/ruby-lsp/editors.html#all-initialization-options
           init_options = {
             enabledFeatures = enabledFeatures,
-            experimentalFeaturesEnabled = true,
-            -- bundleGemfile = ".lsp/Gemfile",
-            indexing = {
-              excludedPatterns = { "**/test/**/*.rb", "**/spec/**/*.rb" }, -- "**/*_spec.rb"
-              -- includedPatterns = { "**/bin/**/*" },
-              excludedGems = {
-                "libv8-node",
-                "google-api-client",
-                "grpc",
-                "mini_racer",
-                "nokogiri",
-                "brakeman",
-                "rbtrace",
-                "faker",
-                "aws-sdk-s3",
-                "google-protobuf",
-                "google-cloud-pubsub",
-                "rubocop",
-                "google-iam",
-                "caxlsx",
-                "rubycritic",
-                "rubocop-ast",
-                "rubocop-capybara",
-                "rubocop-faker",
-                "rubocop-performance",
-                "rubocop-rails",
-                "rubocop-rake",
-                "rubocop-rspec",
-                "rubocop-thread_safety",
+            experimentalFeaturesEnabled = false,
+            featuresConfiguration = {
+              inlayHints = {
+                implicitHashValue = true,
+                implicitRescue = true,
               },
+            },
+            -- https://github.com/search?q=path%3A**%2Fnvim%2F**%2F*.lua+excludedGems&type=code
+            indexing = {
+              excludedPatterns = {
+                -- "**/test/**/*.rb",
+                "**/test/**/*",
+                "**/spec/**/*",
+                "**/db/**/*",
+                "**/vendor/**/*",
+                -- "**/spec/**/*_spec.rb",
+                -- "**/activerecord-*/examples/**/*.rb",
+                "**/activerecord-*/examples/**/*",
+              },
+              -- includedPatterns = { "**/bin/**/*" },
+              excludedGems = excludedGems,
               -- excludedMagicComments = { "compiled:true" },
             },
+            -- formatter = use_ruby_lsp_rubocop and "auto" or nil,
+            -- linters = use_ruby_lsp_rubocop and { "rubocop" } or {},
           },
-          -- settings = {
-          --   rubyLsp = {},
-          -- },
           on_new_config = function(new_config)
             -- ruby-lsp-rubyfmt needs formatter to be set to rubyfmt
             -- https://github.com/jscharf/ruby-lsp-rubyfmt/blob/b28e16e9b847f70dc1ee2012296fda92cb30e7f5/README.md?plain=1#L41
@@ -256,8 +280,7 @@ return {
             end
           end,
           condition = function(ctx)
-            return vim.g.enable_secondary_ruby_linter
-              or (rubocop_provider ~= "ruby_lsp" and require("util.ruby.gems").has_rubocop())
+            return not use_ruby_lsp_rubocop and require("util.ruby.gems").has_rubocop()
           end,
         },
         standardrb = {
@@ -302,12 +325,13 @@ return {
           end,
           condition = function(ctx)
             -- Ruby LSP contains rubocop diagnostics itself
-            return rubocop_provider ~= "ruby_lsp" and require("util.ruby.gems").has_rubocop()
+            return not use_ruby_lsp_rubocop and require("util.ruby.gems").has_rubocop()
           end,
         },
         rubyfmt = {
           condition = function(ctx)
-            return rubocop_provider ~= "ruby_lsp" and require("util.ruby.gems").in_bundle("ruby-lsp-rubyfmt")
+            return not use_ruby_lsp_rubocop and require("util.ruby.gems").in_bundle("ruby-lsp-rubyfmt")
+            -- or not vim.fs.find(".rubocop.yml", { path = ctx.filename, upward = true })
           end,
         },
       },
@@ -323,11 +347,14 @@ return {
         ["neotest-rspec"] = {
           -- NOTE: By default neotest-rspec uses the system wide rspec gem instead of the one through bundler
           rspec_cmd = function()
-            return vim.tbl_flatten({
-              "bundle",
-              "exec",
-              "rspec",
-            })
+            return vim
+              .iter({
+                "bundle",
+                "exec",
+                "rspec",
+              })
+              :flatten()
+              :totable()
           end,
         },
       },

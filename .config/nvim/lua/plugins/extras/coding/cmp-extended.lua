@@ -52,23 +52,23 @@ return {
     opts = function(_, opts)
       local cmp = require("cmp")
       local compare = require("cmp.config.compare")
-      local copilot = require("copilot.suggestion")
+      -- local copilot = require("copilot.suggestion")
       local auto_select = true
-      local source_names = {
-        nvim_lsp = "(LSP)",
-        nvim_lua = "(Lua)",
-        cmp_yanky = "(Yanky)",
-        snippet = "(Snippet)",
-        buffer = "(Buffer)",
-        path = "(Path)",
-        git = "(Git)",
-      }
-      local duplicates = {
-        buffer = 1,
-        path = 1,
-        nvim_lsp = 0,
-        -- nvim_lua = 1,
-      }
+      -- local source_names = {
+      --   nvim_lsp = "(LSP)",
+      --   nvim_lua = "(Lua)",
+      --   cmp_yanky = "(Yanky)",
+      --   snippet = "(Snippet)",
+      --   buffer = "(Buffer)",
+      --   path = "(Path)",
+      --   git = "(Git)",
+      -- }
+      -- local duplicates = {
+      --   buffer = 1,
+      --   path = 1,
+      --   nvim_lsp = 0,
+      --   -- nvim_lua = 1,
+      -- }
 
       -- Comparators
       compare.lsp_scores = function(entry1, entry2)
@@ -167,6 +167,7 @@ return {
       -- end
 
       -- Sources
+      -- Set priority 101 instead of 100
       set_priority(opts.sources, "codeium", 101)
       -- move_before(opts.sources, "codeium", "copilot")
       -- Index 4 is nvim_lsp
@@ -206,14 +207,15 @@ return {
       --   },
       -- }
 
-      if vim.g.copilot_ghost_text then
-        opts.confirm_opts = {
-          behavior = cmp.ConfirmBehavior.Replace,
-          select = false,
-        }
-        opts.preselect = cmp.PreselectMode.None
-        opts.experimental.ghost_text = nil
-      end
+      -- if vim.g.ai_cmp then
+      --  TODO: revisit these two
+      --   opts.confirm_opts = {
+      --     behavior = cmp.ConfirmBehavior.Replace,
+      --     select = false,
+      --   }
+      --   opts.preselect = cmp.PreselectMode.None
+      --   opts.experimental.ghost_text = nil
+      -- end
 
       if astrovim_style then
         opts.preselect = cmp.PreselectMode.None
@@ -283,32 +285,32 @@ return {
         ["<C-k>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
         ["<C-u>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
         ["<C-d>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
-        ["<Tab>"] = cmp.mapping(function(fallback)
-          if copilot.is_visible() then
-            copilot.accept()
-          elseif is_visible(cmp) then
-            cmp.select_next_item()
-          elseif vim.api.nvim_get_mode().mode ~= "c" and vim.snippet.active({ direction = 1 }) then
-            vim.schedule(function()
-              vim.snippet.jump(1)
-            end)
-          elseif has_words_before() then
-            cmp.complete()
-          else
-            fallback()
-          end
-        end, { "i", "s" }),
-        ["<S-Tab>"] = cmp.mapping(function(fallback)
-          if is_visible(cmp) then
-            cmp.select_prev_item()
-          elseif vim.api.nvim_get_mode().mode ~= "c" and vim.snippet.active({ direction = -1 }) then
-            vim.schedule(function()
-              vim.snippet.jump(-1)
-            end)
-          else
-            fallback()
-          end
-        end, { "i", "s" }),
+        -- ["<Tab>"] = cmp.mapping(function(fallback)
+        --   if copilot.is_visible() then
+        --     copilot.accept()
+        --   elseif is_visible(cmp) then
+        --     cmp.select_next_item()
+        --   elseif vim.api.nvim_get_mode().mode ~= "c" and vim.snippet.active({ direction = 1 }) then
+        --     vim.schedule(function()
+        --       vim.snippet.jump(1)
+        --     end)
+        --   elseif has_words_before() then
+        --     cmp.complete()
+        --   else
+        --     fallback()
+        --   end
+        -- end, { "i", "s" }),
+        -- ["<S-Tab>"] = cmp.mapping(function(fallback)
+        --   if is_visible(cmp) then
+        --     cmp.select_prev_item()
+        --   elseif vim.api.nvim_get_mode().mode ~= "c" and vim.snippet.active({ direction = -1 }) then
+        --     vim.schedule(function()
+        --       vim.snippet.jump(-1)
+        --     end)
+        --   else
+        --     fallback()
+        --   end
+        -- end, { "i", "s" }),
       })
 
       if not auto_select then

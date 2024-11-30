@@ -1,13 +1,108 @@
+local M = { state = {
+  provider_states = {},
+} }
 local get_selection = require("util.selection").get_selection
 local prefix = "<leader>aP"
+local modify_prefix = "<leader>am"
 
-local function open_parrot_chat(provider, model, buftype)
-  buftype = buftype or "vsplit"
+--- Opens a new chat window, remembering the last chat for the provider
+---@param provider string
+---@param model string
+---@param target string?
+---@param prompt string?
+local function open_parrot_chat(provider, model, target, prompt)
+  local filename = vim.fn.bufname(vim.api.nvim_get_current_buf())
+  if filename:match("parrot/chats") then return vim.api.nvim_win_close(0, true) end
+
+  target = target or "vsplit"
   local config = require("parrot.config")
   local chat_handler = config.chat_handler
+  local kind = (target and target == "popup" and "popup") or "chat"
+  local toggle_kind = chat_handler:toggle_resolve(kind)
+  local params = { args = target }
+
+  -- Initialize provider state if it doesn't exist
+  M.state.provider_states[provider] = M.state.provider_states[provider]
+    or {
+      toggle_state = nil,
+      last_chat = nil,
+    }
+
+  local provider_state = M.state.provider_states[provider]
+  local toggle_state = chat_handler._toggle[toggle_kind]
+
+  -- vim.api.nvim_echo({ { vim.inspect(M.state.provider_states), "Normal" } }, true, {})
+  -- If we have a toggle state and last chat for this provider
+  if provider_state.last_chat then
+    -- vim.api.nvim_echo({ { ("Seting last to chat to %s"):format(provider_state.last_chat), "Normal" } }, true, {})
+    chat_handler.state:set_last_chat(provider_state.last_chat)
+    chat_handler:chat_toggle(params)
+    chat_handler._toggle[toggle_kind] = toggle_state
+    return
+  else
+    -- vim.api.nvim_echo({ { "Not found", "Title" }, { vim.inspect(M.state.provider_states), "Normal" } }, true, {})
+    chat_handler._toggle[toggle_kind] = nil
+  end
+
   chat_handler:set_provider(provider, true)
   chat_handler:switch_model(true, model, { name = provider })
-  chat_handler:chat_new(buftype)
+
+  local current_buf = chat_handler:chat_new(params, prompt)
+  local chat_file = vim.api.nvim_buf_get_name(current_buf)
+
+  -- Update provider state after opening new chat
+  provider_state.toggle_state = chat_handler._toggle[toggle_kind]
+  -- The plugin will call set_last_chat internally, which we'll capture in the next chat
+  provider_state.last_chat = chat_file
+end
+
+-- Without per-provider toggling
+-- local function open_parrot_chat(provider, model, target, prompt)
+--   local filename = vim.fn.bufname(vim.api.nvim_get_current_buf())
+--   if filename:match("parrot/chats") then return vim.api.nvim_win_close(0, true) end
+--
+--   -- local ui = require("parrot.ui")
+--   target = target or "vsplit"
+--   local config = require("parrot.config")
+--   local chat_handler = config.chat_handler
+--   local kind = (target and target == "popup" and "popup") or "chat"
+--   local toggle_kind = chat_handler:toggle_resolve(kind)
+--   local params = { args = target }
+--   -- vim.api.nvim_echo({ { vim.inspect(chat_handler._toggle), "Normal" } }, true, {})
+--   -- vim.api.nvim_echo({ { kind, "Title" }, { vim.inspect(toggle_kind), "Normal" } }, true, {})
+--   local toggle_state = chat_handler._toggle[toggle_kind]
+--   -- vim.api.nvim_echo({ { "toggle state", "Title" }, { vim.inspect(toggle_state), "Normal" } }, true, {})
+--   if toggle_state and M.state.last_provider == provider then
+--     chat_handler:chat_toggle(params)
+--     chat_handler._toggle[toggle_kind] = toggle_state
+--     return
+--   else
+--     chat_handler._toggle[toggle_kind] = nil
+--   end
+--   chat_handler:set_provider(provider, true)
+--   chat_handler:switch_model(true, model, { name = provider })
+--   -- chat_handler:toggle_add(chat_handler._toggle_kind.chat, toggle)
+--   M.state.last_provider = provider
+--   chat_handler:chat_new(params, prompt)
+-- end
+
+--- Edit a selection of code in place
+---@param target string
+---@param prompt string
+local function parrot_edit(target, prompt)
+  local template = ([[
+          %s
+          ```{{filetype}}
+          {{selection}}
+          ```
+
+          Respond just with the snippet of code that should be inserted.
+          ]]):format(prompt)
+  local prt = require("parrot.config")
+  local model_obj = prt.get_model("command")
+  local selection = get_selection()
+  local params = { range = 2, line1 = selection.start_line, line2 = selection.end_line }
+  prt.Prompt(params, prt.ui.Target[target], model_obj, nil, template)
 end
 
 return {
@@ -20,6 +115,7 @@ return {
       chat_shortcut_delete = { modes = { "n", "i", "v", "x" }, shortcut = "<C-g>d" },
       chat_shortcut_stop = { modes = { "n", "i", "v", "x" }, shortcut = "<C-g>s" },
       chat_shortcut_new = { modes = { "n", "i", "v", "x" }, shortcut = "<C-g>c" },
+      -- enable_spinner = false, -- incompatible with snacks notifier
       hooks = {
         CompleteFullContext = function(prt, params)
           local template = [[
@@ -80,21 +176,35 @@ return {
         desc = "Toggle (OpenAI)",
       },
       {
-        "<M-9>",
+        "<M-S-=>",
         function()
-          open_parrot_chat("gemini", "gemini-1.5-flash")
+          open_parrot_chat("openai", "gpt-4o", "popup")
         end,
-        desc = "Toggle (Gemini)",
+        desc = "Toggle (OpenAI)",
       },
       {
-        "<M-8>",
+        "<M-7>",
         function()
-          open_parrot_chat("mistral", "codestral-mamba-latest")
+          open_parrot_chat("xai", "grok-beta")
         end,
-        desc = "Toggle (Codestral)",
+        desc = "Toggle (xAI)",
       },
+      -- {
+      --   "<M-9>",
+      --   function()
+      --     open_parrot_chat("gemini", "gemini-1.5-flash")
+      --   end,
+      --   desc = "Toggle (Gemini)",
+      -- },
+      -- {
+      --   "<M-8>",
+      --   function()
+      --     open_parrot_chat("mistral", "codestral-mamba-latest")
+      --   end,
+      --   desc = "Toggle (Codestral)",
+      -- },
       {
-        "<leader>agrt",
+        modify_prefix .. "o",
         function()
           -- local prompt =
           --   'For the folllowing instructions, do not use "get :create" etc and instead use full routes like "api_v1_birds_path". Implement RSpec tests for the following code.\n\nCode:\n```{{filetype}}\n{{input}}\n```\n\nTests:\n```{{filetype}}'
@@ -122,21 +232,9 @@ return {
           --   utils.template_render(template, command, selection, filetype, filename, filecontent, multifilecontent)
           -- chat_handler:prompt({}, target, chat_handler:get_model("command"), nil, utils.trim(template), true)
 
-          local template = [[
-          Add comments to the following code:
-          ```{{filetype}}
-          {{selection}}
-          ```
-
-          Respond just with the snippet of code that should be inserted.
-          ]]
-          local prt = require("parrot.config")
-          local model_obj = prt.get_model("command")
-          local selection = get_selection()
-          local params = { range = 2, line1 = selection.start_line, line2 = selection.end_line }
-          prt.Prompt(params, prt.ui.Target.rewrite, model_obj, nil, template)
+          parrot_edit("rewrite", "Write the following code in a more succinct, idiomatic way:")
         end,
-        desc = "Generate RSpec tests",
+        desc = "Optimize code",
         mode = "v",
       },
     },
@@ -148,7 +246,7 @@ return {
             api_key = os.getenv("ANTHROPIC_API_KEY"),
           },
           gemini = {
-            api_key = os.getenv("GEMINI_API_KEY"),
+            api_key = os.getenv("GOOGLE_API_KEY"), -- GEMINI_API_KEY
           },
           groq = {
             api_key = os.getenv("GROQ_API_KEY"),
@@ -158,6 +256,9 @@ return {
           },
           pplx = {
             api_key = os.getenv("PERPLEXITY_API_KEY"),
+          },
+          xai = {
+            api_key = os.getenv("XAI_API_KEY"),
           },
           -- provide an empty list to make provider available (no API key required)
           ollama = {},
@@ -189,6 +290,7 @@ return {
     opts = {
       spec = {
         { "<leader>aP", group = "Parrot", icon = "󱜚 " },
+        { "<leader>am", group = "modify", icon = "󱜚 " },
       },
     },
   },

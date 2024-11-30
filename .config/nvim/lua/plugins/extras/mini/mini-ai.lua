@@ -71,6 +71,57 @@ return {
         ["`"] = {
           { "^%s*```%s*()[^`].-()```%s*$" },
         },
+        F = function()
+          local ts_utils = require("nvim-treesitter.ts_utils")
+          local current_node = ts_utils.get_node_at_cursor()
+
+          -- Traverse up the tree to find the function definition node
+          while current_node and current_node:type() ~= "function_definition" do
+            current_node = current_node:parent()
+          end
+
+          if not current_node then return nil end
+
+          -- Find the block node by iterating through children
+          local body_node
+          for i = 0, current_node:named_child_count() - 1 do
+            local child = current_node:named_child(i)
+            if child and child:type() == "block" then
+              body_node = child
+              break
+            end
+          end
+
+          if not body_node then return nil end
+
+          local start_row, start_col, end_row, end_col = body_node:range()
+          local bufnr = vim.api.nvim_get_current_buf()
+
+          -- Get the first node inside the block
+          local first_child = body_node:named_child(0)
+          local first_child_row, first_child_col = first_child:range()
+
+          -- Get the first and last lines of the function body
+          local first_line = vim.api.nvim_buf_get_lines(bufnr, start_row, start_row + 1, false)[1]
+          local last_line = vim.api.nvim_buf_get_lines(bufnr, end_row, end_row + 1, false)[1]
+
+          local debugvars = {
+            start_row = start_row,
+            start_col = start_col,
+            end_row = end_row,
+            end_col = end_col,
+            first_child_col = first_child_col,
+            last_line_length = #last_line,
+          }
+          vim.api.nvim_echo({ { vim.inspect(debugvars), "Normal" } }, true, {})
+
+          -- Adjust start and end positions with correct column positions
+          -- 'from' starts at first character, 'to' ends at last character
+          local from = { line = start_row + 1, col = first_child_col + 1 }
+          local to = { line = end_row + 1, col = #last_line }
+
+          return { from = from, to = to }
+        end,
         -- Word, ignoring punctuation and digits
         -- w = { "()()%f[%w_][%w_]+()[ \t]*()" },
         -- Word, with camelCase support (supports only Latin alphabet) TestTest

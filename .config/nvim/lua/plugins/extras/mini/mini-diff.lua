@@ -1,11 +1,7 @@
 local git_read_stream = function(stream, feed)
   local callback = function(err, data)
-    if data ~= nil then
-      return table.insert(feed, data)
-    end
-    if err then
-      feed[1] = nil
-    end
+    if data ~= nil then return table.insert(feed, data) end
+    if err then feed[1] = nil end
     stream:close()
   end
   stream:read_start(callback)
@@ -23,15 +19,13 @@ local set_mini_diff_ref_text = function(buf_id, branch, yadm)
   -- NOTE: Do not cache buffer's name to react to its possible rename
   -- local path = vim.api.nvim_buf_get_name(buf_id)
   local path = vim.uv.fs_realpath(vim.api.nvim_buf_get_name(buf_id))
-  if path == "" then
-    return buf_set_ref_text({})
-  end
+  if path == "" then return buf_set_ref_text({}) end
 
   local cwd, basename = vim.fn.fnamemodify(path, ":h"), vim.fn.fnamemodify(path, ":t")
   local stdout = vim.uv.new_pipe()
   local spawn_opts = { args = { "show", branch .. ":./" .. basename }, cwd = cwd, stdio = { nil, stdout, nil } }
 
-  ---@type uv.uv_process_t
+  ---@type uv.uv_process_t | nil
   local process, stdout_feed = nil, {}
   local on_exit = function(exit_code)
     process:close()
@@ -43,9 +37,7 @@ local set_mini_diff_ref_text = function(buf_id, branch, yadm)
     --   does not yet have file created).
     -- - 'Relative can not be used outside working tree' (when opening file
     --   inside '.git' directory).
-    if exit_code ~= 0 or stdout_feed[1] == nil then
-      return buf_set_ref_text({})
-    end
+    if exit_code ~= 0 or stdout_feed[1] == nil then return buf_set_ref_text({}) end
 
     -- Set reference text accounting for possible 'crlf' end of line in index
     local text = table.concat(stdout_feed, ""):gsub("\r\n", "\n")
@@ -136,16 +128,12 @@ return {
         function()
           local buf_id = vim.api.nvim_get_current_buf()
           local handle = io.popen("git rev-parse --abbrev-ref HEAD")
-          if not handle then
-            return
-          end
+          if not handle then return end
           local result = handle:read("*a")
           handle:close()
           local branch = "origin/" .. result
           handle = io.popen("git branch -a | grep " .. branch)
-          if not handle then
-            return
-          end
+          if not handle then return end
           result = handle:read("*a")
           handle:close()
           if result then
@@ -179,9 +167,7 @@ return {
           local current_buf = vim.api.nvim_get_current_buf()
           local old_disable = MiniDiff.disable
           MiniDiff.disable = function(buf_id)
-            if buf_id == current_buf then
-              return
-            end
+            if buf_id == current_buf then return end
             old_disable(buf_id)
           end
           vim.api.nvim_buf_attach(current_buf, false, {

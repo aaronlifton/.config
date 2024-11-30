@@ -41,15 +41,13 @@ g.lsp_goto_source = "fzf" -- glance
 -- g.lazyvim_ruby_lsp = "solargraph"
 g.lazyvim_ruby_lsp = "ruby_lsp"
 g.lazyvim_ruby_formatter = "rubocop"
-g.ruby_lsp_references_provider = "solargraph"
-g.lazyvim_prettier_needs_config = true
-g.copilot_ghost_text = false
-g.codeium_ghost_text = false
+-- if the completion engine supports the AI source,
+-- use that instead of inline suggestions
+g.ai_cmp = true
 g.highlight_provider = "nvim-highlight-colors" -- "mini.hipatterns"
 g.markdown_previewer = "markdown-preview" -- "peek"
 g.animation_provider = "cinnamon" -- "mini.animate"
 g.icon_size = "normal" -- "small"
-g.enable_secondary_ruby_linter = false
 -------------------------------------------------
 
 -- vim.env.XDG_CACHE_HOME = vim.env.XDG_CACHE_HOME or vim.env.HOME .. "/.cache"

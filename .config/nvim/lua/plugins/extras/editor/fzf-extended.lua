@@ -305,31 +305,32 @@ return {
         end,
         desc = "No-bind interal action test",
       },
-      {
-        "gR",
-        function()
-          local ts_util = require("util.treesitter")
-          local search_term = vim.fn.expand("<cword>")
-          local node_type = ts_util.parent_node_type_at_cursor()
-          if node_type == "function_declaration" then
-            search_term = " " .. search_term .. "("
-          elseif node_type == "function_call" then
-            local next_char = ts_util.get_cword_next_char()
-            vim.api.nvim_echo({ { next_char, "Comment" } }, false, {})
-            search_term = " " .. search_term
-            if next_char == "(" then search_term = search_term .. "(" end
-          end
-
-          local current_file = vim.fn.expand("%:t")
-          local file_extension = current_file:match("^.+(%..+)$")
-          -- require("fzf-lua").live_grep({
-          pick("live_grep", {
-            search = search_term,
-            glob = "*." .. file_extension .. "!*{test,spec}/",
-          })()
-        end,
-        desc = "References (grep)",
-      },
+      -- Faster references hack for ruby
+      -- {
+      --   "gR",
+      --   function()
+      --     local ts_util = require("util.treesitter")
+      --     local search_term = vim.fn.expand("<cword>")
+      --     local node_type = ts_util.parent_node_type_at_cursor()
+      --     if node_type == "function_declaration" then
+      --       search_term = " " .. search_term .. "("
+      --     elseif node_type == "function_call" then
+      --       local next_char = ts_util.get_cword_next_char()
+      --       vim.api.nvim_echo({ { next_char, "Comment" } }, false, {})
+      --       search_term = " " .. search_term
+      --       if next_char == "(" then search_term = search_term .. "(" end
+      --     end
+      --
+      --     local current_file = vim.fn.expand("%:t")
+      --     local file_extension = current_file:match("^.+(%..+)$")
+      --     -- require("fzf-lua").live_grep({
+      --     pick("live_grep", {
+      --       search = search_term,
+      --       glob = "*." .. file_extension .. "!*{test,spec}/",
+      --     })()
+      --   end,
+      --   desc = "References (grep)",
+      -- },
       {
         "<leader>mt",
         function()
@@ -376,6 +377,20 @@ return {
               end,
             },
             previewer = fzf_lua.defaults.marks.previewer,
+            -- ui_select = function(fzf_opts, items)
+            --   local original_ui_select = LazyVim.opts("fzf-lua")
+            --   if #items < 4 then
+            --     return vim.tbl_deep_extend("force", fzf_opts, {
+            --       winopts = {
+            --         width = 0.5,
+            --         -- height is number of items, with a max of 80% screen height
+            --         height = math.floor(math.min(vim.o.lines * 0.8, #items + 5) + 0.5),
+            --       },
+            --     })
+            --   else
+            --     return original_ui_select(fzf_opts, items)
+            --   end
+            -- end,
           }
           fzf_lua.fzf_exec(entries, opts)
         end,
@@ -391,7 +406,6 @@ return {
     },
   },
   {
-
     "ibhagwan/fzf-lua",
     optional = true,
     keys = {

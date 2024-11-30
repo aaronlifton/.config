@@ -47,6 +47,7 @@ return {
             ["]i"] = "@rspec.it",
             ["]O"] = "@rspec.describe",
             -- ["]]"] = "@structure.outer",
+            ["]if"] = "@function.inner",
           },
           goto_next_end = {
             ["]I"] = "@rspec.it",

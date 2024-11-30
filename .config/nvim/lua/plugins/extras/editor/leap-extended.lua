@@ -1,4 +1,4 @@
-local paste_on_remote_yank = false
+local paste_on_remote_yank = true
 
 return {
   { import = "lazyvim.plugins.extras.editor.leap" },
@@ -22,13 +22,27 @@ return {
       },
       {
         "g<C-r>",
-        -- "gR",
+        -- "gR", -- interferes with File References for vtsls
+        -- "gS", -- interferes with treesj
         function()
           require("leap.remote").action()
         end,
         mode = { "n", "o" },
         desc = "Leap Remote",
       },
+      -- format is different: <op>r<leap><motion/textobject>
+      -- e.g. crle<cr>i"<esc>
+      -- e.g. cr[first 2 letters]af to change a remote function
+      -- repeat the operator for line: crle<cr>c<esc>
+      -- not for visual mode, since r is useful there
+      -- {
+      --   "r",
+      --   function()
+      --     require("leap.remote").action()
+      --   end,
+      --   mode = { "o" },
+      --   desc = "Leap Remote",
+      -- },
       -- {
       --   "gV",
       --   function()
@@ -73,6 +87,7 @@ return {
 
         require("leap.treesitter").select({ opts = { special_keys = sk } })
       end)
+      -- vim.keymap.set({ "n", "x", "o" }, "gA", "V<CMD>lua require('leap.treesitter').select()<CR>")
 
       if paste_on_remote_yank then
         vim.api.nvim_create_augroup("LeapRemote", {})
@@ -120,6 +135,8 @@ return {
       -- evil-snipe
       -- vim.keymap.set({ "x", "o" }, "x", "<Plug>(leap-forward-till)")
       -- vim.keymap.set({ "x", "o" }, "X", "<Plug>(leap-backward-till)")
+      vim.keymap.set({ "x", "o" }, "z", "<Plug>(leap-forward-till)")
+      vim.keymap.set({ "x", "o" }, "Z", "<Plug>(leap-backward-till)")
     end,
   },
   -- {

@@ -43,20 +43,7 @@ M.get_selection3 = function()
   }
 end
 
--- TODO: compare with model.nvim/lua/model/util/init.lua:340
---- Get the current selection text and range, with common indentation removed
---- @return { selection: string, start_line: number, end_line: number }
-M.get_selection = function()
-  local buf = vim.api.nvim_get_current_buf()
-  -- local start_pos = vim.fn.getpos("'<")
-  -- local end_pos = vim.fn.getpos("'>")
-  -- local start_line = start_pos[2]
-  -- local end_line = end_pos[2]
-  local selection_lines = get_selection_lines()
-  local start_line = selection_lines.start_line.row
-  local end_line = selection_lines.end_line.row
-  local lines = vim.api.nvim_buf_get_lines(buf, start_line - 1, end_line, false)
-
+local function normalize_indentation(lines)
   local min_indent = nil
   local use_tabs = false
   -- measure minimal common indentation for lines with content
@@ -71,19 +58,58 @@ M.get_selection = function()
     end
   end
   if min_indent == nil then min_indent = 0 end
-  prefix = string.rep(use_tabs and "\t" or " ", min_indent)
+  local prefix = string.rep(use_tabs and "\t" or " ", min_indent)
 
   for i, line in ipairs(lines) do
     lines[i] = line:sub(min_indent + 1)
   end
+  return lines
+end
 
-  selection = table.concat(lines, "\n")
+--- Get the current selection text and range, with common indentation removed
+--- Indentation code from parrot.nvim/lua/parrot/chat_handler.lua:1156
+-- TODO: compare with model.nvim/lua/model/util/init.lua:340
+--- @param opts { normalize_indentation: boolean }
+--- @return { selection: string, start_line: number, end_line: number }|nil
+M.get_selection = function(opts)
+  local defaults = {
+    normalize_indentation = true,
+  }
+  opts = vim.tbl_extend("force", defaults, opts or {})
+  local buf = vim.api.nvim_get_current_buf()
+  -- local start_pos = vim.fn.getpos("'<")
+  -- local end_pos = vim.fn.getpos("'>")
+  -- local start_line = start_pos[2]
+  -- local end_line = end_pos[2]
+  local selection_lines = get_selection_lines()
+  local start_line = selection_lines.start_line.row
+  local end_line = selection_lines.end_line.row
+  local lines = vim.api.nvim_buf_get_lines(buf, start_line - 1, end_line, false)
 
-  if selection == "" then
-    vim.notify("Please select some text to rewrite", vim.log.levels.ERROR, { title = "get_selection" })
-    return
-  end
+  if normalize_indentation then lines = normalize_indentation(lines) end
+
+  local selection = table.concat(lines, "\n")
+
+  if selection == "" then return nil end
   return { selection = selection, start_line = start_line, end_line = end_line }
+end
+
+M.markdown_code_fence = function()
+  local selection = M.get_selection()
+  if not selection then return end
+
+  local buf = vim.api.nvim_get_current_buf()
+  local filetype = vim.bo[buf].filetype
+  local filename = vim.fn.bufname(buf)
+
+  local position = string.format("(%s-%s)", selection.start_line, selection.end_line)
+  return string.format(
+    "File: `%s` %s\n```%s\n%s\n```\n\n",
+    vim.fn.fnamemodify(filename, ":~:."),
+    position,
+    filetype,
+    selection.selection
+  )
 end
 
 return M

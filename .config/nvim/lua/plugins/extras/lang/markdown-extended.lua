@@ -45,7 +45,7 @@ return {
     optional = true,
     opts = {
       -- preset = "lazy",
-      file_types = { "markdown", "norg", "rmd", "org", "mchat" },
+      file_types = { "markdown", "norg", "rmd", "org", "mchat", "Avante" },
     },
   },
   {

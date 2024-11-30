@@ -46,6 +46,9 @@ return vim.tbl_extend("force", require("model.prompts.chats"), {
   --     -- add store_results to your messages
   --   end,
   -- },
+  ["gemini:flash"] = vim.tbl_deep_extend("force", require("model.prompts.chats").gemini, {
+    provider = require("util.model.providers.gemini-flash"),
+  }),
   -- Works
   ["together:dolphin-mixtral"] = {
     provider = require("model.providers.together"),

@@ -160,6 +160,11 @@ map({ "n", "x", "o" }, "<M-h>", "_", { desc = "First character of Line" })
 map({ "n", "x" }, "<M-d>", '"_d', { desc = "Delete without yanking" })
 map({ "n", "x" }, "<M-c>", '"_c', { desc = "Change without yanking" })
 
+-- Enable delete to end of line in NUI inputs. Gets overriden by LSP keymap
+-- otherwise.
+-- map("i", "<C-k>", "<C-o>dd", { desc = "Delete line" })
+map("i", "<C-k>", "<C-o>D", { desc = "Delete to end of line", noremap = true })
+
 -- Deleting without yanking empty line
 map("n", "dd", function()
   local is_empty_line = vim.api.nvim_get_current_line():match("^%s*$")
@@ -182,11 +187,7 @@ map("i", "jk", "<ESC>", { silent = true })
 
 -- Dashboard
 map("n", "<leader>fd", function()
-  if LazyVim.has("alpha-nvim") then
-    require("alpha").start(true)
-  elseif LazyVim.has("dashboard-nvim") then
-    vim.cmd("Dashboard")
-  end
+  require("snacks").dashboard.open()
 end, { desc = "Dashboard" })
 
 -- Open in finder
@@ -344,16 +345,22 @@ end, { desc = "Copy relative path:line to clipboard", silent = true })
 map("n", "<leader>cpL", function()
   path_util.copy_abs_file_line()
 end, { desc = "Copy absolute path:line to clipboard", silent = true })
+map("v", "<leader>cpm", function()
+  local clipboard = require("util.clipboard")
+  clipboard.set_clipboard(require("util.selection").markdown_code_fence())
+end, { desc = "Copy markdown code fence" })
 
 map("n", "<leader>cq", function()
   vim.diagnostic.open_float(nil, { source = true })
 end, { desc = "Line Diagnostics (Source)" })
 
 -- Lazygit
-map("n", "<leader>gW", LazyVim.lazygit.browse, { desc = "Git Browse" })
+map("n", "<leader>gW", function()
+  require("snacks").lazygit.open()
+end, { desc = "Git Browse" })
 map("n", "<leader>gF", function()
   local git_path = vim.api.nvim_buf_get_name(0)
-  LazyVim.lazygit.open({
+  require("snacks").lazygit.open({
     args = { "-f", git_path },
     size = {
       height = 0.85,
@@ -363,20 +370,7 @@ map("n", "<leader>gF", function()
 end, { desc = "File History (LazyGit)" })
 
 -- Terminals
-map("n", "<C-S-/>", function()
-  LazyVim.terminal({}, {
-    border = "rounded",
-    persistent = true,
-    size = { width = 0.5, height = 0.75 },
-    backdrop = 75,
-    ctrl_hjkl = false,
-    --     margin = {
-    --       left = 100,
-    --       right = -100,
-    --     },
-  } --[[@as LazyTermOpts]])
-end, { desc = "Float terminal" })
-map("t", "<C-S-/>", "<cmd>close<cr>", { desc = "Hide Terminal" })
+
 map("n", "<M-S-Bslash>", function()
   local buf = vim.api.nvim_get_current_buf()
   local bufname = vim.api.nvim_buf_get_name(buf)
@@ -390,17 +384,7 @@ map("n", "<M-S-Bslash>", function()
     cwd = vim.fn.fnamemodify(path, ":h")
   end
 
-  LazyVim.terminal({ "yazi", cwd }, {
-    border = "rounded",
-    persistent = true,
-    size = { width = 0.75, height = 0.75 },
-    backdrop = 75,
-    ctrl_hjkl = false,
-    env = {
-      -- EDITOR = "nvr -cc close -cc vsplit +'set bufhidden=wipe'",
-      EDITOR = "nvr -cc close +'set bufhidden=wipe'",
-    },
-  })
+  Snacks.terminal("yazi", { cwd = cwd })
 end, { desc = "Yazi" })
 
 -- Custom leap functions
@@ -488,10 +472,21 @@ map(
 -- Goto definition in new tab
 map(
   "n",
-  "<C-w>g<Tab>",
+  "<C-w>gt",
   "<cmd>tab split | lua vim.lsp.buf.definition()<cr>",
   { desc = "Goto Definition (tab)", silent = true }
 )
+-- Goto file in vsplit
+-- map("n", "<C-w><C-v>", "vs | gf", { desc = "Goto File (vsplit)", silent = true })
+map("n", "<C-w><C-v>", function()
+  vim.cmd([[ vsplit ]])
+  if vim.bo.filetype == "ruby" then
+    local cfile = vim.fn["rails#ruby_cfile"]()
+    vim.cmd(":find " .. cfile)
+  else
+    vim.cmd([[normal! gf]])
+  end
+end, { desc = "Goto File (vsplit)", silent = true })
 
 -- Codeium is <leader>cI2
 map("n", "<leader>cI1", "<cmd>Copilot toggle<cr>", { desc = "Toggle Copilot" })
@@ -533,7 +528,7 @@ map("n", "<leader>tk", function()
     )
   end
 end, { desc = "Kitten - RSpec" })
-map("n", "<C-w>V", function()
+map("n", "<C-w>K", function()
   kitten("kittens/side_command.kitten.py")
 end, { desc = "Kitten - Split Vertically" })
 map("n", "<M-C-S-Right>", function()
@@ -594,17 +589,6 @@ local diff_util = require("util.diff")
 map("n", "<leader>uD", function()
   diff_util.compare_windows()
 end, { desc = "Diff windows" })
-
-map("n", "<leader>uR", function()
-  if vim.g.enable_secondary_ruby_linter then
-    vim.g.enable_secondary_ruby_linter = false
-    vim.api.nvim_echo({ { "Disabled secondary ruby linter", "Normal" } }, true, {})
-  else
-    vim.g.enable_secondary_ruby_linter = true
-    vim.api.nvim_echo({ { "Enabled secondary ruby linter", "Normal" } }, true, {})
-    require("lint").try_lint()
-  end
-end, { desc = "Toggle secondary ruby linter" })
 
 map({ "n", "v" }, "<leader>13", function()
   local selection = require("util.selection").get_selection3()

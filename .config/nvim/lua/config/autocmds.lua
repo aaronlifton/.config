@@ -66,7 +66,7 @@ ac("FileType", {
 ac("BufRead", {
   pattern = ".env",
   callback = function()
-    vim.diagnostic.disable(0)
+    vim.diagnostic.enable(false)
   end,
 })
 
@@ -131,7 +131,7 @@ ac({ "BufNewFile", "BufRead" }, {
   group = ag("DisableEslintOnNodeModules", { clear = true }),
   pattern = { "**/node_modules/**", "node_modules", "/node_modules/*" },
   callback = function()
-    vim.diagnostic.disable(0)
+    vim.diagnostic.enable(false)
   end,
 })
 --
@@ -155,7 +155,7 @@ ac({ "BufEnter" }, {
     -- if vim.fn.getcwd() == vim.fn.expand("%:p:h") then
     -- local filename = vim.fn.expand("%:t")
     -- if filename == "README.md" or filename == "CHANGELOG.md" then
-    --   vim.diagnostic.disable(0)
+    --   vim.diagnostic.enable(false)
     --   vim.api.nvim_echo({ { "Disabled diagnostics", "Special" } }, false, {})
     -- end
     vim.opt_local.spell = false
@@ -226,7 +226,7 @@ ac({ "FileType" }, {
   pattern = { "log" },
   callback = function(args)
     vim.opt_local.spell = false
-    vim.diagnostic.disable(0)
+    vim.diagnostic.enable(false)
   end,
 })
 
@@ -236,6 +236,21 @@ ac({ "TabLeave" }, {
     vim.g.last_tabpage = tabpage
   end,
 })
+
+-- Already set by smart-splits.nvim (var:IS_NVIM)
+-- ac({ "VimEnter", "VimResume" }, {
+--   group = vim.api.nvim_create_augroup("KittySetVarVimEnter", { clear = true }),
+--   callback = function()
+--     io.stdout:write("\x1b]1337;SetUserVar=in_editor=MQo\007")
+--   end,
+-- })
+--
+-- ac({ "VimLeave", "VimSuspend" }, {
+--   group = vim.api.nvim_create_augroup("KittyUnsetVarVimLeave", { clear = true }),
+--   callback = function()
+--     io.stdout:write("\x1b]1337;SetUserVar=in_editor\007")
+--   end,
+-- })
 
 -- ac({ "FileType" }, {
 --   pattern = { "javascript", "typescript", "javascriptreact", "typescriptreact" },

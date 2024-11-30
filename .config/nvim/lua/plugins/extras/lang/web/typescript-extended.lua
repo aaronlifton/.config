@@ -6,17 +6,17 @@ LazyVim.on_very_lazy(function()
     },
   })
 end)
-local source_action = function(name)
-  return function()
-    vim.lsp.buf.code_action({
-      apply = true,
-      context = {
-        only = { string.format("source.%s.ts", name) },
-        diagnostics = {},
-      },
-    })
-  end
-end
+-- local source_action = function(name)
+--   return function()
+--     vim.lsp.buf.code_action({
+--       apply = true,
+--       context = {
+--         only = { string.format("source.%s.ts", name) },
+--         diagnostics = {},
+--       },
+--     })
+--   end
+-- end
 
 return {
   { import = "lazyvim.plugins.extras.lang.typescript" },
@@ -40,20 +40,6 @@ return {
           init_options = {
             preferences = {
               disableSuggestions = true,
-            },
-          },
-          keys = {
-            -- already defined by lazyvim:
-            -- <leader>gd require("vtsls").commands.goto_source_definition(0)*
-            -- <leader>gr require("vtsls").commands.file_references(0)
-            -- <leader>co require("vtsls").commands.organize_imports(0)
-            -- <leader>cm require("vtsls").commands.add_missing_imports(0)
-            -- <leader>cd require("vtsls").commands.fix_all(0)
-            -- <leader>cv require("vtsls").commands.select_ts_version(0)
-            {
-              "<leader>cM",
-              source_action("removeUnused"),
-              desc = "Remove unused imports",
             },
           },
         },
