@@ -402,23 +402,62 @@ function img_gpt -a prompt
     curl -s $url -o img-"$rand_num".png
 end
 
+# function aichat --description "Ask GPT-3.5 Turbo a question"
+#     set prompt $argv
+#     curl https://api.openai.com/v1/chat/completions \
+#         -H "Content-Type: application/json" \
+#         -H "Authorization: Bearer $OPENAI_API_KEY" \
+#         -d '
+# {
+#     "model": "gpt-4o-mini",
+#     "response_format": { "type": "json_object" },
+#     "temperature": 0.7,
+#     "messages": [{
+#         "role": "system",
+#         "content": "You are a helpful assistant designed to output JSON. You will receive questions from a user who is asking you questions via his Kitty terminal on OSX, and he is a software engineer."
+#     }]
+# }
+# ' | jq -r '.choices[0].message.content'
+# end
+
 function aichat --description "Ask GPT-3.5 Turbo a question"
     set prompt $argv
-    curl https://api.openai.com/v1/chat/completions \
+    set response (curl -s https://api.openai.com/v1/chat/completions \
         -H "Content-Type: application/json" \
         -H "Authorization: Bearer $OPENAI_API_KEY" \
-        -d '{
-    "model": "gpt-3.5-turbo-0125",
+        -d '
+{
+    "model": "gpt-4o-mini",
     "response_format": { "type": "json_object" },
-    "messages": [
-      {
+    "temperature": 0.7,
+    "messages": [{
         "role": "system",
-        "content": "You are a helpful assistant designed to output JSON. You
-    will receive questions from a user who is asking you questions via his Kitty
-    terminal on OSX, and he is a software engineer."
-      }
-    ]
-  }'
+        "content": "You are a helpful assistant designed to output JSON. You will receive questions from a user who is asking you questions via his Kitty terminal on OSX, and he is a software engineer."
+    }]
+}
+')
+    if test $status -ne 0
+        echo "Error: Failed to connect to OpenAI API"
+        return 1
+    end
+
+    set error (echo $response | jq -r '.error.message')
+    if test "$error" != null
+        echo "API Error: $error"
+        return 1
+    end
+
+    echo "Tokens used: "(echo $response | jq '.usage.total_tokens')
+    # echo $response | jq -r '.choices[0].message.content'
+    set content (echo $response | jq -r '.choices[0].message.content')
+
+    # Try to parse the content as JSON and extract response field if it exists
+    set parsed_response (echo $content | jq -r '.response // empty')
+    if test -n "$parsed_response"
+        echo $parsed_response
+    else
+        echo $content
+    end
 end
 
 function cppwd --description "Copy current working directory to clipboard"
@@ -714,3 +753,7 @@ source ~/.config/fish/zoxide.fish
 
 #alias nvim2="NVIM_APPNAME=lazy-starter nvim"
 # source /opt/homebrew/opt/asdf/libexec/asdf.fish
+
+# Unbind Ctrl+k and rebind to Alt+k
+bind --erase --preset \ck
+bind \ek backward-kill-line

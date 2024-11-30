@@ -1,0 +1,15 @@
+This is the result of running the function:
+```
+❯ aichat test
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  1196  100   834  100   362    896    389 --:--:-- --:--:-- --:--:--  1286
+Tokens used: 61
+{"status":"ready","message":"I'm here to help! Please ask your questions."}
+```
+
+Can you fix it so that it doesnt show the progress
+and that it returns something like this:
+
+Tokens used: 61
+I'm here to help! Please ask your questions.
