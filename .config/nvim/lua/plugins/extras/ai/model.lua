@@ -14,6 +14,17 @@ return {
       })
     end,
     ft = "mchat",
+    dependencies = {
+      {
+        -- Make sure to set this up properly if you have lazy=true
+        "MeanderingProgrammer/render-markdown.nvim",
+        optional = true,
+        opts = {
+          file_types = { "mchat" },
+        },
+        ft = { "mchat" },
+      },
+    },
     keys = {
       -- Chat keymaps
       { "<C-m>a", ":M<cr>", mode = "n", desc = "Run a completion prompt" },
@@ -27,14 +38,14 @@ return {
       -- { "<C-m>l", ":Telescope model mchat<cr>", mode = "n", desc = "Paste file into context" },
       -- Editor keymaps
       -- { "<leader>ag", "", "+gemini" },
-      { gen_prefix .. "c", "<cmd>Model commit:gemini<cr>", desc = "Generate commit (Gemini)" },
-      { gen_prefix .. "v", "<cmd>Model commit:openai<cr>", desc = "Generate commit (OpenAI)" },
+      { gen_prefix .. "c", "<cmd>Model commit:gemini<cr>", desc = "Commit message (Gemini)" },
+      { gen_prefix .. "v", "<cmd>Model commit:openai<cr>", desc = "Commit message (OpenAI)" },
       {
         gen_prefix .. "b",
         "<cmd>Model commit-conventional:openai<cr>",
-        desc = "Generate conventional commit (OpenAI)",
+        desc = "Conventional commit (OpenAI)",
       },
-      { gen_prefix .. "d", "<cmd>Model DiffExplain:main<cr>", desc = "Generate diff explanation (Gemini)" },
+      { gen_prefix .. "d", "<cmd>Model DiffExplain:main<cr>", desc = "Diff explanation (Gemini)" },
       {
         "<leader>ac",
         function()
@@ -74,11 +85,55 @@ return {
         mode = { "n", "v" },
         desc = "Edit Code (Claude Sonnet)",
       },
+      {
+        "<leader>aF",
+        function()
+          local nui = require("util.nui.input")
+          nui.cursor_input("Prompt", function(input)
+            require("util.model.api").prompt(
+              "anthropic:claude-code",
+              require("model").mode.INSERT_OR_REPLACE,
+              input,
+              { visual = true }
+            )
+          end, { size = { width = 40, height = 2 } })
+        end,
+        mode = { "n", "v" },
+        desc = "Edit Code (Claude Sonnet)",
+      },
+      {
+        "<leader>aE",
+        function()
+          -- local input = require("model.core.input")
+          local bufnr = vim.api.nvim_get_current_buf()
+          local selection = require("util.selection")
+          selection.save_selection()
+
+          local InputBox = require("util.nui.input_box")
+          local input = InputBox({
+            title = "Prompt",
+            on_submit = function(content)
+              selection.restore_selection(bufnr)
+
+              vim.schedule(function()
+                require("util.model.api").prompt(
+                  "anthropic:claude-code",
+                  require("model").mode.INSERT_OR_REPLACE,
+                  content,
+                  { visual = true }
+                )
+              end)
+            end,
+            on_close = function() end,
+          })
+          input:mount()
+        end,
+        mode = { "n", "v" },
+        desc = "Edit Code (Claude Sonnet)",
+      },
       { "<C-m>c", "<cmd>Model codestral:fim<cr>", desc = "Complete (Codestral FIM)" },
     },
-
     -- To override defaults add a config field and call setup()
-
     config = function()
       local openai = require("model.providers.openai")
       local hf = require("model.providers.huggingface")
@@ -105,9 +160,11 @@ return {
         group = augroup,
         pattern = "mchat",
         -- command = "nnoremap <silent><buffer> <leader>w :Mchat<cr>",
-        callback = function()
+        callback = function(ev)
           vim.keymap.set("n", "<leader><cr>", ":Mchat<cr>", { buffer = true, silent = true })
           vim.cmd.setlocal("foldmethod=manual")
+          -- local win = vim.fn.bufwinid(ev.buf)
+          -- vim.api.nvim_set_option_value("wrap", true, { win = win })
         end,
       })
       vim.api.nvim_create_autocmd("FileType", {
@@ -144,7 +201,20 @@ return {
     opts = {
       spec = {
         { "<C-m>", group = "AI (Model)", icon = " " },
+        { gen_prefix, group = "+generate" },
       },
     },
   },
+  -- {
+  --   "folke/edgy.nvim",
+  --   optional = true,
+  --   opts = function(_, opts)
+  --     opts.right = opts.right or {}
+  --     table.insert(opts.right, {
+  --       ft = "mchat",
+  --       title = "Model.nvim",
+  --       size = { width = 70 },
+  --     })
+  --   end,
+  -- },
 }

@@ -131,6 +131,14 @@ return {
     opts = function()
       local user = vim.env.USER or "User"
       user = user:sub(1, 1):upper() .. user:sub(2)
+      -- local ag = vim.api.nvim_create_augroup("CopilotChat", { clear = true })
+      -- vim.api.nvim_create_autocmd("BufEnter", {
+      --   pattern = "copilot-chat",
+      --   group = ag,
+      --   callback = function(ev)
+      --     -- vim.api.nvim_buf_set_keymap(ev.buf, "n", key[1], key[2], key[3])
+      --   end,
+      -- })
       return {
         model = "claude-3.5-sonnet",
         auto_insert_mode = true,
@@ -147,7 +155,14 @@ return {
       }
     end,
     keys = {
-      { "<C-x>", "<cmd>CopilotChatStop<cr>", ft = "copilot-chat", desc = "Stop" },
+      { "<C-x>", "<cmd>CopilotChatStop<cr>", ft = "copilot-chat", desc = "Stop current chat" },
+      { "<localleader><esc>", "<cmd>CopilotChatStop<cr>", ft = "copilot-chat", desc = "Stop current chat" },
+      { "<localleader>r", "<cmd>CopilotChatReset<cr>", ft = "copilot-chat", desc = "Reset chat" },
+      { "<localleader>s", "<cmd>CopilotChatSave<cr>", ft = "copilot-chat", desc = "Save chat" },
+      { "<localleader>l", "<cmd>CopilotChatLoad<cr>", ft = "copilot-chat", desc = "Load chat" },
+      { "<localleader>?", "<cmd>CopilotChatDebugInfo<cr>", ft = "copilot-chat", desc = "Show debug info" },
+      { "<localleader>m", "<cmd>CopilotChatModels<cr>", ft = "copilot-chat", desc = "Show available models" },
+      { "<localleader>a", "<cmd>CopilotChatAgents<cr>", ft = "copilot-chat", desc = "Show available agents" },
       {
         "<M-0>",
         function()

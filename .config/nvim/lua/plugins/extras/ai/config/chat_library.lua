@@ -38,6 +38,87 @@ return vim.tbl_extend("force", require("model.prompts.chats"), {
       return git_diff
     end,
   }),
+
+  -- -b, --ignore-space-change
+  --     Ignore changes in amount of whitespace. This ignores whitespace at
+  --     line end, and considers all other sequences of one or more
+  --     whitespace characters to be equivalent.
+  --
+  -- -w, --ignore-all-space
+  --     Ignore whitespace when comparing lines. This ignores differences
+  --     even if one line has whitespace where the other line has none.
+  --
+  --     --ignore-blank-lines
+  --     Ignore changes whose lines are all blank.
+  -- -W, --function-context
+  --     Show whole function as context lines for each change. The function
+  --     names are determined in the same way as git diff works out patch
+  --     hunk headers (see Defining a custom hunk-header in
+  --     gitattributes(5)).
+  -- -M[<n>], --find-renames[=<n>]
+  --     Detect renames. If n is specified, it is a threshold on the
+  --     similarity index (i.e. amount of addition/deletions compared to the
+  --     file’s size). For example, -M90% means Git should consider a
+  --     delete/add pair to be a rename if more than 90% of the file hasn’t
+  --     changed. Without a % sign, the number is to be read as a fraction,
+  --     with a decimal point before it. I.e., -M5 becomes 0.5, and is thus
+  --     the same as -M50%. Similarly, -M05 is the same as -M5%. To limit
+  --     detection to exact renames, use -M100%. The default similarity
+  --     index is 50%.
+  ReviewPR = vim.tbl_deep_extend("force", require("model.prompts.chats").claude, {
+    system = "You are an expert programmer that gives constructive feedback. Review the changes in the user's git diff and the full context of modified files. Don't describe what the user has done. This is a diff of a pull request ready for review, and the user is trying to proof read it and check for any issues before marking it as ready for review.",
+    create = function()
+      local cwd = LazyVim.root.get()
+      -- Using -U3 for 3 lines of context, --function-context to show full function changes
+      -- and -M to detect moved lines
+      local diff_cmd = { "git", "-C", cwd, "diff", "main...HEAD", "-U3", "--function-context", "-M", "-w" }
+      local git_diff = vim.fn.system(diff_cmd)
+
+      if vim.v.shell_error ~= 0 then
+        diff_cmd = { "git", "-C", cwd, "diff", "master...HEAD", "-U3", "--function-context", "-M", "-w" }
+        git_diff = vim.fn.system(diff_cmd)
+      end
+
+      if not git_diff:match("^diff") then error("Git error:\n" .. git_diff) end
+
+      -- Get list of changed files
+      local files_cmd = { "git", "-C", cwd, "diff", "--name-only", "main...HEAD" }
+      local changed_files = vim.fn.systemlist(files_cmd)
+
+      if vim.v.shell_error ~= 0 then
+        files_cmd = { "git", "-C", cwd, "diff", "--name-only", "master...HEAD" }
+        changed_files = vim.fn.systemlist(files_cmd)
+      end
+
+      local context = git_diff .. "\n\nFile Context:\n"
+
+      -- Add content of each changed file
+      for _, file in ipairs(changed_files) do
+        local filepath = cwd .. "/" .. file
+        local ft = vim.filetype.match({ filename = filepath })
+        local content = vim.fn.readfile(filepath)
+
+        if content and #content > 0 then
+          context = context
+            .. string.format(
+              [[
+
+Here is the content from the file `%s`:
+
+```%s
+%s
+```]],
+              file,
+              ft or "",
+              table.concat(content, "\n")
+            )
+        end
+      end
+
+      return context
+    end,
+  }),
+
   -- VectorRuby = {
   --   builder = function(input, context)
   --     ---@type {id: string, content: string}[]

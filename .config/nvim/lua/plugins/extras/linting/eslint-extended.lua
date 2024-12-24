@@ -1,3 +1,38 @@
+-- From lspconfig/configs/eslint.lua:4
+-- Copied here so it can be run synchronously to fix prettier diagnostics before
+-- running default lsp formatting
+local eslint_fix_all = function(opts)
+  opts = opts or {}
+
+  local util = require("lspconfig.util")
+  local lsp = vim.lsp
+
+  local eslint_lsp_client = util.get_active_client_by_name(opts.bufnr, "eslint")
+  if eslint_lsp_client == nil then return end
+
+  local request
+  if opts.sync then
+    request = function(bufnr, method, params)
+      eslint_lsp_client.request_sync(method, params, nil, bufnr)
+    end
+  else
+    request = function(bufnr, method, params)
+      eslint_lsp_client.request(method, params, nil, bufnr)
+    end
+  end
+
+  local bufnr = util.validate_bufnr(opts.bufnr or 0)
+  return request(0, "workspace/executeCommand", {
+    command = "eslint.applyAllFixes",
+    arguments = {
+      {
+        uri = vim.uri_from_bufnr(bufnr),
+        version = lsp.util.buf_versions[bufnr],
+      },
+    },
+  })
+end
+
 return {
   { import = "lazyvim.plugins.extras.linting.eslint" },
   {
@@ -9,39 +44,88 @@ return {
   },
   {
     "neovim/nvim-lspconfig",
+    optional = true,
     opts = {
       servers = {
-        eslint = {},
+        eslint = {
+          rulesCustomizations = {
+            { rule = "object-curly-spacing", severity = "off", fixable = false },
+          },
+        },
+      },
+      setup = {
+        eslint = function()
+          local function get_client(buf)
+            return LazyVim.lsp.get_clients({ name = "eslint", bufnr = buf })[1]
+          end
+
+          local formatter = LazyVim.lsp.formatter({
+            name = "eslint: lsp",
+            primary = false,
+            priority = 200,
+            filter = "eslint",
+          })
+
+          -- Override Eslint LSP formatter with EslintFixAll to support
+          -- prettier/prettier diagnostics
+          formatter.name = "eslint: EslintFixAll"
+          formatter.sources = function(buf)
+            local client = get_client(buf)
+            return client and { "eslint" } or {}
+          end
+          local old_format = formatter.format
+          formatter.format = function(buf)
+            -- format with EslintFixAll first
+            local client = get_client(buf)
+            if client then
+              local diag = vim.diagnostic.get(buf, { severity = { vim.diagnostic.severity.ERROR } })
+              if #diag == 0 then return end
+
+              local has_prettier_diag = false
+              for _, d in pairs(diag) do
+                if d.code == "prettier/prettier" then
+                  has_prettier_diag = true
+                  break
+                end
+              end
+
+              if has_prettier_diag then
+                vim.notify("Running EslintFixAll", "info", { title = "LazyVim" })
+                -- Executes synchronously based on lspconfig/configs/eslint.lua:166
+                -- vim.cmd("EslintFixAll")
+                local _, err = eslint_fix_all({ bufnr = buf, sync = true })
+                if err then vim.notify(("Error:\n%s"):format(err), "error", { title = "EslintFixAll" }) end
+
+                vim.schedule(function()
+                  diag = vim.diagnostic.get(buf, { severity = { vim.diagnostic.severity.ERROR } })
+                  if #diag > 0 then
+                    -- Then format with vim.lsp.buf.format()
+                    vim.notify("Formatting with vim.lsp.buf.format()", "info", { title = "LazyVim" })
+                    old_format(buf)
+                    -- vim.defer_fn(function()
+                    --   old_format(buf)
+                    -- end, 100)
+                  end
+                end)
+              else
+                old_format(buf)
+                return
+              end
+            end
+          end
+
+          -- register the formatter with LazyVim
+          LazyVim.format.register(formatter)
+        end,
       },
     },
-    -- opts = function(_, opts)
-    --   local root = LazyVim.root()
-    --   local eslint_settings_options = {}
-    --   if root then
-    --     local has_config = vim.fs.find({ ".eslintrc.js" }, { path = ctx.filename, upward = true })[1]
-    --
-    --     eslint_settings_options = { overrideConfigFile = root .. "/.eslintrc.js" }
-    --   end
-    --
-    --   return vim.tbl_deep_extend("force", opts, {
-    --     ---@type lspconfig.options
-    --     servers = {
-    --       eslint = {
-    --         -- https://github.com/Microsoft/vscode-eslint#settings-options
-    --         settings = {
-    --           quiet = false,
-    --           options = eslint_settings_options,
-    --         },
-    --       },
-    --     },
-    --   })
-    -- end,
   },
   {
     "stevearc/conform.nvim",
     optional = true,
     opts = function(_, opts)
       -- opts.formatters_by_ft["javascript"] = { "eslint_d" }
+      -- opts.formatters_by_ft["javascript"] = { "prettierd" }
       opts.formatters_by_ft["javascript"] = {}
     end,
   },
@@ -53,17 +137,13 @@ return {
         eslint = {
           prepend_args = function()
             local util = require("util.system")
-            if util.hostname() == "ali-d7jf7y.local" then
-              return { "-c", ".eslintrc.js", "--quiet" }
-            end
+            if util.hostname() == "ali-d7jf7y.local" then return { "-c", ".eslintrc.js", "--quiet" } end
           end,
         },
         eslint_d = {
           prepend_args = function()
             local util = require("util.system")
-            if util.hostname() == "ali-d7jf7y.local" then
-              return { "-c", ".eslintrc.js", "--quiet" }
-            end
+            if util.hostname() == "ali-d7jf7y.local" then return { "-c", ".eslintrc.js", "--quiet" } end
           end,
         },
       },
@@ -76,9 +156,7 @@ return {
         eslint_d = {
           prepend_args = function()
             local util = require("util.system")
-            if util.hostname() == "ali-d7jf7y.local" then
-              return { "--quiet" }
-            end
+            if util.hostname() == "ali-d7jf7y.local" then return { "--quiet" } end
           end,
         },
       },

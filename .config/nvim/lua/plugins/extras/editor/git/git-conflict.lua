@@ -23,7 +23,8 @@ local clear_keymaps = function(buf)
   if not vim.bo[buf].buflisted then return end
 
   for _, key in ipairs(keys) do
-    vim.api.nvim_buf_del_keymap(buf, "n", key[1])
+    local ok = pcall(vim.api.nvim_buf_get_keymap, buf, "n")
+    if ok then vim.api.nvim_buf_del_keymap(buf, "n", key[1]) end
   end
 end
 

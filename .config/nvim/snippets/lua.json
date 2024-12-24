@@ -48,7 +48,11 @@
     "prefix": "import module"
   },
   "nvim_echo": {
-    "body": "vim.api.nvim_echo({ { ${1:string}, \"Normal\" } }, true, {})",
+    "body": "vim.api.nvim_echo({ { vim.inspect(${1:string}), \"Normal\" } }, true, {})",
     "prefix": "echo"
+  },
+  "vim.inspect": {
+    "body": "vim.inspect(${1:string})",
+    "prefix": "ins"
   }
 }

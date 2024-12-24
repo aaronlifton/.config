@@ -1,3 +1,6 @@
+-- which-key.nvim/lua/which-key/presets.lua
+local helix_width = 45 -- default 30
+
 return {
   "folke/which-key.nvim",
   opts = {
@@ -29,10 +32,13 @@ return {
         { pattern = "%f[%a]keywords", icon = " ", color = "white" },
       },
     },
-    -- layout = {
-    --   align = "center",
-    -- },
-    defaults = {},
+    win = {
+      width = { min = helix_width, max = helix_width * 2 },
+    },
+    layout = {
+      width = { min = helix_width },
+      -- align = "center",
+    },
     spec = {
       mode = { "n" },
       -- ["<leader><tab>"] = { name = "󰓩 tabs" },

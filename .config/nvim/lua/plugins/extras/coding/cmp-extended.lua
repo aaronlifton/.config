@@ -37,6 +37,7 @@ local astrovim_style = false
 local follow_cursor = false
 
 return {
+  { import = "lazyvim.plugins.extras.coding.nvim-cmp" },
   {
     "hrsh7th/nvim-cmp",
     optional = true,
@@ -44,7 +45,6 @@ return {
       { "hrsh7th/cmp-cmdline", lazy = true },
       { "hrsh7th/cmp-nvim-lua", lazy = true },
       -- "ray-x/cmp-treesitter",
-      -- "tzachar/cmp-ai",
     },
     keys = {
       { "<leader>ciC", "<cmd>CmpStatus<CR>", desc = "Cmp Status" },
@@ -52,8 +52,9 @@ return {
     opts = function(_, opts)
       local cmp = require("cmp")
       local compare = require("cmp.config.compare")
-      -- local copilot = require("copilot.suggestion")
       local auto_select = true
+
+      -- Format with source_names and mark duplicates
       -- local source_names = {
       --   nvim_lsp = "(LSP)",
       --   nvim_lua = "(Lua)",
@@ -67,19 +68,24 @@ return {
       --   buffer = 1,
       --   path = 1,
       --   nvim_lsp = 0,
-      --   -- nvim_lua = 1,
       -- }
+      -- opts.formatting.format = function(entry, item)
+      --   local new_item = item
+      --   new_item.menu = source_names[entry.source.name]
+      --   new_item.dup = duplicates[entry.source.name] or 0
+      --   return old_format(entry, new_item)
+      -- end
 
       -- Comparators
-      compare.lsp_scores = function(entry1, entry2)
-        local diff
-        if entry1.completion_item.score and entry2.completion_item.score then
-          diff = (entry2.completion_item.score * entry2.score) - (entry1.completion_item.score * entry1.score)
-        else
-          diff = entry2.score - entry1.score
-        end
-        return (diff < 0)
-      end
+      -- compare.lsp_scores = function(entry1, entry2)
+      --   local diff
+      --   if entry1.completion_item.score and entry2.completion_item.score then
+      --     diff = (entry2.completion_item.score * entry2.score) - (entry1.completion_item.score * entry1.score)
+      --   else
+      --     diff = entry2.score - entry1.score
+      --   end
+      --   return (diff < 0)
+      -- end
       -- opts.sorting.comparators = {
       --   -- compare.lsp_scores,
       --   --   -- Defaults
@@ -117,11 +123,9 @@ return {
       -- opts.performance = {
       --   debounce = 20,
       --   throttle = 20,
-      --   -- fetching_timeout = 20,
       --   fetching_timeout = 500,
       --   confirm_resolve_timeout = 20,
       --   async_budget = 1,
-      --   -- max_view_entries = 50,
       --   max_view_entries = 200,
       --   -- Defaults
       --   -- debounce = 60,
@@ -135,7 +139,7 @@ return {
       -- Debug default LazyVim sources
       -- vim.api.nvim_echo({ { vim.inspect(opts.sources), "Normal" } }, true, {})
 
-      -- Format
+      -- Format with nvim-highlight-colors
       local old_format = opts.formatting.format
       opts.formatting.format = function(entry, item)
         item = old_format(entry, item)
@@ -146,6 +150,8 @@ return {
         end
         return item
       end
+
+      -- Max width
       -- opts.formatting.format = function(entry, item)
       --   local icons = LazyVim.config.icons.kinds
       --   if icons[item.kind] then
@@ -158,12 +164,6 @@ return {
       --   end
       --
       --   return item
-      -- end
-      -- opts.formatting.format = function(entry, item)
-      --   local new_item = item
-      --   new_item.menu = source_names[entry.source.name]
-      --   new_item.dup = duplicates[entry.source.name] or 0
-      --   return old_format(entry, new_item)
       -- end
 
       -- Sources
@@ -191,7 +191,7 @@ return {
       }
       -- opts.window = {
       --   completion = {
-      --     -- border = ui_util.square_border("Normal"),
+      --     -- border = require("util.win").square_border("Normal"),
       --     border = "rounded",
       --     winhighlight = "Normal:Normal,FloatBorder:Normal,CursorLine:Visual,Search:None",
       --     scrollbar = false,
@@ -200,7 +200,7 @@ return {
       --     side_padding = 1,
       --   },
       --   documentation = {
-      --     -- border = ui_util.square_border("Normal"),
+      --     -- border = require("util.win").square_border("Normal"),
       --     border = "rounded",
       --     winhighlight = "Normal:Normal,FloatBorder:Normal,CursorLine:Visual,Search:None",
       --     scrollbar = false,
@@ -249,9 +249,6 @@ return {
           { "i", "c" }
         ),
       })
-      local cmdline_mapping = cmp.mapping.preset.cmdline({
-        ["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
-      })
       cmp.setup.cmdline({ "/", "?" }, {
         mapping = search_mapping,
         sources = {
@@ -259,17 +256,23 @@ return {
         },
         completion = { autocomplete = false },
       })
-      cmp.setup.cmdline(":", {
-        mapping = cmdline_mapping,
-        sources = cmp.config.sources({
-          { name = "path" },
-        }, {
-          { name = "cmdline" },
-          { name = "noice_popupmenu" },
-        }),
-        completion = { autocomplete = false },
-        matching = { disallow_symbol_nonprefix_matching = false, disallow_fuzzy_matching = true },
-      })
+
+      if require("util.table").get(LazyVim.opts("noice.nvim"), "popupmenu", "backend") == "cmp" then
+        local cmdline_mapping = cmp.mapping.preset.cmdline({
+          ["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
+        })
+        cmp.setup.cmdline(":", {
+          mapping = cmdline_mapping,
+          sources = cmp.config.sources({
+            { name = "path" },
+          }, {
+            { name = "cmdline" },
+            { name = "noice_popupmenu" },
+          }),
+          completion = { autocomplete = false },
+          matching = { disallow_symbol_nonprefix_matching = false, disallow_fuzzy_matching = true },
+        })
+      end
 
       -- cmp.setup.filetype("gitcommit", {
       --   sources = cmp.config.sources({
@@ -280,6 +283,7 @@ return {
       -- })
       -- require("cmp_git").setup()
 
+      -- local copilot = require("copilot.suggestion")
       opts.mapping = vim.tbl_extend("force", opts.mapping, {
         ["<C-j>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
         ["<C-k>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),

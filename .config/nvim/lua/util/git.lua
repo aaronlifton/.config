@@ -96,4 +96,12 @@ M.open_recently_commited = function(n)
   opts = fzf.config.normalize_opts(opts, "git.files")
   fzf.core.fzf_exec(entries, opts)
 end
+
+M.mru_branches = function(count)
+  count = count or 5
+  return vim.fn.systemlist(
+    'git for-each-ref --sort=-committerdate refs/heads/ --format="%(refname:short)" --count=' .. count
+  )
+end
+
 return M

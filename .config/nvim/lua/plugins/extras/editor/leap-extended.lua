@@ -21,9 +21,9 @@ return {
         desc = "Treesitter Select (Leap - Line)",
       },
       {
-        "g<C-r>",
+        -- "g<C-r>",
         -- "gR", -- interferes with File References for vtsls
-        -- "gS", -- interferes with treesj
+        "gS", -- interferes with treesj
         function()
           require("leap.remote").action()
         end,
@@ -105,6 +105,12 @@ return {
         })
       end
 
+      -- Consider removing this in favor of normal mode operations:
+      -- gs{leap}yap yanks the paragraph at the position specified by {leap}.
+      -- Getting used to the Normal-mode command is recommended over
+      -- Operator-pending mode (ygs{leap}ap), since the former requires the same
+      -- number of keystrokes, but it is much more flexible.
+      -- https://github.com/ggandor/leap.nvim
       -- stylua: ignore
       local default_text_objects = {
         'iw', 'iW', 'is', 'ip', 'i[', 'i]', 'i(', 'i)', 'ib',
@@ -121,12 +127,12 @@ return {
           require("leap.remote").action({ input = tobj })
         end)
       end
-      vim.keymap.set({ "x", "o" }, "irr", function()
-        require("leap.remote").action({ input = "iL" })
-      end)
-      vim.keymap.set({ "x", "o" }, "arr", function()
-        require("leap.remote").action({ input = "aL" })
-      end)
+      -- vim.keymap.set({ "x", "o" }, "irr", function()
+      --   require("leap.remote").action({ input = "iL" })
+      -- end)
+      -- vim.keymap.set({ "x", "o" }, "arr", function()
+      --   require("leap.remote").action({ input = "aL" })
+      -- end)
       -- This conflicts with inc-rename (<cr>)
       vim.keymap.set({ "x", "o" }, "rr", function()
         require("leap.remote").action({ input = "aL" })

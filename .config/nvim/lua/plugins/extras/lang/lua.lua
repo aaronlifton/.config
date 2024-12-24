@@ -44,6 +44,7 @@ return {
   {
     "neovim/nvim-lspconfig",
     optional = true,
+    after = "folke/lazydev.nvim",
     opts = {
       servers = {
         lua_ls = {
@@ -51,6 +52,7 @@ return {
             Lua = {
               workspace = {
                 library = {
+                  -- Source files are in /Applications/Hammerspoon.app/Contents/Resources/extensions/hs/*.lua
                   string.format("%s/.hammerspoon/Spoons/EmmyLua.spoon/annotations", os.getenv("HOME")),
                 },
               },

@@ -85,6 +85,7 @@ return {
   },
   {
     "dmmulroy/tsc.nvim",
+    enabled = false,
     opts = {
       auto_start_watch_mode = false,
       use_trouble_qflist = true,

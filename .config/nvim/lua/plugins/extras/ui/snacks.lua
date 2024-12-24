@@ -1,6 +1,31 @@
 return {
   "folke/snacks.nvim",
   opts = {
+    zen = {
+      enabled = true,
+      toggles = {
+        inlay_hints = true,
+        diagnostics = true,
+      },
+    },
+    scroll = { enabled = false },
+    scope = { enabled = true },
+    indent = { enabled = true },
+    words = { enabled = true },
+    ---@class snacks.gitbrowse.Config
+    gitbrowse = {
+      remote_patterns = {
+        -- { "^https://[^@]+@(.+)$", "https://%1" },
+        { "^https://[^@]+@git%.synack%.com/(.+)%.git$", "https://git.synack.com/%1" },
+      },
+      url_patterns = {
+        ["git%.synack%.com"] = {
+          branch = "/tree/{branch}",
+          file = "/blob/{branch}/{file}#L{line_start}-L{line_end}",
+          commit = "/commit/{commit}",
+        },
+      },
+    },
     dashboard = {
       preset = {
         header = [[
@@ -28,5 +53,16 @@ return {
           },
       },
     },
+  },
+  keys = {
+    -- stylua: ignore start
+    { "<leader>bz", function() Snacks.scratch() end, desc = "Toggle Scratch Buffer" },
+    -- In addition to LazyVim's <leader>wm and <leaer>uZ mappings:
+    { "<leader>z", function() Snacks.zen.zoom() end, desc = "Zoom" },
+    -- { "<leader>Z", function() Snacks.zen.zen() end, desc = "Zen" },
+    -- { "<leader>LS",  function() Snacks.scratch.select() end, desc = "Select Scratch Buffer" },
+    -- { "<leader>S",  function() Snacks.scratch.select() end, desc = "Select Scratch Buffer" },
+    -- { "<leader>n", function() Snacks.notifier.show_history() end, desc = "Notification History" },
+    -- { "<leader>un", function() Snacks.notifier.hide() end, desc = "Dismiss All Notifications" },
   },
 }

@@ -14,13 +14,6 @@ local function copy_github_url(opts)
   vim.fn.setreg("+", url)
 end
 
-local mru_branches = function(count)
-  count = count or 5
-  return vim.fn.systemlist(
-    'git for-each-ref --sort=-committerdate refs/heads/ --format="%(refname:short)" --count=' .. count
-  )
-end
-
 return {
   { import = "lazyvim.plugins.extras.util.octo" },
   -- { import = "plugins.extras.lang.git-extended" },
@@ -41,7 +34,7 @@ return {
       { prefix .. "ry", "<cmd>OpenInGHCopyFileLines<CR>", desc = "Copy github current line", mode = { "n", "x", "v" } },
       { prefix .. "rY", "<cmd>OpenInGHCopyFileLines main<CR>", desc = "Copy github current line (main)", mode = { "n", "x", "v" } },
       { prefix .. "rp", function()
-        vim.ui.select(mru_branches(), { prompt = "Branch: " }, copy_github_url)
+        vim.ui.select(require("util.git").mru_branches(), { prompt = "Branch: " }, copy_github_url)
       end, desc = "Copy github current line (master)", mode = "n" },
       -- stylua: ignore end
     },

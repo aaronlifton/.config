@@ -34,7 +34,7 @@ return {
   },
   keys = {
     {
-      "<leader>gl",
+      "<leader>gV",
       function()
         require("gitgraph").draw({}, { all = true, max_count = 5000 })
       end,
@@ -42,16 +42,17 @@ return {
     },
   },
   init = function()
-    vim.api.nvim_create_autocmd("User", {
-      pattern = "LazyVimKeymaps",
-      once = true,
-      callback = function()
-        -- To override ~/.local/share/nvim/lazy/LazyVim/lua/lazyvim/plugins/extras/util/gitui.lua:30
-        vim.keymap.set("n", "<leader>gl", function()
-          require("gitgraph").draw({}, { all = true, max_count = 5000 })
-        end, { desc = "Graph" })
-      end,
-    })
+    -- Only needed if using <leader>gl
+    -- vim.api.nvim_create_autocmd("User", {
+    --   pattern = "LazyVimKeymaps",
+    --   once = true,
+    --   callback = function()
+    --     -- To override ~/.local/share/nvim/lazy/LazyVim/lua/lazyvim/plugins/extras/util/gitui.lua:30
+    --     vim.keymap.set("n", "<leader>gl", function()
+    --       require("gitgraph").draw({}, { all = true, max_count = 5000 })
+    --     end, { desc = "Graph" })
+    --   end,
+    -- })
     vim.api.nvim_create_user_command("GitGraph", function()
       require("gitgraph").draw({}, { all = true, max_count = 5000 })
     end, { desc = "GitGraph" })

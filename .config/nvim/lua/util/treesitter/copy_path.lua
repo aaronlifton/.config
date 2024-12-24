@@ -1,17 +1,20 @@
 -- https://github.com/FelipeSanchezSoberanis/copy-path
 local ts = require("vim.treesitter")
 
-local function get_root_node()
-  local parser = ts.get_parser()
+---@param lang? string parser languge override
+---@return TSNode
+local function get_root_node(lang)
+  local parser = ts.get_parser(nil, lang)
   local tree = parser:parse()[1]
   return tree:root()
 end
 
-local function get_current_node()
-  local current_node = ts.get_node()
-  if current_node == nil then
-    error("Could not get current node")
-  end
+---@param lang? string parser languge override
+---@return TSNode
+local function get_current_node(lang)
+  local opts = lang and { lang = lang } or nil
+  local current_node = ts.get_node(opts)
+  if current_node == nil then error("Could not get current node") end
   return current_node
 end
 
@@ -19,9 +22,7 @@ local function traversed_nodes_to_path(traversed_nodes)
   local path = ""
   for i = #traversed_nodes, 1, -1 do
     path = path .. traversed_nodes[i]
-    if i ~= 1 then
-      path = path .. "."
-    end
+    if i ~= 1 then path = path .. "." end
   end
   return string.gsub(path, "%.%[", "[")
 end
@@ -31,8 +32,9 @@ local M = {}
 M.copy_json_path = function(args)
   local register = args.register
 
-  local root_node = get_root_node()
-  local current_node = get_current_node()
+  -- set lang to work with bigfile ft
+  local root_node = get_root_node("json")
+  local current_node = get_current_node("json")
 
   local searchable_node_types = {
     ["string"] = true,

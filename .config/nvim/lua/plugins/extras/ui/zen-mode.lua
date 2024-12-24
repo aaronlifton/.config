@@ -1,7 +1,5 @@
 local executeCommandIfExists = function(command)
-  if vim.fn.exists(command) ~= 0 then
-    vim.cmd(command)
-  end
+  if vim.fn.exists(command) ~= 0 then vim.cmd(command) end
 end
 
 return {

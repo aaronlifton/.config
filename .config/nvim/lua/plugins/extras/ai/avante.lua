@@ -70,16 +70,19 @@ return {
       },
       -- stylua: ignore end
     },
+    file_selector = {
+      provider = "fzf",
+    },
     --- @class AvanteConflictUserConfig
-    -- diff = {
-    --   autojump = true,
-    --   ---@type string | fun(): any
-    --   list_opener = "Trouble quickfix",
-    --   --- Override the 'timeoutlen' setting while hovering over a diff (see :help timeoutlen).
-    --   --- Helps to avoid entering operator-pending mode with diff mappings starting with `c`.
-    --   --- Disable by setting to -1.
-    --   override_timeoutlen = 500,
-    -- },
+    diff = {
+      --   autojump = true,
+      --   ---@type string | fun(): any
+      list_opener = "Trouble quickfix",
+      --   --- Override the 'timeoutlen' setting while hovering over a diff (see :help timeoutlen).
+      --   --- Helps to avoid entering operator-pending mode with diff mappings starting with `c`.
+      --   --- Disable by setting to -1.
+      --   override_timeoutlen = 500,
+    },
   },
   -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
   build = "make",

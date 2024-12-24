@@ -1,5 +1,8 @@
 ---@class util.selection
-local M = {}
+---@field last_selection table<string, any>|nil
+local M = {
+  last_selection = nil,
+}
 local function get_cursor()
   local cursor = vim.api.nvim_win_get_cursor(0)
   return { row = cursor[1], col = cursor[2] }
@@ -42,6 +45,104 @@ M.get_selection3 = function()
     stop = stop,
   }
 end
+
+M.get_selection4 = function()
+  local start = vim.fn.getpos("'v")
+  local stop = vim.fn.getpos("'.")
+  local mode = vim.fn.visualmode()
+  vim.api.nvim_echo({
+    { "start stop\n", "Title" },
+    { vim.inspect({ start = start, stop = stop }), "Normal" },
+  }, true, {})
+
+  -- For linewise selection ('V'), we want to include the entire lines
+
+  if mode == "V" then
+    -- local start = vim.fn.getpos("'<")
+    -- local stop = vim.fn.getpos("'>")
+    vim.api.nvim_echo({ { "Here: V", "Normal" } }, true, {})
+    return {
+      start = {
+        row = stop[2] - start[2],
+        col = stop[3] - start[3],
+      },
+      stop = {
+        -- row = stop[2] - 1,
+        row = stop[2],
+        col = vim.v.maxcol,
+      },
+    }
+  end
+
+  -- For characterwise selection ('v')
+  return {
+    start = {
+      row = start[2] - 1,
+      col = start[3] - 1,
+    },
+    stop = {
+      row = stop[2] - 1,
+      col = stop[3], -- stop col can be vim.v.maxcol which means entire line
+    },
+  }
+end
+
+M.save_selection = function()
+  -- local mode = vim.fn.visualmode()
+  -- if mode == "V" then
+  --   local start = vim.fn.getpos("'<")
+  --   local stop = vim.fn.getpos("'>")
+  --   local selection = {
+  --     start_row = start[2],
+  --     start_col = start[3],
+  --     finish_row = stop[2],
+  --     finish_col = stop[3],
+  --   }
+  --   M.last_selection = selection
+  --   return selection
+  -- end
+  local bufnr = vim.api.nvim_get_current_buf()
+  local start_row, start_col = unpack(vim.api.nvim_buf_get_mark(bufnr, "<"))
+  local finish_row, finish_col = unpack(vim.api.nvim_buf_get_mark(bufnr, ">"))
+  -- if finish_col == vim.v.maxcol then
+  --   local finish_row_last_char_position = vim.api.nvim_buf_get_lines(bufnr, finish_row, finish_row + 1, false)[1]:len()
+  --   finish_col = finish_row_last_char_position
+  -- end
+  if start_row == 0 or finish_row == 0 then return nil end
+  if start_row > finish_row then
+    start_row, finish_row = finish_row, start_row
+  end
+  local selection = {
+    start_row = start_row,
+    start_col = start_col,
+    finish_row = finish_row,
+    finish_col = finish_col,
+  }
+  M.last_selection = selection
+  return selection
+end
+
+M.restore_selection = function(bufnr)
+  local sel = M.last_selection
+  if sel then
+    -- vim.api.nvim_buf_set_mark(bufnr, "<", sel.start_row, sel.start_col, {})
+    -- vim.api.nvim_buf_set_mark(bufnr, ">", sel.finish_row, sel.finish_col, {})
+    vim.fn.setpos("'<", { 0, sel.start_row, sel.start_col, 0 })
+    vim.fn.setpos("'>", { 0, sel.finish_row, sel.finish_col, 0 })
+  end
+end
+
+-- M.restore_selection_0_based = function(bufnr)
+--   local sel = M.last_selection
+--   vim.api.nvim_echo({
+--     { "M.restore_selection_0_based", "Special" },
+--     { vim.inspect(sel), "Normal" },
+--   }, true, {})
+--   if sel then
+--     vim.fn.setpos("'<", { 0, sel.start_row, sel.start_col, 0 })
+--     vim.fn.setpos("'>", { 0, sel.finish_row, sel.finish_col, 0 })
+--   end
+-- end
 
 local function normalize_indentation(lines)
   local min_indent = nil

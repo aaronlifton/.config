@@ -4,7 +4,7 @@
 
 [https://github.com/prdanelli/dotfiles/blob/main/neovim/lua/plugins/formatter.lua]
 
-# `vim.nvim_create_user_command` completion for git branches
+## `vim.nvim_create_user_command` completion for git branches
 
 ```lua
 local function git_branch_complete(arglead, cmdline, cursorpos)
@@ -18,7 +18,7 @@ local function git_branch_complete(arglead, cmdline, cursorpos)
 end
 ```
 
-# vim.ui.input vimscript git branch completion
+## vim.ui.input vimscript git branch completion
 
 ```lua
 vim.api.nvim_exec2(
@@ -33,3 +33,15 @@ local branch = vim.ui.input("Branch: ", {
   completion = "customlist,GitBranchComplete",
 })
 ```
+
+## Javascript snippets
+
+- https://github.com/search?q=path%3A**%2Fnvim%2Fsnippets%2F**%2Fjavascript.json+async&type=code
+
+- https://github.com/richban/system/blob/46efe696c3995e6c735e4285b301bdaba0be0864/dotfiles/config/nvim/snippets/javascript/javascript.json#L72
+
+## Cmp plugins before switch to blink
+
+- cmp-extended
+- cmp.dap
+- cmp.git

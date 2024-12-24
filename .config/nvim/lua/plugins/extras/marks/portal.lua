@@ -9,11 +9,11 @@ return {
   },
   opts = {
     -- labels = { "n", "e", "m", "i" },
-    window_options = {
-      -- width = 50,
-      -- height = 5,
-      border = "rounded",
-    },
+    -- window_options = {
+    --   width = 50,
+    --   height = 5,
+    --   border = "rounded",
+    -- },
   },
   -- Optional dependencies
   dependencies = {
@@ -22,9 +22,9 @@ return {
   },
   config = function(_, opts)
     require("portal").setup(opts)
-    -- vim.api.nvim_set_hl(0, "PortalLabel", { link = "Normal" })
-    -- vim.api.nvim_set_hl(0, "PortalTitle", { link = "Normal" })
-    -- vim.api.nvim_set_hl(0, "PortalBorder", { link = "Normal" })
-    -- vim.api.nvim_set_hl(0, "PortalNormal", { link = "Normal" })
+    vim.api.nvim_set_hl(0, "PortalLabel", { link = "Normal" })
+    vim.api.nvim_set_hl(0, "PortalTitle", { link = "Normal" })
+    vim.api.nvim_set_hl(0, "PortalBorder", { link = "Normal" })
+    vim.api.nvim_set_hl(0, "PortalNormal", { link = "Normal" })
   end,
 }

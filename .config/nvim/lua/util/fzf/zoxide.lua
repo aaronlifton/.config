@@ -3,9 +3,8 @@ local function sort(result)
   local function parselines()
     local pairs = {}
     for _, line in ipairs(result) do
-      for num, path in line:gmatch("(%d?%d+%.%d*)%s+(%S+)") do
-        table.insert(pairs, { num, path })
-      end
+      local num, path = line:match("^%s*(%d+%.?%d*)%s+(.+)$")
+      if num and path then table.insert(pairs, { tonumber(num), path }) end
     end
     return pairs
   end
@@ -20,14 +19,13 @@ local function sort(result)
     table.insert(paths, pair[2])
   end
 
+  -- vim.api.nvim_echo({ { vim.inspect(pairs), "Normal" } }, true, {})
   return paths
 end
 
 M.fzf_zoxide = function()
   local handle = io.popen("zoxide query -ls")
-  if not handle then
-    return
-  end
+  if not handle then return end
   local result = handle:read("*a")
   handle:close()
   local lines = {}
@@ -39,14 +37,21 @@ M.fzf_zoxide = function()
   local fzf_lua = require("fzf-lua")
 
   local opts = {
-    fzf_opts = {},
+    fzf_opts = { ["--no-sort"] = true, ["--exact"] = true },
     fzf_colors = true,
+    previewer = false,
+    winopts = {
+      height = 0.25,
+      width = 0.4,
+      -- row = 0.45,
+    },
     actions = {
       ["default"] = function(selected)
         require("fzf-lua").files({ fzf_opts = { ["--layout"] = "reverse-list" }, cwd = selected[1] })
       end,
     },
   }
+
   fzf_lua.fzf_exec(sorted_results, opts)
 end
 

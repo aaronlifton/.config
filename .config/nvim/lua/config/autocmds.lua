@@ -218,7 +218,7 @@ ac({ "FileType" }, {
 ac({ "FileType" }, {
   pattern = { "mchat" },
   callback = function(args)
-    require("render-markdown").enable()
+    if vim.bo[args.buf].buflisted then require("render-markdown").enable() end
   end,
 })
 
@@ -233,9 +233,55 @@ ac({ "FileType" }, {
 ac({ "TabLeave" }, {
   callback = function()
     local tabpage = vim.api.nvim_get_current_tabpage()
+    -- require("util.win").remember_window_sizes()
     vim.g.last_tabpage = tabpage
   end,
 })
+
+local bigfiles = {
+  "common.json",
+  "listing_drafts_controller_spec.rb",
+}
+
+ac({ "BufRead" }, {
+  callback = function(ctx)
+    local filepath = vim.api.nvim_buf_get_name(ctx.buf)
+    local filename = filepath:match("([^/]+)$")
+    for _, bigfile in ipairs(bigfiles) do
+      if filename == bigfile then
+        -- local ft = vim.filetype.match({ buf = args.buf }) or ""
+        -- vim.schedule(function()
+        --   vim.bo[args.buf].syntax = ft
+        -- end)
+        -- vim.bo[args.buf].filetype = "bigfile"
+        vim.cmd([[NoMatchParen]])
+        Snacks.util.wo(0, { foldmethod = "manual", statuscolumn = "", conceallevel = 0 })
+        vim.b.minianimate_disable = true
+        vim.schedule(function()
+          vim.bo[ctx.buf].syntax = ctx.ft
+        end)
+        break
+      end
+    end
+  end,
+})
+
+ac("User", {
+  pattern = "LazyVimKeymaps",
+  once = true,
+  callback = function()
+    vim.keymap.set("n", "<leader>gl", function()
+      Snacks.lazygit.log({ cwd = LazyVim.root.git() })
+    end, { desc = "Lazygit Log" })
+  end,
+})
+-- require("util.ui.lsp").advanced_lsp_progress_autocmd()
+
+-- ac({ "TabEnter" }, {
+--   callback = function()
+--     require("util.win").remember_window_sizes()
+--   end,
+-- })
 
 -- Already set by smart-splits.nvim (var:IS_NVIM)
 -- ac({ "VimEnter", "VimResume" }, {

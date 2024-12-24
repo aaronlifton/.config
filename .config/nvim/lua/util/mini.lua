@@ -5,12 +5,10 @@ local mf = require("mini.files")
 function M.map_split(buf_id, lhs, direction)
   local rhs = function()
     local fsentry = mf.get_fs_entry()
-    if fsentry.fs_type ~= "file" then
-      return
-    end
+    if fsentry.fs_type ~= "file" then return end
     -- Make new window and set it as target
     local new_target_window
-    vim.api.nvim_win_call(mf.get_target_window(), function()
+    vim.api.nvim_win_call(mf.get_explorer_state().target_window, function()
       vim.cmd(direction .. " split")
       new_target_window = vim.api.nvim_get_current_win()
     end)

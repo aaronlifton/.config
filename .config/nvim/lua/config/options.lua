@@ -11,9 +11,9 @@ local config_path = vim.fn.stdpath("config")
 function _G.get_lazyvim_base_dir()
   return "~/.local/share/nvim/lazy/LazyVim"
 end
+
 o.autoindent = true
 o.breakindent = true
--- o.background = "dark"
 o.backspace = { "eol", "start", "indent" }
 -- o.breakindent = true
 -- o.clipboard:append({ "unnamed", "unnamedplus" })
@@ -33,17 +33,21 @@ o.shell = "fish"
 -- g.gui_font_face = "FiraCode Nerd Font"
 -- g.gui_font_face = "MesloLGLDZ Nerd Font Mono"
 -- g.gui_font_face = "MonaLisa Nerd Font Mono"
-g.lazyvim_picker = "fzf" -- telescope
+g.lazyvim_picker = "fzf"
+-- g.lazyvim_picker = "telescope" -- for testing plugins
 g.cmp_widths = { abbr = 80, menu = 30 }
 g.gui_font_face = "Sauce Code Pro Nerd Font Mono"
 g.gui_font_size = 18
 g.lsp_goto_source = "fzf" -- glance
 -- g.lazyvim_ruby_lsp = "solargraph"
+g.lazyvim_cmp = "nvim-cmp" -- "blink.cmp"
 g.lazyvim_ruby_lsp = "ruby_lsp"
 g.lazyvim_ruby_formatter = "rubocop"
+g.lazyvim_eslint_auto_format = true
 -- if the completion engine supports the AI source,
 -- use that instead of inline suggestions
 g.ai_cmp = true
+g.codeium_cmp_hide = false
 g.highlight_provider = "nvim-highlight-colors" -- "mini.hipatterns"
 g.markdown_previewer = "markdown-preview" -- "peek"
 g.animation_provider = "cinnamon" -- "mini.animate"
@@ -59,18 +63,3 @@ g.icon_size = "normal" -- "small"
 if vim.fn.executable("nvr") == 1 then
   vim.env["GIT_EDITOR"] = "nvr -cc close -cc vsplit --remote-wait +'set bufhidden=wipe'"
 end
-
--- suppress error messages from lang servers
--- vim.notify = function(msg, log_level, _)
---   if msg:match("exit code") then
---     return
---   elseif msg:match("typed: false") then -- handle sorbet errors
---     return
---   end
---   if log_level == vim.log.levels.ERROR then
---     vim.api.nvim_err_writeln(msg)
---   else
---     vim.api.nvim_echo({ { msg } }, true, {})
---   end
--- end
---

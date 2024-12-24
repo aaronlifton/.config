@@ -115,6 +115,7 @@ return {
       chat_shortcut_delete = { modes = { "n", "i", "v", "x" }, shortcut = "<C-g>d" },
       chat_shortcut_stop = { modes = { "n", "i", "v", "x" }, shortcut = "<C-g>s" },
       chat_shortcut_new = { modes = { "n", "i", "v", "x" }, shortcut = "<C-g>c" },
+      command_auto_select_response = true,
       -- enable_spinner = false, -- incompatible with snacks notifier
       hooks = {
         CompleteFullContext = function(prt, params)
@@ -133,6 +134,24 @@ return {
           Please finish the code above carefully and logically.
           Respond just with the snippet of code that should be inserted.
           ]]
+          local model_obj = prt.get_model("command")
+          prt.Prompt(params, prt.ui.Target.append, model_obj, nil, template)
+        end,
+        CompleteAsk = function(prt, params)
+          local template = [[
+                  I have the following code from {{filename}}:
+
+                  ```{{filetype}}
+                  {filecontent}}
+                  ```
+
+                  Implement the following ask:
+                  ```{{selection}}```
+
+                Please finish the code above carefully and logically.
+                Respond just with the snippet of code that should be inserted.
+                Do NOT return anything but a single markdown code block.
+                ]]
           local model_obj = prt.get_model("command")
           prt.Prompt(params, prt.ui.Target.append, model_obj, nil, template)
         end,
@@ -160,14 +179,14 @@ return {
       { prefix .. "v", "<cmd>PrtVnew<cr>", desc = "New Chat (vsplit)" },
       { prefix .. "m", "<cmd>PrtModel<cr>", desc = "Choose model" },
       { prefix .. "a", "<cmd>PrtAsk<cr>", desc = "Ask" },
-      { prefix .. "p", "<cmd>PrtProvider<cr>", desc = "Choose provider" },
-      { prefix .. ">", "<cmd>PrtAppend<cr>", desc = "Append" },
-      { prefix .. "<", "<cmd>PrtPrepend<cr>", desc = "Prepend" },
-      { prefix .. "r", "<cmd>PrtRewrite<cr>", desc = "Rewrite" },
+      { prefix .. "p", "<cmd>PrtProvider<cr>", desc = "Choose provider", mode = { "n", "v" } },
+      { prefix .. ">", "<cmd>PrtAppend<cr>", desc = "Append", mode = "v" },
+      { prefix .. "<", "<cmd>PrtPrepend<cr>", desc = "Prepend", mode = "v" },
+      { prefix .. "r", "<cmd>PrtRewrite<cr>", desc = "Rewrite", mode = "v" },
+      { prefix .. "i", "<cmd>PrtImplement<cr>", desc = "Implement", mode = "v" },
       { prefix .. "R", "<cmd>PrtRetry<cr>", desc = "Retry" },
       { prefix .. "<Tab>", "<cmd>PrtChatToggle<cr>", desc = "Toggle chat" },
       { prefix .. "<Esc>", "<cmd>PrtChatStop<cr>", desc = "Stop" },
-      { prefix .. "i", "<cmd>PrtImplement<cr>", desc = "Implement selection", mode = "v" },
       {
         "<M-=>",
         function()
@@ -176,7 +195,7 @@ return {
         desc = "Toggle (OpenAI)",
       },
       {
-        "<M-S-=>",
+        "<M-6>",
         function()
           open_parrot_chat("openai", "gpt-4o", "popup")
         end,
@@ -238,8 +257,8 @@ return {
         mode = "v",
       },
     },
-    config = function()
-      require("parrot").setup({
+    config = function(_, opts)
+      require("parrot").setup(vim.tbl_extend("force", opts, {
         -- Providers must be explicitly added to make them available.
         providers = {
           anthropic = {
@@ -266,7 +285,8 @@ return {
             api_key = os.getenv("OPENAI_API_KEY"),
           },
         },
-      })
+      }))
+
       -- OVERRIDDEN: Returns the list of available models
       ---@return string[]
       local Mistral = require("parrot.provider.mistral")

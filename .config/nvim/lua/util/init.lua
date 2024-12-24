@@ -1,4 +1,4 @@
----@class util: UtilCore
+---@class util: Util
 ---@field config ConfigOptions
 ---@field git util.git
 ---@field leap util.leap
@@ -6,20 +6,20 @@
 ---@field debug util.debug
 ---@field editor util.editor
 ---@field table util.table
+---@field win util.win
 ---@field ui util.ui
 ---@field system util.system
 ---@field selection util.selection
-local M = {
-  git = require("util.git"),
-  leap = require("util.leap"),
-  lsp = require("util.lsp"),
-  debug = require("util.debug"),
-  editor = require("util.editor"),
-  table = require("util.table"),
-  ui = require("util.ui"),
-  system = require("util.system"),
-  selection = require("util.selection"),
-}
+
+local M = {}
+
+setmetatable(M, {
+  __index = function(t, k)
+    ---@diagnostic disable-next-line: no-unknown
+    t[k] = require("util." .. k)
+    return rawget(t, k)
+  end,
+})
 
 ---@param extra string
 function M.has_extra(extra)

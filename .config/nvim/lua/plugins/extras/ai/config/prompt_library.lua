@@ -216,7 +216,7 @@ return vim.tbl_extend("force", starter_prompts, {
     system = "You are an expert programmer and git user.",
     mode = mode.INSERT,
     params = {
-      model = "gpt-4o", -- gpt-4-0125-preview
+      model = "gpt-4o",
     },
     builder = function()
       local git_diff = vim.fn.system({ "git", "diff", "--staged" })

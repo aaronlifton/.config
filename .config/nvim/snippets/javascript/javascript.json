@@ -1,0 +1,146 @@
+{
+  "translate": {
+    "prefix": "tr",
+    "body": "t('${0}')"
+  },
+  "translate jsx": {
+    "prefix": "trj",
+    "body": "{t('${0}')}"
+  },
+  "class": {
+    "prefix": "cs",
+    "body": "class ${1:name} {\n\tconstructor (${2:arguments}) {\n\t\t${0}\n\t}\n}"
+  },
+  "class extends": {
+    "prefix": "csx",
+    "body": "class ${1:name} extends ${2:base} {\n\tconstructor (${3:arguments}) {\n\t\tsuper(${3:arguments})\n\t\t${0}\n\t}\n}"
+  },
+  "arrow function": {
+    "prefix": "af",
+    "body": "(${1:arguments}) => ${2:statement}"
+  },
+  "arrow function with destructuring": {
+    "prefix": "fd",
+    "body": "({${1:arguments}}) => ${2:statement}"
+  },
+  "arrow function with destructuring returning destructured": {
+    "prefix": "fdr",
+    "body": "({${1:arguments}}) => ${1:arguments}"
+  },
+  "arrow function with body": {
+    "prefix": "f",
+    "body": "(${1:arguments}) => {\n\t${0}\n}"
+  },
+  "arrow function with return": {
+    "prefix": "fr",
+    "body": "(${1:arguments}) => {\n\treturn ${0}\n}"
+  },
+  "anonymous function": {
+    "prefix": "fan",
+    "body": "function (${1:arguments}) {${0}}"
+  },
+  "immediately-invoked function expression": {
+    "prefix": "iife",
+    "body": ";(function (${1:arguments}) {\n\t${0}\n})(${2})"
+  },
+  "async immediately-invoked function expression": {
+    "prefix": "aiife",
+    "body": ";(async (${1:arguments}) => {\n\t${0}\n})(${2})"
+  },
+  "named function": {
+    "prefix": "fn",
+    "body": "function ${1:name} (${2:arguments}) {\n\t${0}\n}"
+  },
+  "async function": {
+    "prefix": "asf",
+    "body": "async function (${1:arguments}) {\n\t${0}\n}"
+  },
+  "async arrow function": {
+    "prefix": "aa",
+    "body": "async (${1:arguments}) => {\n\t${0}\n}"
+  },
+  "Promise.all": {
+    "prefix": "pa",
+    "body": "Promise.all(${1:value})"
+  },
+  "Promise.resolve": {
+    "prefix": "prs",
+    "body": "Promise.resolve(${1:value})"
+  },
+  "Promise.reject": {
+    "prefix": "prj",
+    "body": "Promise.reject(${1:value})"
+  },
+  "Promise": {
+    "prefix": "p",
+    "body": "Promise"
+  },
+  "new Promise": {
+    "prefix": "np",
+    "body": "new Promise((resolve, reject) => {\n\t${0}\n})"
+  },
+  "Promise.then": {
+    "prefix": "pt",
+    "body": "${1:promise}.then((${2:value}) => {\n\t${0}\n})"
+  },
+  "Promise.catch": {
+    "prefix": "pc",
+    "body": "${1:promise}.catch(error => {\n\t${0}\n})"
+  },
+  "describe": {
+    "prefix": "desc",
+    "body": "describe('${1:description}', () => {\n\t${0}\n})"
+  },
+  "it asynchronous": {
+    "prefix": "it",
+    "body": "it('${1:description}', async () => {\n\t${0}\n})"
+  },
+  "beforeAll": {
+    "prefix": "ba",
+    "body": "beforeAll(async () => {\n\t${0}\n})"
+  },
+  "beforeEach": {
+    "prefix": "bfe",
+    "body": "beforeEach(async () => {\n\t${0}\n})"
+  },
+  "afterAll": {
+    "prefix": "aa",
+    "body": "afterAll(() => {\n\t${0}\n})"
+  },
+  "afterEach": {
+    "prefix": "afe",
+    "body": "afterEach(() => {\n\t${0}\n})"
+  },
+  "forEach loop": {
+    "prefix": "fe",
+    "body": "${1:iterable}.forEach((${2:item}) => {\n\t${0}\n})"
+  },
+  "map": {
+    "prefix": "map",
+    "body": "${1:iterable}.map((${2:item}) => {\n\t${0}\n})"
+  },
+  "reduce": {
+    "prefix": "reduce",
+    "body": "${1:iterable}.reduce((${2:previous}, ${3:current}) => {\n\t${0}\n}${4:, initial})"
+  },
+  "filter": {
+    "prefix": "filter",
+    "body": "${1:iterable}.filter((${2:item}) => {\n\t${0}\n})"
+  },
+  "find": {
+    "prefix": "find",
+    "body": "${1:iterable}.find((${2:item}) => {\n\t${0}\n})"
+  },
+  "every": {
+    "prefix": "every",
+    "body": "${1:iterable}.every((${2:item}) => {\n\t${0}\n})"
+  },
+  "some": {
+    "prefix": "some",
+    "body": "${1:iterable}.some((${2:item}) => {\n\t${0}\n})"
+  },
+  "waitFor": {
+    "prefix": "wf",
+    "body": "await waitFor(() => {\n${0}\n}"
+  }
+}

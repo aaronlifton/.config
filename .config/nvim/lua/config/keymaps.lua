@@ -21,15 +21,6 @@ map("n", "<leader>uS", function()
   end
 end, { desc = "Toggle Statusline" })
 
--- Toggle tabline
-map("n", "<leader>u<tab>", function()
-  if o.showtabline:get() == 0 then
-    o.showtabline = 2
-  else
-    o.showtabline = 0
-  end
-end, { desc = "Toggle Tabline" })
-
 -- toggle colorcolumn
 map("n", "<leader>u|", function()
   local col = vim.o.colorcolumn
@@ -84,7 +75,6 @@ map("n", "<s-tab>", "<cmd>tabprevious<cr>", { desc = "Previous Tab" })
 for i = 1, 9 do
   map("n", "<leader><tab>" .. i, "<cmd>tabn " .. i .. "<cr>", { desc = "Tab " .. i })
 end
-map("n", "<leader><tab>-", "<cmd>tabonly<cr>", { desc = "Close Other Tabs" })
 map("n", "<leader>f<tab>", function()
   vim.ui.select(vim.api.nvim_list_tabpages(), {
     prompt = "Select Tab:",
@@ -142,7 +132,7 @@ map("v", "<D-c>", '"+y', { noremap = true }) -- Copy
 map("v", "p", '"_dP', { desc = "Paste without overwriting" }, { silent = true })
 
 -- Copy whole text to clipboard
-map("n", "<C-c>", ":%y+<CR>", { desc = "Copy whole text to clipboard", silent = true })
+map("n", "<leader><C-c>", ":%y+<CR>", { desc = "Copy whole text to clipboard", silent = true })
 
 -- Motion
 map("c", "<C-a>", "<C-b>", { desc = "Start Of Line" })
@@ -159,6 +149,7 @@ map({ "n", "x", "o" }, "<M-h>", "_", { desc = "First character of Line" })
 -- Delete and change without yanking
 map({ "n", "x" }, "<M-d>", '"_d', { desc = "Delete without yanking" })
 map({ "n", "x" }, "<M-c>", '"_c', { desc = "Change without yanking" })
+map({ "n", "x" }, "<C-c>", '"_ciw', { desc = "Change word without yanking" })
 
 -- Enable delete to end of line in NUI inputs. Gets overriden by LSP keymap
 -- otherwise.
@@ -187,7 +178,7 @@ map("i", "jk", "<ESC>", { silent = true })
 
 -- Dashboard
 map("n", "<leader>fd", function()
-  require("snacks").dashboard.open()
+  Snacks.dashboard.open()
 end, { desc = "Dashboard" })
 
 -- Open in finder
@@ -320,7 +311,9 @@ map("n", "<leader>cir", "<cmd>LazyRoot<cr>", { desc = "Root" })
 
 map("n", "<M-e>", "<cmd>Neotree reveal_force_cwd<cr>", { desc = "Reveal current file in neo-tree at cwd" })
 
-require("config.keymaps.window")
+map("n", "<leader>wh", function()
+  require("util.win").switch_to_highest_window()
+end)
 
 -- Disabled in favor of Avante/Parrot
 -- map("n", "<M-->", "<cmd>ChatGPT<CR>", { desc = "ChatGPT" })
@@ -354,30 +347,45 @@ map("n", "<leader>cq", function()
   vim.diagnostic.open_float(nil, { source = true })
 end, { desc = "Line Diagnostics (Source)" })
 
--- Lazygit
-map("n", "<leader>gW", function()
-  require("snacks").lazygit.open()
-end, { desc = "Git Browse" })
-map("n", "<leader>gF", function()
-  local git_path = vim.api.nvim_buf_get_name(0)
-  require("snacks").lazygit.open({
-    args = { "-f", git_path },
-    size = {
-      height = 0.85,
-      width = 0.85,
-    },
+-- stylua: ignore start
+
+map({"n", "x" }, "<leader>g<C-y>", function()
+  Snacks.gitbrowse({
+    open = function(url) vim.fn.setreg("+", url) end,
+    branch = "main",
+    notify = false,
   })
-end, { desc = "File History (LazyGit)" })
+end, { desc = "Git Browse (copy - main)" })
+
+map({"n", "x" }, "<leader>g<C-f>", function()
+  Snacks.gitbrowse({
+    open = function(url)
+      vim.fn.setreg("+", url:gsub("#L%d+%-?L?%d*", ""))
+    end,
+    notify = false,
+  })
+end, { desc = "Git Browse (copy file)" })
+
+-- map({"n", "x" }, "<leader>g<M-f>", function()
+--   vim.ui.select(require("util.git").mru_branches(), { prompt = "Branch: " }, function(branch)
+--     Snacks.gitbrowse({
+--       open = function(url) vim.fn.setreg("+", url) end,
+--       branch = branch,
+--       notify = false,
+--     })
+--   end)
+-- end, { desc = "Git Browse (copy - pick)" })
+-- stylua: ignore end
 
 -- Terminals
-
 map("n", "<M-S-Bslash>", function()
   local buf = vim.api.nvim_get_current_buf()
   local bufname = vim.api.nvim_buf_get_name(buf)
-  -- if bufname:match("yazi") then
-  --   vim.cmd("q")
-  --   return
-  -- end
+  if bufname:match("^term://.*yazi$") then
+    vim.cmd("q")
+    return
+  end
+
   local cwd = vim.fn.getcwd()
   if bufname then
     local path = vim.uv.fs_realpath(bufname)
@@ -393,9 +401,9 @@ map("n", "<leader>j", function()
 end, { desc = "Leap AST Parents" })
 
 -- Custom AI chat
-map("n", "<leader>aN", function()
-  require("util.ai").toggle(true)
-end, { desc = "Alpha2Pi - ChatGPT" })
+-- map("n", "<leader>aN", function()
+--   require("util.ai").toggle(true)
+-- end, { desc = "Alpha2Pi - ChatGPT" })
 
 -- Custom notepad
 map("n", "<leader>Ln", function()
@@ -410,15 +418,15 @@ map("n", "zV", function()
 end, { desc = "Add to Vale dictionary" })
 
 -- TreeSJ
-map("n", "gS", function()
+map("n", "gJ", function()
   require("treesj").toggle({ split = { recursive = false } })
 end, { desc = "SplitJoin" })
 map("n", "g<C-s>", function()
   require("treesj").toggle({ split = { recursive = true } })
 end, { desc = "SplitJoin (Recursive)" })
-map("n", "gJ", function()
-  require("treesj").join()
-end, { desc = "Join" })
+-- map("n", "gJ", function()
+--   require("treesj").join()
+-- end, { desc = "Join" })
 
 -- Git modified date
 map("n", "<leader>gT", function()
@@ -476,6 +484,20 @@ map(
   "<cmd>tab split | lua vim.lsp.buf.definition()<cr>",
   { desc = "Goto Definition (tab)", silent = true }
 )
+
+map("n", "<C-w><C-t>", function()
+  local buf = vim.api.nvim_get_current_buf()
+  local win = vim.api.nvim_get_current_win()
+
+  vim.cmd(":tabnew")
+
+  local new_win = vim.api.nvim_get_current_win()
+
+  vim.api.nvim_win_set_buf(new_win, buf)
+
+  vim.api.nvim_win_close(win, false)
+end, { desc = "Move window to new tab", silent = true })
+
 -- Goto file in vsplit
 -- map("n", "<C-w><C-v>", "vs | gf", { desc = "Goto File (vsplit)", silent = true })
 map("n", "<C-w><C-v>", function()
@@ -585,13 +607,50 @@ end, { desc = "Find config files" })
 -- end)
 
 -- Diff utils
-local diff_util = require("util.diff")
-map("n", "<leader>uD", function()
-  diff_util.compare_windows()
-end, { desc = "Diff windows" })
+map("n", "<leader>wD", function()
+  require("util.diff").toggle_compare_windows()
+end, { desc = "Toggle Diff Windows" })
 
 map({ "n", "v" }, "<leader>13", function()
   local selection = require("util.selection").get_selection3()
   local lines = require("model.util").buf.text(selection)
   vim.api.nvim_echo({ { vim.inspect({ selection = selection, lines = lines }), "Normal" } }, true, {})
 end, { desc = "Test fn" })
+
+map("n", "<leader>rl", function()
+  local buf = vim.api.nvim_get_current_buf()
+  local word = vim.fn.expand("<cword>")
+  local newRow = "console.log('### " .. word .. ": ', { " .. word .. " })"
+  local pos = vim.api.nvim_win_get_cursor(0)
+  local row = pos[1]
+  local col = pos[2]
+  local scope = Snacks.scope.get({
+    buf = buf,
+    pos = {
+      row,
+      col,
+    },
+    treesitter = {
+      enabled = true,
+      blocks = {
+        "function_declaration",
+        "function_definition",
+        "method_declaration",
+        "method_definition",
+        "class_declaration",
+        "class_definition",
+        "do_statement",
+        "while_statement",
+        "repeat_statement",
+        "if_statement",
+        "for_statement",
+      },
+    },
+  })
+  local indent = scope and (scope.indent + vim.bo.shiftwidth) or 0
+  newRow = string.rep(" ", indent) .. newRow
+  vim.api.nvim_buf_set_lines(0, row, row, false, { newRow })
+end, { desc = "Debug Print (console.log)", silent = true })
+
+map("n", "<C-S-P>", "[h", { desc = "Previous hunk", remap = true })
+map("n", "<C-S-N>", "]h", { desc = "Next hunk", remap = true })

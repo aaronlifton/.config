@@ -63,7 +63,7 @@ return {
     })
     opts.presets.lsp_doc_border = true
     -- opts.presets.bottom_search = false
-    opts.popupmenu = { backend = "cmp" }
+    -- opts.popupmenu = { backend = "cmp" }
 
     if vim.g.lazyvim_picker == "fzf" then
       require("noice.commands").pick = function()

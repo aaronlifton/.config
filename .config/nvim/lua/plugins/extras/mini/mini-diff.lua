@@ -81,7 +81,6 @@ return {
     --   goto_last = "]H",
     -- },
     keys = {
-
       {
         "<leader>gdh",
         function()
@@ -89,6 +88,14 @@ return {
           set_mini_diff_ref_text(buf_id, ":0")
         end,
         desc = "MiniDiff (HEAD)",
+      },
+      {
+        "<leader>gdH",
+        function()
+          local buf_id = vim.api.nvim_get_current_buf()
+          set_mini_diff_ref_text(buf_id, ":1")
+        end,
+        desc = "MiniDiff (HEAD~1)",
       },
       {
         "<leader>gdm",

@@ -131,7 +131,6 @@ return {
         else
           clear_keymaps(buf)
         end
-        vim.api.nvim_echo({ { vim.inspect(state), "Normal" } }, true, {})
       end,
     }):map("<leader><cr>")
   end,

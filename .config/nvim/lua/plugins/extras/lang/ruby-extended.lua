@@ -77,8 +77,6 @@ return {
       ensure_installed = {
         "solargraph",
         "rubocop",
-        -- "rubocop@1.50.2", -- Before, run `:MasonUninstall rubocop`
-        "ruby-lsp",
         "cucumber-language-server",
         "sorbet",
       },
@@ -178,33 +176,37 @@ return {
           end,
         },
         ruby_lsp = {
-          -- cmd = { vim.fn.expand("~/.asdf/shims/ruby-lsp") },
+          mason = false,
+          cmd = { vim.fn.expand("~/.asdf/shims/ruby-lsp") },
+          -- cmd = { "/Users/alifton/.asdf/installs/ruby/3.3.2/lib/ruby/gems/3.3.0/gems/ruby-lsp-0.22.1/exe/ruby-lsp-launcher", },
+          -- cmd = { "/Users/alifton/.asdf/installs/ruby/3.3.2/bin/ruby-lsp" },
           -- NOTE: https://shopify.github.io/ruby-lsp/editors.html#all-initialization-options
           init_options = {
             enabledFeatures = enabledFeatures,
             experimentalFeaturesEnabled = false,
-            featuresConfiguration = {
-              inlayHints = {
-                implicitHashValue = true,
-                implicitRescue = true,
-              },
-            },
+            -- featuresConfiguration = {
+            --   inlayHints = {
+            --     implicitHashValue = true,
+            --     implicitRescue = true,
+            --   },
+            -- },
             -- https://github.com/search?q=path%3A**%2Fnvim%2F**%2F*.lua+excludedGems&type=code
             indexing = {
               excludedPatterns = {
                 -- "**/test/**/*.rb",
-                "**/test/**/*",
-                "**/spec/**/*",
-                "**/db/**/*",
-                "**/vendor/**/*",
+                "**/test/**/*.rb",
+                "**/spec/**/*.rb",
+                "**/db/**/*.rb",
+                "**/vendor/**/*.rb",
                 -- "**/spec/**/*_spec.rb",
                 -- "**/activerecord-*/examples/**/*.rb",
-                "**/activerecord-*/examples/**/*",
+                "**/activerecord-*/examples/**/*.rb",
               },
               -- includedPatterns = { "**/bin/**/*" },
               excludedGems = excludedGems,
               -- excludedMagicComments = { "compiled:true" },
             },
+            bundleGemfile = ".ruby-lsp/Gemfile",
             -- formatter = use_ruby_lsp_rubocop and "auto" or nil,
             -- linters = use_ruby_lsp_rubocop and { "rubocop" } or {},
           },

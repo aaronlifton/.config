@@ -1,37 +1,53 @@
+local enable_neocodeium = false
+
 return {
   { import = "lazyvim.plugins.extras.ai.codeium" },
+  {
+    "Exafunction/codeium.nvim",
+    enabled = not enable_neocodeium,
+  },
+  {
+    import = "plugins.extras.ai.neocodeium",
+    enabled = enable_neocodeium,
+  },
+
+  -- Enable chat
   -- {
   --   "Exafunction/codeium.nvim",
   --   optional = true,
-  --   cond = not vim.g.ai_cmp,
   --   opts = {
   --     enable_chat = true,
   --   },
   -- },
-  -- For ghost text, use codeium.vim instead of codeium.nvim
-  -- NOTE: Has been replaced by codeium.nvim with enable_cmp_source = false
+
+  -- If vim.g.ai_cmp is disabled, have the choice of codeium.vim,
+  -- codeium.nvim with `enable_cmp_source = false`, or neocodeium.
   {
     "Exafunction/codeium.vim",
     event = "InsertEnter",
     enabled = false,
     -- cond = vim.g.ai_cmp,
     config = function()
-      local cmp = require("cmp")
-      cmp.event:on("menu_opened", function()
-        vim.g.codeium_manual = true
-        vim.fn["codeium#Clear"]()
-      end)
-      cmp.event:on("menu_closed", function()
-        vim.api.nvim_echo({ { "Menu closed" } }, true, {})
-        vim.g.codeium_manual = false
-        vim.fn["codeium#Complete"]()
-      end)
+      if vim.g.codeium_cmp_hide == true then
+        local cmp = require("cmp")
+        cmp.event:on("menu_opened", function()
+          vim.g.codeium_manual = true
+          vim.fn["codeium#Clear"]()
+        end)
+        cmp.event:on("menu_closed", function()
+          vim.api.nvim_echo({ { "Menu closed" } }, true, {})
+          vim.g.codeium_manual = false
+          vim.fn["codeium#Complete"]()
+        end)
+      end
 
       vim.g.codeium_filetypes = {
         TelescopePrompt = false,
         DressingInput = false,
         ["neo-tree-popup"] = false,
         ["dap-repl"] = false,
+        mchat = false,
+        AvanteInput = false,
       }
 
       local opts = { expr = true, silent = true }
@@ -73,6 +89,8 @@ return {
       vim.keymap.set("n", "<leader>cI2", "<cmd>CodeiumToggle<cr>", { desc = "Toggle Codeium" })
     end,
   },
+
+  -- Clickable lualine icon
   -- vim.g.ai_cmp and {
   --   "nvim-lualine/lualine.nvim",
   --   optional = true,
