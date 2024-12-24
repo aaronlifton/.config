@@ -1,6 +1,7 @@
 local inspect = require("inspect")
 local window = require("functions/window")
 local layout = require("functions/layout")
+local browser = require("functions/browser")
 local logger = hs.logger.new("keys.lua", "debug")
 hs.loadSpoon("ClipboardTool")
 
@@ -103,7 +104,8 @@ hs.hotkey.bind("⌘⌥", "g", window.thunk_push({ left = 2 / 3, width = 1 / 3 })
 hs.hotkey.bind("⌘⌥", "e", window.thunk_push({ width = 2 / 3 }))
 hs.hotkey.bind("⌘⌥", "r", window.thunk_push({ left = 1 / 3, width = 2 / 3 }))
 hs.hotkey.bind("⌘⌥", "t", window.thunk_push({ left = 2 / 3, width = 1 / 3 }))
-hs.hotkey.bind("⌘⌥", "y", window.thunk_push({ left = (1 / 8) + 0.01, width = (7 / 8) - 0.01 }))
+-- hs.hotkey.bind("⌘⌥", "y", window.thunk_push({ left = (1 / 8) + 0.01, width = (7 / 8) - 0.01 }))
+hs.hotkey.bind("⌘⌥", "y", window.thunk_push({ left = (1 / 8) + 0.04, width = (7 / 8) - 0.04 }))
 
 -- center 2/3
 hs.hotkey.bind("ctrl⇧", "c", window.thunk_push({ left = 1 / 6, top = 1 / 6, width = 2 / 3, height = 2 / 3 }))
@@ -163,6 +165,8 @@ for _, values in ipairs(hotkeys) do
 	end)
 end
 
+hs.hotkey.bind({ "cmd", "shift" }, "T", browser.newTabToRight)
+
 -- require("functions/control_escape")
 
 -- end
@@ -174,18 +178,41 @@ end
 -- 	end)
 -- end
 -- fk_modal:enter()
--- function application_watcher(appName, eventType, appObject)
--- 	logger.d(appName)
--- 	if eventType == hs.application.watcher.activated then
--- 		if appName == "Kitty" then
--- 			fk_modal:enter()
--- 		end
--- 	end
--- 	if eventType == hs.application.watcher.deactivated then
--- 		if appName == "kitty" then
--- 			fk_modal.exit()
--- 		end
--- 	end
--- end
--- local appWatcher = hs.application.watcher.new(application_watcher)
--- appWatcher:start()
+
+local CHROME = "Google Chrome"
+local chrome_modal = hs.hotkey.modal.new({}, nil, nil)
+chrome_modal:bind({ "alt" }, "t", browser.newTabToRight)
+
+--- Application watcher
+---@param appName string
+---@param eventType string
+---@param appObject hs.application
+local function application_watcher(appName, eventType, appObject)
+	logger.d(
+    appName,
+    eventType == hs.application.watcher.activated and "activated" or "deactivated"
+  )
+  if eventType == hs.application.watcher.activated then
+    if appName == CHROME then
+      logger.d("Entered Chrome")
+      chrome_modal:enter()
+    end
+  end
+  if eventType == hs.application.watcher.deactivated then
+    if appName == CHROME then
+      chrome_modal:exit()
+    end
+  end
+	-- if eventType == hs.application.watcher.activated then
+	-- 	if appName == "Kitty" then
+	-- 		fk_modal:enter()
+	-- 	end
+	-- end
+	-- if eventType == hs.application.watcher.deactivated then
+	-- 	if appName == "kitty" then
+	-- 		fk_modal.exit()
+	-- 	end
+	-- end
+end
+local appWatcher = hs.application.watcher.new(application_watcher)
+appWatcher:start()

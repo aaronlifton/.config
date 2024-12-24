@@ -27,4 +27,10 @@ M.jump = function(browserName)
 	return { open = open, jump = jump }
 end
 
+-- Function to create a new tab to the right in Chrome
+M.newTabToRight = function()
+	local app = hs.application.find("Chrome")
+	app:selectMenuItem({ "Tab", "New Tab to the Right" })
+end
+
 return M
