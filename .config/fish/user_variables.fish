@@ -128,6 +128,9 @@ set -xg FZF_DEFAULT_OPTS "--height=90% --layout=reverse --info=right --border ro
   --color=separator:#ff966c \
   --color=spinner:#ff007c \
 "
+#   --bind 'ctrl-y:execute-silent(printf {} | cut -f 2- | pbcopy)' \
+#   --bind space:jump,jump:accept,jump-cancel:abort \
+# "
 
 # Tried these for padding background
 # --color=preview-border:#1e2030 \
@@ -154,7 +157,6 @@ set -xg FZF_DEFAULT_OPTS "--height=90% --layout=reverse --info=right --border ro
 #   --color=separator:#ff966c \
 #   --color=spinner:#ff007c \
 # "
-
 set -xg _ZO_FZF_OPTS $FZF_DEFAULT_OPTS
 set -xg fzf_preview_dir_cmd eza --long --header --icons --all --color=always --group-directories-first --hyperlink
 set -xg fzf_fd_opts --hidden --color=always

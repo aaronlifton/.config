@@ -757,3 +757,5 @@ source ~/.config/fish/zoxide.fish
 # Unbind Ctrl+k and rebind to Alt+k
 bind --erase --preset \ck
 bind \ek backward-kill-line
+
+bind \e\cz fzf-zoxide
