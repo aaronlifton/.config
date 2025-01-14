@@ -55,7 +55,7 @@ SETUVAR fish_pager_color_selected_background:\x1d
 SETUVAR fish_pager_color_selected_completion:\x1d
 SETUVAR fish_pager_color_selected_description:\x1d
 SETUVAR fish_pager_color_selected_prefix:\x1d
-SETUVAR fish_user_paths:/Users/alifton/\x2elocal/bin\x1e/opt/homebrew/bin\x1e/Users/alifton/\x2easdf/shims\x1e/Users/alifton/\x2easdf/installs/rust/1\x2e80/bin\x1e/Users/alifton/\x2elocal/share/bob/nvim\x2dbin\x1e/Users/alifton/go/bin\x1e/Users/alifton/Code/venv/bin\x1e/usr/sbin\x1e/opt/homebrew/opt/postgresql\x4016/bin\x1e/Users/alifton/\x2edeno/bin\x1e/usr/local/go/bin\x1e/Users/alifton/\x2easdf/installs/rust/1\x2e78\x2e0/bin\x1e/Users/alifton/\x2ecargo/bin\x1e/opt/homebrew/opt/libpq/bin\x1e/opt/homebrew/opt/llvm/bin\x1e/usr/local/bin\x1e/usr/bin\x1e/Users/aaron/\x2elocal/bin
+SETUVAR fish_user_paths:/Users/alifton/\x2elocal/bin\x1e/Users/alifton/Code/venv/bin\x1e/opt/homebrew/bin\x1e/Users/alifton/\x2easdf/shims\x1e/Users/alifton/\x2easdf/installs/rust/1\x2e80/bin\x1e/Users/alifton/\x2elocal/share/bob/nvim\x2dbin\x1e/Users/alifton/go/bin\x1e/usr/sbin\x1e/opt/homebrew/opt/postgresql\x4016/bin\x1e/Users/alifton/\x2edeno/bin\x1e/usr/local/go/bin\x1e/Users/alifton/\x2easdf/installs/rust/1\x2e78\x2e0/bin\x1e/Users/alifton/\x2ecargo/bin\x1e/opt/homebrew/opt/libpq/bin\x1e/opt/homebrew/opt/llvm/bin\x1e/usr/local/bin\x1e/usr/bin\x1e/Users/aaron/\x2elocal/bin
 SETUVAR --export fisher_path:/Users/alifton/\x2econfig/fish/fisher
 SETUVAR --export nvm_default_version:v21\x2e7\x2e1
 SETUVAR pisces_pairs:\x28\x2c\x29\x1e\x5b\x2c\x5d\x1e\x7b\x2c\x7d\x1e\x22\x2c\x22\x1e\x27\x2c\x27

@@ -6,6 +6,7 @@ set -x nvm_default_version v21.7.1
 fish_add_path /usr/local/bin/
 fish_add_path -m /Users/$USER/.asdf/shims
 fish_add_path -m /opt/homebrew/bin
+fish_add_path -m /Users/$USER/Code/venv/bin
 # fish_add_path /opt/homebrew/opt/asdf/lib/exec/bin
 # fish_add_path /opt/homebrew/opt/ccache/libexec
 # fish_add_path /usr/local/llvm/bin 
@@ -27,9 +28,6 @@ fish_add_path /opt/homebrew/opt/postgresql@16/bin
 fish_add_path /Users/$USER/.local/share/bob/nvim-bin
 fish_add_path /usr/sbin # for chown
 # fish_add_path /opt/homebrew/sbin
-
-# Python
-fish_add_path /Users/$USER/Code/venv/bin
 
 # XDG
 set -gx XDG_CONFIG_HOME "$HOME/.config"
