@@ -23,10 +23,20 @@ function reload
     set -q _flag_help && __help && return 0
 
     # Create unset options
+    # Was causing the error "env: unsetenv : Invalid argument"
+    # for env_var in (env)
+    #     set key (string split = "$env_var")[1]
+    #     if not contains "$key" $RELOAD_PROTECTED_ENV_VARS
+    #         set unset_options $unset_options -u $key
+    #     end
+    # end
     for env_var in (env)
         set key (string split = "$env_var")[1]
-        if not contains "$key" $RELOAD_PROTECTED_ENV_VARS
-            set unset_options $unset_options -u $key
+        # Skip empty keys or keys with invalid characters
+        if test -n "$key" && string match -q -r '^[A-Za-z_][A-Za-z0-9_]*$' "$key"
+            if not contains "$key" $RELOAD_PROTECTED_ENV_VARS
+                set unset_options $unset_options -u $key
+            end
         end
     end
 

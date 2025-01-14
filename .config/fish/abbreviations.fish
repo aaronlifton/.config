@@ -1,39 +1,27 @@
+abbr cp "cp -i"
+abbr mv "mv -i"
+abbr mkdir "mkdir -p"
+abbr h history
+abbr which "type -a"
+
 abbr -a y yadm
 abbr -a g git
 abbr -a t gtrash
 abbr -a grep rg
 abbr -a find fd
+abbr -a cat bat --style grid
 
 abbr --add tar 'tar -zxvf'
-# abbr --add ls eza
+
 abbr --add ls lsd
-abbr --add ll eza --across --icons --group-directories-first
-abbr --add lt eza --tree --level=2 -a --long --header --accessed --git
-abbr --add lla eza -la --header --across
-abbr --add lll eza -la --header
-abbr --add llg eza -la --header --git --git-repos
-abbr --add lls \
-    eza -Fulb --color-scale-mode gradient --color-scale --total-size --sort size \
-    --icons
+abbr --add ll lsd -la
+abbr --add lt lsd --tree --depth 2
+abbr --add llm lsd -ltr
+abbr --add lg lsd -GgF
+abbr --add llg lsd -lGgF
+abbr --add lsd-size lsd --human-readable --size=short --blocks=size,name -Sr
+abbr --add lsd-date lsd -t --date relative -l
 
-abbr --add ezallm eza -s modified --reverse
-# alias llm="eza -s modified --reverse"
-
-abbr --add ezamrd eza -s created --reverse ~/Downloads/ | head -n 5
-alias llrcd="eza -s created --reverse ~/Downloads/ | head -n 5"
-
-abbr --add ezamrc eza -s created --reverse ./
-alias llrc="eza -s created --reverse ./"
-
-abbr --add ezamrm eza -s modified --reverse ./
-alias llrm="ezamrm eza -s modified --reverse ./"
-
-abbr --add ezalll eza --icons --group --header --group-directories-first --long
-abbr --add ezallg eza --icons --group --header --group-directories-first --long --git --git-repos
-abbr --add ezallr eza --icons --group --header --group-directories-first --long --reverse
-abbr --add ezallt eza --icons --group --header --group-directories-first --long --sort accessed --reverse
-abbr --add ezallc eza --icons --group --header --group-directories-first --long --sort created --reverse
-abbr --add ezallm eza --icons --group --header --group-directories-first --long --sort modified --reverse
 abbr --add rg- rg -m 80 -M 80 -u
 abbr --add rg8 rg -m 80 -M 80 -u
 abbr --add rg-mr --position command --set-cursor "rg -l \"%\" | xargs lsd -lt"
@@ -41,7 +29,6 @@ abbr --add rg-mr --position command --set-cursor "rg -l \"%\" | xargs lsd -lt"
 abbr --add glp git log --pretty="format:%h %G? %aN %s"
 abbr --add gdiffhead git diff HEAD^ -- . '!:node_modules'
 
-abbr --add cat bat --style grid
 
 abbr -a --position anywhere -- --fwm --files-with-matches
 
@@ -49,20 +36,19 @@ abbr -a !! --position anywhere --function last_history_item
 abbr 4dirs --set-cursor=! "$(string join \n -- 'for dir in */' 'cd $dir' '!' 'cd ..' 'end')"
 abbr -a L --position anywhere --set-cursor "% | less"
 
-abbr --add ber bundle exec rspec
-abbr --add njest APP_ENV=development TZ=UTC npx jest --projects src/jest.config.rtl.js --watch --color --silent
-abbr --add lsd-size lsd --human-readable --size=short --blocks=size,name -Sr
-abbr --add lsd-date lsd -t --date relative -l
+abbr --add zn z-nvim
+abbr --add fr fzf-rg-bat
 
-# Nvim AI
+### Nvim AI
 abbr --add chat-gemini nvim -o1 -c \"Mchat gemini\"
 abbr --add chat-pplx nvim -o1 -c \"Mchat pplx\"
 abbr --add llm-gemini --set-cursor "llm -m gemini-1.5-pro-latest --system \"You are a helpful assistant. You will receive questions from a user who is asking you questions via his Kitty terminal on OSX, and he is a software engineer.\" \"%\""
 abbr --add llm-gemini-flash --set-cursor "llm -m gemini-1.5-flash-latest --system \"You are a helpful assistant. You will receive questions from a user who is asking you questions via his Kitty terminal on OSX, and he is a software engineer.\" \"%\""
 # abbr --add llm-gemini-flash --set-cursor "llm -m gemini-1.5-flash-latest --system \"You are a helpful assistant. You will receive questions from a user who is asking you questions via his Kitty terminal on OSX, and he is a software engineer.\" \"%\" | glow"
 
-
-
+#### Development
+abbr --add ber bundle exec rspec
+abbr --add njest APP_ENV=development TZ=UTC npx jest --projects src/jest.config.rtl.js --watch --color --silent
 # Jest
 ## Researcher
 abbr --add jest-researcher TZ=UTC npx jest --projects jest.config.rtl.js --coverage=false --watch

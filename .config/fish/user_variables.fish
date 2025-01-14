@@ -4,16 +4,17 @@ set -x nvm_default_version v21.7.1
 # Setting PATH for node
 # fish_add_path /Users/$USER/.local/share/nvm/v19.7.0/bin
 fish_add_path /usr/local/bin/
-fish_add_path /Users/$USER/.asdf/shims
+fish_add_path -m /Users/$USER/.asdf/shims
 fish_add_path -m /opt/homebrew/bin
 # fish_add_path /opt/homebrew/opt/asdf/lib/exec/bin
 # fish_add_path /opt/homebrew/opt/ccache/libexec
 # fish_add_path /usr/local/llvm/bin 
 fish_add_path /opt/homebrew/opt/llvm/bin
 fish_add_path /opt/homebrew/opt/libpq/bin
-fish_add_path /Users/$USER/.local/bin
+fish_add_path -m /Users/$USER/.local/bin
 fish_add_path /Users/$USER/.cargo/bin
-fish_add_path /Users/$USER/.asdf/installs/rust/1.78.0/bin/
+fish_add_path /Users/$USER/.asdf/installs/rust/1.80/bin
+
 # bass source /Users/$USER/.cargo/env
 fish_add_path /usr/local/texlive/2024/bin/universal-darwin
 # fish_add_path /Users/$USER/Library/Python/3.11/bin 
@@ -127,9 +128,17 @@ set -xg FZF_DEFAULT_OPTS "--height=90% --layout=reverse --info=right --border ro
   --color=scrollbar:#589ed7 \
   --color=separator:#ff966c \
   --color=spinner:#ff007c \
+  --bind=ctrl-b:preview-page-up,ctrl-f:preview-page-down,\
+ctrl-u:half-page-up,ctrl-d:half-page-down,\
+shift-up:preview-top,shift-down:preview-bottom,\
+alt-up:half-page-up,alt-down:half-page-down,\
+alt-g:first,\
+ctrl-x:jump,jump-cancel:abort
 "
 #   --bind 'ctrl-y:execute-silent(printf {} | cut -f 2- | pbcopy)' \
-#   --bind space:jump,jump:accept,jump-cancel:abort \
+#   ctrl-y:preview-up,ctrl-e:preview-down,\
+#   ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down,\
+#   ctrl-x:jump,jump:accept,jump-cancel:abort
 # "
 
 # Tried these for padding background
@@ -158,7 +167,8 @@ set -xg FZF_DEFAULT_OPTS "--height=90% --layout=reverse --info=right --border ro
 #   --color=spinner:#ff007c \
 # "
 set -xg _ZO_FZF_OPTS $FZF_DEFAULT_OPTS
-set -xg fzf_preview_dir_cmd eza --long --header --icons --all --color=always --group-directories-first --hyperlink
+# set -xg fzf_preview_dir_cmd eza --long --header --icons --all --color=always --group-directories-first --hyperlink
+set -xg fzf_preview_dir_cmd lsd --color always --tree --depth 1
 set -xg fzf_fd_opts --hidden --color=always
 
 ## Pager
@@ -175,3 +185,5 @@ set -xg BAT_THEME tokyonight_moon #Catppuccin-macchiato
 set -xg STARSHIP_LOG error
 
 set -xg GOPRIVATE git.synack.com
+
+# set -xg PRETTIERD_DEFAULT_CONFIG /Users/alifton/.config/nvim/rules/.prettierrc.json

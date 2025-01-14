@@ -1,4 +1,4 @@
-function fzf-dh -d "Fuzzy search directory history"
+function fzf-dirh -d "Fuzzy search directory history"
     set -l result (
         dirh |
         grep -v '^\s*$' |
