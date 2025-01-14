@@ -1,5 +1,8 @@
 local path = require("plenary.path")
+
+---@class util.fzf.devdocs
 local M = {}
+
 local dir_path = vim.fn.stdpath("data") .. "/devdocs"
 DATA_DIR = path:new(dir_path)
 DOCS_DIR = DATA_DIR:joinpath("docs")
@@ -63,7 +66,7 @@ local fzf_utils = require("fzf-lua.utils")
 
 M.init = function()
   if M.entries and #M.entries > 0 then return end
-  M.entries = M.get_doc_entries({ "lua-5.4", "jest" })
+  M.entries = M.get_doc_entries({ "lua-5.4", "jest", "javascript", "ruby" })
 end
 
 M.read_index = function()
@@ -142,8 +145,8 @@ function M.previewer()
     ---@type FzfWin
     local win = self.win
     self:set_preview_buf(buf)
-    win:update_title(" Devdocs ")
-    win:update_scrollbar()
+    if win.update_title then win:update_title(" Devdocs ") end
+    if win.update_scrollbar then win:update_scrollbar() end
   end
 
   return previewer
@@ -182,7 +185,9 @@ function M.open(opts)
   return fzf.fzf_exec(lines, opts)
 end
 
-return function()
-  M.init()
-  return M.open
-end
+return setmetatable({}, {
+  __call = function(_, ...)
+    M.init()
+    return M.open(...)
+  end,
+})

@@ -95,38 +95,39 @@ return {
           --   vim.api.nvim_exec("Neotree focus filesystem left", true)
           -- end,
           ["b"] = function()
-            vim.api.nvim_exec("Neotree focus buffers left", true)
+            vim.api.nvim_exec2("Neotree focus buffers left", { output = true })
           end,
           ["g"] = function()
-            vim.api.nvim_exec("Neotree focus git_status left", true)
+            vim.api.nvim_exec2("Neotree focus git_status left", { output = true })
           end,
           ["<C-s>"] = "open_split",
           ["v"] = "open_vsplit",
+          ["<C-f>"] = "fuzzy_finder_directory",
           -- ["<C-/>"] = "fuzzy_finder_directory",
           ["D"] = function(state)
             local node = state.tree:get_node()
             local log = require("neo-tree.log")
             state.clipboard = state.clipboard or {}
-            if diff_Node and diff_Node ~= tostring(node.id) then
-              local current_Diff = node.id
-              require("neo-tree.utils").open_file(state, diff_Node, open)
-              vim.cmd("vert diffs " .. current_Diff)
-              log.info("Diffing " .. diff_Name .. " against " .. node.name)
-              diff_Node = nil
-              current_Diff = nil
+            if DiffNode and DiffNode ~= tostring(node.id) then
+              local current_diff = node.id
+              require("neo-tree.utils").open_file(state, DiffNode, "open")
+              vim.cmd("vert diffs " .. current_diff)
+              log.info("Diffing " .. DiffName .. " against " .. node.name)
+              DiffNode = nil
+              current_diff = nil
               state.clipboard = {}
               require("neo-tree.ui.renderer").redraw(state)
             else
               local existing = state.clipboard[node.id]
               if existing and existing.action == "diff" then
                 state.clipboard[node.id] = nil
-                diff_Node = nil
+                DiffNode = nil
                 require("neo-tree.ui.renderer").redraw(state)
               else
                 state.clipboard[node.id] = { action = "diff", node = node }
-                diff_Name = state.clipboard[node.id].node.name
-                diff_Node = tostring(state.clipboard[node.id].node.id)
-                log.info("Diff source file " .. diff_Name)
+                DiffName = state.clipboard[node.id].node.name
+                DiffNode = tostring(state.clipboard[node.id].node.id)
+                log.info("Diff source file " .. DiffName)
                 require("neo-tree.ui.renderer").redraw(state)
               end
             end
@@ -160,12 +161,10 @@ return {
               local node = state.tree:get_node()
               local path = node:get_id()
               local fs_stat = vim.uv.fs_stat(path)
-              if fs_stat and fs_stat.type == "file" then
-                path = vim.fn.fnamemodify(path, ":h")
-              end
+              if fs_stat and fs_stat.type == "file" then path = vim.fn.fnamemodify(path, ":h") end
               LazyVim.pick("files", { cwd = path })
             end,
-            desc = "Grep in dir"
+            desc = "Grep in dir",
           },
           unpack(astrovim_style and {
             ["[b"] = "prev_source",
@@ -225,6 +224,15 @@ return {
       --   "dapui_watches",
       --   "edgy",
       -- },
+    },
+    keys = {
+      {
+        "<leader>gE",
+        function()
+          require("neo-tree.command").execute({ source = "git_status", git_base = "HEAD~2", toggle = false })
+        end,
+        desc = "Git Explorer (HEAD~2)",
+      },
     },
   },
   astrovim_style

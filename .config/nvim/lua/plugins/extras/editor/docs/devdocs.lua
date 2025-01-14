@@ -1,3 +1,6 @@
+-- Install docs
+-- nvim --headless +"DevdocsInstall rust"
+-- nvim --headless +"DevdocsInstall javascript"
 local use_glow = false
 return {
   {
@@ -13,6 +16,10 @@ return {
       "DevdocsUpdate",
       "DevdocsUpdateAll",
     },
+    -- Only needed when installing docs via `nvim --headless +"DevdocsInstall"`
+    -- dependencies = {
+    --   "nvim-telescope/telescope.nvim",
+    -- },
     keys = {
       { "<leader>sE", "<cmd>DevdocsOpen<cr>", desc = "Devdocs" },
       { "<leader>se", "<cmd>DevdocsOpenCurrent<cr>", desc = "Devdocs Current" },

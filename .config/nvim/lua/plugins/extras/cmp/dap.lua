@@ -3,14 +3,14 @@ return {
   lazy = true,
   optional = true,
   dependencies = {
-    { "rcarriga/cmp-dap", ft = { "dap-repl" }, dev = true },
+    { "rcarriga/cmp-dap", ft = { "dap-repl" } },
   },
-  opts = function(_, opts)
+  opts = function(_, _opts)
     local cmp = require("cmp")
     cmp.register_source("dap", require("cmp_dap").new())
     cmp.setup({
       enabled = function()
-        return vim.api.nvim_buf_get_option(0, "buftype") ~= "prompt" or require("cmp_dap").is_dap_buffer()
+        return vim.api.nvim_get_option_value("buftype", { buf = 0 }) ~= "prompt" or require("cmp_dap").is_dap_buffer()
       end,
     })
 

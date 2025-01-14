@@ -56,6 +56,8 @@ return {
       { "<leader>cI", group = "AI Controls" },
       { "<leader>L", group = "Notepads", icon = { icon = "󰓩 ", color = "green" } },
       { "<leader>cp", group = "Copy path", icon = { icon = "󰓩 " } },
+      { "g<C-r>", group = "Modify register", icon = { icon = "󰈔 ", color = "orange" } },
+      { "<leader>fl", group = "My Config", icon = { icon = " " } },
       -- ---LazyVim
       -- { "<leader><tab>", group = "tabs" },
       -- { "<leader>b", group = "buffer" },

@@ -2,6 +2,7 @@ return {
   "NeogitOrg/neogit",
   dependencies = {
     "nvim-lua/plenary.nvim",
+    -- "nvim-telescope/telescope.nvim", -- Faster than fzf
     { "sindrets/diffview.nvim", optional = true },
   },
   cmd = { "Neogit" },
@@ -37,6 +38,13 @@ return {
             if not require("util.tab").goto_buf_tab(cfile) then vim.cmd("tabnew | e " .. f) end
           end
         end, { buffer = ev.buf })
+      end,
+    })
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "NeogitStatus",
+      callback = function(ev)
+        vim.keymap.set("n", "{", "zk", { buffer = ev.buf })
+        vim.keymap.set("n", "}", "zj", { buffer = ev.buf })
       end,
     })
   end,

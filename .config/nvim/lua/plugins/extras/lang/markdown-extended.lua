@@ -68,8 +68,10 @@ return {
   {
     "luckasRanarison/nvim-devdocs",
     optional = true,
-    ensure_installed = {
-      "markdown",
+    opts = {
+      ensure_installed = {
+        "markdown",
+      },
     },
   },
   {
@@ -78,10 +80,10 @@ return {
     opts = {
       formatters_by_ft = {
         markdown = function(bufnr)
-          return { first(bufnr, "prettierd", "prettier", "dprint"), "markdownlint-cli2", "markdown-toc" }
+          return { first(bufnr, "prettier", "dprint"), "markdownlint-cli2", "markdown-toc" }
         end,
         ["markdown.mdx"] = function(bufnr)
-          return { first(bufnr, "prettierd", "prettier", "dprint"), "markdownlint-cli2", "markdown-toc" }
+          return { first(bufnr, "prettier", "dprint"), "markdownlint-cli2", "markdown-toc" }
         end,
       },
     },

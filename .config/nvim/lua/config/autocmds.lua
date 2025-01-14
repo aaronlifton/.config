@@ -233,7 +233,6 @@ ac({ "FileType" }, {
 ac({ "TabLeave" }, {
   callback = function()
     local tabpage = vim.api.nvim_get_current_tabpage()
-    -- require("util.win").remember_window_sizes()
     vim.g.last_tabpage = tabpage
   end,
 })
@@ -275,13 +274,8 @@ ac("User", {
     end, { desc = "Lazygit Log" })
   end,
 })
--- require("util.ui.lsp").advanced_lsp_progress_autocmd()
 
--- ac({ "TabEnter" }, {
---   callback = function()
---     require("util.win").remember_window_sizes()
---   end,
--- })
+-- require("util.ui.lsp").advanced_lsp_progress_autocmd()
 
 -- Already set by smart-splits.nvim (var:IS_NVIM)
 -- ac({ "VimEnter", "VimResume" }, {

@@ -1,6 +1,7 @@
 return {
   "lewis6991/gitsigns.nvim",
-  enable = function()
+  optional = true,
+  enabled = function()
     return not LazyVim.has_extra("editor.mini-diff")
   end,
   opts = {

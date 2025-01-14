@@ -12,20 +12,25 @@ function _G.get_lazyvim_base_dir()
   return "~/.local/share/nvim/lazy/LazyVim"
 end
 
-o.autoindent = true
+-- Fix for https://github.com/neovim/neovim/issues/31675
+vim.hl = vim.highlight
+
+-- o.autoindent = true -- LazyVim uses smartindent instead
 o.breakindent = true
 o.backspace = { "eol", "start", "indent" }
--- o.breakindent = true
 -- o.clipboard:append({ "unnamed", "unnamedplus" })
-o.fillchars = { eob = " " }
 o.spellfile = config_path .. "/spell/en.utf-8.add"
-o.spelllang = "en_us" -- "en"
+o.spelllang = "en_us" -- "en_us", "en"
 o.sps = "file:" .. config_path .. "/spell/sugg,best"
-o.startofline = true
+-- o.startofline = true
 o.swapfile = false
 o.textwidth = 80
-o.termguicolors = true
 o.shell = "fish"
+
+-- Disable annoying cmd line stuff
+-- o.showcmd = false
+-- o.cmdheight = 0
+
 -- o.formatoptions = "jcrqlnt" -- "jcroqlnt" -- tcqj
 -- o.colorcolumn = "80"
 
@@ -33,25 +38,28 @@ o.shell = "fish"
 -- g.gui_font_face = "FiraCode Nerd Font"
 -- g.gui_font_face = "MesloLGLDZ Nerd Font Mono"
 -- g.gui_font_face = "MonaLisa Nerd Font Mono"
+g.gui_font_face = "Sauce Code Pro Nerd Font Mono"
+g.gui_font_size = 18
+
 g.lazyvim_picker = "fzf"
 -- g.lazyvim_picker = "telescope" -- for testing plugins
 g.cmp_widths = { abbr = 80, menu = 30 }
-g.gui_font_face = "Sauce Code Pro Nerd Font Mono"
-g.gui_font_size = 18
-g.lsp_goto_source = "fzf" -- glance
--- g.lazyvim_ruby_lsp = "solargraph"
-g.lazyvim_cmp = "nvim-cmp" -- "blink.cmp"
-g.lazyvim_ruby_lsp = "ruby_lsp"
+g.lsp_goto_source = "fzf" -- "fzf", "glance"
+g.lualine_info_extras = true
+g.lazyvim_cmp = "nvim-cmp" -- "nvim-cmp", "blink.cmp"
+g.lazyvim_ruby_lsp = "ruby_lsp" -- "ruby_lsp", "solargraph"
 g.lazyvim_ruby_formatter = "rubocop"
 g.lazyvim_eslint_auto_format = true
+g.lazyvim_prettier_needs_config = false
 -- if the completion engine supports the AI source,
 -- use that instead of inline suggestions
 g.ai_cmp = true
 g.codeium_cmp_hide = false
-g.highlight_provider = "nvim-highlight-colors" -- "mini.hipatterns"
-g.markdown_previewer = "markdown-preview" -- "peek"
-g.animation_provider = "cinnamon" -- "mini.animate"
-g.icon_size = "normal" -- "small"
+g.highlight_provider = "nvim-highlight-colors" -- "nvim-highlight-colors", "mini.hipatterns"
+g.markdown_previewer = "markdown-preview" -- "markdown-preview", "peek"
+g.smooth_scroll_provider = "snacks" -- "cinnamon", mini.animate", "snacks"
+g.icon_size = "normal" -- "normal", "small"
+g.dprint_needs_config = true
 -------------------------------------------------
 
 -- vim.env.XDG_CACHE_HOME = vim.env.XDG_CACHE_HOME or vim.env.HOME .. "/.cache"

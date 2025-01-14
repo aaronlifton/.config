@@ -264,4 +264,29 @@ Here is the content from the file `%s`:
       return { messages = messages }
     end,
   },
+  xai = {
+    provider = require("model.providers.openai"),
+    runOptions = function()
+      return {
+        model = "grok-beta",
+        url = "https://api.x.ai/v1/", -- chat/completions
+        authorization = ("Bearer %s"):format(require("model.util").env("XAI_API_KEY")),
+      }
+    end,
+    params = {
+      model = "grok-beta",
+    },
+    create = input_if_selection,
+    system = "You're an assistant",
+    run = function(messages, config)
+      if config.system then
+        table.insert(messages, 1, {
+          role = "system",
+          content = config.system,
+        })
+      end
+
+      return { messages = messages }
+    end,
+  },
 })

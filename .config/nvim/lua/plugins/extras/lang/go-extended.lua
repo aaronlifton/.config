@@ -30,8 +30,10 @@ return {
   {
     "luckasRanarison/nvim-devdocs",
     optional = true,
-    ensure_installed = {
-      "go",
+    opts = {
+      ensure_installed = {
+        "go",
+      },
     },
   },
   {

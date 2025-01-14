@@ -2,38 +2,77 @@ local M = {}
 
 local ts_utils = require("nvim-treesitter.ts_utils")
 
-M.parent_node_type_at_cursor = function()
-  local node = ts_utils.get_node_at_cursor()
+function M.get_node_text(node, source, opts)
+  if not node then return "" end
 
-  if node == nil then
-    return false
+  return vim.treesitter.get_node_text(node, source or 0, opts or {})
+end
+
+function M.ancestor(node, depth)
+  depth = depth or 0
+  while node and depth > 0 do
+    node = node:parent()
+    depth = depth - 1
   end
 
-  -- local node_type = node:type()
-  local parent_type = node:parent():type()
+  return node
+end
 
-  local function_want_types = {
-    "function_call",
-    "call",
-  }
-  local function_declaration_want_types = {
-    "function_declaration",
-    "singleton_method",
-    "method",
-  }
-  local class_want_types = {
-    "class",
-    "module",
-  }
+function M.node_at_cursor()
+  require("nvim-treesitter.ts_utils").get_node_at_cursor()
+end
 
-  if vim.list_contains(function_want_types, parent_type) then
-    return "function_call"
-  elseif vim.list_contains(function_declaration_want_types, parent_type) then
-    return "function_declaration"
-  elseif vim.list_contains(class_want_types, parent_type) then
-    return "class"
-  else
-    return nil
+--- Usage:
+--- require("util.treesitter").get_parent_type(require("nvim-treesitter.ts_utils").get_node_at_cursor(), 1)
+function M.get_parent_type(node, counter)
+  local parent_node = M.ancestor(node, counter)
+
+  if parent_node ~= nil then return parent_node:type() end
+end
+
+function M.next_children_text(node, separator, types)
+  if not node then return "" end
+
+  return vim
+    .iter(node:iter_children())
+    :filter(function(child)
+      return vim.tbl_contains(types, child:type())
+    end)
+    :map(function(child)
+      return M.get_node_text(child)
+    end)
+    :join(separator)
+end
+
+--- Get the text of the previous sibling node
+--- Usage require("util.treesitter").prev_sibling_text(require("nvim-treesitter.ts_utils").get_node_at_cursor(), 2)
+---@param node TSNode The current node
+---@param types? string[] Optional list of node types to filter by
+---@return string The text of the previous sibling or empty string if none exists
+function M.prev_sibling_text(node, depth)
+  if not node then return "" end
+  depth = depth or 1
+
+  local current = node
+  while depth > 0 and current do
+    current = current:prev_sibling()
+    depth = depth - 1
+  end
+
+  return current and M.get_node_text(current) or ""
+end
+
+--- Usage require("util.treesitter").ancestor_text(require("nvim-treesitter.ts_utils").get_node_at_cursor(), 1)
+function M.ancestor_text(node, depth)
+  local parent = M.ancestor(node, depth)
+  if parent then return M.get_node_text(parent) end
+end
+
+function M.ancestors_by_type(node, types)
+  while node do
+    node = node:parent()
+
+    if node and vim.tbl_contains(types, node:type()) then return node end
   end
 end
 

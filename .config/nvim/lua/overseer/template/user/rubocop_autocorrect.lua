@@ -7,16 +7,20 @@ return {
       cop = input
     end)
 
+    local cmd = {
+      "bundle",
+      "exec",
+      "rubocop",
+      "-A",
+    }
+    if cop then
+      table.insert(cmd, "--only")
+      table.insert(cmd, cop)
+    end
+    table.insert(cmd, rel_path)
+
     return {
-      cmd = {
-        "bundle",
-        "exec",
-        "rubocop",
-        "-A",
-        "--only",
-        cop,
-        rel_path,
-      },
+      cmd = cmd,
       components = { "on_complete_notify", "on_complete_dispose", "default" },
     }
   end,

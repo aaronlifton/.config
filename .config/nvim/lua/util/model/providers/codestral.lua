@@ -1,13 +1,12 @@
 local util = require("model.util")
 local sse = require("model.util.sse")
-local echo = require("util.debug").echo
 
 local input_as_message = require("model.providers.openai").prompt.input_as_message
 
 ---@type Provider
 local M = {
   request_completion = function(handler, params)
-    echo("Params", params)
+    vim.api.nvim_echo({ { "Params", "Title" }, { vim.inspect(params), "String" } }, true, {})
     -- Default endpoint is chat
     local endpoint = "chat"
     if params.endpoint == "fim" then

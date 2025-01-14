@@ -83,6 +83,19 @@ return {
     },
   },
   {
+    "neovim/nvim-lspconfig",
+    optional = true,
+    ---@class PluginLspOpts
+    opts = {
+      servers = {
+        rubocop = {
+          -- Disable since rubocop diagnostics come from either ruby-lsp or nvim-lint
+          enabled = false,
+        },
+      },
+    },
+  },
+  {
     "tpope/vim-rails",
     ft = "ruby",
     config = function()
@@ -183,7 +196,7 @@ return {
           -- NOTE: https://shopify.github.io/ruby-lsp/editors.html#all-initialization-options
           init_options = {
             enabledFeatures = enabledFeatures,
-            experimentalFeaturesEnabled = false,
+            experimentalFeaturesEnabled = true,
             -- featuresConfiguration = {
             --   inlayHints = {
             --     implicitHashValue = true,

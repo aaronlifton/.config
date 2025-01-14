@@ -38,8 +38,10 @@ return {
   {
     "luckasRanarison/nvim-devdocs",
     optional = true,
-    ensure_installed = {
-      "eslint",
+    opts = {
+      ensure_installed = {
+        "eslint",
+      },
     },
   },
   {

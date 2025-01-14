@@ -31,6 +31,7 @@ return {
           "user.rdbg",
           "user.rubocop_autocorrect",
           "user.jest_debug",
+          "user.jest_debug_rtl",
         },
       }))
     end,

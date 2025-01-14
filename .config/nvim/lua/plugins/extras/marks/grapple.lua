@@ -1,17 +1,20 @@
 local prefix = "<leader>m"
 local keys = {}
 
--- stylua: ignore start
 for i = 1, 9 do
   table.insert(keys, { prefix .. i, "<cmd>Grapple select index=" .. i .. "<CR>", desc = "File " .. i })
 end
 
--- local chars = { "q", "w", "e", "r" }
--- for idx, char in ipairs(chars) do 
---   table.insert(keys, { prefix .. char, "<cmd>Grapple select index=" .. idx .. "<CR>", desc = "File " .. string.upper(char) })
--- end
-table.insert(keys, { prefix .. "a", "<cmd>Grapple toggle<CR>", desc = "Toggle Mark" })
+table.insert(keys, {
+  prefix .. "a",
+  function()
+    local cursor = vim.api.nvim_win_get_cursor(0)
+    require("grapple").toggle({ cursor = cursor })
+  end,
+  desc = "Toggle Mark",
+})
 
+-- stylua: ignore start
 table.insert(keys, { "<leader>M", "<cmd>Grapple toggle_tags<CR>", desc = "Marks" })
 -- table.insert(keys, { prefix .. "t", "<cmd>Telescope grapple tags<CR>", desc = "Marks (Telescope)" })
 table.insert(keys, { prefix .. "x", "<cmd>Grapple reset<CR>", desc = "Clear all Marks" })
@@ -26,7 +29,7 @@ table.insert(keys, {
       require("grapple").prune({ limit = choice })
     end)
   end,
-  desc = "Prune",
+  desc = "Prune (select)",
 })
 
 -- Harpoon style
@@ -40,6 +43,12 @@ table.insert(keys, { "<C-S-H>", "<cmd>Grapple cycle backward<CR>", desc = "Prev 
 -- table.insert(keys, { "[k", "<cmd>Grapple cycle backward<CR>", desc = "Prev Mark" })
 -- table.insert(keys, { "<c-s-n>", "<cmd>Grapple cycle_tags next<cr>", desc = "Next Mark" })
 -- table.insert(keys, { "<c-s-p>", "<cmd>Grapple cycle_tags prev<cr>", desc = "Prev Mark" })
+
+-- local chars = { "q", "w", "e", "r" }
+-- for idx, char in ipairs(chars) do
+--   table.insert(keys, { prefix .. char, "<cmd>Grapple select index=" .. idx .. "<CR>", desc = "File " .. string.upper(char) })
+-- end
+-- table.insert(keys, { prefix .. "a", "<cmd>Grapple toggle<CR>", desc = "Toggle Mark" })
 -- stylua: ignore end
 
 return {
@@ -69,7 +78,6 @@ return {
             if found == 1 then return "help", data end
             _helpfile, found = current_file:gsub(cellar, "")
             if found == 1 then return "help", cellar end
-            -- return id, path, err
           end,
         },
       },
@@ -83,16 +91,6 @@ return {
       end
     end,
   },
-  -- {
-  --   "goolord/alpha-nvim",
-  --   optional = true,
-  --   opts = function(_, dashboard)
-  --     local button = dashboard.button("m", "󰛢 " .. " Marks", "<cmd>Grapple toggle_tags<CR>")
-  --     button.opts.hl = "AlphaButtons"
-  --     button.opts.hl_shortcut = "AlphaShortcut"
-  --     table.insert(dashboard.section.buttons.val, 5, button)
-  --   end,
-  -- },
   {
     "nvimdev/dashboard-nvim",
     optional = true,

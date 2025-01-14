@@ -3,6 +3,85 @@
 local M = {
   last_selection = nil,
 }
+
+---@class SelectionResult
+---@field content string Selected content
+---@field range SelectionRange Selection range
+local SelectionResult = {}
+SelectionResult.__index = SelectionResult
+
+-- Create a selection content and range
+---@param content string Selected content
+---@param range SelectionRange Selection range
+function SelectionResult:new(content, range)
+  local instance = setmetatable({}, SelectionResult)
+  instance.content = content
+  instance.range = range
+  return instance
+end
+
+---@class SelectionRange
+---@field start RangeSelection start point
+---@field finish RangeSelection Selection end point
+local SelectionRange = {}
+SelectionRange.__index = SelectionRange
+
+---@class RangeSelection: table<string, integer>
+---@field lnum number
+---@field col number
+
+---Create a selection range
+---@param start RangeSelection Selection start point
+---@param finish RangeSelection Selection end point
+function SelectionRange:new(start, finish)
+  local instance = setmetatable({}, SelectionRange)
+  instance.start = start
+  instance.finish = finish
+  return instance
+end
+
+local function normalize_indentation(lines)
+  local min_indent = nil
+  local use_tabs = false
+  -- measure minimal common indentation for lines with content
+  for i, line in ipairs(lines) do
+    lines[i] = line
+    -- skip whitespace only lines
+    if not line:match("^%s*$") then
+      local indent = line:match("^%s*")
+      -- contains tabs
+      if indent:match("\t") then use_tabs = true end
+      if min_indent == nil or #indent < min_indent then min_indent = #indent end
+    end
+  end
+  if min_indent == nil then min_indent = 0 end
+  local prefix = string.rep(use_tabs and "\t" or " ", min_indent)
+
+  for i, line in ipairs(lines) do
+    lines[i] = line:sub(min_indent + 1)
+  end
+  return lines
+end
+
+--- Returns the current selection surrounded by a markdown code fence
+M.markdown_code_fence = function()
+  local selection = M.get_selection()
+  if not selection then return end
+
+  local buf = vim.api.nvim_get_current_buf()
+  local filetype = vim.bo[buf].filetype
+  local filename = vim.fn.bufname(buf)
+
+  local position = string.format("(%s-%s)", selection.start_line, selection.end_line)
+  return string.format(
+    "File: `%s` %s\n```%s\n%s\n```\n\n",
+    vim.fn.fnamemodify(filename, ":~:."),
+    position,
+    filetype,
+    selection.selection
+  )
+end
+
 local function get_cursor()
   local cursor = vim.api.nvim_win_get_cursor(0)
   return { row = cursor[1], col = cursor[2] }
@@ -19,72 +98,150 @@ local function get_selection_lines()
   end
 end
 
-M.get_selection2 = function()
-  local vpos = vim.fn.getpos("v")
-  local cursor = vim.api.nvim_win_get_cursor(0)
-  local start = { row = cursor[1], col = cursor[2] }
-  local stop = { row = vpos[2] + 1, col = vpos[3] }
-  -- vim.api.nvim_echo({ { vim.inspect({ start = start, stop = stop }), "Normal" } }, true, {})
-
-  return {
-    start = start,
-    stop = stop,
+--- Get the current selection text and range, with common indentation removed
+--- Indentation code from parrot.nvim/lua/parrot/chat_handler.lua:1156
+--- @param opts? { normalize_indentation: boolean }
+--- @return { selection: string, start_line: number, end_line: number }|nil
+-- TODO: compare with model.nvim/lua/model/util/init.lua:340
+function M.get_selection(opts)
+  local defaults = {
+    normalize_indentation = true,
   }
+  opts = vim.tbl_extend("force", defaults, opts or {})
+
+  local buf = vim.api.nvim_get_current_buf()
+  local selection_lines = get_selection_lines()
+  local start_line = selection_lines.start_line.row
+  local end_line = selection_lines.end_line.row
+  local lines = vim.api.nvim_buf_get_lines(buf, start_line - 1, end_line, false)
+
+  lines = normalize_indentation(lines)
+
+  local selection = table.concat(lines, "\n")
+
+  if selection == "" then return nil end
+  return { selection = selection, start_line = start_line, end_line = end_line }
 end
 
---- 0-based index for row and col
-M.get_selection3 = function()
-  local vpos = vim.fn.getpos("v")
-  local cursor = vim.api.nvim_win_get_cursor(0)
-  local start = { row = cursor[1] - 1, col = cursor[2] }
-  local stop = { row = vpos[2] - 1, col = vpos[3] }
-  -- vim.api.nvim_echo({ { vim.inspect({ start = start, stop = stop }), "Normal" } }, true, {})
+-- Also handles columns from visual mode selections, not just full lines
+function M.get_selection2()
+  local buf = vim.api.nvim_get_current_buf()
+  local selection_lines = get_selection_lines()
+  local start_pos = selection_lines.start_line
+  local end_pos = selection_lines.end_line
 
-  return {
-    start = start,
-    stop = stop,
-  }
-end
+  -- Get all the lines in the selection
+  local lines = vim.api.nvim_buf_get_lines(buf, start_pos.row - 1, end_pos.row, false)
 
-M.get_selection4 = function()
-  local start = vim.fn.getpos("'v")
-  local stop = vim.fn.getpos("'.")
-  local mode = vim.fn.visualmode()
-  vim.api.nvim_echo({
-    { "start stop\n", "Title" },
-    { vim.inspect({ start = start, stop = stop }), "Normal" },
-  }, true, {})
-
-  -- For linewise selection ('V'), we want to include the entire lines
-
-  if mode == "V" then
-    -- local start = vim.fn.getpos("'<")
-    -- local stop = vim.fn.getpos("'>")
-    vim.api.nvim_echo({ { "Here: V", "Normal" } }, true, {})
-    return {
-      start = {
-        row = stop[2] - start[2],
-        col = stop[3] - start[3],
-      },
-      stop = {
-        -- row = stop[2] - 1,
-        row = stop[2],
-        col = vim.v.maxcol,
-      },
-    }
+  -- If selection is within a single line
+  if start_pos.row == end_pos.row then
+    lines[1] = lines[1]:sub(start_pos.col + 1, end_pos.col + 1)
+  else
+    -- First line: from start column to end
+    lines[1] = lines[1]:sub(start_pos.col + 1)
+    -- Last line: from start to end column
+    lines[#lines] = lines[#lines]:sub(1, end_pos.col + 1)
   end
 
-  -- For characterwise selection ('v')
+  local selection = table.concat(lines, "\n")
+  if selection == "" then return nil end
+
   return {
-    start = {
-      row = start[2] - 1,
-      col = start[3] - 1,
-    },
-    stop = {
-      row = stop[2] - 1,
-      col = stop[3], -- stop col can be vim.v.maxcol which means entire line
-    },
+    selection = selection,
+    start_line = start_pos.row,
+    end_line = end_pos.row,
+    start_pos = start_pos,
+    end_pos = end_pos,
   }
+end
+
+function M.in_visual_mode()
+  local current_mode = vim.fn.mode()
+  return current_mode == "v" or current_mode == "V" or current_mode == ""
+end
+
+---@return SelectionRange|nil
+function M.get_selection_range()
+  if not M.in_visual_mode() then return nil end
+
+  -- Get the start and end positions of Visual mode
+  local start_pos = vim.fn.getpos("v")
+  local end_pos = vim.fn.getpos(".")
+
+  -- Get the start and end line and column numbers
+  local start_line = start_pos[2]
+  local start_col = start_pos[3]
+  local end_line = end_pos[2]
+  local end_col = end_pos[3]
+  -- If the start point is after the end point, swap them
+  if start_line > end_line or (start_line == end_line and start_col > end_col) then
+    start_line, end_line = end_line, start_line
+    start_col, end_col = end_col, start_col
+  end
+  return SelectionRange:new({ lnum = start_line, col = start_col }, { lnum = end_line, col = end_col })
+end
+
+-- From avante.nvim
+function M.get_selection3()
+  if not M.in_visual_mode() then return nil end
+
+  -- Get the start and end positions of Visual mode
+  local start_pos = vim.fn.getpos("v")
+  local end_pos = vim.fn.getpos(".")
+
+  -- Get the start and end line and column numbers
+  local start_line = start_pos[2]
+  local start_col = start_pos[3]
+  local end_line = end_pos[2]
+  local end_col = end_pos[3]
+  -- If the start point is after the end point, swap them
+  if start_line > end_line or (start_line == end_line and start_col > end_col) then
+    start_line, end_line = end_line, start_line
+    start_col, end_col = end_col, start_col
+  end
+  local content = "" -- luacheck: ignore
+  local range = SelectionRange:new({ lnum = start_line, col = start_col }, { lnum = end_line, col = end_col })
+  -- Check if it's a single-line selection
+  if start_line == end_line then
+    -- Get partial content of a single line
+    local line = vim.fn.getline(start_line)
+    -- content = string.sub(line, start_col, end_col)
+    content = line
+  else
+    -- Multi-line selection: Get all lines in the selection
+    local lines = vim.fn.getline(start_line, end_line)
+    -- Extract partial content of the first line
+    -- lines[1] = string.sub(lines[1], start_col)
+    -- Extract partial content of the last line
+    -- lines[#lines] = string.sub(lines[#lines], 1, end_col)
+    -- Concatenate all lines in the selection into a string
+    if type(lines) == "table" then
+      content = table.concat(lines, "\n")
+    else
+      content = lines
+    end
+  end
+  if not content then return nil end
+  -- Return the selected content and range
+  return SelectionResult:new(content, range)
+end
+
+--- from grug-far.nvim
+--- get text lines in visual selection
+---@return string[]
+function M.getVisualSelectionLines()
+  local start_row, start_col = unpack(vim.api.nvim_buf_get_mark(0, "<"))
+  local end_row, end_col = unpack(vim.api.nvim_buf_get_mark(0, ">"))
+  local lines = vim.fn.getline(start_row, end_row) --[[ @as string[] ]]
+  if #lines > 0 and start_col and end_col and end_col < string.len(lines[#lines]) then
+    if start_row == end_row then
+      lines[1] = lines[1]:sub(start_col + 1, end_col + 1)
+    else
+      lines[1] = lines[1]:sub(start_col + 1, -1)
+      lines[#lines] = lines[#lines]:sub(1, end_col + 1)
+    end
+  end
+  return lines
 end
 
 M.save_selection = function()
@@ -130,87 +287,6 @@ M.restore_selection = function(bufnr)
     vim.fn.setpos("'<", { 0, sel.start_row, sel.start_col, 0 })
     vim.fn.setpos("'>", { 0, sel.finish_row, sel.finish_col, 0 })
   end
-end
-
--- M.restore_selection_0_based = function(bufnr)
---   local sel = M.last_selection
---   vim.api.nvim_echo({
---     { "M.restore_selection_0_based", "Special" },
---     { vim.inspect(sel), "Normal" },
---   }, true, {})
---   if sel then
---     vim.fn.setpos("'<", { 0, sel.start_row, sel.start_col, 0 })
---     vim.fn.setpos("'>", { 0, sel.finish_row, sel.finish_col, 0 })
---   end
--- end
-
-local function normalize_indentation(lines)
-  local min_indent = nil
-  local use_tabs = false
-  -- measure minimal common indentation for lines with content
-  for i, line in ipairs(lines) do
-    lines[i] = line
-    -- skip whitespace only lines
-    if not line:match("^%s*$") then
-      local indent = line:match("^%s*")
-      -- contains tabs
-      if indent:match("\t") then use_tabs = true end
-      if min_indent == nil or #indent < min_indent then min_indent = #indent end
-    end
-  end
-  if min_indent == nil then min_indent = 0 end
-  local prefix = string.rep(use_tabs and "\t" or " ", min_indent)
-
-  for i, line in ipairs(lines) do
-    lines[i] = line:sub(min_indent + 1)
-  end
-  return lines
-end
-
---- Get the current selection text and range, with common indentation removed
---- Indentation code from parrot.nvim/lua/parrot/chat_handler.lua:1156
--- TODO: compare with model.nvim/lua/model/util/init.lua:340
---- @param opts { normalize_indentation: boolean }
---- @return { selection: string, start_line: number, end_line: number }|nil
-M.get_selection = function(opts)
-  local defaults = {
-    normalize_indentation = true,
-  }
-  opts = vim.tbl_extend("force", defaults, opts or {})
-  local buf = vim.api.nvim_get_current_buf()
-  -- local start_pos = vim.fn.getpos("'<")
-  -- local end_pos = vim.fn.getpos("'>")
-  -- local start_line = start_pos[2]
-  -- local end_line = end_pos[2]
-  local selection_lines = get_selection_lines()
-  local start_line = selection_lines.start_line.row
-  local end_line = selection_lines.end_line.row
-  local lines = vim.api.nvim_buf_get_lines(buf, start_line - 1, end_line, false)
-
-  if normalize_indentation then lines = normalize_indentation(lines) end
-
-  local selection = table.concat(lines, "\n")
-
-  if selection == "" then return nil end
-  return { selection = selection, start_line = start_line, end_line = end_line }
-end
-
-M.markdown_code_fence = function()
-  local selection = M.get_selection()
-  if not selection then return end
-
-  local buf = vim.api.nvim_get_current_buf()
-  local filetype = vim.bo[buf].filetype
-  local filename = vim.fn.bufname(buf)
-
-  local position = string.format("(%s-%s)", selection.start_line, selection.end_line)
-  return string.format(
-    "File: `%s` %s\n```%s\n%s\n```\n\n",
-    vim.fn.fnamemodify(filename, ":~:."),
-    position,
-    filetype,
-    selection.selection
-  )
 end
 
 return M

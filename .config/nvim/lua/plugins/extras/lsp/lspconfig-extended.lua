@@ -10,6 +10,7 @@ return {
       keys[#keys + 1] = { prefix .. "r", "<cmd>LspRestart<cr>", desc = "Restart Lsp" }
       keys[#keys + 1] = { prefix .. "s", "<cmd>LspStart<cr>", desc = "Start Lsp" }
       keys[#keys + 1] = { prefix .. "S", "<cmd>LspStop<cr>", desc = "Stop Lsp" }
+      keys[#keys + 1] = { prefix .. "K", "<cmd>LspStop ++force<cr>", desc = "Stop Lsp (force)" }
 
       -- stylua: ignore start
       keys[#keys + 1] = { prefix .. "R", function() vim.lsp.buf.remove_workspace_folder() end, desc = "Remove workspace" }

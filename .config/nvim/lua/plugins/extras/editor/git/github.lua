@@ -1,19 +1,5 @@
 local prefix = "<leader>G"
 
-local function copy_github_url(opts)
-  local openingh = require("openingh")
-  -- local root = LazyVim.root.realpath()
-  local branch = #opts.args > 0 and opts.args or vim.fn.system({ "git", "rev-parse", "--abbrev-ref", "HEAD" })
-  local url
-  if opts.range == 0 then -- Nothing was selected
-    url = openingh.get_file_url(openingh.priority.BRANCH, branch, opts.line1)
-  else -- Current line or block was selected
-    url = openingh.get_file_url(openingh.priority.BRANCH, branch, opts.line1, opts.line2)
-  end
-
-  vim.fn.setreg("+", url)
-end
-
 return {
   { import = "lazyvim.plugins.extras.util.octo" },
   -- { import = "plugins.extras.lang.git-extended" },
@@ -22,29 +8,6 @@ return {
     opts = {
       ensure_installed = { "gh" },
     },
-  },
-  {
-    "almo7aya/openingh.nvim",
-    cmd = { "OpenInGHRepo", "OpenInGHFile", "OpenInGHFileLines" },
-    keys = {
-      { prefix .. "ro", "<cmd>OpenInGHRepo<CR>", desc = "Open git repo in web", mode = { "n" } },
-      { prefix .. "rf", "<cmd>OpenInGHFile<CR>", desc = "Open git file in web", mode = { "n" } },
-      { prefix .. "rc", "<cmd>OpenInGHFileLines<CR>", desc = "Open current line in web", mode = { "n", "x", "v" } },
-      -- stylua: ignore start
-      { prefix .. "ry", "<cmd>OpenInGHCopyFileLines<CR>", desc = "Copy github current line", mode = { "n", "x", "v" } },
-      { prefix .. "rY", "<cmd>OpenInGHCopyFileLines main<CR>", desc = "Copy github current line (main)", mode = { "n", "x", "v" } },
-      { prefix .. "rp", function()
-        vim.ui.select(require("util.git").mru_branches(), { prompt = "Branch: " }, copy_github_url)
-      end, desc = "Copy github current line (master)", mode = "n" },
-      -- stylua: ignore end
-    },
-    init = function()
-      vim.api.nvim_create_user_command(
-        "OpenInGHCopyFileLines",
-        copy_github_url,
-        { range = true, bang = true, nargs = "*" }
-      )
-    end,
   },
   -- {
   --   "Rawnly/gist.nvim",

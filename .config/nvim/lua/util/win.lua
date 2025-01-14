@@ -1,51 +1,6 @@
 ---@class win
 local M = {}
 
-local window_sizes = {}
-function M.remember_window_sizes()
-  local current_tab = vim.api.nvim_get_current_tabpage()
-  local windows = vim.api.nvim_tabpage_list_wins(current_tab)
-
-  -- Return early if there's only 1 window
-  if #windows <= 1 then return end
-
-  local current_windows = {}
-
-  for _, win in ipairs(windows) do
-    local buf_type = vim.api.nvim_get_option_value("buftype", { buf = vim.api.nvim_win_get_buf(win) })
-    if buf_type ~= "nofile" then
-      local width = vim.api.nvim_win_get_width(win)
-      local height = vim.api.nvim_win_get_height(win)
-      current_windows[win] = { width = width, height = height }
-    end
-  end
-
-  -- Initialize tab-specific storage if it doesn't exist
-  window_sizes[current_tab] = window_sizes[current_tab] or {}
-
-  if vim.tbl_isempty(window_sizes[current_tab]) then
-    -- Store sizes on the first call
-    for win, size in pairs(current_windows) do
-      window_sizes[current_tab][win] = size
-    end
-  else
-    -- Resize windows on the second call
-    for win, size in pairs(window_sizes[current_tab]) do
-      if vim.api.nvim_win_is_valid(win) then
-        vim.api.nvim_win_set_width(win, size.width)
-        vim.api.nvim_win_set_height(win, size.height)
-      end
-    end
-    -- Clear stored sizes for current tab after restoring
-    window_sizes[current_tab] = {}
-  end
-end
-
--- Add function to clear all stored window sizes
-function M.clear_window_sizes()
-  window_sizes = {}
-end
-
 function M.switch_to_highest_window()
   local windows = vim.api.nvim_list_wins()
   local highest_win = windows[1]
@@ -58,11 +13,13 @@ function M.switch_to_highest_window()
     end
   end
 
-  vim.api.nvim_echo({
-    { "Highest window\n", "Title" },
-    { "Window: " .. highest_win .. "\n", "Normal" },
-    { "Zindex: " .. highest_zindex, "Normal" },
-  }, false, {})
+  vim.schedule(function()
+    vim.api.nvim_echo({
+      { "Highest window\n", "Title" },
+      { "Window: " .. highest_win .. "\n", "Normal" },
+      { "Zindex: " .. highest_zindex, "Normal" },
+    }, false, {})
+  end)
   vim.api.nvim_set_current_win(highest_win)
 end
 
@@ -80,4 +37,42 @@ function M.square_border(hl)
   }
 end
 
+local skip_buftypes = { "nofile", "quickfix", "terminal", "help" }
+
+--- Returns only editor windows, excluding edgy windows and non-editor buftypes
+---@return number[]
+function M.editor_windows()
+  local windows = vim.api.nvim_tabpage_list_wins(0)
+  local edgy_wins = require("edgy.editor").list_wins().edgy
+  return vim
+    .iter(windows)
+    :filter(function(win)
+      local buf = vim.api.nvim_win_get_buf(win)
+      local buf_type = vim.api.nvim_get_option_value("buftype", { buf = buf })
+      return not vim.tbl_contains(skip_buftypes, buf_type)
+        and vim.bo[buf].buflisted
+        and not vim.tbl_contains(edgy_wins, win)
+    end)
+    :totable()
+end
+
+--- Returns only editor bufs, excluding edgy windows and non-editor buftypes
+---@return number[]
+function M.editor_bufs()
+  local windows = vim.api.nvim_tabpage_list_wins(0)
+  local edgy_wins = require("edgy.editor").list_wins().edgy
+  return vim
+    .iter(windows)
+    :filter(function(win)
+      return not vim.tbl_contains(edgy_wins, win)
+    end)
+    :map(function(win)
+      return vim.api.nvim_win_get_buf(win)
+    end)
+    :filter(function(buf)
+      local buf_type = vim.api.nvim_get_option_value("buftype", { buf = buf })
+      return not vim.tbl_contains(skip_buftypes, buf_type) and vim.bo[buf].buflisted
+    end)
+    :totable()
+end
 return M

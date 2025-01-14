@@ -8,10 +8,18 @@ return {
         diagnostics = true,
       },
     },
-    scroll = { enabled = false },
+    scroll = {
+      enabled = vim.g.smooth_scroll_provider == "snacks",
+      animate = {
+        duration = { step = 10, total = 150 },
+      },
+    },
     scope = { enabled = true },
     indent = { enabled = true },
     words = { enabled = true },
+    notifier = {
+      style = "fancy",
+    },
     ---@class snacks.gitbrowse.Config
     gitbrowse = {
       remote_patterns = {

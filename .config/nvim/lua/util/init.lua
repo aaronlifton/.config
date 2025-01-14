@@ -4,7 +4,7 @@
 ---@field leap util.leap
 ---@field lsp util.lsp
 ---@field debug util.debug
----@field editor util.editor
+---@field writing util.writing
 ---@field table util.table
 ---@field win util.win
 ---@field ui util.ui

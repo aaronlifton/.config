@@ -1,5 +1,10 @@
 return {
-  "nvim-treesitter/nvim-treesitter",
-  optional = true,
-  dependencies = { "chrisgrieser/nvim-puppeteer", lazy = true },
+  "chrisgrieser/nvim-puppeteer",
+  lazy = true,
+  dependencies = {
+    { "nvim-treesitter/nvim-treesitter", optional = true },
+  },
+  init = function()
+    vim.g.puppeteer_disable_filetypes = { "lua" }
+  end,
 }

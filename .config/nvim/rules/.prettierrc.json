@@ -1,16 +1,7 @@
 {
-  "trailingComma": "es5",
-  "tabWidth": 2,
-  "useTabs": false,
+  "bracketSpacing": false,
+  "proseWrap": "always",
   "printWidth": 120,
-  "semi": false,
-  "singleQuote": false,
-  "overides": [
-    {
-      "files": "*.jsonc",
-      "options": {
-        "trailingComma": false
-      }
-    }
-  ]
+  "singleQuote": true,
+  "trailingComma": "all"
 }

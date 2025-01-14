@@ -43,10 +43,13 @@ return {
       }),
     }
 
-    table.insert(opts.sections.lualine_x, 2, lsp)
-    table.insert(opts.sections.lualine_x, 2, formatter)
-    table.insert(opts.sections.lualine_x, 2, linter)
-    -- table.insert(opts.sections.lualine_x, 2, starship)
+    if vim.g.lualine_info_extras == true then
+      table.insert(opts.sections.lualine_x, 2, lsp)
+      table.insert(opts.sections.lualine_x, 2, formatter)
+      table.insert(opts.sections.lualine_x, 2, linter)
+      table.insert(opts.sections.lualine_x, 2, require("util.lualine.codecompanion"))
+      -- table.insert(opts.sections.lualine_x, 2, starship)
+    end
     opts.sections.lualine_y = { "progress" }
     opts.sections.lualine_z = {
       { "location", separator = "" },
@@ -64,7 +67,6 @@ return {
       "nvim-dap-ui",
       "overseer",
       "quickfix",
-      "toggleterm",
       "trouble",
       "neo-tree",
       "fzf",

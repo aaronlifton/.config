@@ -16,7 +16,7 @@ return {
   --   { import = "astrocommunity.git.nvim-tinygit" }, -- optional dependency
   -- },
   keys = {
-    { "<Leader>gN", "<Cmd>Fugit2<CR>", desc = "Fugit2" },
+    { "<Leader>g<C-n>", "<Cmd>Fugit2<CR>", desc = "Fugit2" },
   },
   dependencies = {
     "MunifTanjim/nui.nvim",

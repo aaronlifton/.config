@@ -1,20 +1,26 @@
----@class util.git
+---@class util.fzf.recently_commited
 local M = {}
 
 ---@alias Entry { date: string, hash: string, file: string }
 
 ---@param n number number of entries
 ---@return string
-M.recently_commited_cmd = function(n)
+local function recently_commited_cmd(n)
   local git_dir = require("lazyvim.util").root.git()
-  assert(git_dir, "Not a git repo")
+
+  -- Check if it's a git repo using systemlist to capture both output and exit status
+  vim.fn.systemlist(string.format("git -C %s rev-parse --is-inside-work-tree", git_dir))
+  local is_git_repo = vim.v.shell_error == 0
+
+  if not is_git_repo then error("Not a git repository") end
+
   return string.format('git -C %s log -n %d --pretty=format:"%%ad %%h" --date=short --name-only', git_dir, n)
 end
 
 ---@return Entry[]
 ---@param n number number of entries
-M.commited_files_with_dates = function(n)
-  local cmd = M.recently_commited_cmd(n)
+local function commited_files_with_dates(n)
+  local cmd = recently_commited_cmd(n)
   local git_output = vim.fn.system(cmd)
   ---@type Entry[]
   local files = {}
@@ -34,7 +40,7 @@ end
 
 ---@param entry Entry
 ---@return string
-M.format_entry = function(entry)
+local function format_entry(entry)
   local utils = require("fzf-lua").utils
   return string.format(
     " %-15s %15s %s",
@@ -45,7 +51,7 @@ M.format_entry = function(entry)
   )
 end
 
-function M.previewer()
+local function previewer_ctor()
   local builtin = require("fzf-lua.previewer.builtin")
   local previewer = builtin.buffer_or_file:extend()
 
@@ -66,14 +72,14 @@ function M.previewer()
 end
 
 ---@param n number number of files to show
-M.open_recently_commited = function(n)
+M.open_fzf = function(n)
   local fzf = require("fzf-lua")
-  local output = M.commited_files_with_dates(n)
+  local output = commited_files_with_dates(n)
   local entries = {}
   for _, entry in ipairs(output) do
-    table.insert(entries, M.format_entry(entry))
+    table.insert(entries, format_entry(entry))
   end
-  local cmd = M.recently_commited_cmd(n)
+  local cmd = recently_commited_cmd(n)
   local opts = {
     cmd = cmd,
     cwd = require("fzf-lua").path.git_root(),
@@ -81,7 +87,7 @@ M.open_recently_commited = function(n)
       title = " Recently commited files ",
       title_pos = "left",
     },
-    previewer = M.previewer(),
+    previewer = { _ctor = previewer_ctor },
     fzf_opts = {
       ["--no-multi"] = "",
       -- ["--with-nth"] = "2..",
@@ -95,13 +101,6 @@ M.open_recently_commited = function(n)
   }
   opts = fzf.config.normalize_opts(opts, "git.files")
   fzf.core.fzf_exec(entries, opts)
-end
-
-M.mru_branches = function(count)
-  count = count or 5
-  return vim.fn.systemlist(
-    'git for-each-ref --sort=-committerdate refs/heads/ --format="%(refname:short)" --count=' .. count
-  )
 end
 
 return M

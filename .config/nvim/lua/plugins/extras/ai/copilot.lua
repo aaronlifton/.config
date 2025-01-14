@@ -210,7 +210,7 @@ return {
     opts = {
       spec = {
         mode = { "n", "v" },
-        { copilot_chat_prefix, group = "CopilotChat", icon = { icon = " ", color = "orange" } },
+        { copilot_chat_prefix, group = "CopilotChat", icon = { icon = " ", color = "orange" }, mode = { "n", "v" } },
       },
     },
   },

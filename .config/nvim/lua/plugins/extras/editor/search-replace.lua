@@ -42,7 +42,7 @@ return {
         function()
           local grug = require("grug-far")
           local ext = vim.bo.buftype == "" and vim.fn.expand("%:e")
-          grug.grug_far({
+          grug.open({
             transient = true,
             prefills = {
               filesFilter = ext and ext ~= "" and "*." .. ext or nil,
@@ -57,7 +57,7 @@ return {
         function()
           local grug = require("grug-far")
           local current_file_relpath = vim.fn.fnamemodify(vim.fn.expand("%"), ":~:.")
-          grug.grug_far({
+          grug.open({
             -- extraRgArgs = { "--", current_file_relpath },
             transient = true,
             prefills = {
@@ -67,6 +67,23 @@ return {
         end,
         mode = { "n", "v" },
         desc = "Current File",
+      },
+      {
+        "<leader>src",
+        function()
+          local grug = require("grug-far")
+          local cwd = vim.fn.fnamemodify(vim.fn.expand("%"), ":h")
+          local ext = vim.bo.buftype == "" and vim.fn.expand("%:e")
+          grug.open({
+            transient = true,
+            prefills = {
+              paths = cwd,
+              filesFilter = ext and ext ~= "" and "*." .. ext or nil,
+            },
+          })
+        end,
+        mode = { "n", "v" },
+        desc = "Cwd",
       },
     },
   },

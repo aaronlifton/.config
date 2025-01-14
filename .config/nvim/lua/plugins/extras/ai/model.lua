@@ -1,4 +1,5 @@
 local gen_prefix = "<leader>ag"
+local provider_prefix = "<leader>ap"
 -- local mod_prefix = "<leader>am"
 --
 return {
@@ -55,66 +56,38 @@ return {
         desc = "Toggle Chat (Claude Sonnet (Cache))",
       },
       {
-        "<M-9>",
+        provider_prefix .. "c",
         function()
           vim.cmd(":vsplit | Mchat claude")
         end,
-        desc = "Toggle Chat (Claude Sonnet)",
+        desc = "Claude Sonnet",
       },
       {
-        "<M-8>",
+        provider_prefix .. "g",
         function()
           vim.cmd(":vsplit | Mchat gemini:flash")
         end,
-        desc = "Toggle Chat (Gemini Flash)",
+        desc = "Gemini Flash",
       },
-      {
-        "<leader>ae",
-        function()
-          -- local prompt = vim.fn.input("Prompt: ")
-          local nui = require("util.nui.input")
-          nui.cursor_input("Prompt", function(value)
-            -- local start_line = vim.fn.line("'<")
-            -- local end_line = vim.fn.line("'>")
-            -- vim.cmd(string.format("%d,%dModel %s", start_line, end_line, "anthropic:claude-code"))
-
-            vim.cmd(("'<,'>Model %s %s"):format("anthropic:claude-code", value))
-            -- vim.cmd("Model anthropic:claude-code " .. value)
-          end, { size = { width = 40, height = 2 } })
-        end,
-        mode = { "n", "v" },
-        desc = "Edit Code (Claude Sonnet)",
-      },
-      {
-        "<leader>aF",
-        function()
-          local nui = require("util.nui.input")
-          nui.cursor_input("Prompt", function(input)
-            require("util.model.api").prompt(
-              "anthropic:claude-code",
-              require("model").mode.INSERT_OR_REPLACE,
-              input,
-              { visual = true }
-            )
-          end, { size = { width = 40, height = 2 } })
-        end,
-        mode = { "n", "v" },
-        desc = "Edit Code (Claude Sonnet)",
-      },
+      -- Disabled in favor of Avante edit
+      -- {
+      --   "<leader>ae",
+      --   function()
+      --     local nui = require("util.nui.input")
+      --     nui.cursor_input("Prompt", function(value)
+      --       vim.cmd(("'<,'>Model %s %s"):format("anthropic:claude-code", value))
+      --     end, { size = { width = 40, height = 2 } })
+      --   end,
+      --   mode = { "n", "v" },
+      --   desc = "Edit Code (Claude Sonnet)",
+      -- },
       {
         "<leader>aE",
         function()
-          -- local input = require("model.core.input")
-          local bufnr = vim.api.nvim_get_current_buf()
-          local selection = require("util.selection")
-          selection.save_selection()
-
           local InputBox = require("util.nui.input_box")
           local input = InputBox({
-            title = "Prompt",
+            title = " Prompt ",
             on_submit = function(content)
-              selection.restore_selection(bufnr)
-
               vim.schedule(function()
                 require("util.model.api").prompt(
                   "anthropic:claude-code",
@@ -125,6 +98,10 @@ return {
               end)
             end,
             on_close = function() end,
+            size = {
+              height = 5,
+              width = 50,
+            },
           })
           input:mount()
         end,
@@ -160,7 +137,7 @@ return {
         group = augroup,
         pattern = "mchat",
         -- command = "nnoremap <silent><buffer> <leader>w :Mchat<cr>",
-        callback = function(ev)
+        callback = function(_event)
           vim.keymap.set("n", "<leader><cr>", ":Mchat<cr>", { buffer = true, silent = true })
           vim.cmd.setlocal("foldmethod=manual")
           -- local win = vim.fn.bufwinid(ev.buf)
@@ -202,6 +179,7 @@ return {
       spec = {
         { "<C-m>", group = "AI (Model)", icon = " " },
         { gen_prefix, group = "+generate" },
+        { provider_prefix, group = "+Chat with provider" },
       },
     },
   },

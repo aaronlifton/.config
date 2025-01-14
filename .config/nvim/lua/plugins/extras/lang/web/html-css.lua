@@ -107,10 +107,12 @@ return {
   {
     "luckasRanarison/nvim-devdocs",
     optional = true,
-    ensure_installed = {
-      "html",
-      "css",
-      "sass",
+    opts = {
+      ensure_installed = {
+        "html",
+        "css",
+        "sass",
+      },
     },
   },
   -- Replaced by emmet_language_server

@@ -7,21 +7,6 @@ local anthropic = require("model.providers.anthropic")
 local starter_prompts = require("model.prompts.starters")
 local gemini_builder = require("plugins.extras.ai.config.models.gemini.builder")
 
----@param system_cmd table|nil
----@return string
-local get_git_diff = function(system_cmd)
-  system_cmd = system_cmd or { "git", "diff", "--staged" }
-  local git_diff = vim.fn.system(system_cmd)
-
-  if not git_diff:match("^diff") then
-    git_diff = vim.fn.system({ "git", "diff" })
-
-    if not git_diff:match("^diff") then error("diff empty:\n" .. git_diff) end
-  end
-
-  return git_diff
-end
-
 ---@type table<string, Prompt>
 return vim.tbl_extend("force", starter_prompts, {
   NodeJsConvert = {
@@ -46,7 +31,7 @@ return vim.tbl_extend("force", starter_prompts, {
     mode = require("model").mode.REPLACE,
     builder = function()
       local cwd = vim.fn.expand("%:h:h")
-      local git_diff = get_git_diff({ "git", "-C", cwd, "diff", "--staged", "-U0" })
+      local git_diff = require("util.git").get_git_diff({ "git", "-C", cwd, "diff", "--staged", "-U0" })
 
       return {
         messages = {

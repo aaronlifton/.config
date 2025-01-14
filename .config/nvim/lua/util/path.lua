@@ -24,9 +24,9 @@ M.rel_file_line = function()
 end
 
 M.abs_file_line = function()
-  local rel_path = M.current_abs_path()
+  local abs_path = M.current_abs_path()
   local current_line = vim.fn.line(".")
-  return rel_path .. ":" .. tostring(current_line)
+  return abs_path .. ":" .. tostring(current_line)
 end
 
 M.set_clipboard = function(str)

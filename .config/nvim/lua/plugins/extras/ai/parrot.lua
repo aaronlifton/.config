@@ -4,6 +4,7 @@ local M = { state = {
 local get_selection = require("util.selection").get_selection
 local prefix = "<leader>aP"
 local modify_prefix = "<leader>am"
+local provider_prefix = "<leader>ap"
 
 --- Opens a new chat window, remembering the last chat for the provider
 ---@param provider string
@@ -55,36 +56,6 @@ local function open_parrot_chat(provider, model, target, prompt)
   -- The plugin will call set_last_chat internally, which we'll capture in the next chat
   provider_state.last_chat = chat_file
 end
-
--- Without per-provider toggling
--- local function open_parrot_chat(provider, model, target, prompt)
---   local filename = vim.fn.bufname(vim.api.nvim_get_current_buf())
---   if filename:match("parrot/chats") then return vim.api.nvim_win_close(0, true) end
---
---   -- local ui = require("parrot.ui")
---   target = target or "vsplit"
---   local config = require("parrot.config")
---   local chat_handler = config.chat_handler
---   local kind = (target and target == "popup" and "popup") or "chat"
---   local toggle_kind = chat_handler:toggle_resolve(kind)
---   local params = { args = target }
---   -- vim.api.nvim_echo({ { vim.inspect(chat_handler._toggle), "Normal" } }, true, {})
---   -- vim.api.nvim_echo({ { kind, "Title" }, { vim.inspect(toggle_kind), "Normal" } }, true, {})
---   local toggle_state = chat_handler._toggle[toggle_kind]
---   -- vim.api.nvim_echo({ { "toggle state", "Title" }, { vim.inspect(toggle_state), "Normal" } }, true, {})
---   if toggle_state and M.state.last_provider == provider then
---     chat_handler:chat_toggle(params)
---     chat_handler._toggle[toggle_kind] = toggle_state
---     return
---   else
---     chat_handler._toggle[toggle_kind] = nil
---   end
---   chat_handler:set_provider(provider, true)
---   chat_handler:switch_model(true, model, { name = provider })
---   -- chat_handler:toggle_add(chat_handler._toggle_kind.chat, toggle)
---   M.state.last_provider = provider
---   chat_handler:chat_new(params, prompt)
--- end
 
 --- Edit a selection of code in place
 ---@param target string
@@ -195,18 +166,18 @@ return {
         desc = "Toggle (OpenAI)",
       },
       {
-        "<M-6>",
+        provider_prefix .. "o",
         function()
           open_parrot_chat("openai", "gpt-4o", "popup")
         end,
-        desc = "Toggle (OpenAI)",
+        desc = "OpenAI",
       },
       {
-        "<M-7>",
+        provider_prefix .. "x",
         function()
           open_parrot_chat("xai", "grok-beta")
         end,
-        desc = "Toggle (xAI)",
+        desc = "xAI",
       },
       -- {
       --   "<M-9>",
@@ -225,32 +196,6 @@ return {
       {
         modify_prefix .. "o",
         function()
-          -- local prompt =
-          --   'For the folllowing instructions, do not use "get :create" etc and instead use full routes like "api_v1_birds_path". Implement RSpec tests for the following code.\n\nCode:\n```{{filetype}}\n{{input}}\n```\n\nTests:\n```{{filetype}}'
-          --
-          -- local config = require("parrot.config")
-          -- local ui = require("parrot.ui")
-          -- local utils = require("parrot.utils")
-          -- local chat_handler = config.chat_handler
-          -- -- chat_handler.Append(nil, { "Add a comment" })
-          -- -- local cmd_prefix = require("parrot.utils").template_render_from_list(
-          -- --   config.options.command_prompt_prefix_template,
-          -- --   { ["{{llm}}"] = chat_handler:get_model("command").name }
-          -- -- )
-          -- local buf = vim.api.nvim_get_current_buf()
-          -- local win = vim.api.nvim_get_current_win()
-          -- local target = ui.Target.append
-          -- local template = chat_handler.options.template_append
-          -- local pft = require("plenary.filetype")
-          -- local filetype = pft.detect(vim.api.nvim_buf_get_name(buf), {})
-          -- local filename = vim.api.nvim_buf_get_name(buf)
-          -- local user_prompt = "Add comments to the code"
-          -- local filecontent = table.concat(user_prompt, "\n")
-          -- local multifilecontent = utils.get_all_buffer_content()
-          -- local user_prompt =
-          --   utils.template_render(template, command, selection, filetype, filename, filecontent, multifilecontent)
-          -- chat_handler:prompt({}, target, chat_handler:get_model("command"), nil, utils.trim(template), true)
-
           parrot_edit("rewrite", "Write the following code in a more succinct, idiomatic way:")
         end,
         desc = "Optimize code",
@@ -309,8 +254,7 @@ return {
     "folke/which-key.nvim",
     opts = {
       spec = {
-        { "<leader>aP", group = "Parrot", icon = "󱜚 " },
-        { "<leader>am", group = "modify", icon = "󱜚 " },
+        { "<leader>aP", group = "+Parrot", icon = "󱜚 ", mode = { "n", "v" } },
       },
     },
   },

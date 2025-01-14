@@ -2,6 +2,24 @@
 local M = {}
 local TableExt = {}
 
+---Compacts the given list-like table, removing empty/0/false/nil values
+---@param tbl table<any>
+---@return table<any>
+function M.compact_list(tbl)
+  return vim.tbl_filter(function(element)
+    local t = type(element)
+    if vim.tbl_contains({ "string", "table" }, t) then
+      return #element > 0
+    elseif t == "number" then
+      return element ~= 0
+    elseif t == "nil" then
+      return false
+    else
+      return element
+    end
+  end, tbl)
+end
+
 ---Safely get a nested value in a table
 ---@param t table The table to search in
 ---@param ... string The keys to search for

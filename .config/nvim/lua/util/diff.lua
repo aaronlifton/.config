@@ -14,16 +14,7 @@ M.toggle_compare_windows = function()
 end
 
 M.compare_windows = function()
-  local windows = vim.api.nvim_tabpage_list_wins(0)
-  local compare_windows = {}
-
-  local win1, win2 = table.unpack(windows, 1, 2)
-  for _, win in ipairs({ win1, win2 }) do
-    local win_buf = vim.api.nvim_win_get_buf(win)
-    local buf_name = vim.api.nvim_buf_get_name(win_buf)
-    local buf_type = vim.api.nvim_get_option_value("buftype", { buf = win_buf })
-    if buf_type ~= "nofile" then table.insert(compare_windows, win) end
-  end
+  local compare_windows = require("util.win").editor_windows()
 
   if #compare_windows ~= 2 then
     print("Error: Found " .. #compare_windows .. " non-NeoTree windows. Expected 2.")

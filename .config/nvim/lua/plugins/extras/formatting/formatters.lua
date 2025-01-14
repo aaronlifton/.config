@@ -4,5 +4,5 @@
 return {
   { import = "plugins.extras.formatting.prettier-extended" },
   { import = "plugins.extras.formatting.biome" },
-  { import = "plugins.extras.formatting.dprint" },
+  -- { import = "plugins.extras.formatting.dprint" },
 }

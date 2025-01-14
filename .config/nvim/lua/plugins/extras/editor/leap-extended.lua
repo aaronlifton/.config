@@ -21,9 +21,7 @@ return {
         desc = "Treesitter Select (Leap - Line)",
       },
       {
-        -- "g<C-r>",
-        -- "gR", -- interferes with File References for vtsls
-        "gS", -- interferes with treesj
+        "gS",
         function()
           require("leap.remote").action()
         end,
@@ -55,18 +53,6 @@ return {
     opts = {
       equivalence_classes = { " \t\r\n", "([{", ")]}", "'\"`" },
     },
-    -- config = function(_, opts)
-    --   LazyVim default config
-    --   local leap = require("leap")
-    --   for k, v in pairs(opts) do
-    --     leap.opts[k] = v
-    --   end
-    --   leap.add_default_mappings(true)
-    --   Uncomment these lines to keep the evil-snipe mappings
-    --   vim.keymap.del({ "x", "o" }, "x")
-    --   vim.keymap.del({ "x", "o" }, "X")
-    -- end,
-    -- init = function()
     config = function(_, opts)
       -- LazyVim default config
       local leap = require("leap")
@@ -78,6 +64,7 @@ return {
       vim.keymap.del({ "x", "o" }, "X")
 
       require("leap.user").set_repeat_keys("<enter>", "<backspace>")
+
       vim.keymap.set({ "n", "x", "o" }, "ga", function()
         local sk = vim.deepcopy(require("leap").opts.special_keys)
         -- The items in `special_keys` can be both strings or tables - the
@@ -86,7 +73,7 @@ return {
         sk.prev_target = vim.fn.flatten(vim.list_extend({ "A" }, { sk.prev_target }))
 
         require("leap.treesitter").select({ opts = { special_keys = sk } })
-      end)
+      end, { desc = "Treesitter Select (Leap)" })
       -- vim.keymap.set({ "n", "x", "o" }, "gA", "V<CMD>lua require('leap.treesitter').select()<CR>")
 
       if paste_on_remote_yank then
@@ -97,8 +84,11 @@ return {
           callback = function(event)
             -- Do not paste if some special register was in use.
             -- vim.cmd("normal! zz")
-            vim.api.nvim_echo({ { event.data.register, "Normal" } }, false, {})
-            if vim.v.operator == "y" and event.data.register == "+" then -- '"'
+            -- vim.api.nvim_echo({ { event.data.register, "Normal" } }, false, {})
+            local cursor = vim.api.nvim_win_get_cursor(0)
+            local char_at_cursor = vim.fn.getline(cursor[1]):sub(cursor[2], cursor[2])
+            if vim.v.operator == "y" and event.data.register == "+" then
+              if char_at_cursor:match("['\".]") ~= nil then vim.cmd("normal h") end
               vim.cmd("normal! p")
             end
           end,
@@ -127,13 +117,6 @@ return {
           require("leap.remote").action({ input = tobj })
         end)
       end
-      -- vim.keymap.set({ "x", "o" }, "irr", function()
-      --   require("leap.remote").action({ input = "iL" })
-      -- end)
-      -- vim.keymap.set({ "x", "o" }, "arr", function()
-      --   require("leap.remote").action({ input = "aL" })
-      -- end)
-      -- This conflicts with inc-rename (<cr>)
       vim.keymap.set({ "x", "o" }, "rr", function()
         require("leap.remote").action({ input = "aL" })
       end)

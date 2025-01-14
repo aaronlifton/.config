@@ -1,10 +1,9 @@
-local function is_visible(cmp)
-  return cmp.core.view:visible() or vim.fn.pumvisible() == 1
-end
-local function has_words_before()
+local has_words_before = function()
+  unpack = unpack or table.unpack
   local line, col = unpack(vim.api.nvim_win_get_cursor(0))
   return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
 end
+
 local function set_priority(sources, target_name, new_priority)
   for _, source in ipairs(sources) do
     if source.name == target_name then
@@ -13,25 +12,6 @@ local function set_priority(sources, target_name, new_priority)
     end
   end
 end
-
--- local ai_icons = { HF = "", OpenAI = "", Codestral = "", Bard = "" }
--- local format = function(entry, item)
---   local icons = LazyVim.config.icons.kinds
---   if icons[item.kind] then item.kind = icons[item.kind] .. item.kind end
---
---   local widths = {
---     abbr = vim.g.cmp_widths and vim.g.cmp_widths.abbr or 40,
---     menu = vim.g.cmp_widths and vim.g.cmp_widths.menu or 30,
---   }
---
---   for key, width in pairs(widths) do
---     if item[key] and vim.fn.strdisplaywidth(item[key]) > width then
---       item[key] = vim.fn.strcharpart(item[key], 0, width - 1) .. "…"
---     end
---   end
---
---   return item
--- end
 
 local astrovim_style = false
 local follow_cursor = false
@@ -44,71 +24,13 @@ return {
     dependencies = {
       { "hrsh7th/cmp-cmdline", lazy = true },
       { "hrsh7th/cmp-nvim-lua", lazy = true },
-      -- "ray-x/cmp-treesitter",
     },
     keys = {
       { "<leader>ciC", "<cmd>CmpStatus<CR>", desc = "Cmp Status" },
     },
     opts = function(_, opts)
       local cmp = require("cmp")
-      local compare = require("cmp.config.compare")
       local auto_select = true
-
-      -- Format with source_names and mark duplicates
-      -- local source_names = {
-      --   nvim_lsp = "(LSP)",
-      --   nvim_lua = "(Lua)",
-      --   cmp_yanky = "(Yanky)",
-      --   snippet = "(Snippet)",
-      --   buffer = "(Buffer)",
-      --   path = "(Path)",
-      --   git = "(Git)",
-      -- }
-      -- local duplicates = {
-      --   buffer = 1,
-      --   path = 1,
-      --   nvim_lsp = 0,
-      -- }
-      -- opts.formatting.format = function(entry, item)
-      --   local new_item = item
-      --   new_item.menu = source_names[entry.source.name]
-      --   new_item.dup = duplicates[entry.source.name] or 0
-      --   return old_format(entry, new_item)
-      -- end
-
-      -- Comparators
-      -- compare.lsp_scores = function(entry1, entry2)
-      --   local diff
-      --   if entry1.completion_item.score and entry2.completion_item.score then
-      --     diff = (entry2.completion_item.score * entry2.score) - (entry1.completion_item.score * entry1.score)
-      --   else
-      --     diff = entry2.score - entry1.score
-      --   end
-      --   return (diff < 0)
-      -- end
-      -- opts.sorting.comparators = {
-      --   -- compare.lsp_scores,
-      --   --   -- Defaults
-      --   --   compare.offset,-- Items closer to cursor will have lower priority
-      --   --   compare.exact,
-      --   --   -- compare.scopes,
-      --   --   compare.score,
-      --   --   compare.recently_used,
-      --   --   compare.locality, -- Items closer to cursor will have higher priority, conflicts with `offset`
-      --   --   compare.kind,
-      --   --   -- compare.sort_text,
-      --   --   compare.length,
-      --   --   compare.order,
-      --   --   -- Modern-neovim
-      --   -- compare.score,
-      --   -- compare.recently_used,
-      --   -- compare.offset,
-      --   -- compare.exact,
-      --   -- compare.kind,
-      --   -- compare.sort_text,
-      --   -- compare.length,
-      --   -- compare.order,
-      -- }
 
       -- Performance
       opts.performance = {
@@ -120,24 +42,6 @@ return {
         async_budget = 1,
         max_view_entries = 50,
       }
-      -- opts.performance = {
-      --   debounce = 20,
-      --   throttle = 20,
-      --   fetching_timeout = 500,
-      --   confirm_resolve_timeout = 20,
-      --   async_budget = 1,
-      --   max_view_entries = 200,
-      --   -- Defaults
-      --   -- debounce = 60,
-      --   -- throttle = 30,
-      --   -- fetching_timeout = 500,
-      --   -- confirm_resolve_timeout = 80,
-      --   -- async_budget = 1,
-      --   -- max_view_entries = 200,
-      -- }
-
-      -- Debug default LazyVim sources
-      -- vim.api.nvim_echo({ { vim.inspect(opts.sources), "Normal" } }, true, {})
 
       -- Format with nvim-highlight-colors
       local old_format = opts.formatting.format
@@ -169,12 +73,9 @@ return {
       -- Sources
       -- Set priority 101 instead of 100
       set_priority(opts.sources, "codeium", 101)
-      -- move_before(opts.sources, "codeium", "copilot")
+
       -- Index 4 is nvim_lsp
       table.insert(opts.sources, 3, { name = "nvim_lua", group_index = 1 })
-      -- vim.list_extend(opts.sources, {
-      --   { name = "treesitter", group_index = 1 },
-      -- })
 
       -- Window
       opts.window = {
@@ -189,33 +90,6 @@ return {
           winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel,Search:None",
         }),
       }
-      -- opts.window = {
-      --   completion = {
-      --     -- border = require("util.win").square_border("Normal"),
-      --     border = "rounded",
-      --     winhighlight = "Normal:Normal,FloatBorder:Normal,CursorLine:Visual,Search:None",
-      --     scrollbar = false,
-      --     -- col_offset = -1,
-      --     col_offset = -1,
-      --     side_padding = 1,
-      --   },
-      --   documentation = {
-      --     -- border = require("util.win").square_border("Normal"),
-      --     border = "rounded",
-      --     winhighlight = "Normal:Normal,FloatBorder:Normal,CursorLine:Visual,Search:None",
-      --     scrollbar = false,
-      --   },
-      -- }
-
-      -- if vim.g.ai_cmp then
-      --  TODO: revisit these two
-      --   opts.confirm_opts = {
-      --     behavior = cmp.ConfirmBehavior.Replace,
-      --     select = false,
-      --   }
-      --   opts.preselect = cmp.PreselectMode.None
-      --   opts.experimental.ghost_text = nil
-      -- end
 
       if astrovim_style then
         opts.preselect = cmp.PreselectMode.None
@@ -289,12 +163,12 @@ return {
         ["<C-k>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
         ["<C-u>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
         ["<C-d>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
+        -- Supertab
         -- ["<Tab>"] = cmp.mapping(function(fallback)
-        --   if copilot.is_visible() then
-        --     copilot.accept()
-        --   elseif is_visible(cmp) then
+        --   if cmp.visible() then
+        --     -- You could replace select_next_item() with confirm({ select = true }) to get VS Code autocompletion behavior
         --     cmp.select_next_item()
-        --   elseif vim.api.nvim_get_mode().mode ~= "c" and vim.snippet.active({ direction = 1 }) then
+        --   elseif vim.snippet.active({ direction = 1 }) then
         --     vim.schedule(function()
         --       vim.snippet.jump(1)
         --     end)
@@ -305,9 +179,9 @@ return {
         --   end
         -- end, { "i", "s" }),
         -- ["<S-Tab>"] = cmp.mapping(function(fallback)
-        --   if is_visible(cmp) then
+        --   if cmp.visible() then
         --     cmp.select_prev_item()
-        --   elseif vim.api.nvim_get_mode().mode ~= "c" and vim.snippet.active({ direction = -1 }) then
+        --   elseif vim.snippet.active({ direction = -1 }) then
         --     vim.schedule(function()
         --       vim.snippet.jump(-1)
         --     end)

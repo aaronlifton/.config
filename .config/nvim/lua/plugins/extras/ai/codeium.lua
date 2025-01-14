@@ -106,7 +106,7 @@ return {
   --       on_click = function(num_clicks, mouse_button, mods)
   --         if num_clicks == 1 and mouse_button == "l" and not mods:match("%w") then
   --           local status = vim.fn["codeium#GetStatusString"]()
-  --           local highlight = require("util.lualine").highlight_for_status(status)
+  --           local highlight = status:match("ON") and "healthSuccess" or "healthError"
   --           vim.api.nvim_echo({
   --             { "Codeium: ", "Normal" },
   --             { status, highlight },

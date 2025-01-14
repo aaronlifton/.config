@@ -253,12 +253,12 @@ map("n", "<leader>ciF", function()
   for _, formatter in ipairs(format_util.resolve(buf)) do
     if formatter.active then
       for _, line in ipairs(formatter.resolved) do
-        str = str .. " " .. formatter.name .. "[" .. line .. "]"
+        str = str .. " " .. formatter.name .. "[" .. line .. "]\n"
       end
     end
   end
   vim.api.nvim_echo({ { str, "Normal" } }, true, {})
-end)
+end, { desc = "Formatting 2" })
 local linters = function()
   local linters_attached = require("lint").linters_by_ft[vim.bo.filetype]
   local buf_linters = {}
@@ -342,6 +342,14 @@ map("v", "<leader>cpm", function()
   local clipboard = require("util.clipboard")
   clipboard.set_clipboard(require("util.selection").markdown_code_fence())
 end, { desc = "Copy markdown code fence" })
+map("n", "g<C-r>m", function()
+  local start_pos = vim.fn.getpos("'[")
+  local end_pos = vim.fn.getpos("']")
+
+  -- Insert code fences
+  vim.api.nvim_buf_set_lines(0, start_pos[2] - 1, start_pos[2] - 1, false, { "```" })
+  vim.api.nvim_buf_set_lines(0, end_pos[2] + 1, end_pos[2] + 1, false, { "```" })
+end, { desc = "Surround with markdown code fence" })
 
 map("n", "<leader>cq", function()
   vim.diagnostic.open_float(nil, { source = true })
@@ -484,6 +492,12 @@ map(
   "<cmd>tab split | lua vim.lsp.buf.definition()<cr>",
   { desc = "Goto Definition (tab)", silent = true }
 )
+-- map("n", "<leader>ct", function()
+--   vim.lsp.buf.typehierarchy("subtypes")
+-- end, { desc = "Show subtypes" })
+-- map("n", "<leader>cT", function()
+--   vim.lsp.buf.typehierarchy("supertypes")
+-- end, { desc = "Show supertypes" })
 
 map("n", "<C-w><C-t>", function()
   local buf = vim.api.nvim_get_current_buf()
@@ -549,7 +563,7 @@ map("n", "<leader>tk", function()
       -- { env = { APP_ENV = "development", TZ = "utc" } }
     )
   end
-end, { desc = "Kitten - RSpec" })
+end, { desc = "Run RSpec (Kitten)" })
 map("n", "<C-w>K", function()
   kitten("kittens/side_command.kitten.py")
 end, { desc = "Kitten - Split Vertically" })
@@ -620,7 +634,19 @@ end, { desc = "Test fn" })
 map("n", "<leader>rl", function()
   local buf = vim.api.nvim_get_current_buf()
   local word = vim.fn.expand("<cword>")
-  local newRow = "console.log('### " .. word .. ": ', { " .. word .. " })"
+  local filetype = vim.bo.filetype
+  local new_row
+  if filetype == "lua" then
+    new_row = ('vim.api.nvim_echo({{ "%s\\n", "Title"}, { vim.inspect(%s), "Normal" } }, true, {})'):format(word, word)
+  elseif filetype == "javascript" then
+    new_row = ("console.log('### %s: ', { %s })"):format(word, word)
+  elseif filetype == "ruby" then
+    new_row = ('Rails.logger.info("%s")'):format(word)
+  else
+    vim.notify("Unsupported filetype", vim.log.levels.INFO, { title = "Debug Print" })
+    return
+  end
+
   local pos = vim.api.nvim_win_get_cursor(0)
   local row = pos[1]
   local col = pos[2]
@@ -648,9 +674,62 @@ map("n", "<leader>rl", function()
     },
   })
   local indent = scope and (scope.indent + vim.bo.shiftwidth) or 0
-  newRow = string.rep(" ", indent) .. newRow
-  vim.api.nvim_buf_set_lines(0, row, row, false, { newRow })
+  new_row = string.rep(" ", indent) .. new_row
+  vim.api.nvim_buf_set_lines(0, row, row, false, { new_row })
 end, { desc = "Debug Print (console.log)", silent = true })
 
-map("n", "<C-S-P>", "[h", { desc = "Previous hunk", remap = true })
-map("n", "<C-S-N>", "]h", { desc = "Next hunk", remap = true })
+-- map("n", "<C-S-P>", "[h<esc>zz", { desc = "Previous hunk", remap = true })
+-- map("n", "<C-S-N>", "]h<esc>zz", { desc = "Next hunk", remap = true })
+-- map("n", "<C-S-P>", "[h<esc><esc>", { desc = "Previous hunk", remap = true })
+--
+-- map("n", "<C-S-N>", "]h", { desc = "Next hunk", remap = true })
+-- map("n", "<C-S-P>", "[h", { desc = "Previous hunk", noremap = true })
+-- map("n", "<M-N>", "]h", { desc = "Next hunk", remap = true })
+-- map("n", "<M-P>", "[h", { desc = "Previous hunk", remap = true })
+
+-- map("n", "<C-S-P>", "<Cmd>lua MiniDiff.goto_hunk('prev')<CR>", { desc = "Previous hunk" })
+map("n", "<C-S-P>", function()
+  MiniDiff.goto_hunk("prev")
+  vim.cmd("normal! zz")
+end, { desc = "Previous hunk" })
+-- map("n", "<C-S-N>", "<Cmd>lua MiniDiff.goto_hunk('next')<CR>", { desc = "Next hunk" })
+map("n", "<C-S-N>", function()
+  MiniDiff.goto_hunk("next")
+  vim.cmd("normal! zz")
+end, { desc = "Next hunk" })
+-- vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", true)
+
+-- /Users/alifton/.asdf/installs/ruby/3.3.2/lib/ruby/gems/3.3.0/gems/devise-4.8.1/lib/devise/test/controller_helpers.rb:128
+local function resolve_github_url_from_text(text)
+  local url = require("util.git.github").resolve_github_url_from_gem_path(text)
+  if not url then
+    vim.notify("Could not resolve github url", vim.log.levels.INFO, { title = "Github" })
+    return
+  end
+  return url
+end
+
+map("v", "<leader>gU", function()
+  local selected_text = require("util.selection").get_selection2().selection
+  local url = resolve_github_url_from_text(selected_text)
+  if not url then return end
+  vim.notify("Opening: " .. url, vim.log.levels.INFO, { title = "Github" })
+  vim.ui.open(url)
+end, { desc = "Resolve github url from path" })
+
+map("n", "<leader>g<C-r>", function()
+  local path_with_line = path_util.abs_file_line()
+  local url = resolve_github_url_from_text(path_with_line)
+  if not url then return end
+  vim.notify("Opening: " .. url, vim.log.levels.INFO, { title = "Github" })
+  vim.ui.open(url)
+end, { desc = "Open github url from current path" })
+
+map("v", "gzaU", function()
+  vim.cmd([[exe "normal gza]f]a(\<esc>l" | startinsert]])
+end, { desc = "Convert to markdown url" })
+
+map("n", "g<C-h>", function()
+  local cword = vim.fn.expand("<cword>")
+  vim.cmd("help " .. cword)
+end, { desc = "Open help file" })

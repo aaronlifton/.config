@@ -5,16 +5,34 @@ local toggle_flag = function(flag)
   end
 end
 
--- From LazyVim
--- local function symbols_filter(entry, ctx)
---   if ctx.symbols_filter == nil then
---     ctx.symbols_filter = LazyVim.config.get_kind_filter(ctx.bufnr) or false
---   end
---   if ctx.symbols_filter == false then
---     return true
---   end
---   return vim.tbl_contains(ctx.symbols_filter, entry.kind)
--- end
+--- Append an iglob pattern
+---@param opts {search:string, resume:boolean}
+---@param path string
+local function _toggle_iglob(opts, path)
+  local o = vim.tbl_deep_extend("keep", { resume = true }, opts.__call_opts)
+
+  if o.search:find(path, nil, true) then
+    o.search = o.search:gsub("%s*" .. vim.pesc(path), "")
+    -- Check if there's only whitespace or nothing after "--"
+    local after_dashdash = o.search:match("%-%-(.*)$")
+    if after_dashdash and after_dashdash:match("^%s*$") then
+      -- Remove "-- " and trailing whitespace
+      o.search = o.search:gsub("%s*%-%-%s*$", "")
+    end
+  elseif o.search:find("--", nil, true) then
+    o.search = o.search .. " " .. path
+  else
+    o.search = o.search .. " -- " .. path
+  end
+
+  opts.__call_fn(o)
+end
+
+local function toggle_iglob(path)
+  return function(selected, opts)
+    _toggle_iglob(opts, path)
+  end
+end
 
 local use_lazyvim_picker = true
 local pick = use_lazyvim_picker and function(name, opts)
@@ -22,9 +40,6 @@ local pick = use_lazyvim_picker and function(name, opts)
 end or function(name, opts)
   return require("fzf-lua")[name](opts)
 end
--- [Fzf-lua] unsupported action: '󰢱 lua/fzf-lua/defaults.lua:501:3:  rg_opts
--- = "--column --line-number --no-heading --color=always --smart-case "',
--- type:nil
 local default_grep_rg_opts = "--column --line-number --no-heading --color=always --smart-case " .. "--max-columns=4096" -- " -e"
 local rg_opts = default_grep_rg_opts .. [[ -g '!**/dist/**.js*' -g '!*{-,.}min.js' -e]]
 local rg_opts_pcre2 = default_grep_rg_opts .. [[ --pcre2 ]]
@@ -67,13 +82,18 @@ local live_grep_opts = {
     ["alt-r"] = toggle_flag("--iglob=*.rb --iglob=!*{test,spec}/"),
     ["alt-y"] = toggle_flag("--iglob=!{test,spec}/"),
     ["alt-t"] = toggle_flag("--iglob=*{spec,test}*.{lua,js,ts,tsx,rb}"),
-    ["alt-s"] = toggle_flag("--iglob=spec/**/*.rb"),
     ["alt-5"] = toggle_flag("--iglob=!**{umd,cjs,esm}**"),
+    -- stylua: ignore start
+    ["alt-6"] = toggle_iglob("app/models/**"),
+    ["alt-7"] = toggle_iglob("app/controllers/**"),
+    ["alt-8"] = toggle_iglob("spec/**/*.rb"),
+    ["alt-9"] = toggle_iglob("!spec/**/*.rb !**/__tests__"),
     -- ["alt-x"] = function()
     --   local buf = vim.api.nvim_get_current_buf()
     --   local leap = require("util.leap").get_leap_for_buf(buf)
     --   leap()
     -- end,
+    -- stylua: ignore end
   },
 }
 
@@ -87,15 +107,21 @@ return {
     opts = function(_, opts)
       -- if testing telescope
       if not opts then return end
+      -- opts[1] = "border-fused"
+      -- opts[1] = "borderless-full"
       local config = require("fzf-lua.config")
       config.defaults.keymap.builtin["<F7>"] = "toggle-fullscreen"
       config.defaults.actions.files["alt-t"] = require("fzf-lua.actions").file_tabedit
-      -- local prev_ui_select = opts.ui_select
-      -- opts.ui_select = function(fzf_opts, items)
-      --   vim.notify(("kind %s"):format(fzf_opts.kind))
-      --   prev_ui_select(fzf_opts, items)
-      -- end
       opts.lsp.async_or_timeout = true -- timeout(ms) or 'true' for async calls
+      -- opts.git.branches.cmd = "git branch --all --color=always --sort=-committerdate"
+      return vim.tbl_extend("force", opts, {
+        git = {
+          branches = {
+            cmd = "git branch --color=always --sort=-committerdate",
+            preview = "git log --graph --pretty=oneline --abbrev-commit --color --stat {1}",
+          },
+        },
+      })
     end,
     keys = {
       --stylua: ignore start
@@ -120,8 +146,8 @@ return {
       { "<leader>fz", function() require("util.fzf.zoxide").fzf_zoxide() end, desc = "Zoxide"},
       -- TODO: work on async version of fzf_zoxide
       { "<leader>fZ", function() require("util.fzf.zoxide").fzf_zoxide2() end, desc = "Zoxide (Test)"},
-      { "<leader>sL", function() require("fzf-lua").lsp_finder({}) end, desc = "LSP Finder" },
-      { "<leader>ga", function() require("fzf-lua").git_branches({}) end, desc = "Git Branches" },
+      { "<leader>sL", "<cmd>FzfLua lsp_finder<cr>", desc = "LSP Finder" },
+      { "<leader>ga", "<cmd>FzfLua git_branches<cr>", desc = "Git Branches" },
       --stylua: ignore end
       {
         "<leader>sF",
@@ -189,109 +215,8 @@ return {
       {
         "<leader>sA",
         function()
-          local open = require("util.devdocs")()
-          open()
+          require("util.fzf.devdocs")()
         end,
-      },
-      {
-        "<leader>sz",
-        function()
-          local function get_tmp_buffer()
-            local tmp_buf = vim.api.nvim_create_buf(false, true)
-            vim.bo[tmp_buf].bufhidden = "wipe"
-            return tmp_buf
-          end
-          vim.ui.input({
-            prompt = "Language",
-          }, function(input)
-            -- split new by /
-            local new = string.gsub(input, "/", " ")
-            local lang, query = string.match(new, "(%S+)%s(%S+)")
-            local output = vim.fn.system("dedoc search " .. lang .. " " .. query)
-            local lines = {}
-            for s in output:gmatch("[^\r\n]+") do
-              table.insert(lines, s)
-            end
-            local tmpbuf = get_tmp_buffer()
-            vim.api.nvim_buf_set_lines(tmpbuf, 0, -1, false, lines)
-            vim.bo[tmpbuf].filetype = "markdown"
-            local float = require("lazy.util").float({
-              buf = tmpbuf,
-              size = { width = 0.6, height = 0.6 },
-            })
-            local function get_entry(n)
-              local entry = lines[n + 2]
-              local lines = {}
-              for s in entry:gmatch("%S+") do
-                table.insert(lines, s)
-              end
-              second_word = string.gsub(lines[2], ",", "")
-              local output = vim.fn.system("dedoc open " .. lang .. " " .. second_word)
-              local newlines = {}
-              for s in output:gmatch("[^\r\n]+") do
-                table.insert(newlines, s)
-              end
-              local tmpbuf = get_tmp_buffer()
-              local tmpbuf = vim.api.nvim_create_buf(true, true)
-              -- vim.api.nvim_buf_set_lines(tmpbuf, 0, -1, false, newlines)
-              vim.bo[tmpbuf].filetype = "markdown"
-              float:close()
-              vim.cmd("vsplit")
-              local win = vim.api.nvim_get_current_win()
-              vim.api.nvim_win_set_buf(win, tmpbuf)
-              vim.cmd("r !" .. "dedoc open " .. lang .. " " .. second_word)
-              -- local buf = vim.api.nvim_get_current_buf()
-              vim.bo[tmpbuf].filetype = "markdown"
-              vim.cmd("normal! ggdd")
-            end
-
-            for i = 1, #lines do
-              vim.keymap.set("n", tostring(i), function()
-                get_entry(i)
-              end, { buffer = tmpbuf, noremap = true, silent = true })
-            end
-
-            -- vim.ui.input({
-            --   prompt = "Query",
-            -- }, function(query)
-            --   vim.notify("https://devdocs.io/" .. new .. "/" .. query)
-            --   -- vim.fn.system("open " .. "https://devdocs.io/" .. query)
-            -- end)
-          end)
-        end,
-
-        -- local choices = {
-        --   "bash",
-        --   "jest",
-        --   "lua-5.4",
-        --   "python-3.9",
-        --   "python-3.11",
-        --   "python-3.12",
-        --   "rails-7.1",
-        --   "react",
-        --   "ruby-3.3",
-        -- }
-        -- require("fzf-lua").fzf_exec(choices, {
-        --   actions = {
-        --     ["enter"] = function(sel, _opts)
-        --       vim.fn.notify(sel)
-        --       -- vim.system("open " .. "https://devdocs.io/" .. sel)
-        --     end,
-        --   },
-        --   -- @param selected: the selected entry or entries
-        --   -- @param opts: fzf-lua caller/provider options
-        --   -- @param line: originating buffer completed line
-        --   -- @param col: originating cursor column location
-        --   -- @return newline: will replace the current buffer line
-        --   -- @return newcol?: optional, sets the new cursor column
-        --   -- complete = function(selected, opts, line, col)
-        --   --   local newline = line:sub(1, col) .. selected[1]
-        --   --   -- set cursor to EOL, since `nvim_win_set_cursor`
-        --   --   -- is 0-based we have to lower the col value by 1
-        --   --   return newline, #newline - 1
-        --   -- end,
-        -- })
-        desc = "Custom Completion",
       },
       {
         "<leader>sZ",
@@ -310,32 +235,6 @@ return {
         end,
         desc = "No-bind interal action test",
       },
-      -- Faster references hack for ruby
-      -- {
-      --   "gR",
-      --   function()
-      --     local ts_util = require("util.treesitter")
-      --     local search_term = vim.fn.expand("<cword>")
-      --     local node_type = ts_util.parent_node_type_at_cursor()
-      --     if node_type == "function_declaration" then
-      --       search_term = " " .. search_term .. "("
-      --     elseif node_type == "function_call" then
-      --       local next_char = ts_util.get_cword_next_char()
-      --       vim.api.nvim_echo({ { next_char, "Comment" } }, false, {})
-      --       search_term = " " .. search_term
-      --       if next_char == "(" then search_term = search_term .. "(" end
-      --     end
-      --
-      --     local current_file = vim.fn.expand("%:t")
-      --     local file_extension = current_file:match("^.+(%..+)$")
-      --     -- require("fzf-lua").live_grep({
-      --     pick("live_grep", {
-      --       search = search_term,
-      --       glob = "*." .. file_extension .. "!*{test,spec}/",
-      --     })()
-      --   end,
-      --   desc = "References (grep)",
-      -- },
       {
         "<leader>mt",
         function()
@@ -404,7 +303,7 @@ return {
       {
         "<leader>gR",
         function()
-          require("util.git").open_recently_commited(10)
+          require("util.fzf.recently_committed").open_fzf(10)
         end,
         desc = "Recently commited",
       },
