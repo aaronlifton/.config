@@ -1,6 +1,5 @@
 .git-backup
 fishd.tmp*
-secrets.fish
 tmp/
 .DS_Store
 config-backup.fish
