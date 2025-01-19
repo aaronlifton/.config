@@ -8,3 +8,5 @@ foo.*
 data
 *.bk
 tmp
+notes
+notes.md

@@ -1,1 +1,0 @@
-Write a lua method that will take the main 3 windows in my editor (one way to check is if the buftype isnt `nofile`) and remember their sizes. And when the method is called a second time, the windows and resized to their positions
