@@ -72,17 +72,18 @@ local live_grep_opts = {
     -- ctrl-t: trouble
     -- ctrl-r: toggle-root-dir
     -- alt-c: toggle-root-dir
-    ["alt-u"] = toggle_flag("--iglob=*.lua --iglob=!*{test,spec}*"),
-    ["alt-j"] = toggle_flag("--iglob=*.{js,ts,tsx} --iglob=!*{test,spec}*"),
-    ["alt-o"] = toggle_flag("--iglob=*.{js,ts,tsx} --iglob=**test**"),
-    ["alt-1"] = toggle_flag("--iglob=**{test,spec}**"),
-    ["alt-2"] = toggle_flag("--iglob=!**{test,spec}**"),
-    ["alt-3"] = toggle_flag("--iglob=*.{js,ts,tsx}"),
-    ["alt-4"] = toggle_flag("--iglob=*.rb"),
-    ["alt-r"] = toggle_flag("--iglob=*.rb --iglob=!*{test,spec}/"),
-    ["alt-y"] = toggle_flag("--iglob=!{test,spec}/"),
-    ["alt-t"] = toggle_flag("--iglob=*{spec,test}*.{lua,js,ts,tsx,rb}"),
-    ["alt-5"] = toggle_flag("--iglob=!**{umd,cjs,esm}**"),
+    ["alt-u"] = toggle_iglob("*.lua !*{test,spec}*"),
+    ["alt-j"] = toggle_iglob("*.{js,ts,tsx} !*{test,spec}*"),
+    ["alt-o"] = toggle_iglob("*.{js,ts,tsx} **test**"),
+    ["alt-1"] = toggle_iglob("**{test,spec}**"),
+    ["alt-2"] = toggle_iglob("!**{test,spec}**"),
+    ["alt-3"] = toggle_iglob("*.{js,ts,tsx}"),
+    -- ["alt-4"] = toggle_iglob("*.rb !spec/**/*.rb"),
+    -- ["alt-y"] = toggle_flag("--iglob=!{test,spec}/"),
+    -- ["alt-t"] = toggle_flag("--iglob=*{spec,test}*.{lua,js,ts,tsx,rb}"),
+    ["alt-4"] = toggle_iglob("!**{umd,cjs,esm}**"),
+    -- ["alt-r"] = toggle_iglob("*.rb !*{test,spec}/"),
+    ["alt-5"] = toggle_iglob("*.rb !*{test,spec}/"),
     -- stylua: ignore start
     ["alt-6"] = toggle_iglob("app/models/**"),
     ["alt-7"] = toggle_iglob("app/controllers/**"),
@@ -112,14 +113,23 @@ return {
       local config = require("fzf-lua.config")
       config.defaults.keymap.builtin["<F7>"] = "toggle-fullscreen"
       config.defaults.actions.files["alt-t"] = require("fzf-lua.actions").file_tabedit
-      opts.lsp.async_or_timeout = true -- timeout(ms) or 'true' for async calls
+      -- opts.lsp.async_or_timeout = true -- timeout(ms) or 'true' for async calls
       -- opts.git.branches.cmd = "git branch --all --color=always --sort=-committerdate"
+
       return vim.tbl_extend("force", opts, {
         git = {
           branches = {
             cmd = "git branch --color=always --sort=-committerdate",
             preview = "git log --graph --pretty=oneline --abbrev-commit --color --stat {1}",
           },
+        },
+        previewers = {
+          builtin = {
+            syntax_limit_b = 1024 * 100, -- 100KB
+          },
+        },
+        lsp = {
+          async_or_timeout = true,
         },
       })
     end,
@@ -130,7 +140,7 @@ return {
       { "<leader>fF", LazyVim.pick("files", { root = false, git_icons = false, fd_opts = fd_opts }), desc = "Find Files (cwd)" },
       { "<leader>su", function() pick("grep_cword", live_grep_opts) end, desc = "Word (Root Dir)", mode = "n" },
       { "<leader>su", function() pick("grep_visual", live_grep_opts) end, desc = "Selection (Root Dir)", mode = "v" },
-      -- { "<leader>sx", "<cmd>lua require('fzf-lua').grep_cWORD()<CR>", desc = "WORD (Root Dir)", mode = "n" },
+      { "<leader>s<C-w>", "<cmd>lua require('fzf-lua').grep_cWORD()<CR>", desc = "WORD (Root Dir)", mode = "n" },
       { "<leader>sx", function() pick("live_grep_native", live_grep_opts) end, desc = "Grep (Native)", mode = "n" },
       { "<leader>sw", function() pick("grep_cword", vim.tbl_extend("force", live_grep_opts, { rg_glob = false, git_icons = true })) end, desc = "Word (Root Dir)", mode = "n" },
       { "<leader>sW", function() pick("grep_cword", vim.tbl_extend("force", live_grep_opts, { rg_glob = false, git_icons = true, root = false })) end, desc = "Word (cwd)", mode = "n" },
@@ -148,6 +158,11 @@ return {
       { "<leader>fZ", function() require("util.fzf.zoxide").fzf_zoxide2() end, desc = "Zoxide (Test)"},
       { "<leader>sL", "<cmd>FzfLua lsp_finder<cr>", desc = "LSP Finder" },
       { "<leader>ga", "<cmd>FzfLua git_branches<cr>", desc = "Git Branches" },
+      { "<leader>gr", "<cmd>FzfLua git_branches<cr>", desc = "Branches" },
+      { "<leader>sA", "<cmd>FzfLua treesitter<cr>", desc = "Treesiter Symbols" },
+      -- { "<leader>sX", "<cmd>FzfLua treesitter<cr>", desc = "Treesiter Symbols" },
+      -- { "<leader>S", "<cmd>FzfLua spell_suggest<cr>", desc = "Spelling" },
+      { "<leader><C-s>", "<cmd>FzfLua spell_suggest<cr>", desc = "Spelling" },
       --stylua: ignore end
       {
         "<leader>sF",
@@ -184,56 +199,11 @@ return {
         end,
       },
       {
-        "<C-x><C-f>",
-        function()
-          require("fzf-lua").complete_path({ winopts = { height = 0.33, width = 0.5 } })
-        end,
-        mode = { "n", "v", "i" },
-        silent = true,
-        desc = "Fuzzy complete path",
-      },
-      {
-        "<leader>sX",
-        function()
-          require("fzf-lua").fzf_exec({ "foo", "bar" }, {
-            -- @param selected: the selected entry or entries
-            -- @param opts: fzf-lua caller/provider options
-            -- @param line: originating buffer completed line
-            -- @param col: originating cursor column location
-            -- @return newline: will replace the current buffer line
-            -- @return newcol?: optional, sets the new cursor column
-            complete = function(selected, opts, line, col)
-              local newline = line:sub(1, col) .. selected[1]
-              -- set cursor to EOL, since `nvim_win_set_cursor`
-              -- is 0-based we have to lower the col value by 1
-              return newline, #newline - 1
-            end,
-          })
-        end,
-        desc = "Custom Completion",
-      },
-      {
-        "<leader>sA",
+        -- "<leader>sA",
+        "<leader>s<C-d>",
         function()
           require("util.fzf.devdocs")()
         end,
-      },
-      {
-        "<leader>sZ",
-        function()
-          require("fzf-lua").fzf_exec({ 1, 2, 3, 4 }, {
-            keymap = { fzf = { ["backward-eof"] = "print(_myaction)+accept" } },
-            actions = {
-              ["enter"] = function(sel, _opts)
-                print("enter, num sel:", #sel)
-              end,
-              ["_myaction"] = function(sel, _opts)
-                print("_myaction, num sel", #sel)
-              end,
-            },
-          })
-        end,
-        desc = "No-bind interal action test",
       },
       {
         "<leader>mt",
@@ -261,7 +231,10 @@ return {
             )
           end
           table.sort(entries, function(a, b)
-            return a < b
+            -- Extract the first number, skipping ANSI color codes
+            local num_a = tonumber(a:gsub("\27%[[%d;]+m", ""):match("^%s*(%d+)"))
+            local num_b = tonumber(b:gsub("\27%[[%d;]+m", ""):match("^%s*(%d+)"))
+            return num_a < num_b
           end)
           table.insert(entries, 1, string.format("%-5s %s  %s %s", "mark", "line", "col", "path"))
 
@@ -307,11 +280,58 @@ return {
         end,
         desc = "Recently commited",
       },
+      {
+        "<C-x><C-f>",
+        function()
+          require("fzf-lua").complete_path({ winopts = { height = 0.33, width = 0.5 } })
+        end,
+        mode = { "n", "v", "i" },
+        silent = true,
+        desc = "Fuzzy complete path",
+      },
+      {
+        "<leader>sZ",
+        function()
+          require("fzf-lua").fzf_exec({ 1, 2, 3, 4 }, {
+            keymap = { fzf = { ["backward-eof"] = "print(_myaction)+accept" } },
+            actions = {
+              ["enter"] = function(sel, _opts)
+                print("enter, num sel:", #sel)
+              end,
+              ["_myaction"] = function(sel, _opts)
+                print("_myaction, num sel", #sel)
+              end,
+            },
+          })
+        end,
+        desc = "No-bind interal action test",
+      },
+      -- {
+      --   "<leader>sX",
+      --   function()
+      --     require("fzf-lua").fzf_exec({ "foo", "bar" }, {
+      --       -- @param selected: the selected entry or entries
+      --       -- @param opts: fzf-lua caller/provider options
+      --       -- @param line: originating buffer completed line
+      --       -- @param col: originating cursor column location
+      --       -- @return newline: will replace the current buffer line
+      --       -- @return newcol?: optional, sets the new cursor column
+      --       complete = function(selected, opts, line, col)
+      --         local newline = line:sub(1, col) .. selected[1]
+      --         -- set cursor to EOL, since `nvim_win_set_cursor`
+      --         -- is 0-based we have to lower the col value by 1
+      --         return newline, #newline - 1
+      --       end,
+      --     })
+      --   end,
+      --   desc = "Custom Completion",
+      -- },
     },
   },
   {
     "ibhagwan/fzf-lua",
     optional = true,
+    -- cond = LazyVim.has("nvim-dap"),
     keys = {
       -- | `dap_commands`         | list,run `nvim-dap` builtin commands         |
       -- | `dap_configurations`   | list,run debug configurations              |

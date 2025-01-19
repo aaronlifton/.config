@@ -68,9 +68,10 @@ return {
         } },
         h = LazyVim.has("gitsigns") and mini_ai_git_signs or nil,
         -- Match the strart and end of a markdown code fence
-        ["`"] = {
-          { "^%s*```%s*()[^`].-()```%s*$" },
-        },
+        -- ["`"] = ai.gen_spec.treesitter({
+        --   a = "@fenced_code_block.outer",
+        --   i = "@code_fence_content",
+        -- }),
         F = function()
           local ts_utils = require("nvim-treesitter.ts_utils")
           local current_node = ts_utils.get_node_at_cursor()

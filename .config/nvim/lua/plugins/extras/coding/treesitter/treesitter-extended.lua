@@ -20,39 +20,27 @@ return {
           border = "rounded", -- "none"
           floating_preview_opts = { maximum_height = 12 },
           peek_definition_code = {
+            -- Overrides <C-w>p - previous window
             ["<C-w>p"] = "@function.outer",
-            ["<C-w>P"] = "@class.outer",
+            ["g<C-c>"] = "@class.outer",
             ["g<C-k>"] = "@function.outer",
+            ["g<C-f>"] = "@function.outer",
             -- ["df"] = "@function.outer",
             -- ["dF"] = "@class.outer",
           },
         },
         move = {
           goto_next_start = {
-            -- ["]r"] = "@rspec.context",
-            -- ["]i"] = "@rspec.it",
-            -- ["]O"] = "@rspec.describe",
-            --
             -- ["]]"] = "@structure.outer",
             ["]if"] = "@function.inner",
           },
           goto_next_end = {
-            -- ["]I"] = "@rspec.it",
-            -- ["]R"] = "@rspec.context",
-            --
             -- ["]["] = "@structure.outer",
           },
           goto_previous_start = {
-            -- ["[r"] = "@rspec.context",
-            -- ["[i"] = "@rspec.it",
-            -- ["[O"] = "@rspec.describe",
-            --
             -- ["[["] = "@structure.outer",
           },
           goto_previous_end = {
-            -- ["[R"] = "@rspec.context",
-            -- ["[I"] = "@rspec.it",
-            --
             -- ["[]"] = "@structure.outer",
           },
         },

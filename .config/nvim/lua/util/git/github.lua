@@ -10,7 +10,10 @@ function M.resolve_github_url_from_gem_path(filepath)
   local gem_pattern = ".+/gems/([^/]+)%-([%d%.]+)/(.+)"
   local gem_name, version, rel_path = filepath:match(gem_pattern)
 
-  if not gem_name or not version then return nil, "Could not extract gem name and version from path" end
+  if not gem_name or not version then
+    vim.notify("Could not extract gem name and version from path", vim.log.levels.ERROR)
+    return nil, "Could not extract gem name and version from path"
+  end
 
   -- Split the line number if present
   local file_path, line_num = rel_path:match("([^:]+):?(%d*)")
@@ -19,19 +22,15 @@ function M.resolve_github_url_from_gem_path(filepath)
   -- Known mappings of gem names to GitHub repos
   local known_repos = {
     ["devise"] = "heartcombo/devise",
+    ["with_advisory_lock"] = "ClosureTree/with_advisory_lock",
   }
 
   local repo = known_repos[gem_name]
-  if not repo then
-    vim.ui.input({ prompt = "account/repo" }, function(input)
-      if input == nil then return end
-      repo = input
-    end)
-  end
 
   if not repo then
-    return nil,
-      string.format("GitHub repository mapping not found for gem '%s'. Please add mapping for 'owner/repo'", gem_name)
+    local message = "GitHub repository mapping not found for gem '%s'. Please add mapping for 'owner/repo'"
+    vim.notify(string.format(message, gem_name), vim.log.levels.ERROR)
+    return nil, string.format(message, gem_name)
   end
 
   return string.format("https://github.com/%s/blob/v%s/%s%s", repo, version, file_path, line_suffix)

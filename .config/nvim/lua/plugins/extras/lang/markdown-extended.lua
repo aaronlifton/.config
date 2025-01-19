@@ -44,7 +44,6 @@ return {
     "MeanderingProgrammer/render-markdown.nvim",
     optional = true,
     opts = {
-      -- preset = "lazy",
       file_types = { "markdown", "norg", "rmd", "org", "mchat", "Avante" },
     },
   },

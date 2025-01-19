@@ -6,6 +6,11 @@ return {
       M = {
         output = { left = "```\n", right = "\n```" },
       },
+      -- Markdown URL surround
+      L = {
+        -- input = { "%[().*()%]%(.*%)" }, -- Matches [text](url)
+        output = { left = "[", right = "]()" },
+      },
     },
   },
 }

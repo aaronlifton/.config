@@ -13,7 +13,7 @@ end
 vim.api.nvim_create_user_command("WordCount", feedkeys_action, { range = true })
 
 local function keys()
-  local mc = require("multicursor-nvim")
+  -- local mc = require("multicursor-nvim")
   -- stylua: ignore start
   return {
     -- Add or skip cursor above/below
@@ -79,7 +79,9 @@ local clear_keymaps = function(buf)
   for _, key in ipairs(keys()) do
     local mode, lhs, rhs, opts = unpack(key)
     for _, m in ipairs(mode) do
-      vim.api.nvim_buf_del_keymap(buf, m, lhs)
+      -- vim.api.nvim_buf_del_keymap(buf, m, lhs)
+      pcall(vim.api.nvim_buf_del_keymap, buf, m, lhs)
+
       -- pcall(vim.api.nvim_del_keymap, m, lhs)
     end
   end
@@ -127,9 +129,11 @@ return {
         vim.g.multicursor_mode_disable = not state
         local buf = vim.api.nvim_get_current_buf()
         if state then
-          set_keymaps(buf)
+          require("util.keys").buf_set_keymap(buf, keys())
+          -- set_keymaps(buf)
         else
-          clear_keymaps(buf)
+          require("util.keys").buf_clear_keymap(buf, keys())
+          -- clear_keymaps(buf)
         end
       end,
     }):map("<leader><cr>")

@@ -47,6 +47,7 @@ g.cmp_widths = { abbr = 80, menu = 30 }
 g.lsp_goto_source = "fzf" -- "fzf", "glance"
 g.lualine_info_extras = true
 g.lazyvim_cmp = "nvim-cmp" -- "nvim-cmp", "blink.cmp"
+-- g.lazyvim_cmp = "blink.cmp"
 g.lazyvim_ruby_lsp = "ruby_lsp" -- "ruby_lsp", "solargraph"
 g.lazyvim_ruby_formatter = "rubocop"
 g.lazyvim_eslint_auto_format = true

@@ -33,6 +33,13 @@ return {
         "echasnovski/mini.diff",
         optional = true,
       },
+      -- {
+      --   "saghen/blink.cmp",
+      --   optional = true,
+      --   opts = function(_, opts)
+      --     if LazyVim.is_loaded("codecompanion.nvim") then vim.list_extend(opts.sources.default, { "codecompanion" }) end
+      --   end,
+      -- },
     },
     init = function()
       vim.cmd([[cab cc CodeCompanion]])

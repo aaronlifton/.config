@@ -15,6 +15,7 @@ return {
     mappings = {
       status = {
         ["5"] = "PeekFile",
+        ["<c-y>"] = "PeekFile",
       },
     },
   },
@@ -30,21 +31,33 @@ return {
     require("neogit").setup(opts)
     vim.api.nvim_create_autocmd("FileType", {
       pattern = "NeogitCommitView",
-      callback = function(ev)
+      callback = function(event)
         vim.keymap.set("n", "gf", function()
           local cfile = vim.fn.expand("<cfile>")
           local f = vim.fn.findfile(cfile)
           if f ~= "" then
             if not require("util.tab").goto_buf_tab(cfile) then vim.cmd("tabnew | e " .. f) end
           end
-        end, { buffer = ev.buf })
+        end, { buffer = event.buf })
       end,
     })
-    vim.api.nvim_create_autocmd("FileType", {
-      pattern = "NeogitStatus",
-      callback = function(ev)
-        vim.keymap.set("n", "{", "zk", { buffer = ev.buf })
-        vim.keymap.set("n", "}", "zj", { buffer = ev.buf })
+
+    -- Already handled by <C-n> and <C-p>
+    -- vim.api.nvim_create_autocmd("FileType", {
+    --   pattern = "NeogitStatus",
+    --   callback = function(event)
+    --     vim.keymap.set("n", "{", "zk", { buffer = event.buf, remap = true })
+    --     vim.keymap.set("n", "}", "zj", { buffer = event.buf, remap = true })
+    --   end,
+    -- })
+
+    -- Load git-conflict if it hasn't been loaded yet
+    vim.api.nvim_create_autocmd("User", {
+      pattern = "NeogitRebase",
+      --- @param event {commit: string, status: string}
+      callback = function(event)
+        -- { commit: string, status: "ok" | "conflict" }
+        if event.status == "conflict" then require("lazy").load({ plugins = { "git-conflict.nvim" } }) end
       end,
     })
   end,

@@ -23,8 +23,13 @@ local clear_keymaps = function(buf)
   if not vim.bo[buf].buflisted then return end
 
   for _, key in ipairs(keys) do
-    local ok = pcall(vim.api.nvim_buf_get_keymap, buf, "n")
-    if ok then vim.api.nvim_buf_del_keymap(buf, "n", key[1]) end
+    local ok, keymap = pcall(vim.api.nvim_buf_get_keymap, buf, "n")
+    if ok then
+      local has_keymap = vim.iter(keymap):any(function(k)
+        return vim.trim(k.lhs) == key[1]
+      end)
+      if has_keymap then vim.api.nvim_buf_del_keymap(buf, "n", key[1]) end
+    end
   end
 end
 
@@ -57,10 +62,11 @@ return {
       {
         prefix .. "R",
         function()
-          require("git-conflict").setup()
+          -- require("git-conflict").setup()
+          require("lazy").load({ plugins = { "git-conflict.nvim" } })
           vim.api.nvim_command("GitConflictRefresh")
         end,
-        "Git Conflict Load",
+        desc = "Git Conflict Load",
       },
     },
     -- config = true,
@@ -93,7 +99,6 @@ return {
     opts = {
       spec = {
         mode = "n",
-        -- { prefix, group = "conflicts", icon = { icon = "", color = "red" } },
         { prefix, group = "conflicts", icon = { icon = " ", color = "red" } },
       },
     },

@@ -76,6 +76,23 @@ return {
       end, { desc = "Treesitter Select (Leap)" })
       -- vim.keymap.set({ "n", "x", "o" }, "gA", "V<CMD>lua require('leap.treesitter').select()<CR>")
 
+      -- Single line
+      -- vim.keymap.set({ "x", "o" }, "rr", function()
+      --   require("leap.remote").action({ input = "aL" })
+      -- end)
+
+      -- Lines with v:count
+      -- A very handy custom mapping - remote line(s), with optional count (y2aa{leap})
+      vim.keymap.set({ "x", "o" }, "rr", function()
+        -- Force linewise selection.
+        local V = vim.fn.mode(true):match("V") and "" or "V"
+        -- In any case, do some movement, to trigger operations in O-p mode.
+        local input = vim.v.count > 1 and (vim.v.count - 1 .. "j") or "hl"
+        -- With `count=false` you can skip feeding count to the command
+        -- automatically (we need -1 here, see above).
+        require("leap.remote").action({ input = V .. input, count = false })
+      end)
+
       if paste_on_remote_yank then
         vim.api.nvim_create_augroup("LeapRemote", {})
         vim.api.nvim_create_autocmd("User", {
@@ -95,7 +112,8 @@ return {
         })
       end
 
-      -- Consider removing this in favor of normal mode operations:
+      -- NOTE: Consider removing this in favor of normal mode operations (ygS{leap}aa)
+      --
       -- gs{leap}yap yanks the paragraph at the position specified by {leap}.
       -- Getting used to the Normal-mode command is recommended over
       -- Operator-pending mode (ygs{leap}ap), since the former requires the same
@@ -117,15 +135,21 @@ return {
           require("leap.remote").action({ input = tobj })
         end)
       end
-      vim.keymap.set({ "x", "o" }, "rr", function()
-        require("leap.remote").action({ input = "aL" })
-      end)
 
       -- evil-snipe
       -- vim.keymap.set({ "x", "o" }, "x", "<Plug>(leap-forward-till)")
       -- vim.keymap.set({ "x", "o" }, "X", "<Plug>(leap-backward-till)")
       vim.keymap.set({ "x", "o" }, "z", "<Plug>(leap-forward-till)")
       vim.keymap.set({ "x", "o" }, "Z", "<Plug>(leap-backward-till)")
+
+      require("which-key").add({
+        { "ar", group = "remote" },
+        { "ir", group = "remote" },
+        { "r", group = "remote" },
+        { "rr", desc = "line" },
+        -- { "arw", desc = "word" },
+        mode = { "o", "x" },
+      }, { notify = false })
     end,
   },
   -- {

@@ -1,7 +1,6 @@
 local M = { state = {
   provider_states = {},
 } }
-local get_selection = require("util.selection").get_selection
 local prefix = "<leader>aP"
 local modify_prefix = "<leader>am"
 local provider_prefix = "<leader>ap"
@@ -71,7 +70,7 @@ local function parrot_edit(target, prompt)
           ]]):format(prompt)
   local prt = require("parrot.config")
   local model_obj = prt.get_model("command")
-  local selection = get_selection()
+  local selection = require("util.selection").get_selection()
   local params = { range = 2, line1 = selection.start_line, line2 = selection.end_line }
   prt.Prompt(params, prt.ui.Target[target], model_obj, nil, template)
 end

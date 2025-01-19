@@ -1,11 +1,25 @@
 return {
-  { import = "lazyvim.plugins.extras.coding.blink" },
+  {
+    import = "lazyvim.plugins.extras.coding.blink",
+    cond = function()
+      return LazyVim.cmp_engine() == "blink.cmp"
+    end,
+  },
   {
     "saghen/blink.cmp",
     optional = true,
+    cond = function()
+      return LazyVim.cmp_engine() == "blink.cmp"
+    end,
     opts = {
+      keymap = {
+        ["<C-k>"] = { "select_prev", "fallback" },
+        ["<C-j>"] = { "select_next", "fallback" },
+      },
       completion = {
         menu = {
+          border = "rounded",
+          winhighlight = "Normal:BlinkCmpDoc,FloatBorder:BlinkCmpDocBorder,CursorLine:BlinkCmpDocCursorLine,Search:None",
           draw = {
             columns = { { "label", "label_description", gap = 1 }, { "kind_icon", "kind" } },
             -- To right-align the kind label ext https://github.com/Saghen/blink.cmp/pull/245#issuecomment-2463659508
@@ -14,6 +28,22 @@ return {
             -- },
           },
         },
+        documentation = {
+          window = {
+            border = "rounded",
+          },
+        },
+      },
+      sources = {
+        -- default = { "lsp", "path", "snippets", "buffer" },
+        cmdline = function()
+          local type = vim.fn.getcmdtype()
+          -- Search forward and backward
+          if type == "/" or type == "?" then return { "buffer" } end
+          -- Commands
+          if type == ":" then return { "cmdline" } end
+          return {}
+        end,
       },
       -- keymap = {
       --   -- Supertab

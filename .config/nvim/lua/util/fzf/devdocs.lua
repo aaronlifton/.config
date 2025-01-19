@@ -125,14 +125,16 @@ function M.previewer()
     -- end, M.entries)
     local entry = entry_str:match("^%s*(.-)%s*$")
     local res = M.cache[entry]
-    assert(res, "No entry found for " .. entry_str)
+    -- assert(res, "No entry found for " .. entry_str)
+    if not res then return end
     return M.read_entry(res)
   end
 
   function previewer:populate_preview_buf(entry_str)
     local buf = self:get_tmp_buffer()
     local lines = self:parse_entry(entry_str)
-    assert(lines, "No message found for entry: " .. entry_str)
+    -- assert(lines, "No message found for entry: " .. entry_str)
+    if not lines then lines = { "No entry found for " .. entry_str } end
 
     vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
     vim.bo[buf].filetype = "markdown"
@@ -175,7 +177,7 @@ function M.open(opts)
         vim.cmd("vsplit")
         local win = vim.api.nvim_get_current_win()
         vim.api.nvim_win_set_buf(win, M.last_preview)
-        vim.api.nvim_set_option_value("wrap", true, { win = win })
+        -- vim.api.nvim_set_option_value("wrap", true, { win = win })
       end,
     },
   })

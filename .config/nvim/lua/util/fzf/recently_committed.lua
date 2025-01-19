@@ -12,7 +12,7 @@ local function recently_commited_cmd(n)
   vim.fn.systemlist(string.format("git -C %s rev-parse --is-inside-work-tree", git_dir))
   local is_git_repo = vim.v.shell_error == 0
 
-  if not is_git_repo then error("Not a git repository") end
+  if not is_git_repo then error("Not a git repository", 0) end
 
   return string.format('git -C %s log -n %d --pretty=format:"%%ad %%h" --date=short --name-only', git_dir, n)
 end

@@ -69,10 +69,13 @@ return {
       scopes = {
         {
           name = "help",
+          desc = "Helpfiles",
           fallback = "global",
           resolver = function()
             local data = vim.fn.stdpath("data") --[[@as string]]
-            local cellar = "/opt/homebrew/Cellar/neovim/%d+.%d+.%d+_%d+/"
+            -- local cellar = "/opt/homebrew/Cellar/neovim/%d+.%d+.%d+_%d+/"
+            -- local cellar = ".*opt/homebrew/Cellar/"
+            local cellar = ".*opt/homebrew/Cellar/neovim/%d+.%d+.%d+/"
             local current_file = vim.api.nvim_buf_get_name(0)
             local _helpfile, found = current_file:gsub(data, "")
             if found == 1 then return "help", data end
@@ -89,6 +92,13 @@ return {
           require("telescope").load_extension("grapple")
         end)
       end
+    end,
+  },
+  {
+    "nvim-lualine/lualine.nvim",
+    optional = true,
+    opts = function(_, opts)
+      table.insert(opts.sections.lualine_c, { require("grapple").statusline, cond = require("grapple").exists })
     end,
   },
   {
@@ -116,13 +126,6 @@ return {
       opts.items = vim.list_extend(opts.items, {
         util.new_section("Marks 󰛢", "Grapple toggle_tags", "Telescope"),
       })
-    end,
-  },
-  {
-    "nvim-lualine/lualine.nvim",
-    optional = true,
-    opts = function(_, opts)
-      table.insert(opts.sections.lualine_c, { require("grapple").statusline, cond = require("grapple").exists })
     end,
   },
   {

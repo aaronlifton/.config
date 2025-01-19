@@ -83,19 +83,6 @@ return {
     },
   },
   {
-    "neovim/nvim-lspconfig",
-    optional = true,
-    ---@class PluginLspOpts
-    opts = {
-      servers = {
-        rubocop = {
-          -- Disable since rubocop diagnostics come from either ruby-lsp or nvim-lint
-          enabled = false,
-        },
-      },
-    },
-  },
-  {
     "tpope/vim-rails",
     ft = "ruby",
     config = function()
@@ -173,24 +160,12 @@ return {
     opts = {
       ---@type lspconfig.options
       servers = {
-        standardrb = {
-          on_new_config = function(new_config)
-            new_config.enabled = require("util.ruby.gems").in_bundle("standard")
-          end,
-        },
-        -- NOTE: already disabled in LazyVim/lua/lazyvim/plugins/extras/lang/ruby.lua
-        -- rubocop = {
-        --   enabled = not use_ruby_lsp_rubocop,
-        -- },
-        sorbet = {
-          -- init_options = { documentFormatting = false, codeAction = true },
-          on_new_config = function(new_config)
-            new_config.enabled = vim.fn.filereadable("sorbet/config") == 1
-          end,
-        },
         ruby_lsp = {
           mason = false,
           cmd = { vim.fn.expand("~/.asdf/shims/ruby-lsp") },
+          flags = {
+            debounce_text_changes = 150,
+          },
           -- cmd = { "/Users/alifton/.asdf/installs/ruby/3.3.2/lib/ruby/gems/3.3.0/gems/ruby-lsp-0.22.1/exe/ruby-lsp-launcher", },
           -- cmd = { "/Users/alifton/.asdf/installs/ruby/3.3.2/bin/ruby-lsp" },
           -- NOTE: https://shopify.github.io/ruby-lsp/editors.html#all-initialization-options
@@ -205,17 +180,64 @@ return {
             -- },
             -- https://github.com/search?q=path%3A**%2Fnvim%2F**%2F*.lua+excludedGems&type=code
             indexing = {
+              -- __mocks__/
+              -- app/
+              -- config/
+              -- db/
+              -- git_hooks/
+              -- k8s/
+              -- lib/
+              -- log/
+              -- public/
+              -- script/
+              -- spec/
+              -- swagger/
+              -- test/
+              -- tmp/
+              -- vendor/
+              -- includedPatterns = { "**/bin/**/*" },,
               excludedPatterns = {
                 -- "**/test/**/*.rb",
-                "**/test/**/*.rb",
-                "**/spec/**/*.rb",
-                "**/db/**/*.rb",
-                "**/vendor/**/*.rb",
-                -- "**/spec/**/*_spec.rb",
+                -- "**/spec/**/*.rb",
+                -- "**/db/**/*.rb",
+                -- "**/vendor/**/*.rb",
                 -- "**/activerecord-*/examples/**/*.rb",
-                "**/activerecord-*/examples/**/*.rb",
+                --
+                "__mocks__/**",
+                -- "app/**",
+                "config/**",
+                "db/**",
+                "git_hooks/**",
+                "k8s/**",
+                "lib/**",
+                "log/**",
+                "public/**",
+                "script/**",
+                "spec/**",
+                "swagger/**",
+                "test/**",
+                "tmp/**",
+                "vendor/**",
+                -- App
+                "app/assets/**",
+                -- "app/controllers/**",
+                "app/decorators/**",
+                "app/emails/**",
+                "app/helpers/**",
+                "app/http_services/**",
+                "app/jobs/**",
+                "app/legacy_policies/**",
+                -- "app/lib/**",
+                "app/mailers/**",
+                -- "app/models/**",
+                -- "app/policies/**",
+                -- "app/presenters/**",
+                -- "app/queries/**",
+                -- "app/services/**",
+                -- "app/values/**",
+                -- "app/views/**",
+                -- "app/workers/**"
               },
-              -- includedPatterns = { "**/bin/**/*" },
               excludedGems = excludedGems,
               -- excludedMagicComments = { "compiled:true" },
             },
@@ -232,6 +254,22 @@ return {
           end,
           on_attach = function(client, buffer)
             if add_ruby_deps_command then require("util.lsp.ruby").add_ruby_deps_command(client, buffer) end
+          end,
+        },
+        rubocop = {
+          -- NOTE: already disabled in LazyVim/lua/lazyvim/plugins/extras/lang/ruby.lua
+          -- Disabled since rubocop diagnostics come from either ruby-lsp or nvim-lint
+          enabled = false,
+        },
+        standardrb = {
+          on_new_config = function(new_config)
+            new_config.enabled = require("util.ruby.gems").in_bundle("standard")
+          end,
+        },
+        sorbet = {
+          -- init_options = { documentFormatting = false, codeAction = true },
+          on_new_config = function(new_config)
+            new_config.enabled = vim.fn.filereadable("sorbet/config") == 1
           end,
         },
         cucumber_language_server = {

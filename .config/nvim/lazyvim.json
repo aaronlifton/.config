@@ -24,6 +24,7 @@
     "plugins.extras.ai.model",
     "plugins.extras.ai.parrot",
     "plugins.extras.coding.annotation",
+    "plugins.extras.coding.blink-extended",
     "plugins.extras.coding.cmp-extended",
     "plugins.extras.coding.luapad",
     "plugins.extras.coding.mason-extended",

@@ -200,7 +200,7 @@ ac({ "BufEnter", "BufWinEnter" }, {
 })
 
 ac({ "FileType" }, {
-  pattern = { "json" },
+  pattern = { "json", "javascript" },
   callback = function(args)
     vim.keymap.set("n", "<leader>cpj", function()
       require("util.treesitter.copy_path").copy_json_path({ register = "*" })
@@ -209,8 +209,17 @@ ac({ "FileType" }, {
 })
 
 ac({ "FileType" }, {
-  pattern = { "markdown" },
+  pattern = { "ruby" },
   callback = function(args)
+    vim.keymap.set("n", "<leader>cpj", function()
+      require("util.treesitter.copy_path").copy_ruby_path({ register = "*" })
+    end, { desc = "Copy Ruby Path", buffer = args.buf })
+  end,
+})
+
+ac({ "FileType" }, {
+  pattern = { "markdown" },
+  callback = function(_args)
     vim.opt_local.spell = false
   end,
 })
@@ -224,24 +233,43 @@ ac({ "FileType" }, {
 
 ac({ "FileType" }, {
   pattern = { "log" },
-  callback = function(args)
+  callback = function(_args)
     vim.opt_local.spell = false
     vim.diagnostic.enable(false)
   end,
 })
 
-ac({ "TabLeave" }, {
-  callback = function()
-    local tabpage = vim.api.nvim_get_current_tabpage()
-    vim.g.last_tabpage = tabpage
+-- Add multi-buffer word completion to AvanteInput
+ac({ "FileType" }, {
+  pattern = { "AvanteInput" },
+  callback = function(_args)
+    require("cmp").setup.buffer({
+      sources = {
+        {
+          name = "buffer",
+          option = {
+            get_bufnrs = require("util.win").editor_bufs,
+          },
+        },
+      },
+    })
   end,
 })
+
+-- Replaced by default keymap <C-w>g<Tab>
+-- ac({ "TabLeave" }, {
+--   callback = function()
+--     local tabpage = vim.api.nvim_get_current_tabpage()
+--     vim.g.last_tabpage = tabpage
+--   end,
+-- })
 
 local bigfiles = {
   "common.json",
   "listing_drafts_controller_spec.rb",
 }
 
+-- Modified from snacks.bigfile
 ac({ "BufRead" }, {
   callback = function(ctx)
     local filepath = vim.api.nvim_buf_get_name(ctx.buf)
@@ -265,6 +293,7 @@ ac({ "BufRead" }, {
   end,
 })
 
+-- Re-add <leader>gl keymap deleted by lazyvim gitui extra
 ac("User", {
   pattern = "LazyVimKeymaps",
   once = true,
@@ -272,6 +301,10 @@ ac("User", {
     vim.keymap.set("n", "<leader>gl", function()
       Snacks.lazygit.log({ cwd = LazyVim.root.git() })
     end, { desc = "Lazygit Log" })
+    -- Use Snacks.git.blame_line until Snacks.picker.git_log_line improves
+    vim.keymap.set("n", "<leader>gb", function()
+      Snacks.git.blame_line()
+    end, { desc = "Git Blame Line" })
   end,
 })
 

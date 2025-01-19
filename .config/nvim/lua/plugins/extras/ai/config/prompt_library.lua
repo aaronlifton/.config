@@ -5,7 +5,6 @@ local openai = require("model.providers.openai")
 local gemini = require("model.providers.gemini")
 local anthropic = require("model.providers.anthropic")
 local starter_prompts = require("model.prompts.starters")
-local gemini_builder = require("plugins.extras.ai.config.models.gemini.builder")
 
 ---@type table<string, Prompt>
 return vim.tbl_extend("force", starter_prompts, {

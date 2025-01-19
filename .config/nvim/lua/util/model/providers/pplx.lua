@@ -29,6 +29,7 @@ local function extract_chat_data(item)
     return {
       content = (data.choices[1].delta or {}).content,
       finish_reason = data.choices[1].finish_reason,
+      citations = data.citations,
     }
   end
 end
@@ -82,12 +83,22 @@ function M.request_completion(handlers, params, options)
           )
         end
       else
+        -- vim.api.nvim_echo({ { vim.inspect(data), "Normal" } }, true, {})
         if data.content ~= nil then
           completion = completion .. data.content
           handlers.on_partial(data.content)
         end
 
-        if data.finish_reason ~= nil then handlers.on_finish(completion, data.finish_reason) end
+        if data.finish_reason ~= nil then
+          -- Add markdown citation links at the bottom if we have citations
+          if data.citations and #data.citations > 0 then
+            completion = completion .. "\n\n---\n\n"
+            for i, url in ipairs(data.citations) do
+              completion = completion .. string.format("[%d]: %s\n", i, url)
+            end
+          end
+          handlers.on_finish(completion, data.finish_reason)
+        end
       end
     end,
     on_other = function(content)

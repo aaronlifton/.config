@@ -10,7 +10,55 @@ function M.type_keys(keys, flags)
     flags or 'x',
     false
   )
+  -- stylua: ignore end
 end
+
+---@param buf number
+---@param keys table
+function M.buf_set_keymap(buf, keys)
+  for _, key in ipairs(keys) do
+    local mode, lhs, rhs, opts = unpack(key)
+    for _, m in ipairs(mode) do
+      vim.api.nvim_buf_set_keymap(buf, m, lhs, rhs, opts)
+    end
+  end
+end
+
+---@param buf number
+---@param keys table
+function M.buf_clear_keymap(buf, keys)
+  if not vim.api.nvim_buf_is_valid(buf) then return end
+
+  if not vim.bo[buf].buflisted then return end
+
+  for _, key in ipairs(keys) do
+    local mode, lhs, _, _ = unpack(key)
+    if type(mode) == "string" then mode = { mode } end
+    for _, m in ipairs(mode) do
+      -- vim.api.nvim_buf_del_keymap(buf, m, lhs)
+      pcall(vim.api.nvim_buf_del_keymap, buf, m, lhs)
+    end
+  end
+end
+
+-- ---@param buf number
+-- ---@param keys table
+-- No need to pcall nvim_buf_get_keymap first
+-- function M.clear_keymaps(buf, keys)
+--   if not vim.api.nvim_buf_is_valid(buf) then return end
+--
+--   if not vim.bo[buf].buflisted then return end
+--
+--   for _, key in ipairs(keys) do
+--     local ok, keymap = pcall(vim.api.nvim_buf_get_keymap, buf, "n")
+--     if ok then
+--       local has_keymap = vim.iter(keymap):any(function(k)
+--         return vim.trim(k.lhs) == key[1]
+--       end)
+--       if has_keymap then vim.api.nvim_buf_del_keymap(buf, "n", key[1]) end
+--     end
+--   end
+-- end
 
 function M.list_buffer_mappings()
   local modes = { "n", "v", "x", "s", "o", "i", "l", "c", "t" }

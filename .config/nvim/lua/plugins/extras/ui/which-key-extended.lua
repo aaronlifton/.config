@@ -77,4 +77,14 @@ return {
       -- { "z", group = "fold" },
     },
   },
+  keys = {
+    {
+      "<leader>?",
+      function()
+        require("which-key").show({ global = true })
+      end,
+      desc = "Buffer Keymaps (which-key)",
+      mode = "v",
+    },
+  },
 }

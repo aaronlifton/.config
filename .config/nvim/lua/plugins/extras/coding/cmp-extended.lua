@@ -17,7 +17,12 @@ local astrovim_style = false
 local follow_cursor = false
 
 return {
-  { import = "lazyvim.plugins.extras.coding.nvim-cmp" },
+  {
+    import = "lazyvim.plugins.extras.coding.nvim-cmp",
+    cond = function()
+      return LazyVim.cmp_engine() == "nvim-cmp"
+    end,
+  },
   {
     "hrsh7th/nvim-cmp",
     optional = true,

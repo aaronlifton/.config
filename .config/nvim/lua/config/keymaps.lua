@@ -102,14 +102,17 @@ map("n", "<leader>f<tab>", function()
     if tabid ~= nil then vim.cmd(tabid .. "tabnext") end
   end)
 end, { desc = "Tabs" })
-map("n", "<leader><tab>\\", function()
-  if vim.g.last_tabpage == nil then return end
-  local tabpages = vim.api.nvim_list_tabpages()
-  for _, tab in ipairs(tabpages) do
-    if tab == vim.g.last_tabpage then return vim.api.nvim_set_current_tabpage(vim.g.last_tabpage) end
-  end
-  vim.g.last_tabpage = nil
-end, { desc = "Alt Tab" })
+
+-- Replaced by default keymap <C-w>g<Tab>
+map("n", "<leader><tab>\\", "<C-w>g<Tab>", { desc = "Alt Tab", remap = true })
+-- map("n", "<leader><tab>\\", function()
+--   if vim.g.last_tabpage == nil then return end
+--   local tabpages = vim.api.nvim_list_tabpages()
+--   for _, tab in ipairs(tabpages) do
+--     if tab == vim.g.last_tabpage then return vim.api.nvim_set_current_tabpage(vim.g.last_tabpage) end
+--   end
+--   vim.g.last_tabpage = nil
+-- end, { desc = "Alt Tab" })
 
 map({ "n", "x" }, "gw", "*N", { desc = "Search word under cursor" })
 
@@ -143,7 +146,7 @@ map("i", "<C-e>", "<End>", { desc = "End Of Line" })
 map("n", "<M-v>", "cw<C-r>0<ESC>", { desc = "Change word under cursor with register 0" })
 
 -- Move to beginning/end of line
-map({ "n", "x", "o" }, "<M-l>", "$", { desc = "LAST CHARACTER OF LINE", noremap = true })
+map({ "n", "x", "o" }, "<M-l>", "$", { desc = "Last Character of Line", noremap = true })
 map({ "n", "x", "o" }, "<M-h>", "_", { desc = "First character of Line" })
 
 -- Delete and change without yanking
@@ -365,6 +368,14 @@ map({"n", "x" }, "<leader>g<C-y>", function()
   })
 end, { desc = "Git Browse (copy - main)" })
 
+map({"n", "x" }, "<leader>g<M-y>", function()
+  Snacks.gitbrowse({
+    open = function(url) vim.fn.setreg("+", url) end,
+    branch = "main",
+    notify = false,
+  })
+end, { desc = "Git Browse (copy - master)" })
+
 map({"n", "x" }, "<leader>g<C-f>", function()
   Snacks.gitbrowse({
     open = function(url)
@@ -492,6 +503,12 @@ map(
   "<cmd>tab split | lua vim.lsp.buf.definition()<cr>",
   { desc = "Goto Definition (tab)", silent = true }
 )
+-- local wk = require("which-key")
+-- wk.add({
+--   mode = "n",
+--   { "<C-w>gt", "<cmd>tab split | lua vim.lsp.buf.definition()<cr>", desc = "Goto Definition (tab)", silent = true },
+-- })
+
 -- map("n", "<leader>ct", function()
 --   vim.lsp.buf.typehierarchy("subtypes")
 -- end, { desc = "Show subtypes" })
@@ -499,18 +516,22 @@ map(
 --   vim.lsp.buf.typehierarchy("supertypes")
 -- end, { desc = "Show supertypes" })
 
-map("n", "<C-w><C-t>", function()
-  local buf = vim.api.nvim_get_current_buf()
-  local win = vim.api.nvim_get_current_win()
+-- see if can get used to <C-w>T instead of this
+map("n", "<C-w><C-t>", "<C-w>T", { desc = "Break out into a new tab", remap = true })
 
-  vim.cmd(":tabnew")
-
-  local new_win = vim.api.nvim_get_current_win()
-
-  vim.api.nvim_win_set_buf(new_win, buf)
-
-  vim.api.nvim_win_close(win, false)
-end, { desc = "Move window to new tab", silent = true })
+-- Not needed, default keymap <C-w>T
+-- map("n", "<C-w><C-t>", function()
+--   local buf = vim.api.nvim_get_current_buf()
+--   local win = vim.api.nvim_get_current_win()
+--
+--   vim.cmd(":tabnew")
+--
+--   local new_win = vim.api.nvim_get_current_win()
+--
+--   vim.api.nvim_win_set_buf(new_win, buf)
+--
+--   vim.api.nvim_win_close(win, false)
+-- end, { desc = "Move window to new tab", silent = true })
 
 -- Goto file in vsplit
 -- map("n", "<C-w><C-v>", "vs | gf", { desc = "Goto File (vsplit)", silent = true })
@@ -564,9 +585,9 @@ map("n", "<leader>tk", function()
     )
   end
 end, { desc = "Run RSpec (Kitten)" })
-map("n", "<C-w>K", function()
+map("n", "<C-w><M-v>", function()
   kitten("kittens/side_command.kitten.py")
-end, { desc = "Kitten - Split Vertically" })
+end, { desc = "Split window vertically (Kitten)" })
 map("n", "<M-C-S-Right>", function()
   kitten("kittens/resize_window.kitten.py", { "right" })
 end, { desc = "Kitten - Resize Wider" })
@@ -598,6 +619,13 @@ end, { silent = true, desc = "Prev Test Success" })
 map("n", "]S", function()
   require("neotest").jump.next({ status = "passed" })
 end, { silent = true, desc = "Next Test Success" })
+
+-- Trouble shortcuts
+map("n", "<leader>x1", function()
+  local items = require("trouble").get_items("last")
+  local first = items[1]
+  require("trouble.view"):jump(fist)
+end, { desc = "Jump to item 1" })
 
 -- Custom finders
 local T = require("util.fzf.finders")
@@ -725,9 +753,9 @@ map("n", "<leader>g<C-r>", function()
   vim.ui.open(url)
 end, { desc = "Open github url from current path" })
 
-map("v", "gzaU", function()
-  vim.cmd([[exe "normal gza]f]a(\<esc>l" | startinsert]])
-end, { desc = "Convert to markdown url" })
+-- map("v", "gzaU", function()
+--   vim.cmd([[exe "normal gza]f]a(\<esc>l" | startinsert]])
+-- end, { desc = "Convert to markdown url" })
 
 map("n", "g<C-h>", function()
   local cword = vim.fn.expand("<cword>")
