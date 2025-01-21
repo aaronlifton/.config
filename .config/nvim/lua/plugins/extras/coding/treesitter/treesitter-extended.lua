@@ -32,7 +32,7 @@ return {
         move = {
           goto_next_start = {
             -- ["]]"] = "@structure.outer",
-            ["]if"] = "@function.inner",
+            ["]<C-f>"] = "@function.inner",
           },
           goto_next_end = {
             -- ["]["] = "@structure.outer",

@@ -171,13 +171,13 @@ return {
         end,
         desc = "OpenAI",
       },
-      {
-        provider_prefix .. "x",
-        function()
-          open_parrot_chat("xai", "grok-beta")
-        end,
-        desc = "xAI",
-      },
+      -- {
+      --   provider_prefix .. "x",
+      --   function()
+      --     open_parrot_chat("xai", "grok-beta")
+      --   end,
+      --   desc = "xAI",
+      -- },
       -- {
       --   "<M-9>",
       --   function()

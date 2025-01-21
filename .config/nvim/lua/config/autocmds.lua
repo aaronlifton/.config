@@ -239,22 +239,23 @@ ac({ "FileType" }, {
   end,
 })
 
+-- NOTE: Doesn't work since avante sets the buffer cmp right after this
 -- Add multi-buffer word completion to AvanteInput
-ac({ "FileType" }, {
-  pattern = { "AvanteInput" },
-  callback = function(_args)
-    require("cmp").setup.buffer({
-      sources = {
-        {
-          name = "buffer",
-          option = {
-            get_bufnrs = require("util.win").editor_bufs,
-          },
-        },
-      },
-    })
-  end,
-})
+-- ac({ "FileType" }, {
+--   pattern = { "AvanteInput" },
+--   callback = function(_args)
+--     require("cmp").setup.buffer({
+--       sources = {
+--         {
+--           name = "buffer",
+--           option = {
+--             get_bufnrs = require("util.win").editor_bufs,
+--           },
+--         },
+--       },
+--     })
+--   end,
+-- })
 
 -- Replaced by default keymap <C-w>g<Tab>
 -- ac({ "TabLeave" }, {

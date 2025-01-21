@@ -32,13 +32,16 @@ function reload
     # end
     for env_var in (env)
         set key (string split = "$env_var")[1]
-        # Skip empty keys or keys with invalid characters
-        if test -n "$key" && string match -q -r '^[A-Za-z_][A-Za-z0-9_]*$' "$key"
+        # Skip empty keys, keys with only whitespace, or keys with invalid characters
+        # NOTE: $PATH is causing this to crash when certain dirs dont exist
+        if test -n "$key" && string match -q -r '^[A-Za-z_][A-Za-z0-9_]*$' "$key" && test (string trim "$key") != ""
             if not contains "$key" $RELOAD_PROTECTED_ENV_VARS
+                echo $key
                 set unset_options $unset_options -u $key
             end
         end
     end
+    echo $unset_options
 
     # Execute command
     set -q _flag_command && eval $_flag_command >/dev/null 2>&1
@@ -51,6 +54,8 @@ function reload
         set re_evaluated (fish -c "echo $value")
         set -a envs "$key=$re_evaluated"
     end
+    exec env $unset_options
+    return
 
     # Reload shell
     exec env $unset_options /usr/bin/env $envs bash -i -c "exec fish"

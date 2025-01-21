@@ -47,6 +47,7 @@ return {
         desc = "Conventional commit (OpenAI)",
       },
       { gen_prefix .. "d", "<cmd>Model DiffExplain:main<cr>", desc = "Diff explanation (Gemini)" },
+      -- stylua: ignore start
       {
         "<leader>ac",
         function()
@@ -55,20 +56,10 @@ return {
         end,
         desc = "Toggle Chat (Claude Sonnet (Cache))",
       },
-      {
-        provider_prefix .. "c",
-        function()
-          vim.cmd(":vsplit | Mchat claude")
-        end,
-        desc = "Claude Sonnet",
-      },
-      {
-        provider_prefix .. "g",
-        function()
-          vim.cmd(":vsplit | Mchat gemini:flash")
-        end,
-        desc = "Gemini Flash",
-      },
+      { provider_prefix .. "c", function() vim.cmd(":vsplit | Mchat claude") end, desc = "Claude Sonnet" },
+      { provider_prefix .. "g", function() vim.cmd(":vsplit | Mchat gemini:flash") end, desc = "Gemini Flash" },
+      { provider_prefix .. "x", "<cmd>tab Mchat xai<cr>", desc = "xAI" },
+      -- stylua: ignore end
       -- Disabled in favor of Avante edit
       -- {
       --   "<leader>ae",

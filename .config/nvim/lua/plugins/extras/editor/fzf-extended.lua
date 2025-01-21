@@ -154,8 +154,7 @@ return {
       { "<leader>fM", function() pick("files", { cwd = "node_modules", fd_opts = fd_opts .. " -u" }) end, desc = "Find Files (node_modules)" },
       -- { "<leader><space>", pick("files", { winopts = { height = 0.33, width = 0.33, preview = { hidden = "hidden" } } }), desc = "Find Files (Root Dir)" },
       { "<leader>fz", function() require("util.fzf.zoxide").fzf_zoxide() end, desc = "Zoxide"},
-      -- TODO: work on async version of fzf_zoxide
-      { "<leader>fZ", function() require("util.fzf.zoxide").fzf_zoxide2() end, desc = "Zoxide (Test)"},
+      { "<leader>fZ", function() require("util.fzf.zoxide").fzf_zoxide_async() end, desc = "Zoxide (Async)"},
       { "<leader>sL", "<cmd>FzfLua lsp_finder<cr>", desc = "LSP Finder" },
       { "<leader>ga", "<cmd>FzfLua git_branches<cr>", desc = "Git Branches" },
       { "<leader>gr", "<cmd>FzfLua git_branches<cr>", desc = "Branches" },
