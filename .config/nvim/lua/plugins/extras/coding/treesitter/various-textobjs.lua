@@ -87,7 +87,8 @@ return {
       desc = "Rest of indentation",
     },
     {
-      "daA",
+      "aA",
+      mode = { "o", "x" },
       function()
         -- select outer indentation
         require("various-textobjs").indentation("outer", "outer")
@@ -105,7 +106,7 @@ return {
         vim.cmd(tostring(endBorderLn) .. " delete") -- delete end first so line index is not shifted
         vim.cmd(tostring(startBorderLn) .. " delete")
       end,
-      desc = "Delete Surrounding Indentation",
+      desc = "Surrounding indentation",
     },
   },
 }

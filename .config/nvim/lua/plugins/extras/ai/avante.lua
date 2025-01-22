@@ -60,35 +60,26 @@ return {
       --   max_tokens = 4096,
       -- },
       -- behaviour = {
+      --   auto_focus_sidebar = true,
       --   auto_suggestions = false, -- Experimental stage
+      --   auto_suggestions_respect_ignore = false,
       --   auto_set_highlight_group = true,
       --   auto_set_keymaps = true,
       --   auto_apply_diff_after_generation = false,
+      --   jump_result_buffer_on_finish = false,
+      -- jump_to_result_buffer_on_finish = true,
       --   support_paste_from_clipboard = false,
+      --   minimize_diff = true,
       -- },
+      -- Defaults: ~/.local/share/nvim/lazy/avante.nvim/lua/avante/config.lua
       mappings = {
         ask = "<leader>aa", -- <leader>aa
         edit = "<leader>ae", -- <leader>ate
         refresh = "<leader>atr", -- <leader>ar
         chat = "<leader>atc", -- <leader>ac
-        -- Defaults
-        -- ask = "<leader>aa",
-        -- edit = "<leader>ae",
-        -- refresh = "<leader>ar",
-        -- focus = "<leader>af",
-        -- toggle = {
-        --   default = "<leader>at",
-        --   debug = "<leader>ad",
-        --   hint = "<leader>ah",
-        --   suggestion = "<leader>as",
-        --   repomap = "<leader>aR",
-        -- },
-        -- suggestion = {
-        --   accept = "<M-l>",
-        --   next = "<M-]>",
-        --   prev = "<M-[>",
-        --   dismiss = "<C-]>",
-        -- },
+        files = {
+          add_current = "<leader>aA",
+        },
       },
       hints = {
         enabled = false,
@@ -97,19 +88,7 @@ return {
         ---@type "right" | "left" | "top" | "bottom"
         position = "right", -- the position of the sidebar
         wrap = true, -- similar to vim.o.wrap
-        width = 40, -- default % based on available width
-        -- sidebar_header = {
-        --   enabled = true,
-        --   align = "center", -- left, center, right for title
-        --   rounded = true,
-        -- },
-        -- ask = {
-        --   floating = false, -- Open the 'AvanteAsk' prompt in a floating window
-        --   start_insert = true, -- Start insert mode when opening the ask window
-        --   border = "rounded",
-        --   ---@type "ours" | "theirs"
-        --   focus_on_apply = "ours", -- which diff to focus after applying
-        -- },
+        -- width = 40, -- default 30% of available width
       },
       repo_map = {
         -- stylua: ignore start
@@ -126,8 +105,7 @@ return {
       },
       --- @class AvanteConflictUserConfig
       diff = {
-        --   autojump = true,
-        --   ---@type string | fun(): any
+        ---@type string | fun(): any
         list_opener = "Trouble quickfix",
         --   --- Override the 'timeoutlen' setting while hovering over a diff (see :help timeoutlen).
         --   --- Helps to avoid entering operator-pending mode with diff mappings starting with `c`.
@@ -181,6 +159,22 @@ return {
       end, mappings)
       return vim.list_extend(mappings, keys)
     end,
+  },
+  {
+    "saghen/blink.cmp",
+    optional = true,
+    dependencies = {
+      "saghen/blink.compat",
+    },
+    opts = {
+      sources = {
+        compat = {
+          "avante_commands",
+          "avante_mentions",
+          "avante_files",
+        },
+      },
+    },
   },
   {
     "folke/which-key.nvim",

@@ -11,9 +11,7 @@
   },
   "order": {
     "prefix": ".order",
-    "body": [
-      ".order(${1:attribute}: :asc, ${2:second_optional_attribute}: :desc)"
-    ]
+    "body": [".order(${1:attribute}: :asc, ${2:second_optional_attribute}: :desc)"]
   },
   "select": {
     "prefix": ".select",
@@ -57,12 +55,7 @@
   },
   "update_attributes": {
     "prefix": ".update_attributes",
-    "body": [
-      ".update_attributes(",
-      "  ${1:attribute}: '${2:value1}',",
-      "  ${3:attribute_2}: '${4:value2}'",
-      ")"
-    ],
+    "body": [".update_attributes(", "  ${1:attribute}: '${2:value1}',", "  ${3:attribute_2}: '${4:value2}'", ")"],
     "description": "Update multiple attributes"
   },
   "has_many": {
@@ -77,7 +70,7 @@
   },
   "belongs_to": {
     "prefix": "belongs_to",
-    "body": ["belongs_to :${1:category}${2:, dependent: ${3::destroy}}"],
+    "body": ["belongs_to :${1:category}${2:, dependent: ${3:destroy}}"],
     "description": "Add belongs_to association"
   },
   "belongs_to_polymorphic": {
@@ -87,9 +80,7 @@
   },
   "has_and_belongs_to_many": {
     "prefix": "has_and_belongs_to_many",
-    "body": [
-      "has_and_belongs_to_many :${1:categories}, join_table: '${2:categories_products}'$3"
-    ],
+    "body": ["has_and_belongs_to_many :${1:categories}, join_table: '${2:categories_products}'$3"],
     "description": "Add has_and_belongs_to_many association"
   },
   "has_many_through": {
@@ -104,30 +95,22 @@
   },
   "validates_presence_of": {
     "prefix": "validates_presence_of",
-    "body": [
-      "validates_presence_of :${1:attribute}, on: :create, message: '${2:message}'"
-    ],
+    "body": ["validates_presence_of :${1:attribute}, on: :create, message: '${2:message}'"],
     "description": "Validates presence of attribute"
   },
   "validates_length_of": {
     "prefix": "validates_length_of",
-    "body": [
-      "validates_length_of :${1:attribute}, within: 5..10, on: :create, message: '${2:message}'"
-    ],
+    "body": ["validates_length_of :${1:attribute}, within: 5..10, on: :create, message: '${2:message}'"],
     "description": "Validates length of attribute"
   },
   "validates_length": {
     "prefix": "validates_length",
-    "body": [
-      "validates :${1:attribute}, length: { minimum: ${2:minimum}, maximum: ${3:maximum} }"
-    ],
+    "body": ["validates :${1:attribute}, length: { minimum: ${2:minimum}, maximum: ${3:maximum} }"],
     "description": "This helper validates the length of the attributes' values. It provides a variety of options, so you can specify length constraints in different ways. See https://guides.rubyonrails.org/active_record_validations.html#length"
   },
   "validates_numericality": {
     "prefix": "validates_numericality",
-    "body": [
-      "validates :${1:attribute}, numericality: { only_integer: ${2:true} }"
-    ],
+    "body": ["validates :${1:attribute}, numericality: { only_integer: ${2:true} }"],
     "description": "This helper validates that your attributes have only numeric values. By default, it will match an optional sign followed by an integer or floating point number. To specify that only integer numbers are allowed, set :only_integer to true. See https://guides.rubyonrails.org/active_record_validations.html#numericality"
   },
   "validates_uniqueness_of": {
@@ -147,30 +130,22 @@
   },
   "validates_comparison": {
     "prefix": "validates_comparison",
-    "body": [
-      "validates :${1:attribute}, comparison: { greater_than: ${2:value} }"
-    ],
+    "body": ["validates :${1:attribute}, comparison: { greater_than: ${2:value} }"],
     "description": "This check will validate a comparison between any two comparable values. The validator requires a compare option be supplied. Each option accepts a value, proc, or symbol. Any class that includes Comparable can be compared. See https://guides.rubyonrails.org/active_record_validations.html#comparison"
   },
   "validates_exclusion": {
     "prefix": "validates_exclusion",
-    "body": [
-      "validates :${1:attribute}, exclusion: { in: %w(www us ca jp), message: '%{value} is reserved.' }"
-    ],
+    "body": ["validates :${1:attribute}, exclusion: { in: %w(www us ca jp), message: '%{value} is reserved.' }"],
     "description": "This helper validates that the attributes' values are not included in a given set. In fact, this set can be any enumerable object. See https://guides.rubyonrails.org/active_record_validations.html#exclusion"
   },
   "validates_inclusion": {
     "prefix": "validates_inclusion",
-    "body": [
-      "validates :${1:attribute}, inclusion: { in: %w(www us ca jp), message: '%{value} is not valid.' }"
-    ],
+    "body": ["validates :${1:attribute}, inclusion: { in: %w(www us ca jp), message: '%{value} is not valid.' }"],
     "description": "This helper validates that the attributes' values are included in a given set. In fact, this set can be any enumerable object. The inclusion helper has an option :in that receives the set of values that will be accepted. The :in option has an alias called :within that you can use for the same purpose, if you'd like to. The previous example uses the :message option to show how you can include the attribute's value. See https://guides.rubyonrails.org/active_record_validations.html#inclusion"
   },
   "validates_format": {
     "prefix": "validates_format",
-    "body": [
-      "validates :${1:attribute}, format: { with: '${2:condition_value}', message: 'only allows something' }"
-    ],
+    "body": ["validates :${1:attribute}, format: { with: '${2:condition_value}', message: 'only allows something' }"],
     "description": "This helper validates the attributes' values by testing whether they match a given regular expression, which is specified using the :with option. See https://guides.rubyonrails.org/active_record_validations.html#format"
   },
   "scope where": {

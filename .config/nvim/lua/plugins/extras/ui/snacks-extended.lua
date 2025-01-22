@@ -24,7 +24,8 @@ return {
     gitbrowse = {
       remote_patterns = {
         -- { "^https://[^@]+@(.+)$", "https://%1" },
-        { "^https://[^@]+@git%.synack%.com/(.+)%.git$", "https://git.synack.com/%1" },
+        -- { "^https://[^@]+@git%.synack%.com/(.+)%.git$", "https://git.synack.com/%1" },
+        { "^https://git%.synack%.com/(.+)%.git$", "https://git.synack.com/%1" },
       },
       url_patterns = {
         ["git%.synack%.com"] = {

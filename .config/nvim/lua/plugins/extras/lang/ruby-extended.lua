@@ -413,4 +413,18 @@ return {
       },
     },
   },
+  {
+    "luckasRanarison/nvim-devdocs",
+    optional = true,
+    opts = {
+      ensure_installed = {
+        "ruby-3.3",
+        -- "ruby-3.4",
+        "rails-7.0",
+        -- "rails-7.1",
+        -- "rails-7.2",
+        -- "rails-8.0"
+      },
+    },
+  },
 }

@@ -1,6 +1,6 @@
 local lsp_names = function()
   local names = {}
-  for i, server in pairs(vim.lsp.get_active_clients({ bufnr = 0 })) do
+  for _, server in pairs(vim.lsp.get_clients({ bufnr = 0 })) do
     table.insert(names, server.name)
   end
   return "[" .. table.concat(names, " ") .. "]"
@@ -12,6 +12,8 @@ local lsp = function()
   return " " .. " " .. lsp_names()
 end
 local formatter = function()
+  if not LazyVim.format.enabled() then return "" end
+
   local formatters = require("conform").list_formatters(0)
   if #formatters == 0 then return "" end
 

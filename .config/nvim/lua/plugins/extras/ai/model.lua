@@ -28,14 +28,14 @@ return {
     },
     keys = {
       -- Chat keymaps
-      { "<C-m>a", ":M<cr>", mode = "n", desc = "Run a completion prompt" },
-      { "<C-m><space>", ":Mchat<cr>", mode = "n", desc = "Open a chat buffer" },
-      { "<C-m>d", ":Mdelete<cr>", mode = "n", desc = "Delete" },
-      { "<C-m>s", ":Mselect<cr>", mode = "n", desc = "Select" },
-      { "<C-m>ma", ":MCadd<cr>", mode = "n", desc = "Add the current file into context" },
-      { "<C-m>md", ":MCremove<cr>", mode = "n", desc = "Remove the current file into context" },
-      { "<C-m>mD", ":MCclear<cr>", mode = "n", desc = "Clear the current context" },
-      { "<C-m>mp", ":MCpaste<cr>", mode = "n", desc = "Paste file into context" },
+      { "<C-m>a", ":M<cr>", ft = "mchat", mode = "n", desc = "Run a completion prompt" },
+      { "<C-m><space>", ":Mchat<cr>", ft = "mchat", mode = "n", desc = "Open a chat buffer" },
+      { "<C-m>d", ":Mdelete<cr>", ft = "mchat", mode = "n", desc = "Delete" },
+      { "<C-m>s", ":Mselect<cr>", ft = "mchat", mode = "n", desc = "Select" },
+      { "<C-m>ma", ":MCadd<cr>", ft = "mchat", mode = "n", desc = "Add the current file into context" },
+      { "<C-m>md", ":MCremove<cr>", ft = "mchat", mode = "n", desc = "Remove the current file into context" },
+      { "<C-m>mD", ":MCclear<cr>", ft = "mchat", mode = "n", desc = "Clear the current context" },
+      { "<C-m>mp", ":MCpaste<cr>", ft = "mchat", mode = "n", desc = "Paste file into context" },
       -- { "<C-m>l", ":Telescope model mchat<cr>", mode = "n", desc = "Paste file into context" },
       -- Editor keymaps
       -- { "<leader>ag", "", "+gemini" },

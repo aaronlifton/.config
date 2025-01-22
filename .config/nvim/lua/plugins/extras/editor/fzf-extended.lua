@@ -198,11 +198,12 @@ return {
         end,
       },
       {
-        -- "<leader>sA",
         "<leader>s<C-d>",
         function()
-          require("util.fzf.devdocs")()
+          -- require("util.fzf.devdocs")(vim.bo.filetype)
+          require("util.fzf.devdocs").open_async({ languages = vim.bo.filetype })
         end,
+        desc = "Devdocs",
       },
       {
         "<leader>mt",

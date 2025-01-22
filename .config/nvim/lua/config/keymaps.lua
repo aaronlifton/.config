@@ -345,14 +345,15 @@ map("v", "<leader>cpm", function()
   local clipboard = require("util.clipboard")
   clipboard.set_clipboard(require("util.selection").markdown_code_fence())
 end, { desc = "Copy markdown code fence" })
-map("n", "g<C-r>m", function()
-  local start_pos = vim.fn.getpos("'[")
-  local end_pos = vim.fn.getpos("']")
 
-  -- Insert code fences
-  vim.api.nvim_buf_set_lines(0, start_pos[2] - 1, start_pos[2] - 1, false, { "```" })
-  vim.api.nvim_buf_set_lines(0, end_pos[2] + 1, end_pos[2] + 1, false, { "```" })
-end, { desc = "Surround with markdown code fence" })
+-- map("n", "gzaM", function()
+--   local start_pos = vim.fn.getpos("'[")
+--   local end_pos = vim.fn.getpos("']")
+--
+--   -- Insert code fences
+--   vim.api.nvim_buf_set_lines(0, start_pos[2] - 1, start_pos[2] - 1, false, { "```" })
+--   vim.api.nvim_buf_set_lines(0, end_pos[2] + 1, end_pos[2] + 1, false, { "```" })
+-- end, { desc = "Surround with markdown code fence" })
 
 map("n", "<leader>cq", function()
   vim.diagnostic.open_float(nil, { source = true })
