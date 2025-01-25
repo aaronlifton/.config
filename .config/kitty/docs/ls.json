@@ -1,0 +1,947 @@
+[
+  {
+    "background_opacity": 0.949999988079071,
+    "id": 1,
+    "is_active": true,
+    "is_focused": true,
+    "last_focused": true,
+    "platform_window_id": 125,
+    "tabs": [
+      {
+        "active_window_history": [277, 1],
+        "enabled_layouts": ["splits", "tall", "stack", "horizontal", "fat"],
+        "groups": [
+          {
+            "id": 1,
+            "windows": [1]
+          },
+          {
+            "id": 242,
+            "windows": [277]
+          }
+        ],
+        "id": 1,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "splits",
+        "layout_opts": {
+          "default_axis_is_horizontal": true
+        },
+        "layout_state": {
+          "pairs": {
+            "bias": 0.5,
+            "horizontal": true,
+            "one": 1,
+            "two": 242
+          }
+        },
+        "title": "k9s",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": ["fish"],
+            "columns": 126,
+            "created_at": 1736276544339254000,
+            "cwd": "/Users/alifton/synack/local-k8s-dev",
+            "env": {
+              "KITTY_WINDOW_ID": "1",
+              "MANPATH": "/Applications/kitty.app/Contents/Resources/man:",
+              "PWD": "/Users/alifton"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": [
+                  "tilt",
+                  "up",
+                  "synack-login",
+                  "synack-synack",
+                  "synack-boss",
+                  "synack-client",
+                  "synack-platform",
+                  "asset-v2",
+                  "synack-synack-sidekiq",
+                  "--",
+                  "--local-sync",
+                  "synack-synack",
+                  "--local-sync",
+                  "synack-client",
+                  "--local-sync",
+                  "synack-platform",
+                  "--local-sync",
+                  "synack-boss"
+                ],
+                "cwd": "/Users/alifton/synack/local-k8s-dev",
+                "pid": 2182
+              }
+            ],
+            "id": 1,
+            "is_active": false,
+            "is_focused": false,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "tilt up synack-login synack-synack synack-boss synack-client synack-platform asset-v2 synack-synack-sidekiq -- --local-sync synack-synack --local-sync synack-client --local-sync synack-platform --local-sync synack-boss",
+            "lines": 58,
+            "pid": 2039,
+            "title": "tilt up synack-login ~/s/local-k8s-dev",
+            "user_vars": {}
+          },
+          {
+            "at_prompt": true,
+            "cmdline": ["fish"],
+            "columns": 126,
+            "created_at": 1736782723486454000,
+            "cwd": "/Users/alifton/synack/local-k8s-dev",
+            "env": {
+              "KITTY_WINDOW_ID": "277",
+              "PWD": "/Users/alifton/synack/local-k8s-dev"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": ["fish"],
+                "cwd": "/Users/alifton/synack/local-k8s-dev",
+                "pid": 38747
+              }
+            ],
+            "id": 277,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 130,
+            "last_reported_cmdline": "k9s",
+            "lines": 58,
+            "pid": 38747,
+            "title": "~/s/local-k8s-dev",
+            "user_vars": {}
+          }
+        ]
+      },
+      {
+        "active_window_history": [320],
+        "enabled_layouts": ["splits", "tall", "stack", "horizontal", "fat"],
+        "groups": [
+          {
+            "id": 282,
+            "windows": [320]
+          }
+        ],
+        "id": 226,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "splits",
+        "layout_opts": {
+          "default_axis_is_horizontal": true
+        },
+        "layout_state": {
+          "pairs": {
+            "bias": 0.5,
+            "horizontal": true,
+            "one": 282
+          }
+        },
+        "title": "htop",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": ["fish"],
+            "columns": 254,
+            "created_at": 1736802263931120000,
+            "cwd": "/Users/alifton/synack/synack",
+            "env": {
+              "KITTY_WINDOW_ID": "320",
+              "PWD": "/Users/alifton/synack/synack"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": ["htop"],
+                "cwd": "/Users/alifton/synack/synack",
+                "pid": 89652
+              }
+            ],
+            "id": 320,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "htop",
+            "lines": 58,
+            "pid": 96726,
+            "title": "htop ~/s/synack",
+            "user_vars": {}
+          }
+        ]
+      },
+      {
+        "active_window_history": [476],
+        "enabled_layouts": ["splits", "tall", "stack", "horizontal", "fat"],
+        "groups": [
+          {
+            "id": 390,
+            "windows": [476]
+          }
+        ],
+        "id": 318,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "splits",
+        "layout_opts": {
+          "default_axis_is_horizontal": true
+        },
+        "layout_state": {
+          "pairs": {
+            "bias": 0.5,
+            "horizontal": true,
+            "one": 390
+          }
+        },
+        "title": "nvim . ~/s/synack",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": ["fish"],
+            "columns": 254,
+            "created_at": 1737134208813686000,
+            "cwd": "/Users/alifton/synack/synack",
+            "env": {
+              "KITTY_WINDOW_ID": "476",
+              "PWD": "/Users/alifton/synack/synack"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": ["nvim", "."],
+                "cwd": "/Users/alifton/synack/synack",
+                "pid": 15737
+              }
+            ],
+            "id": 476,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "nvim .",
+            "lines": 58,
+            "pid": 47864,
+            "title": "nvim . ~/s/synack",
+            "user_vars": {
+              "IS_NVIM": "1 "
+            }
+          }
+        ]
+      },
+      {
+        "active_window_history": [508],
+        "enabled_layouts": ["splits", "tall", "stack", "horizontal", "fat"],
+        "groups": [
+          {
+            "id": 416,
+            "windows": [508]
+          }
+        ],
+        "id": 343,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "splits",
+        "layout_opts": {
+          "default_axis_is_horizontal": true
+        },
+        "layout_state": {
+          "pairs": {
+            "bias": 0.5,
+            "horizontal": true,
+            "one": 416
+          }
+        },
+        "title": "nvim . ~/.l/s/n/l/fzf-lua",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": ["fish"],
+            "columns": 254,
+            "created_at": 1737238878201298000,
+            "cwd": "/Users/alifton/.local/share/nvim/lazy/fzf-lua",
+            "env": {
+              "KITTY_WINDOW_ID": "508",
+              "PWD": "/Users/alifton/synack/synack"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": ["nvim", "."],
+                "cwd": "/Users/alifton/.local/share/nvim/lazy/fzf-lua",
+                "pid": 20329
+              }
+            ],
+            "id": 508,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "nvim .",
+            "lines": 58,
+            "pid": 17501,
+            "title": "nvim . ~/.l/s/n/l/fzf-lua",
+            "user_vars": {
+              "IS_NVIM": "1 "
+            }
+          }
+        ]
+      },
+      {
+        "active_window_history": [507],
+        "enabled_layouts": ["splits", "tall", "stack", "horizontal", "fat"],
+        "groups": [
+          {
+            "id": 415,
+            "windows": [507]
+          }
+        ],
+        "id": 342,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "splits",
+        "layout_opts": {
+          "default_axis_is_horizontal": true
+        },
+        "layout_state": {
+          "pairs": {
+            "bias": 0.5,
+            "horizontal": true,
+            "one": 415
+          }
+        },
+        "title": "nvim . ~/C/ruby-lsp",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": ["fish"],
+            "columns": 254,
+            "created_at": 1737238270006655000,
+            "cwd": "/Users/alifton/Code/ruby-lsp",
+            "env": {
+              "KITTY_WINDOW_ID": "507",
+              "PWD": "/Users/alifton/.local/share/nvim/lazy/nvim-lspconfig"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": ["nvim", "."],
+                "cwd": "/Users/alifton/Code/ruby-lsp",
+                "pid": 33529
+              }
+            ],
+            "id": 507,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "nvim .",
+            "lines": 58,
+            "pid": 11922,
+            "title": "nvim . ~/C/ruby-lsp",
+            "user_vars": {
+              "IS_NVIM": "1 "
+            }
+          }
+        ]
+      },
+      {
+        "active_window_history": [502],
+        "enabled_layouts": ["splits", "tall", "stack", "horizontal", "fat"],
+        "groups": [
+          {
+            "id": 410,
+            "windows": [502]
+          }
+        ],
+        "id": 337,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "splits",
+        "layout_opts": {
+          "default_axis_is_horizontal": true
+        },
+        "layout_state": {
+          "pairs": {
+            "bias": 0.5,
+            "horizontal": true,
+            "one": 410
+          }
+        },
+        "title": "nvim . ~/s/frontend_boss",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": ["fish"],
+            "columns": 254,
+            "created_at": 1737155875609693000,
+            "cwd": "/Users/alifton/synack/frontend_boss",
+            "env": {
+              "KITTY_WINDOW_ID": "502",
+              "PWD": "/Users/alifton/synack/synack"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": ["nvim", "."],
+                "cwd": "/Users/alifton/synack/frontend_boss",
+                "pid": 40431
+              }
+            ],
+            "id": 502,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "nvim .",
+            "lines": 58,
+            "pid": 40186,
+            "title": "nvim . ~/s/frontend_boss",
+            "user_vars": {
+              "IS_NVIM": "1 "
+            }
+          }
+        ]
+      },
+      {
+        "active_window_history": [504],
+        "enabled_layouts": ["splits", "tall", "stack", "horizontal", "fat"],
+        "groups": [
+          {
+            "id": 412,
+            "windows": [504]
+          }
+        ],
+        "id": 339,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "splits",
+        "layout_opts": {
+          "default_axis_is_horizontal": true
+        },
+        "layout_state": {
+          "pairs": {
+            "bias": 0.5,
+            "horizontal": true,
+            "one": 412
+          }
+        },
+        "title": "nvim . ~/.l/s/n/l/nvim-lspconfig",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": ["fish"],
+            "columns": 254,
+            "created_at": 1737229066551280000,
+            "cwd": "/Users/alifton/.local/share/nvim/lazy/nvim-lspconfig",
+            "env": {
+              "KITTY_WINDOW_ID": "504",
+              "PWD": "/Users/alifton/synack/frontend_boss"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": ["nvim", "."],
+                "cwd": "/Users/alifton/.config/nvim",
+                "pid": 89005
+              }
+            ],
+            "id": 504,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "nvim .",
+            "lines": 58,
+            "pid": 88873,
+            "title": "nvim . ~/.l/s/n/l/nvim-lspconfig",
+            "user_vars": {
+              "IS_NVIM": "1 "
+            }
+          }
+        ]
+      },
+      {
+        "active_window_history": [494],
+        "enabled_layouts": ["splits", "tall", "stack", "horizontal", "fat"],
+        "groups": [
+          {
+            "id": 402,
+            "windows": [494]
+          }
+        ],
+        "id": 329,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "splits",
+        "layout_opts": {
+          "default_axis_is_horizontal": true
+        },
+        "layout_state": {
+          "pairs": {
+            "bias": 0.5,
+            "horizontal": true,
+            "one": 402
+          }
+        },
+        "title": "nvim . ~/.l/s/n/l/grapple.nvim",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": ["fish"],
+            "columns": 254,
+            "created_at": 1737142962360297000,
+            "cwd": "/Users/alifton/.local/share/nvim/lazy/grapple.nvim",
+            "env": {
+              "KITTY_WINDOW_ID": "494",
+              "PWD": "/Users/alifton/.config/helix"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": ["nvim", "."],
+                "cwd": "/Users/alifton/.local/share/nvim/lazy/grapple.nvim",
+                "pid": 90014
+              }
+            ],
+            "id": 494,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "nvim .",
+            "lines": 58,
+            "pid": 32932,
+            "title": "nvim . ~/.l/s/n/l/grapple.nvim",
+            "user_vars": {
+              "IS_NVIM": "1 "
+            }
+          }
+        ]
+      },
+      {
+        "active_window_history": [497],
+        "enabled_layouts": ["splits", "tall", "stack", "horizontal", "fat"],
+        "groups": [
+          {
+            "id": 405,
+            "windows": [497]
+          }
+        ],
+        "id": 332,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "splits",
+        "layout_opts": {
+          "default_axis_is_horizontal": true
+        },
+        "layout_state": {
+          "pairs": {
+            "bias": 0.5,
+            "horizontal": true,
+            "one": 405
+          }
+        },
+        "title": "nvim . ~/s/frontend_researcher",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": ["fish"],
+            "columns": 254,
+            "created_at": 1737150008058181000,
+            "cwd": "/Users/alifton/synack/frontend_researcher",
+            "env": {
+              "KITTY_WINDOW_ID": "497",
+              "PWD": "/Users/alifton/synack/synack"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": ["nvim", "."],
+                "cwd": "/Users/alifton/synack/frontend_researcher",
+                "pid": 2827
+              }
+            ],
+            "id": 497,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "nvim .",
+            "lines": 58,
+            "pid": 98728,
+            "title": "nvim . ~/s/frontend_researcher",
+            "user_vars": {
+              "IS_NVIM": "1 "
+            }
+          }
+        ]
+      },
+      {
+        "active_window_history": [499],
+        "enabled_layouts": ["splits", "tall", "stack", "horizontal", "fat"],
+        "groups": [
+          {
+            "id": 407,
+            "windows": [499]
+          }
+        ],
+        "id": 334,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "splits",
+        "layout_opts": {
+          "default_axis_is_horizontal": true
+        },
+        "layout_state": {
+          "pairs": {
+            "bias": 0.5,
+            "horizontal": true,
+            "one": 407
+          }
+        },
+        "title": "researcher jest",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": ["fish"],
+            "columns": 254,
+            "created_at": 1737151043922459000,
+            "cwd": "/Users/alifton/synack/frontend_researcher",
+            "env": {
+              "KITTY_WINDOW_ID": "499",
+              "PWD": "/Users/alifton/synack/frontend_researcher"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": [
+                  "node",
+                  "/Users/alifton/synack/frontend_researcher/node_modules/.bin/jest",
+                  "--projects",
+                  "jest.config.enz.js",
+                  "--coverage=false",
+                  "--watch",
+                  "src/components/PerformanceDashboard/PointsUI/__tests__/PointsTable-test.js"
+                ],
+                "cwd": "/Users/alifton/synack/frontend_researcher",
+                "pid": 13330
+              },
+              {
+                "cmdline": [
+                  "npm exec jest --projects jest.config.enz.js --coverage=false --watch src/components/PerformanceDashboard/PointsUI/__tests__/PointsTable-test.js",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  "",
+                  ""
+                ],
+                "cwd": "/Users/alifton/synack/frontend_researcher",
+                "pid": 13199
+              }
+            ],
+            "id": 499,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "TZ=UTC npx jest --projects jest.config.enz.js --coverage=false --watch src/components/PerformanceDashboard/PointsUI/__tests__/PointsTable-test.js",
+            "lines": 58,
+            "pid": 13065,
+            "title": "TZ=UTC npx jest --pr ~/s/frontend_researcher",
+            "user_vars": {}
+          }
+        ]
+      },
+      {
+        "active_window_history": [477],
+        "enabled_layouts": ["splits", "tall", "stack", "horizontal", "fat"],
+        "groups": [
+          {
+            "id": 391,
+            "windows": [477]
+          }
+        ],
+        "id": 319,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "splits",
+        "layout_opts": {
+          "default_axis_is_horizontal": true
+        },
+        "layout_state": {
+          "pairs": {
+            "bias": 0.5,
+            "horizontal": true,
+            "one": 391
+          }
+        },
+        "title": "nvim . ~/s/frontend_researcher",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": ["fish"],
+            "columns": 254,
+            "created_at": 1737134443701447000,
+            "cwd": "/Users/alifton/synack/frontend_researcher",
+            "env": {
+              "KITTY_WINDOW_ID": "477",
+              "PWD": "/Users/alifton/synack/synack"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": ["nvim", "."],
+                "cwd": "/Users/alifton/synack/frontend_researcher",
+                "pid": 49549
+              }
+            ],
+            "id": 477,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "nvim .",
+            "lines": 58,
+            "pid": 49311,
+            "title": "nvim . ~/s/frontend_researcher",
+            "user_vars": {
+              "IS_NVIM": "1 "
+            }
+          }
+        ]
+      },
+      {
+        "active_window_history": [518],
+        "enabled_layouts": ["splits", "tall", "stack", "horizontal", "fat"],
+        "groups": [
+          {
+            "id": 426,
+            "windows": [518]
+          }
+        ],
+        "id": 350,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "splits",
+        "layout_opts": {
+          "default_axis_is_horizontal": true
+        },
+        "layout_state": {
+          "pairs": {
+            "bias": 0.5,
+            "horizontal": true,
+            "one": 426
+          }
+        },
+        "title": "nvim ~/synack/notes/ ~/s/synack",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": ["fish"],
+            "columns": 254,
+            "created_at": 1737472630297585000,
+            "cwd": "/Users/alifton/synack/synack",
+            "env": {
+              "KITTY_WINDOW_ID": "518",
+              "PWD": "/Users/alifton/synack/synack"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": ["nvim", "/Users/alifton/synack/notes/better_logging.md"],
+                "cwd": "/Users/alifton/synack/synack",
+                "pid": 33911
+              }
+            ],
+            "id": 518,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "nvim ~/synack/notes/better_logging.md",
+            "lines": 58,
+            "pid": 33647,
+            "title": "nvim ~/synack/notes/ ~/s/synack",
+            "user_vars": {
+              "IS_NVIM": "1 "
+            }
+          }
+        ]
+      },
+      {
+        "active_window_history": [522],
+        "enabled_layouts": ["splits", "tall", "stack", "horizontal", "fat"],
+        "groups": [
+          {
+            "id": 428,
+            "windows": [522]
+          }
+        ],
+        "id": 352,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "splits",
+        "layout_opts": {
+          "default_axis_is_horizontal": true
+        },
+        "layout_state": {
+          "pairs": {
+            "bias": 0.5,
+            "horizontal": true,
+            "one": 428
+          }
+        },
+        "title": "nvim . ~/.c/kitty",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": ["fish"],
+            "columns": 254,
+            "created_at": 1737472888790419000,
+            "cwd": "/Users/alifton/.config/kitty",
+            "env": {
+              "KITTY_WINDOW_ID": "522",
+              "PWD": "/Users/alifton/synack/synack"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": ["nvim", "."],
+                "cwd": "/Users/alifton/.config/kitty",
+                "pid": 38314
+              }
+            ],
+            "id": 522,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "nvim .",
+            "lines": 58,
+            "pid": 38176,
+            "title": "nvim . ~/.c/kitty",
+            "user_vars": {
+              "IS_NVIM": "1 "
+            }
+          }
+        ]
+      },
+      {
+        "active_window_history": [525],
+        "enabled_layouts": ["splits", "tall", "stack", "horizontal", "fat"],
+        "groups": [
+          {
+            "id": 431,
+            "windows": [525]
+          }
+        ],
+        "id": 355,
+        "is_active": true,
+        "is_focused": true,
+        "layout": "splits",
+        "layout_opts": {
+          "default_axis_is_horizontal": true
+        },
+        "layout_state": {
+          "pairs": {
+            "bias": 0.5,
+            "horizontal": true,
+            "one": 431
+          }
+        },
+        "title": "kitten @ ls | pbcopy ~/.c/kitty",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": ["fish"],
+            "columns": 254,
+            "created_at": 1737473022151735000,
+            "cwd": "/Users/alifton/.config/kitty",
+            "env": {
+              "KITTY_WINDOW_ID": "525",
+              "PWD": "/Users/alifton/.config/kitty"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": ["pbcopy"],
+                "cwd": "/Users/alifton/.config/kitty",
+                "pid": 39760
+              },
+              {
+                "cmdline": ["kitten", "@", "ls"],
+                "cwd": "/Users/alifton/.config/kitty",
+                "pid": 39759
+              }
+            ],
+            "id": 525,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": true,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "kitten @ ls | pbcopy",
+            "lines": 58,
+            "pid": 39693,
+            "title": "kitten @ ls | pbcopy ~/.c/kitty",
+            "user_vars": {}
+          }
+        ]
+      },
+      {
+        "active_window_history": [524],
+        "enabled_layouts": ["splits", "tall", "stack", "horizontal", "fat"],
+        "groups": [
+          {
+            "id": 430,
+            "windows": [524]
+          }
+        ],
+        "id": 354,
+        "is_active": false,
+        "is_focused": false,
+        "layout": "splits",
+        "layout_opts": {
+          "default_axis_is_horizontal": true
+        },
+        "layout_state": {
+          "pairs": {
+            "bias": 0.5,
+            "horizontal": true,
+            "one": 430
+          }
+        },
+        "title": "kitten @ --help | nv ~/.c/kitty",
+        "windows": [
+          {
+            "at_prompt": false,
+            "cmdline": ["fish"],
+            "columns": 254,
+            "created_at": 1737472958782332000,
+            "cwd": "/Users/alifton/.config/kitty",
+            "env": {
+              "KITTY_WINDOW_ID": "524",
+              "PWD": "/Users/alifton/.config/kitty"
+            },
+            "foreground_processes": [
+              {
+                "cmdline": [
+                  "nvimpager",
+                  "-R",
+                  "--cmd",
+                  "set rtp+=$RUNTIME | lua nvimpager = require(\"nvimpager\"); nvimpager.stage1()",
+                  "-c",
+                  "lua nvimpager.stage2()",
+                  "/var/folders/d_/hgt4ft595kj2h_m886cglx880000gn/T/tmp.XCkZfR9Idc"
+                ],
+                "cwd": "/Users/alifton/.config/kitty",
+                "pid": 39092
+              }
+            ],
+            "id": 524,
+            "is_active": true,
+            "is_focused": true,
+            "is_self": false,
+            "last_cmd_exit_status": 0,
+            "last_reported_cmdline": "kitten @ --help | nvimpager",
+            "lines": 58,
+            "pid": 39056,
+            "title": "kitten @ --help | nv ~/.c/kitty",
+            "user_vars": {}
+          }
+        ]
+      }
+    ],
+    "wm_class": "kitty",
+    "wm_name": "kitty"
+  }
+]
