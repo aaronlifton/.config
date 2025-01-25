@@ -1,3 +1,17 @@
+local _vendors = {
+  deepseek = {
+    __inherited_from = "openai",
+    api_key_name = "DEEPSEEK_API_KEY",
+    endpoint = "https://api.deepseek.com",
+    model = "deepseek-coder",
+    -- endpoint = "https://api.deepseek.com/v1",
+    -- model = "deepseek-chat",
+    -- timeout = 30000, -- Timeout in milliseconds
+    -- temperature = 0,
+    -- max_tokens = 4096,
+  },
+}
+
 return {
   {
     "yetone/avante.nvim",
@@ -144,16 +158,18 @@ return {
       local opts =
         require("lazy.core.plugin").values(require("lazy.core.config").spec.plugins["avante.nvim"], "opts", false)
 
-    -- stylua: ignore start
-    local mappings = {
-      { "<M-->", function() require("avante.api").ask() end, desc = "avante: ask", mode = { "n", "v" } },
-      -- { "<leader>ata", function() require("avante.api").ask() end, desc = "avante: ask", mode = { "n", "v" } },
-      { opts.mappings.ask, function() require("avante.api").ask() end, desc = "avante: ask", mode = { "n", "v" } },
-      { opts.mappings.refresh, function() require("avante.api").refresh() end, desc = "avante: refresh", mode = "v" },
-      { opts.mappings.edit, function() require("avante.api").edit() end, desc = "avante: edit", mode = { "n", "v" } },
-      { opts.mappings.chat, function() vim.cmd("AvanteChat") end, desc = "avante: chat", mode = { "n" } },
-    }
+      -- stylua: ignore start
+      local mappings = {
+        { "<M-->", function() require("avante.api").ask() end, desc = "avante: ask", mode = { "n", "v" } },
+        -- { "<leader>ata", function() require("avante.api").ask() end, desc = "avante: ask", mode = { "n", "v" } },
+        { opts.mappings.ask, function() require("avante.api").ask() end, desc = "avante: ask", mode = { "n", "v" } },
+        { opts.mappings.refresh, function() require("avante.api").refresh() end, desc = "avante: refresh", mode = "v" },
+        { opts.mappings.edit, function() require("avante.api").edit() end, desc = "avante: edit", mode = { "n", "v" } },
+        { opts.mappings.chat, function() vim.cmd("AvanteChat") end, desc = "avante: chat", mode = { "n" } },
+        { "<leader>ats", function() require("avante.api").get_suggestion():suggest() end, desc = "avante: suggest", mode = { "n" } },
+      }
       -- stylua: ignore end
+
       mappings = vim.tbl_filter(function(m)
         return m[1] and #m[1] > 0
       end, mappings)

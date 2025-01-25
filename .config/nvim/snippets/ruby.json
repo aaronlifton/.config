@@ -1,6 +1,6 @@
 {
   "Insert pry call": {
-    "prefix": "pry",
+    "prefix": "pr",
     "body": "binding.pry"
   },
   "Exception block": {

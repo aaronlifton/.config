@@ -16,7 +16,7 @@ end
 vim.hl = vim.highlight
 
 -- o.autoindent = true -- LazyVim uses smartindent instead
-o.breakindent = true
+-- o.breakindent = true
 o.backspace = { "eol", "start", "indent" }
 -- o.clipboard:append({ "unnamed", "unnamedplus" })
 o.spellfile = config_path .. "/spell/en.utf-8.add"

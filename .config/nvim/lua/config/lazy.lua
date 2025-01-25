@@ -11,9 +11,7 @@ vim.opt.rtp:prepend(vim.env.LAZY or lazypath)
 require("lazy").setup({
   spec = {
     { "LazyVim/LazyVim", import = "lazyvim.plugins" },
-    -- { import = "lazyvim.plugins.extras.ui.mini-animate" },
     { import = "lazyvim.plugins.extras.vscode" },
-    -- { import = "lazyvim.plugins.extras.lsp.none-ls" },
     { import = "plugins" },
   },
   defaults = {
@@ -39,6 +37,7 @@ require("lazy").setup({
         "tohtml",
         "tutor",
         "zipPlugin",
+        --
         -- NVChad
         -- "2html_plugin",
         -- "getscript",
@@ -51,7 +50,7 @@ require("lazy").setup({
         -- "matchit",
         -- "tar",
         -- "rrhelper",
-        -- -- "spellfile_plugin",
+        -- "spellfile_plugin",
         -- "vimball",
         -- "vimballPlugin",
         -- "zip",
@@ -68,7 +67,7 @@ require("lazy").setup({
   dev = {
     path = "~/Code/nvim-plugins",
     ---@type string[] plugins that match these patterns will use your local versions instead of being fetched from GitHub
-    patterns = { "aaronlifton" },
+    patterns = {},
     -- Fallback to git when local plugin doesn't exist
     fallback = true,
   },

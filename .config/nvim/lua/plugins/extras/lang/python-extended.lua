@@ -6,6 +6,7 @@ local ruff = vim.g.lazyvim_python_ruff
 
 return {
   { import = "lazyvim.plugins.extras.lang.python" },
+  -- Basedpyright is installed automatically with mason-lspconfig - LazyVim/lua/lazyvim/plugins/lsp/init.lua
   {
     "neovim/nvim-lspconfig",
     opts = {

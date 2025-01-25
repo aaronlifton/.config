@@ -20,15 +20,15 @@ local formatter = function()
   return "󰛖 "
 end
 local linter = function()
-  local linters = require("lint").linters_by_ft[vim.bo.filetype]
+  local linters = require("lint").get_running(0)
   if #linters == 0 then return "" end
 
   return "󱉶 "
 end
 
-local starship = function()
-  return require("util.lualine.starship")()
-end
+-- local starship = function()
+--   return require("util.lualine.starship")()
+-- end
 
 return {
   "nvim-lualine/lualine.nvim",

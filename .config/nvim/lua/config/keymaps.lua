@@ -176,8 +176,9 @@ map("x", "g/", "<esc>/\\%V", { silent = false, desc = "Search Inside Visual Sele
 map("x", "*", [[y/\V<C-R>=escape(@", '/\')<CR><CR>]], { desc = "Search Selected Text", silent = true })
 map("x", "#", [[y?\V<C-R>=escape(@", '?\')<CR><CR>]], { desc = "Search Selected Text (Backwards)", silent = true })
 
+-- Currently set by better-escape.nvim
 -- Press jk fast to enter
-map("i", "jk", "<ESC>", { silent = true })
+-- map("i", "jk", "<ESC>", { silent = true })
 
 -- Dashboard
 map("n", "<leader>fd", function()
@@ -193,25 +194,14 @@ local function spell_reload()
 end
 map("n", "zR", spell_reload, { noremap = true, silent = true })
 
--- if LazyVim.has("baleia.nvim") then
---   map("n", "<leader>buc", function()
---     local bufname = vim.api.nvim_buf_get_name(vim.fn.bufnr())
---     if bufname == "LazyTerm" then
---       return
---     end
---     require("baleia").automatically(vim.fn.bufnr())
---   end)
--- end
-
-function GetDiags()
+vim.api.nvim_create_user_command("SaveJsonDiags", function()
   local diagnostics = vim.diagnostic.get(0)
   local json = vim.fn.json_encode(diagnostics)
   vim.fn.mkdir(vim.fn.stdpath("data") .. "/diagjson", "p")
   local path = vim.fn.stdpath("data") .. "/diagnostics.json"
   vim.fn.writefile({ json }, path)
   vim.notify("Saved diagnostics to " .. path, vim.log.levels.INFO, { title = "Diagnostics" })
-end
-vim.api.nvim_command("command! SaveJsonDiags lua GetDiags()")
+end, { desc = "Save Json Diagnostics" })
 
 -- Comment box
 map("n", "]/", "/\\S\\zs\\s*╭<CR>zt", { desc = "Next Block Comment" })
@@ -232,60 +222,30 @@ map("n", "<leader>lr", function()
   vim.fn.system({ "xdg-open", "https://github.com/folke/lazy.nvim" })
 end, { desc = "lazy.nvim Repo" })
 
+-- stylua: ignore start
 map("n", "<leader>lx", "<cmd>LazyExtras<cr>", { desc = "Extras" })
-map("n", "<leader>lc", function()
-  LazyVim.news.changelog()
-end, { desc = "LazyVim Changelog" })
-map("n", "<leader>lu", function()
-  lazy.update()
-end, { desc = "Lazy Update" })
-map("n", "<leader>lC", function()
-  lazy.check()
-end, { desc = "Lazy Check" })
-map("n", "<leader>ls", function()
-  lazy.sync()
-end, { desc = "Lazy Sync" })
+map("n", "<leader>lc", function() LazyVim.news.changelog() end, { desc = "LazyVim Changelog" })
+map("n", "<leader>lu", function() require("lazy").update() end, { desc = "Lazy Update" })
+map("n", "<leader>lC", function() require("lazy").check() end, { desc = "Lazy Check" })
+map("n", "<leader>ls", function() require("lazy").sync() end, { desc = "Lazy Sync" })
+-- stylua: ignore end
 
 -- Linter and formatter info
 map("n", "<leader>cif", "<cmd>LazyFormatInfo<cr>", { desc = "Formatting" })
 map("n", "<leader>cic", "<cmd>ConformInfo<cr>", { desc = "Conform" })
-map("n", "<leader>ciF", function()
-  local format_util = require("lazyvim.util.format")
-  local str = ""
-  local buf = vim.api.nvim_get_current_buf()
-  for _, formatter in ipairs(format_util.resolve(buf)) do
-    if formatter.active then
-      for _, line in ipairs(formatter.resolved) do
-        str = str .. " " .. formatter.name .. "[" .. line .. "]\n"
-      end
-    end
-  end
-  vim.api.nvim_echo({ { str, "Normal" } }, true, {})
-end, { desc = "Formatting 2" })
+
 local linters = function()
-  local linters_attached = require("lint").linters_by_ft[vim.bo.filetype]
-  local buf_linters = {}
+  local buf = vim.api.nvim_get_current_buf()
+  local linters_attached = require("lint").get_running(buf)
 
-  if LazyVim.has("none-ls.nvim") then
-    local nls_lsp_util = require("util.none_ls_lsp")
-    for _, linter in pairs(nls_lsp_util.get_linters()) do
-      table.insert(linters_attached, ("%s (NLS)"):format(linter))
-    end
-  end
-
-  if not linters_attached then
+  if not linters_attached or not #linters_attached > 0 then
     vim.notify("No linters attached", vim.log.levels.WARN, { title = "Linter" })
     return
   end
 
-  for _, linter in pairs(linters_attached) do
-    table.insert(buf_linters, linter)
-  end
+  local unique_client_names = table.concat(linters_attached, ", ")
 
-  local unique_client_names = table.concat(buf_linters, ", ")
-  local linters = string.format("%s", unique_client_names)
-
-  vim.notify(linters, vim.log.levels.INFO, { title = "Linter" })
+  vim.notify(string.format("%s", unique_client_names), vim.log.levels.INFO, { title = "Linter" })
 end
 map("n", "<leader>ciL", linters, { desc = "Lint" })
 map("n", "<leader>cir", "<cmd>LazyRoot<cr>", { desc = "Root" })
@@ -398,6 +358,16 @@ end, { desc = "Git Browse (copy file)" })
 -- stylua: ignore end
 
 -- Terminals
+map("n", "<leader>fT", function()
+  Snacks.terminal(nil, { win = { position = "float", border = "rounded", backdrop = 60, width = 0.5, height = 0.5 } })
+end, { desc = "Terminal (float)" })
+map("n", "<leader>ft", function()
+  Snacks.terminal(
+    nil,
+    { cwd = LazyVim.root(), win = { position = "float", border = "rounded", backdrop = 60, width = 0.5, height = 0.5 } }
+  )
+end, { desc = "Terminal (float, Root Dir)" })
+
 map("n", "<M-S-Bslash>", function()
   local buf = vim.api.nvim_get_current_buf()
   local bufname = vim.api.nvim_buf_get_name(buf)
@@ -518,7 +488,7 @@ map(
 -- end, { desc = "Show supertypes" })
 
 -- see if can get used to <C-w>T instead of this
-map("n", "<C-w><C-t>", "<C-w>T", { desc = "Break out into a new tab", remap = true })
+-- map("n", "<C-w><C-t>", "<C-w>T", { desc = "Break out into a new tab", remap = true })
 
 -- Not needed, default keymap <C-w>T
 -- map("n", "<C-w><C-t>", function()

@@ -4,6 +4,14 @@ return {
   { import = "lazyvim.plugins.extras.coding.neogen" },
   {
     "danymat/neogen",
+    opts = {
+      placeholders_text = {
+        ["description"] = "",
+      },
+      languages = {
+        lua = {},
+      },
+    },
     keys = {
       {
         prefix .. "t",

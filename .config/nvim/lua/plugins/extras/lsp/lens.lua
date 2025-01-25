@@ -12,6 +12,9 @@ return {
       end,
       git_authors = false,
     },
+    ignore_filetype = {
+      "ruby",
+    },
   },
   keys = {
     { "<leader>ue", "<cmd>LspLensToggle<cr>", desc = "Toggle Lsp Lens" },

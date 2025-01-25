@@ -35,3 +35,6 @@ type = "string"
 
 [[it.args]]
 type = "function"
+
+[[Snacks]]
+any = true

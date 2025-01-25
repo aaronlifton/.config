@@ -62,26 +62,6 @@ return {
       },
     },
   },
-  -- {
-  --   "neovim/nvim-lspconfig",
-  --   optional = true,
-  --   opts = {
-  --     servers = {
-  --       lua_ls = {
-  --         settings = {
-  --           Lua = {
-  --             hint = {
-  --               setType = true,
-  --             },
-  --             codeLens = {
-  --               enable = false,
-  --             },
-  --           },
-  --         },
-  --       },
-  --     },
-  --   },
-  -- },
   {
     "stevearc/conform.nvim",
     optional = true,
@@ -125,6 +105,26 @@ return {
       },
     },
   },
+  -- {
+  --   "neovim/nvim-lspconfig",
+  --   optional = true,
+  --   opts = {
+  --     servers = {
+  --       lua_ls = {
+  --         settings = {
+  --           Lua = {
+  --             hint = {
+  --               setType = true,
+  --             },
+  --             codeLens = {
+  --               enable = false,
+  --             },
+  --           },
+  --         },
+  --       },
+  --     },
+  --   },
+  -- },
   --   opts = {
   --     servers = {
   --       lua_ls = {
@@ -138,41 +138,12 @@ return {
   --             },
   --             telemetry = { enable = false },
   --             semantic = { enable = false }, -- Do not override treesitter lua highlighting with lua_ls's highlighting
-  --             -- -- Already defined in .luarc.json
-  --             -- workspace = {
-  --             --   checkThirdParty = false,
-  --             --   library = lsp_util.library(),
-  --             --   maxPreload = 8000,
-  --             --   preloadFileSize = 1000,
-  --             --   ignoreDir = { ".*", "aaron", "config/nvim", "nvim/lua" },
-  --             --   -- maxPreload = 100000,
-  --             --   -- preloadFileSize = 10000,
-  --             -- },
-  --             -- completion = {
-  --             --   callSnippet = "Replace",
-  --             -- },
-  --             -- Using LazyVim's config
-  --             -- hint = {
-  --             --   enable = true,
-  --             --   setType = true,
-  --             --   paramType = true, -- Show type hints at the parameter of the function.
-  --             --   paramName = "Literal", -- Show hints of parameter name (literal types only) at the function call.
-  --             --   arrayIndex = "Auto", -- Show hints only when the table is greater than 3 items, or the table is a mixed table.
-  --             -- },
   --             diagnostics = {
   --               globals = { "vim", "LazyVim" },
   --               undefined_global = false, -- remove this from diag!
   --               missing_parameters = false, -- missing fields :)
   --               disable = { "missing-parameters", "missing-fields" },
   --             },
-  --             -- format = {
-  --             --   enable = true,
-  --             --   defaultConfig = {
-  --             --     indent_style = "space",
-  --             --     indent_size = "2",
-  --             --     continuation_indent_size = "2",
-  --             --   },
-  --             -- },
   --           },
   --         },
   --       },

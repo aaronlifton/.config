@@ -123,7 +123,7 @@ return vim.tbl_extend("force", starter_prompts, {
       endpoint = "fim",
     },
     builder = function(input)
-      -- /Users/aaron/.local/share/nvim/lazy/cmp-ai/lua/cmp_ai/backends/codestral.lua
+      -- /Users/$USER/.local/share/nvim/lazy/cmp-ai/lua/cmp_ai/backends/codestral.lua
       local context = require("util.model.context")
       local ctx = context:get()
       return { prompt = ctx.lines_before }

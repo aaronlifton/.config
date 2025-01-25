@@ -10,7 +10,7 @@ local has_rubocop_config = function()
   return vim.fs.find(".rubocop.yml", { path = filename, upward = true })
 end
 
-local use_ruby_lsp_rubocop = false
+local use_ruby_lsp_rubocop = true
 local add_ruby_deps_command = false
 
 -- https://github.com/Shopify/ruby-lsp/blob/4f7ce060de3257c35028ccb70e1854da952cdb95/vscode/package.json#L231
@@ -353,10 +353,14 @@ return {
       },
       formatters = {
         rubocop = {
+          -- Bundle version (1.50.2 does not work with nvim)
           -- command = "bundle",
           -- args = {
           --   "exec",
           --   "rubocop",
+          --   "-c",
+          --   ".rubocop_ci.yml",
+          --   "--force-exclusion",
           --   "--server",
           --   "-a",
           --   "-f",
@@ -365,6 +369,7 @@ return {
           --   "--stdin",
           --   "$FILENAME",
           -- },
+          --
           prepend_args = function()
             local hostname = require("util.system").hostname()
             if hostname == "ali-d7jf7y.local" then

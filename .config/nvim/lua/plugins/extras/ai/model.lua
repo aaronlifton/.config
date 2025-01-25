@@ -36,9 +36,8 @@ return {
       { "<C-m>md", ":MCremove<cr>", ft = "mchat", mode = "n", desc = "Remove the current file into context" },
       { "<C-m>mD", ":MCclear<cr>", ft = "mchat", mode = "n", desc = "Clear the current context" },
       { "<C-m>mp", ":MCpaste<cr>", ft = "mchat", mode = "n", desc = "Paste file into context" },
-      -- { "<C-m>l", ":Telescope model mchat<cr>", mode = "n", desc = "Paste file into context" },
+      { "<C-m>c", "<cmd>Model codestral:fim<cr>", desc = "Complete (Codestral FIM)" },
       -- Editor keymaps
-      -- { "<leader>ag", "", "+gemini" },
       { gen_prefix .. "c", "<cmd>Model commit:gemini<cr>", desc = "Commit message (Gemini)" },
       { gen_prefix .. "v", "<cmd>Model commit:openai<cr>", desc = "Commit message (OpenAI)" },
       {
@@ -51,8 +50,9 @@ return {
       {
         "<leader>ac",
         function()
-          -- vim.cmd(":tab Mchat claude")
-          vim.cmd(":tab Mchat claude:cache")
+          -- Need to prefix messages with ">> cache\n" to set ephemeral tag
+          -- vim.cmd(":tab Mchat claude:cache")
+          vim.cmd(":tab Mchat claude")
         end,
         desc = "Toggle Chat (Claude Sonnet (Cache))",
       },
@@ -99,13 +99,12 @@ return {
         mode = { "n", "v" },
         desc = "Edit Code (Claude Sonnet)",
       },
-      { "<C-m>c", "<cmd>Model codestral:fim<cr>", desc = "Complete (Codestral FIM)" },
     },
     -- To override defaults add a config field and call setup()
     config = function()
       local openai = require("model.providers.openai")
       local hf = require("model.providers.huggingface")
-      local gemini = require("model.providers.gemini")
+      -- local gemini = require("model.providers.gemini")
       local llamacpp = require("model.providers.llamacpp")
       local model = require("model")
       local util = require("model.util")
@@ -157,6 +156,7 @@ return {
       -- Override elixir-tools :M/:Mix command
       vim.api.nvim_command("command! M Model")
 
+      -- Override mchat filetype to support render-markdown.nvim
       vim.treesitter.language.register("markdown", "mchat")
 
       -- Setup ruby embeddings functions

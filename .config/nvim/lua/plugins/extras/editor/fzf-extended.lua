@@ -34,6 +34,60 @@ local function toggle_iglob(path)
   end
 end
 
+local function toggle_file_ignore_pattern(pattern)
+  return function(_, opts)
+    -- vim.api.nvim_echo({ { vim.inspect(opts), "Normal" } }, true, {})
+
+    local o = vim.tbl_deep_extend("keep", { resume = true }, opts.__call_opts)
+    o.file_ignore_patterns = o.file_ignore_patterns or {}
+    local found
+    for idx, path in ipairs(o.file_ignore_patterns) do
+      if path == pattern then
+        table.remove(o.file_ignore_patterns, idx)
+        found = true
+        break
+      end
+    end
+    if not found then table.insert(o.file_ignore_patterns, pattern) end
+
+    opts.__call_fn(o)
+  end
+end
+
+local function toggle_fd_exclude_patterns(patterns)
+  -- Convert single pattern to list for consistent handling
+  if type(patterns) == "string" then patterns = { patterns } end
+
+  return function(_, opts)
+    local o = vim.tbl_deep_extend("keep", { resume = true }, opts.__call_opts)
+    o.fd_opts = o.fd_opts or ""
+
+    -- Check if all patterns exist in fd_opts
+    local all_patterns_exist = true
+    for _, pattern in ipairs(patterns) do
+      if not o.fd_opts:find(pattern, nil, true) then
+        all_patterns_exist = false
+        break
+      end
+    end
+
+    if all_patterns_exist then
+      -- Remove all patterns
+      for _, pattern in ipairs(patterns) do
+        o.fd_opts = o.fd_opts:gsub("--exclude '" .. vim.pesc(pattern) .. "'", "")
+      end
+    else
+      -- Add all missing patterns
+      for _, pattern in ipairs(patterns) do
+        if not o.fd_opts:find(pattern, nil, true) then o.fd_opts = o.fd_opts .. " --exclude '" .. pattern .. "'" end
+      end
+    end
+
+    -- vim.api.nvim_echo({ { vim.inspect({ opts = o.fd_opts, patterns = patterns }), "Normal" } }, true, {})
+    opts.__call_fn(o)
+  end
+end
+
 local use_lazyvim_picker = true
 local pick = use_lazyvim_picker and function(name, opts)
   return LazyVim.pick(name, opts)()
@@ -47,6 +101,12 @@ local rg_opts_pcre2 = default_grep_rg_opts .. [[ --pcre2 ]]
 local default_fd_opts = "--color=never --type f --hidden --follow --exclude .git"
 local fd_opts = default_fd_opts
   .. " --exclude '**/dist/*.js*' --exclude '**/dist/*.css*' --exclude '*.min.*' --exclude '*-min.*'"
+
+local file_opts = {
+  actions = {
+    ["alt-9"] = toggle_fd_exclude_patterns({ "spec/**/*", "test/**/*", "**/test/**", "!**/__tests__" }),
+  },
+}
 
 local live_grep_opts = {
   rg_glob = true,
@@ -99,6 +159,7 @@ local live_grep_opts = {
 }
 
 local live_grep_opts_with_reset = vim.tbl_extend("force", live_grep_opts, { search = "" })
+
 return {
   { import = "lazyvim.plugins.extras.editor.fzf" },
   { import = "plugins.extras.editor.telescope.urlview" },
@@ -134,10 +195,10 @@ return {
       })
     end,
     keys = {
-      --stylua: ignore start
-      { "<leader><space>", LazyVim.pick("files", { git_icons = false, fd_opts = fd_opts}), desc = "Find Files (Root Dir)" },
-      { "<leader>ff", LazyVim.pick("files", { git_icons = false, fd_opts = fd_opts }), desc = "Find Files (Root Dir)" },
-      { "<leader>fF", LazyVim.pick("files", { root = false, git_icons = false, fd_opts = fd_opts }), desc = "Find Files (cwd)" },
+      -- stylua: ignore start
+      { "<leader><space>", LazyVim.pick("files", vim.tbl_extend("force", file_opts, { git_icons = false, fd_opts = fd_opts })), desc = "Find Files (Root Dir)" },
+      { "<leader>ff", LazyVim.pick("files", vim.tbl_extend("force", file_opts, { git_icons = false, fd_opts = fd_opts })), desc = "Find Files (Root Dir)" },
+      { "<leader>fF", LazyVim.pick("files", vim.tbl_extend("force", file_opts, { root = false, git_icons = false, fd_opts = fd_opts })), desc = "Find Files (cwd)" },
       { "<leader>su", function() pick("grep_cword", live_grep_opts) end, desc = "Word (Root Dir)", mode = "n" },
       { "<leader>su", function() pick("grep_visual", live_grep_opts) end, desc = "Selection (Root Dir)", mode = "v" },
       { "<leader>s<C-w>", "<cmd>lua require('fzf-lua').grep_cWORD()<CR>", desc = "WORD (Root Dir)", mode = "n" },
@@ -153,16 +214,15 @@ return {
       { "<leader>sN", function() pick("live_grep_glob", { cwd = "node_modules", rg_opts = "-uu" }) end, desc = "Grep (node_modules)" },
       { "<leader>fM", function() pick("files", { cwd = "node_modules", fd_opts = fd_opts .. " -u" }) end, desc = "Find Files (node_modules)" },
       -- { "<leader><space>", pick("files", { winopts = { height = 0.33, width = 0.33, preview = { hidden = "hidden" } } }), desc = "Find Files (Root Dir)" },
-      { "<leader>fz", function() require("util.fzf.zoxide").fzf_zoxide() end, desc = "Zoxide"},
-      { "<leader>fZ", function() require("util.fzf.zoxide").fzf_zoxide_async() end, desc = "Zoxide (Async)"},
+      -- { "<leader>fz", function() require("util.fzf.zoxide").fzf_zoxide() end, desc = "Zoxide"},
+      { "<leader>fz", function() require("util.fzf.zoxide").fzf_zoxide_async() end, desc = "Zoxide"},
       { "<leader>sL", "<cmd>FzfLua lsp_finder<cr>", desc = "LSP Finder" },
       { "<leader>ga", "<cmd>FzfLua git_branches<cr>", desc = "Git Branches" },
       { "<leader>gr", "<cmd>FzfLua git_branches<cr>", desc = "Branches" },
       { "<leader>sA", "<cmd>FzfLua treesitter<cr>", desc = "Treesiter Symbols" },
       -- { "<leader>sX", "<cmd>FzfLua treesitter<cr>", desc = "Treesiter Symbols" },
-      -- { "<leader>S", "<cmd>FzfLua spell_suggest<cr>", desc = "Spelling" },
-      { "<leader><C-s>", "<cmd>FzfLua spell_suggest<cr>", desc = "Spelling" },
-      --stylua: ignore end
+      -- { "<leader><C-s>", "<cmd>FzfLua spell_suggest<cr>", desc = "Spelling" },
+      -- stylua: ignore end
       {
         "<leader>sF",
         function()
@@ -174,6 +234,10 @@ return {
         desc = "Grep (--fixed-strings)",
         mode = "n",
       },
+      -- stylua: ignore start
+      { "<leader>mt", function() require("util.fzf.grapple").open() end, desc = "Marks (Fzf)" },
+      { "<leader>s<C-d>", function() require("util.fzf.devdocs").open_async({ languages = vim.bo.filetype }) end, desc = "Devdocs" },
+      -- stylua: ignore end
       {
         "<leader>sY",
         function()
@@ -196,82 +260,6 @@ return {
           local path = get_module_path(cwd)
           if path then pick("live_grep", { cwd = path })() end
         end,
-      },
-      {
-        "<leader>s<C-d>",
-        function()
-          -- require("util.fzf.devdocs")(vim.bo.filetype)
-          require("util.fzf.devdocs").open_async({ languages = vim.bo.filetype })
-        end,
-        desc = "Devdocs",
-      },
-      {
-        "<leader>mt",
-        function()
-          local fzf_utils = require("fzf-lua.utils")
-          local tags = require("grapple").tags()
-          local entries = {}
-          if not tags then return end
-
-          for i, tag in ipairs(tags) do
-            local idx = i
-            local path = tag.path
-            local line = (tag.cursor or { 1, 0 })[1]
-            local col = (tag.cursor or { 1, 0 })[2]
-            path = path:gsub("^" .. vim.fn.getcwd() .. "/", "")
-            table.insert(
-              entries,
-              string.format(
-                " %-15s %15s %15s %s",
-                fzf_utils.ansi_codes.yellow(tostring(idx)),
-                fzf_utils.ansi_codes.blue(tostring(line)),
-                fzf_utils.ansi_codes.green(tostring(col)),
-                path
-              )
-            )
-          end
-          table.sort(entries, function(a, b)
-            -- Extract the first number, skipping ANSI color codes
-            local num_a = tonumber(a:gsub("\27%[[%d;]+m", ""):match("^%s*(%d+)"))
-            local num_b = tonumber(b:gsub("\27%[[%d;]+m", ""):match("^%s*(%d+)"))
-            return num_a < num_b
-          end)
-          table.insert(entries, 1, string.format("%-5s %s  %s %s", "mark", "line", "col", "path"))
-
-          local fzf_lua = require("fzf-lua")
-          local opts = {
-            fzf_opts = { ["--header-lines"] = 1 },
-            prompt = "Grapple>",
-            fzf_colors = true,
-            actions = {
-              ["default"] = function(selected)
-                local _, lnum, col, filepath = selected[1]:match("(.)%s+(%d+)%s+(%d+)%s+(.*)")
-                vim.cmd("e " .. filepath)
-                vim.defer_fn(function()
-                  vim.fn.cursor(lnum, col)
-                  vim.cmd("normal! zz")
-                end, 50)
-              end,
-            },
-            previewer = fzf_lua.defaults.marks.previewer,
-            -- ui_select = function(fzf_opts, items)
-            --   local original_ui_select = LazyVim.opts("fzf-lua")
-            --   if #items < 4 then
-            --     return vim.tbl_deep_extend("force", fzf_opts, {
-            --       winopts = {
-            --         width = 0.5,
-            --         -- height is number of items, with a max of 80% screen height
-            --         height = math.floor(math.min(vim.o.lines * 0.8, #items + 5) + 0.5),
-            --       },
-            --     })
-            --   else
-            --     return original_ui_select(fzf_opts, items)
-            --   end
-            -- end,
-          }
-          fzf_lua.fzf_exec(entries, opts)
-        end,
-        desc = "Marks (Fzf)",
       },
       {
         "<leader>gR",

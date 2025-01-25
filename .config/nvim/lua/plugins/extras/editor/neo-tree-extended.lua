@@ -11,6 +11,16 @@ end
 function M.escape_pattern(text)
   return text:gsub("([^%w])", "%%%1")
 end
+
+---@class NeoTreeState
+---@field name string
+---@field id string
+---@field current_position string
+---@field tabid number
+---@field winid number
+---@field bufnr number
+---@field clipboard table<string, table>
+
 local astrovim_style = false
 
 return {
@@ -87,23 +97,19 @@ return {
         end,
       },
       window = {
+        ---@type table<string, string|fun(state:NeoTreeState)|table<string, string|fun(state:NeoTreeState)>>
         mappings = {
           ["l"] = "open",
           ["h"] = "close_node",
           ["<space>"] = "none",
-          -- ["e"] = function()
-          --   vim.api.nvim_exec("Neotree focus filesystem left", true)
+          -- ["b"] = function()
+          --   vim.api.nvim_exec2("Neotree focus buffers left", { output = true })
           -- end,
-          ["b"] = function()
-            vim.api.nvim_exec2("Neotree focus buffers left", { output = true })
-          end,
-          ["g"] = function()
-            vim.api.nvim_exec2("Neotree focus git_status left", { output = true })
-          end,
+          -- ["g"] = function()
+          --   vim.api.nvim_exec2("Neotree focus git_status left", { output = true })
+          -- end,
           ["<C-s>"] = "open_split",
           ["v"] = "open_vsplit",
-          ["<C-f>"] = "fuzzy_finder_directory",
-          -- ["<C-/>"] = "fuzzy_finder_directory",
           ["D"] = function(state)
             local node = state.tree:get_node()
             local log = require("neo-tree.log")
@@ -174,14 +180,11 @@ return {
       },
       filesystem = {
         -- hijack_netrw_behavior = "open_default",
-        -- window = {
-        --   mappings = {
-        --     ["O"] = function(state)
-        --       local node = state.tree:get_node()
-        --       local path = node:get_id()
-        --       vim.fn.jobstart({ "open", path }, { detach = true })
-        --     end,
-        --   },
+        window = {
+          mappings = {
+            ["<M-d>"] = "fuzzy_finder_directory",
+          },
+        },
         filtered_items = {
           --   always_show = { ".github", ".gitignore" },
           --   hide_dotfiles = false,

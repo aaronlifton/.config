@@ -1,7 +1,7 @@
 -- LazyVim.on_very_lazy(function()
 --   vim.treesitter.language.register("markdown", "mdx")
 -- end)
-local first = require("util.conform").first
+
 return {
   { import = "lazyvim.plugins.extras.lang.markdown" },
   {
@@ -79,10 +79,10 @@ return {
     opts = {
       formatters_by_ft = {
         markdown = function(bufnr)
-          return { first(bufnr, "prettier", "dprint"), "markdownlint-cli2", "markdown-toc" }
+          return { require("util.conform").first(bufnr, "prettier", "dprint"), "markdownlint-cli2", "markdown-toc" }
         end,
         ["markdown.mdx"] = function(bufnr)
-          return { first(bufnr, "prettier", "dprint"), "markdownlint-cli2", "markdown-toc" }
+          return { require("util.conform").first(bufnr, "prettier", "dprint"), "markdownlint-cli2", "markdown-toc" }
         end,
       },
     },

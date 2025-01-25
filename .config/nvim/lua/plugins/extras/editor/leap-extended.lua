@@ -1,5 +1,16 @@
 local paste_on_remote_yank = true
 
+local function enable_leap_anywhere_mappings()
+  vim.keymap.del({ "n", "x", "o" }, "s")
+  vim.keymap.del({ "n", "x", "o" }, "S")
+  vim.keymap.del({ "n", "x", "o" }, "gs")
+
+  vim.keymap.set("n", "s", "<Plug>(leap-anywhere)")
+  vim.keymap.set("x", "s", "<Plug>(leap)")
+  vim.keymap.set("o", "s", "<Plug>(leap-forward)")
+  vim.keymap.set("o", "S", "<Plug>(leap-backward)")
+end
+
 return {
   { import = "lazyvim.plugins.extras.editor.leap" },
   {
@@ -25,7 +36,8 @@ return {
         function()
           require("leap.remote").action()
         end,
-        mode = { "n", "o" },
+        -- mode = { "n", "o" },
+        mode = { "n", "o", "x" },
         desc = "Leap Remote",
       },
       -- format is different: <op>r<leap><motion/textobject>
@@ -52,6 +64,10 @@ return {
     },
     opts = {
       equivalence_classes = { " \t\r\n", "([{", ")]}", "'\"`" },
+      -- skip the middle of alphanumeric words (affects the first preview)
+      -- preview_filter = function(ch0, ch1, ch2)
+      --   return not (ch1:match("%s") or ch0:match("%w") and ch1:match("%w") and ch2:match("%w"))
+      -- end,
     },
     config = function(_, opts)
       -- LazyVim default config
@@ -62,6 +78,8 @@ return {
       leap.add_default_mappings(true)
       vim.keymap.del({ "x", "o" }, "x")
       vim.keymap.del({ "x", "o" }, "X")
+
+      -- enable_leap_anywhere_mappings()
 
       require("leap.user").set_repeat_keys("<enter>", "<backspace>")
 
@@ -118,7 +136,9 @@ return {
       -- Getting used to the Normal-mode command is recommended over
       -- Operator-pending mode (ygs{leap}ap), since the former requires the same
       -- number of keystrokes, but it is much more flexible.
-      -- https://github.com/ggandor/leap.nvim
+      -- ^ That paragraph was replaced by:
+      -- Example: `gs{leap}yap`, `vgs{leap}apy`, or `ygs{leap}ap` yank the
+      -- paragraph at the position specified by `{leap}`.
       -- stylua: ignore
       local default_text_objects = {
         'iw', 'iW', 'is', 'ip', 'i[', 'i]', 'i(', 'i)', 'ib',

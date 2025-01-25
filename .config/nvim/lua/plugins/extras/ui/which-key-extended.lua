@@ -12,6 +12,8 @@ return {
       group = "",
       rules = {
         -- /Users/alifton/.local/share/nvim/lazy/mini.icons/lua/mini/icons.lua:1853
+        -- /Users/alifton/.local/share/nvim/lazy/which-key.nvim/lua/which-key/icons.lua
+        -- https://github.com/8bitmcu/NerdFont-Cheat-Sheet/blob/main/nerdfont.txt
         { pattern = "main", cat = "filetype", name = "git" },
         -- { pattern = "main", icon = " ", color = "orange" },
         { plugin = "overseer.nvim", icon = "󰑮 ", color = "orange" },
@@ -30,6 +32,12 @@ return {
         { pattern = "%f[%a]gemini", icon = "󰊭 ", color = "white" },
         { pattern = "%f[%a]rails", icon = " ", color = "red" },
         { pattern = "%f[%a]keywords", icon = " ", color = "white" },
+        { pattern = "%f[%a]avante", icon = "󱜚 ", color = "white" },
+        { pattern = "%f[%a]xai", icon = " ", color = "black" },
+        { pattern = "%f[%a]chat with provider", icon = " ", color = "white" },
+        { pattern = "%f[%a]toggle chat %([^%)]+%)", icon = " ", color = "white" },
+        { pattern = "%f[%a]edit code %([^%)]+%)", icon = " ", color = "white" },
+        -- { plugin = "model.nvim", icon = " ", color = "white" },
       },
     },
     win = {
