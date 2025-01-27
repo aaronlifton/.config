@@ -6,6 +6,7 @@ set -x nvm_default_version v21.7.1
 fish_add_path /usr/local/bin/
 fish_add_path -m /Users/$USER/.asdf/shims
 fish_add_path -m /opt/homebrew/bin
+fish_add_path -m /Users/$USER/.local/share/bob/nvim-bin
 fish_add_path -m /Users/$USER/Code/venv/bin
 # fish_add_path /opt/homebrew/opt/asdf/lib/exec/bin
 # fish_add_path /opt/homebrew/opt/ccache/libexec
@@ -25,7 +26,6 @@ fish_add_path /usr/local/go/bin
 fish_add_path /Users/$USER/.deno/bin
 # fish_add_path /Users/$USER/.luarocks/bin 
 fish_add_path /opt/homebrew/opt/postgresql@16/bin
-fish_add_path /Users/$USER/.local/share/bob/nvim-bin
 fish_add_path /usr/sbin # for chown
 # fish_add_path /opt/homebrew/sbin
 
@@ -171,15 +171,19 @@ set -xg fzf_fd_opts --hidden --color=always
 
 ## Pager
 set -gx PAGER nvimpager
+# Doesn't work with bob nvim
+set -gx NVIMPAGER_NVIM /opt/homebrew/bin/nvim
 # set -gx MANPAGER "PAGER=less col -bx | bat -l man -p"
-# Bat
+
+## Bat
 set -gx BAT_PAGER "less -RFX"
 if type -q vivid
     # set -xg LS_COLORS (vivid generate catppuccin-macchiato)
     set -xg LS_COLORS (vivid generate tokyonight-moon)
 end
 set -xg BAT_THEME tokyonight_moon #Catppuccin-macchiato
-# Starship
+
+## Starship
 set -xg STARSHIP_LOG error
 
 set -xg GOPRIVATE git.synack.com
