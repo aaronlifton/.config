@@ -238,7 +238,7 @@ local linters = function()
   local buf = vim.api.nvim_get_current_buf()
   local linters_attached = require("lint").get_running(buf)
 
-  if not linters_attached or not #linters_attached > 0 then
+  if not #linters_attached > 0 then
     vim.notify("No linters attached", vim.log.levels.WARN, { title = "Linter" })
     return
   end
@@ -624,12 +624,6 @@ map("n", "<leader>wD", function()
   require("util.diff").toggle_compare_windows()
 end, { desc = "Toggle Diff Windows" })
 
-map({ "n", "v" }, "<leader>13", function()
-  local selection = require("util.selection").get_selection3()
-  local lines = require("model.util").buf.text(selection)
-  vim.api.nvim_echo({ { vim.inspect({ selection = selection, lines = lines }), "Normal" } }, true, {})
-end, { desc = "Test fn" })
-
 map("n", "<leader>rl", function()
   local buf = vim.api.nvim_get_current_buf()
   local word = vim.fn.expand("<cword>")
@@ -732,3 +726,16 @@ map("n", "g<C-h>", function()
   local cword = vim.fn.expand("<cword>")
   vim.cmd("help " .. cword)
 end, { desc = "Open help file" })
+
+-- Testing
+-- map({ "n", "v" }, "<leader>13", function()
+--   local selection = require("util.selection").get_selection3()
+--   local lines = require("model.util").buf.text(selection)
+--   vim.api.nvim_echo({ { vim.inspect({ selection = selection, lines = lines }), "Normal" } }, true, {})
+-- end, { desc = "Test fn" })
+
+map("n", "<leader>13", function()
+  require("util.lsp.location").get_definition_content(vim.api.nvim_get_current_buf(), function(ctx)
+    vim.api.nvim_echo({ { vim.inspect(ctx), "Normal" } }, true, {})
+  end)
+end)

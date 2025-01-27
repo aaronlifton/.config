@@ -40,7 +40,7 @@ function SelectionRange:new(start, finish)
   return instance
 end
 
-local function normalize_indentation(lines)
+function M.normalize_indentation(lines)
   local min_indent = nil
   local use_tabs = false
   -- measure minimal common indentation for lines with content
@@ -115,7 +115,7 @@ function M.get_selection(opts)
   local end_line = selection_lines.end_line.row
   local lines = vim.api.nvim_buf_get_lines(buf, start_line - 1, end_line, false)
 
-  lines = normalize_indentation(lines)
+  lines = M.normalize_indentation(lines)
 
   local selection = table.concat(lines, "\n")
 

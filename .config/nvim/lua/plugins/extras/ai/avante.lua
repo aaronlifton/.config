@@ -22,6 +22,7 @@ return {
     -- branch = "feat/better-ruby-parsing",
     -- pin = true,
     -- build = "make BUILD_FROM_SOURCE=true",
+    -- dev = true,
 
     -- For non-development
     version = false, -- set this to "*" if you want to always pull the latest change
