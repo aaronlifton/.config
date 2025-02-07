@@ -39,6 +39,9 @@ abbr -a L --position anywhere --set-cursor "% | less"
 abbr --add zn z-nvim
 abbr --add fr fzf-rg-bat
 
+### Helpfiles
+abbr --add help-kw bat ~/.config/kitty/kitty.conf -r 100:150
+
 ### Nvim AI
 abbr --add chat-gemini nvim -o1 -c \"Mchat gemini\"
 abbr --add chat-pplx nvim -o1 -c \"Mchat pplx\"
@@ -49,7 +52,10 @@ abbr --add llm-gemini-flash --set-cursor "llm -m gemini-1.5-flash-latest --syste
 #### Development
 abbr --add ber bundle exec rspec
 abbr --add njest APP_ENV=development TZ=UTC npx jest --projects src/jest.config.rtl.js --watch --color --silent
+abbr --add jest-debug node --inspect-brk node_modules/.bin/jest --projects src/jest.config.js --no-coverage --colors
+
 # Jest
+abbr --add jj TZ=UTC npx jest --watch
 ## Researcher
 abbr --add jest-researcher TZ=UTC npx jest --projects jest.config.rtl.js --coverage=false --watch
 abbr --add jr TZ=UTC npx jest --projects jest.config.rtl.js --coverage=false --watch
