@@ -83,11 +83,23 @@ git:
   overrideGpg: false # prevents lazygit from spawning a separate process when using GPG
   disableForcePushing: false
   parseEmoji: false
-os:
-  editPreset: "nvim" # see 'Configuring File Editing' section
-  edit: "nvim {{filename}}"
-  editAtLine: "nvim --line={{line}} {{filename}}"
-  editAtLineAndWait: "nvim --block --line={{line}} {{filename}}"
+# os:
+  # editPreset: "nvim-remote"
+  # editPreset: "nvim" # see 'Configuring File Editing' section
+  # edit: "nvim {{filename}}"
+  # editAtLine: "nvim --line={{line}} {{filename}}"
+  # editAtLineAndWait: "nvim --block --line={{line}} {{filename}}"
+  #
+  # edit: "nvr -cc close -cc vsplit +'setl bufhidden=delete' {{filename}}"
+  # editAtLine: "nvr -cc close -cc vsplit --remote-wait +'setl bufhidden=delete | {{line}}' {{filename}}"
+  # editAtLineAndWait: "nvr -cc close -cc vsplit --remote-wait +'setl bufhidden=delete | {{line}}' {{filename}}"
+  #
+  # edit: "nvr --remote-tab-wait +'setl bufhidden=delete' {{filename}}"
+  # editAtLine: "nvr --remote-tab-wait +'setl bufhidden=delete | {{line}}' {{filename}}"
+  # editAtLineAndWait: "nvr --remote-tab-wait +'setl bufhidden=delete | {{line}}' {{filename}}"
+  # edit: "nvr -cc vsplit --remote-wait +'set bufhidden=delete' {{filename}}"
+  # editAtLine: "nvr -cc vsplit --remote-wait +'set bufhidden=delete' +{{line}} {{filename}}"
+  # editAtLineAndWait: "nvr -cc vsplit --remote-wait +'set bufhidden=delete' +{{line}} {{filename}}"
 refresher:
   refreshInterval: 10 # File/submodule refresh interval in seconds. Auto-refresh can be disabled via option 'git.autoRefresh'.
   fetchInterval: 60 # Re-fetch interval in seconds. Auto-fetch can be disabled via option 'git.autoFetch'.
