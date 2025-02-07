@@ -15,7 +15,7 @@ return {
         executeCommandIfExists(":LspLensOff")
         executeCommandIfExists(":NvimContextVtDisable")
         executeCommandIfExists(":IBLDisable")
-        LazyVim.toggle.inlay_hints()
+        Snacks.toggle.inlay_hints()
         executeCommandIfExists(":Gitsigns toggle_current_line_blame")
         executeCommandIfExists(":CccHighlighterDisable")
       end,
@@ -26,7 +26,7 @@ return {
         executeCommandIfExists(":LspLensOn")
         executeCommandIfExists(":NvimContextVtEnable")
         executeCommandIfExists(":IBLEnable")
-        LazyVim.toggle.inlay_hints()
+        Snacks.toggle.inlay_hints()
         executeCommandIfExists(":Gitsigns toggle_current_line_blame")
         executeCommandIfExists(":CccHighlighterEnable")
       end,

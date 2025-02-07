@@ -117,44 +117,6 @@ return {
   },
   { "tpope/vim-bundler", ft = "ruby" },
   {
-    "nvimtools/none-ls.nvim",
-    cond = function()
-      return LazyVim.has_extra("lsp.none-ls")
-    end,
-    optional = true,
-    dependencies = {
-      {
-        "williamboman/mason.nvim",
-        opts = function(_, opts)
-          opts.ensure_installed = opts.ensure_installed or {}
-          vim.list_extend(opts.ensure_installed, { "rubocop" })
-        end,
-      },
-    },
-    opts = function(_, opts)
-      local nls = require("null-ls")
-      opts.sources = vim.list_extend(opts.sources or {}, {
-        nls.builtins.diagnostics.rubocop.with({
-          prefer_local = ".bundle/bin",
-          condition = function(utils)
-            return utils.root_has_file({ ".rubocop.yml" })
-          end,
-        }),
-        nls.builtins.diagnostics.yamllint,
-        nls.builtins.formatting.rubyfmt,
-        nls.builtins.formatting.rubocop.with({
-          prefer_local = ".bundle/bin",
-          condition = function(utils)
-            return utils.root_has_file({ ".rubocop.yml" })
-          end,
-        }),
-        nls.builtins.diagnostics.erb_lint,
-        nls.builtins.diagnostics.reek,
-        nls.builtins.formatting.erb_format, -- htmlbeautifier
-      })
-    end,
-  },
-  {
     "neovim/nvim-lspconfig",
     ---@class PluginLspOpts
     opts = {

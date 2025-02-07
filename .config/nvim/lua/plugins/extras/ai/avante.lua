@@ -15,7 +15,8 @@ local _vendors = {
 return {
   {
     "yetone/avante.nvim",
-    event = "VeryLazy",
+    -- No need since we lazy load via keys
+    -- event = "VeryLazy",
     -- lazy = false,
 
     -- For developmennt
@@ -201,4 +202,26 @@ return {
       },
     },
   },
+  -- {
+  --   "folke/edgy.nvim",
+  --   optional = true,
+  --   opts = function(_, opts)
+  --     opts.right = opts.right or {}
+  --     table.insert(opts.right, {
+  --       ft = "Avante",
+  --       title = "Avante",
+  --       size = { width = 70, height = 80 },
+  --     })
+  --     table.insert(opts.right, {
+  --       ft = "AvanteSelectedFiles",
+  --       title = "Avante",
+  --       size = { width = 70, height = 30 },
+  --     })
+  --     table.insert(opts.right, {
+  --       ft = "AvanteInput",
+  --       title = "Avante",
+  --       size = { width = 70, height = 40 },
+  --     })
+  --   end,
+  -- },
 }

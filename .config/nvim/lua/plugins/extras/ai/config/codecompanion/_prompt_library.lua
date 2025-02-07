@@ -115,4 +115,40 @@ return {
       },
     },
   },
+  ["Ripgrep regex help"] = {
+    strategy = "chat",
+    description = "Get help with searching with ripgrep",
+    opts = {
+      is_slash_cmd = false,
+      modes = { "n" },
+      short_name = "ripgrep-regex-help",
+      auto_submit = false,
+      user_prompt = true,
+      stop_context_insertion = true,
+    },
+    prompts = {
+      {
+        role = "system",
+        content = [[When asked to generate regex, follow these steps:
+
+  1. For the content in the <search> tag, generate a ripgrep regex search query that will match it.
+  2. Describe how the regex works.]],
+        opts = {
+          visible = false,
+        },
+      },
+      {
+        role = "user",
+        content = function(context)
+          return [[Please help me write a regex that will find this string:
+<search>
+</search>
+If it helps, the regex that I've tried is: ``]]
+        end,
+        opts = {
+          contains_code = false,
+        },
+      },
+    },
+  },
 }

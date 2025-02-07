@@ -12,6 +12,10 @@
     "body": "---@type ${1:string}",
     "prefix": "@type (LuaDoc)"
   },
+  "module": {
+    "body": ["local M = {}", "", "$0", "", "return M"],
+    "prefix": "local M"
+  },
   "export module": {
     "body": [
       "local M = {}",

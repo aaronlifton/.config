@@ -1,4 +1,4 @@
----@class ai.context
+---@class util.ai.context
 ---@field config {max_lines: number}
 Context = {
   config = {

@@ -117,14 +117,14 @@ return {
             })
             vim.g.ai_cmp = true
           end
-          vim.api.nvim_command("Lazy reload copilot.lua")
+          vim.cmd("Lazy reload copilot.lua")
         end, { desc = "Toggle Copilot Suggestion" })
       end)
     end,
   },
   {
     "CopilotC-Nvim/CopilotChat.nvim",
-    -- optional = true,
+    optional = true,
     branch = "canary",
     cmd = "CopilotChat",
     build = "make tiktoken", -- TODO: is this needed?

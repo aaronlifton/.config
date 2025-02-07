@@ -8,6 +8,8 @@ return {
     dependencies = {
       "Weissle/persistent-breakpoints.nvim",
       vscode = false,
+      -- FIXME: Contributes 51.54ms to LazyFile startup time, as it loads dap
+      -- and all dap dependencies
       event = "LazyFile",
       keys = {
         { prefix .. "d", "<cmd>PBClearAllBreakpoints<cr>", desc = "Delete All Breakpoints" },

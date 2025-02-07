@@ -95,7 +95,7 @@
     "prefix": "it",
     "body": "it('${1:description}', () => {\n\t${0}\n})"
   },
-  "it asynchronous": {
+  "it async": {
     "prefix": "ita",
     "body": "it('${1:description}', async () => {\n\t${0}\n})"
   },
@@ -105,6 +105,10 @@
   },
   "beforeEach": {
     "prefix": "bfe",
+    "body": "beforeEach(() => {\n\t${0}\n})"
+  },
+  "beforeEachAsync": {
+    "prefix": "bfea",
     "body": "beforeEach(async () => {\n\t${0}\n})"
   },
   "afterAll": {

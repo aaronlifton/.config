@@ -56,6 +56,7 @@ g.lazyvim_prettier_needs_config = false
 -- use that instead of inline suggestions
 g.ai_cmp = true
 g.codeium_cmp_hide = false
+g.ai_accept_word_provider = "supermaven"
 g.highlight_provider = "nvim-highlight-colors" -- "nvim-highlight-colors", "mini.hipatterns"
 g.markdown_previewer = "markdown-preview" -- "markdown-preview", "peek"
 g.smooth_scroll_provider = "snacks" -- "cinnamon", mini.animate", "snacks"
@@ -69,6 +70,9 @@ g.dprint_needs_config = true
 
 -- require("config.neovide")
 
+-- Install via `pip install neovim-remote`
 if vim.fn.executable("nvr") == 1 then
-  vim.env["GIT_EDITOR"] = "nvr -cc close -cc vsplit --remote-wait +'set bufhidden=wipe'"
+  vim.env["GIT_EDITOR"] = "nvr -cc close -cc vsplit +'setl bufhidden=delete'"
+  -- vim.env["GIT_EDITOR"] = "nvr -cc close -cc vsplit --remote-wait +'setl bufhidden=delete'"
+  -- vim.env["GIT_EDITOR"] = "nvr --nostart --remote-tab-wait +'set bufhidden=delete'"
 end

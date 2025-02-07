@@ -35,6 +35,7 @@ return {
       servers = {
         vtsls = {
           handlers = {
+            -- The requires adds 004.357msec to startup time
             ["textdocument/publishdiagnostics"] = require("util.lsp").publish_to_ts_error_translator,
           },
           init_options = {

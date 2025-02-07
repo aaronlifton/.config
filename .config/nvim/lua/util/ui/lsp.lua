@@ -1,3 +1,4 @@
+---@class util.ui.lsp
 local M = {}
 
 ---@type table<number, {token:lsp.ProgressToken, msg:string, done:boolean}[]>

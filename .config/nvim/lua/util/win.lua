@@ -1,4 +1,4 @@
----@class win
+---@class util.win
 local M = {}
 
 function M.switch_to_highest_window()

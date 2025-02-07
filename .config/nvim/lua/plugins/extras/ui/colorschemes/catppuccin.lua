@@ -101,90 +101,94 @@ return {
         which_key = true,
       },
     },
-  },
-  {
-    "akinsho/bufferline.nvim",
-    optional = true,
-    opts = function(_, opts)
-      local palette = require("catppuccin.palettes").get_palette("macchiato")
-      opts.highlights = require("catppuccin.groups.integrations.bufferline").get({
-        styles = { "italic", "bold" },
-        custom = {
-          all = {
-            fill = {
-              bg = palette.mantle,
+    dependencies = {
+      {
+        "akinsho/bufferline.nvim",
+        optional = true,
+        opts = function(_, opts)
+          if vim.api.nvim_exec2("color", { output = true }).output ~= "catppuccin" then return end
+
+          local palette = require("catppuccin.palettes").get_palette("macchiato")
+          opts.highlights = require("catppuccin.groups.integrations.bufferline").get({
+            styles = { "italic", "bold" },
+            custom = {
+              all = {
+                fill = {
+                  bg = palette.mantle,
+                },
+                separator_selected = {
+                  bg = palette.base,
+                  fg = palette.mantle,
+                },
+                separator = {
+                  bg = palette.mantle,
+                  fg = palette.mantle,
+                },
+                tab_separator = {
+                  bg = palette.mantle,
+                  fg = palette.mantle,
+                },
+                tab_selected = {
+                  bg = palette.base,
+                },
+                tab_separator_selected = {
+                  bg = palette.base,
+                  fg = palette.mantle,
+                },
+              },
             },
-            separator_selected = {
-              bg = palette.base,
-              fg = palette.mantle,
-            },
-            separator = {
-              bg = palette.mantle,
-              fg = palette.mantle,
-            },
-            tab_separator = {
-              bg = palette.mantle,
-              fg = palette.mantle,
-            },
-            tab_selected = {
-              bg = palette.base,
-            },
-            tab_separator_selected = {
-              bg = palette.base,
-              fg = palette.mantle,
-            },
+          })
+        end,
+        -- opts = {
+        --   highlights = require("catppuccin.groups.integrations.bufferline").get({
+        --     styles = { "italic", "bold" },
+        --     custom = {
+        --       all = {
+        --         fill = {
+        --           bg = palette.mantle,
+        --         },
+        --         separator_selected = {
+        --           bg = palette.base,
+        --           fg = palette.mantle,
+        --         },
+        --         separator = {
+        --           bg = palette.mantle,
+        --           fg = palette.mantle,
+        --         },
+        --         tab_separator = {
+        --           bg = palette.mantle,
+        --           fg = palette.mantle,
+        --         },
+        --         tab_selected = {
+        --           bg = palette.base,
+        --         },
+        --         tab_separator_selected = {
+        --           bg = palette.base,
+        --           fg = palette.mantle,
+        --         },
+        --       },
+        --     },
+        --   }),
+        -- },
+      },
+      {
+        "rasulomaroff/reactive.nvim",
+        optional = true,
+        opts = {
+          load = { "catppuccin-macchiato-cursor", "catppuccin-macchiato-cursorline" },
+        },
+      },
+      {
+        "rachartier/tiny-devicons-auto-colors.nvim",
+        optional = true,
+        opts = {
+          colors = palette,
+          factors = {
+            lightness = 0.9,
+            chroma = 1,
+            hue = 0.7,
           },
         },
-      })
-    end,
-    -- opts = {
-    --   highlights = require("catppuccin.groups.integrations.bufferline").get({
-    --     styles = { "italic", "bold" },
-    --     custom = {
-    --       all = {
-    --         fill = {
-    --           bg = palette.mantle,
-    --         },
-    --         separator_selected = {
-    --           bg = palette.base,
-    --           fg = palette.mantle,
-    --         },
-    --         separator = {
-    --           bg = palette.mantle,
-    --           fg = palette.mantle,
-    --         },
-    --         tab_separator = {
-    --           bg = palette.mantle,
-    --           fg = palette.mantle,
-    --         },
-    --         tab_selected = {
-    --           bg = palette.base,
-    --         },
-    --         tab_separator_selected = {
-    --           bg = palette.base,
-    --           fg = palette.mantle,
-    --         },
-    --       },
-    --     },
-    --   }),
-    -- },
-  },
-  {
-    "rasulomaroff/reactive.nvim",
-    optional = true,
-    opts = {
-      load = { "catppuccin-macchiato-cursor", "catppuccin-macchiato-cursorline" },
-    },
-  },
-  {
-    "rachartier/tiny-devicons-auto-colors.nvim",
-    optional = true,
-    opts = {
-      colors = palette,
-      factors = {
-        lightness = 0.9,
-        chroma = 1,
-        hue = 0.7,
       },
     },
   },

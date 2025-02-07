@@ -20,17 +20,18 @@ end
 return {
   {
     "echasnovski/mini.ai",
-    dependencies = {
-      {
-        "echasnovski/mini.nvim",
-        lazy = true,
-        vscode = true,
-        config = function()
-          require("mini.extra").setup()
-        end,
-      },
-    },
     optional = true,
+    dependencies = {
+      -- {
+      --   "echasnovski/mini.nvim",
+      --   lazy = true,
+      --   vscode = true,
+      --   config = function()
+      --     require("mini.extra").setup()
+      --   end,
+      -- },
+      { "echasnovski/mini.extra", version = "*" },
+    },
     opts = function(_, opts)
       local ai = require("mini.ai")
       local MiniExtra = require("mini.extra")

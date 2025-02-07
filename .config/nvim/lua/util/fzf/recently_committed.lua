@@ -1,11 +1,11 @@
----@class util.fzf.recently_commited
+---@class util.fzf.recently_committed
 local M = {}
 
 ---@alias Entry { date: string, hash: string, file: string }
 
 ---@param n number number of entries
 ---@return string
-local function recently_commited_cmd(n)
+local function recently_committed_cmd(n)
   local git_dir = require("lazyvim.util").root.git()
 
   -- Check if it's a git repo using systemlist to capture both output and exit status
@@ -19,8 +19,8 @@ end
 
 ---@return Entry[]
 ---@param n number number of entries
-local function commited_files_with_dates(n)
-  local cmd = recently_commited_cmd(n)
+local function committed_files_with_dates(n)
+  local cmd = recently_committed_cmd(n)
   local git_output = vim.fn.system(cmd)
   ---@type Entry[]
   local files = {}
@@ -74,17 +74,17 @@ end
 ---@param n number number of files to show
 M.open_fzf = function(n)
   local fzf = require("fzf-lua")
-  local output = commited_files_with_dates(n)
+  local output = committed_files_with_dates(n)
   local entries = {}
   for _, entry in ipairs(output) do
     table.insert(entries, format_entry(entry))
   end
-  local cmd = recently_commited_cmd(n)
+  local cmd = recently_committed_cmd(n)
   local opts = {
     cmd = cmd,
-    cwd = require("fzf-lua").path.git_root(),
+    cwd = require("fzf-lua").path.git_root({}),
     winopts = {
-      title = " Recently commited files ",
+      title = " Recently committed files ",
       title_pos = "left",
     },
     previewer = { _ctor = previewer_ctor },

@@ -60,16 +60,20 @@ return {
           skip = true,
         },
       },
+      -- https://github.com/yioneko/vtsls/issues/159
+      {
+        filter = {
+          event = "notify",
+          find = "Request textDocument/inlayHint failed",
+        },
+        opts = {
+          skip = true,
+        },
+      },
     })
     opts.presets.lsp_doc_border = true
     -- opts.presets.bottom_search = false
     if LazyVim.cmp_engine() == "nvim-cmp" then opts.popupmenu = { backend = "cmp" } end
-
-    if vim.g.lazyvim_picker == "fzf" then
-      require("noice.commands").pick = function()
-        require("noice.integrations.fzf").open({})
-      end
-    end
   end,
   keys = {
     {
@@ -77,7 +81,7 @@ return {
       function()
         require("noice.integrations.fzf").open({})
       end,
-      desc = "Noice Picker (Telescope/FzfLua)",
+      desc = "Noice Picker",
     },
   },
 }

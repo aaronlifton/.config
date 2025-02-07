@@ -76,8 +76,10 @@ return {
       -- end
 
       -- Sources
-      -- Set priority 101 instead of 100
+      -- Make codeium appear before copilot
       set_priority(opts.sources, "codeium", 101)
+      -- Supermaven is too fast, so that buffer/lsp completions come after it, so lower the priority
+      set_priority(opts.sources, "supermaven", 90)
 
       -- Index 4 is nvim_lsp
       table.insert(opts.sources, 3, { name = "nvim_lua", group_index = 1 })
@@ -195,6 +197,21 @@ return {
         --   end
         -- end, { "i", "s" }),
       })
+
+      if LazyVim.has("supermaven.nvim") and vim.g.ai_accept_word_provider == "supermaven" then
+        opts.mapping = vim.tbl_extend("force", opts.mapping, {
+          ["<C-w>"] = require("cmp").mapping(function(fallback)
+            local suggestion = require("supermaven-nvim.completion_preview")
+            if suggestion.has_suggestion() then
+              LazyVim.create_undo()
+              vim.schedule(function()
+                suggestion.on_accept_suggestion(true)
+              end)
+              return true
+            end
+          end, { "i" }),
+        })
+      end
 
       if not auto_select then
         opts.preselect = cmp.PreselectMode.None

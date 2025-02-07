@@ -8,6 +8,7 @@ return {
   --     -- require("mini.colors").setup()
   --   end,
   -- },
+  -- Somehow this file adds 3.6 ms to loading time
   { import = "plugins.extras.mini.mini-files" },
   { import = "plugins.extras.mini.mini-ai" },
   { import = "plugins.extras.mini.mini-diff" },

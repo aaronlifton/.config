@@ -38,7 +38,7 @@ return {
   },
   {
     "gennaro-tedesco/nvim-jqx",
-    ft = { "json", "yaml" },
+    ft = { "json", "json5", "yaml" },
     cmd = { "JqxList", "JqxQuery" },
     keys = {
       { "<leader>cj", ft = { "json", "yaml" }, "<cmd>JqxList<cr>", desc = "Jqx List" },

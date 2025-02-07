@@ -1,10 +1,4 @@
 return {
-  -- {
-  --   import = "lazyvim.plugins.extras.coding.blink",
-  --   cond = function()
-  --     return LazyVim.cmp_engine() == "blink.cmp"
-  --   end,
-  -- },
   {
     "saghen/blink.cmp",
     optional = true,
@@ -27,15 +21,38 @@ return {
             --   kind_icon = { width = { fill = true } },
             -- },
           },
+          auto_show = function(ctx)
+            return ctx.mode ~= "cmdline" or not vim.tbl_contains({ "/", "?" }, vim.fn.getcmdtype())
+          end,
         },
         documentation = {
           window = {
             border = "rounded",
           },
         },
+        list = {
+          selection = {
+            preselect = function(ctx)
+              return ctx.mode ~= "cmdline" and not require("blink.cmp").snippet_active({ direction = 1 })
+            end,
+          },
+        },
       },
       sources = {
         -- default = { "lsp", "path", "snippets", "buffer" },
+        providers = {
+          -- snippets = {
+          --   score_offset = -2,
+          -- },
+
+          -- copilot = {
+          --   score_offset = 100
+          -- }
+          -- buffer = {
+          -- should_show_items = false,
+          -- },
+        },
+        -- Included by default, but override LazyVim setting empty cmdline sources
         cmdline = function()
           local type = vim.fn.getcmdtype()
           -- Search forward and backward

@@ -10,6 +10,7 @@ end
 ---@param path string
 local function _toggle_iglob(opts, path)
   local o = vim.tbl_deep_extend("keep", { resume = true }, opts.__call_opts)
+  vim.api.nvim_echo({ { vim.inspect(o), "Normal" } }, true, {})
 
   if o.search:find(path, nil, true) then
     o.search = o.search:gsub("%s*" .. vim.pesc(path), "")
@@ -95,6 +96,7 @@ end or function(name, opts)
   return require("fzf-lua")[name](opts)
 end
 local default_grep_rg_opts = "--column --line-number --no-heading --color=always --smart-case " .. "--max-columns=4096" -- " -e"
+-- TODO: replace with --ignore-file=/Users/$USER/.config/nvim/rules/rg-ignore
 local rg_opts = default_grep_rg_opts .. [[ -g '!**/dist/**.js*' -g '!*{-,.}min.js' -e]]
 local rg_opts_pcre2 = default_grep_rg_opts .. [[ --pcre2 ]]
 -- local default_find_opts = [[-type f -not -path '*/\.git/*' -printf '%P\n']]
@@ -104,7 +106,8 @@ local fd_opts = default_fd_opts
 
 local file_opts = {
   actions = {
-    ["alt-9"] = toggle_fd_exclude_patterns({ "spec/**/*", "test/**/*", "**/test/**", "!**/__tests__" }),
+    -- https://docs.rs/globset/latest/globset/#syntax
+    ["alt-9"] = toggle_fd_exclude_patterns({ "spec/**/*", "**{__tests__,tests?}**", "{test,tests}/" }),
   },
 }
 
@@ -147,8 +150,12 @@ local live_grep_opts = {
     -- stylua: ignore start
     ["alt-6"] = toggle_iglob("app/models/**"),
     ["alt-7"] = toggle_iglob("app/controllers/**"),
-    ["alt-8"] = toggle_iglob("spec/**/*.rb"),
-    ["alt-9"] = toggle_iglob("!spec/**/*.rb !**/__tests__"),
+    ["alt-8"] = toggle_iglob("spec/**/*.rb **/test*/** __tests__"),
+    -- ["alt-9"] = toggle_iglob("!spec/**/* !**/test*/** !test/**"),
+    ["alt-9"] = toggle_iglob("!spec/**/* !**/test*/** !__tests__"),
+    ["alt-p"] = toggle_flag("--pcre2"),
+    ["alt-u"] = toggle_flag("-U"),
+    ["alt-s"] = toggle_flag("--case-sensitive"),
     -- ["alt-x"] = function()
     --   local buf = vim.api.nvim_get_current_buf()
     --   local leap = require("util.leap").get_leap_for_buf(buf)
@@ -174,6 +181,8 @@ return {
       local config = require("fzf-lua.config")
       config.defaults.keymap.builtin["<F7>"] = "toggle-fullscreen"
       config.defaults.actions.files["alt-t"] = require("fzf-lua.actions").file_tabedit
+      config.defaults.actions.files["ctrl-q"] = require("fzf-lua.actions").file_sel_to_qf
+      config.defaults.actions.files["ctrl-t"] = require("util.fzf.actions").add_selected
       -- opts.lsp.async_or_timeout = true -- timeout(ms) or 'true' for async calls
       -- opts.git.branches.cmd = "git branch --all --color=always --sort=-committerdate"
 
@@ -190,7 +199,9 @@ return {
           },
         },
         lsp = {
-          async_or_timeout = true,
+          -- Causes the fzf window to flash on the screen when there's only 1 result
+          -- async_or_timeout = true,
+          async_or_timeout = 35000,
         },
       })
     end,
@@ -209,7 +220,7 @@ return {
       { "<leader>sW", function() pick("grep_visual", vim.tbl_extend("force", live_grep_opts, { rg_glob = false, root = false })) end, desc = "Selection (cwd)", mode = "v" },
       -- { "<leader>sB", "<cmd>lua LazyVim.pick('lgrep_curbuf')()<CR>", desc = "Buffer (Live Grep)", mode = "n" },
       { "<leader>sg", function() pick("live_grep_glob", live_grep_opts_with_reset) end, desc = "Grep (Root Dir)" },
-      { "<leader>sP", function() pick("live_grep_glob", { rg_opts = rg_opts_pcre2, silent = true }) end, desc = "Grep (pcre2)" },
+      { "<leader>sP", function() pick("live_grep_glob", { rg_opts = rg_opts_pcre2, silent = true }) end, desc = "Grep (--pcre2)" },
       { "<leader>sG", function() pick("live_grep_glob", vim.tbl_extend("force", live_grep_opts_with_reset, { root = false })) end, desc = "Grep (cwd)" },
       { "<leader>sN", function() pick("live_grep_glob", { cwd = "node_modules", rg_opts = "-uu" }) end, desc = "Grep (node_modules)" },
       { "<leader>fM", function() pick("files", { cwd = "node_modules", fd_opts = fd_opts .. " -u" }) end, desc = "Find Files (node_modules)" },

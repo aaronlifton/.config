@@ -1,5 +1,7 @@
-local chat = require("model.core.chat")
+---@class util.fzf.model
 local M = {}
+
+local chat = require("model.core.chat")
 
 local function get_mchat_buffers()
   return vim.tbl_filter(function(bufnr)

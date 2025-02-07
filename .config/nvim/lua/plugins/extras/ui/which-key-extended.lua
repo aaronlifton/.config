@@ -37,6 +37,7 @@ return {
         { pattern = "%f[%a]chat with provider", icon = " ", color = "white" },
         { pattern = "%f[%a]toggle chat %([^%)]+%)", icon = " ", color = "white" },
         { pattern = "%f[%a]edit code %([^%)]+%)", icon = " ", color = "white" },
+        { pattern = "%f[%a]toggle floating chat %([^%)]+%)", icon = " ", color = "white" },
         -- { plugin = "model.nvim", icon = " ", color = "white" },
       },
     },

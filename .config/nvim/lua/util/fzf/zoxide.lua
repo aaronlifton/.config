@@ -1,7 +1,8 @@
+---@class util.fzf.zoxide
+local M = {}
+
 local fzf_lua = require("fzf-lua")
 local fzf_utils = require("fzf-lua.utils")
-
-local M = {}
 
 local function sort_results(result)
   local max_rank_width = 0

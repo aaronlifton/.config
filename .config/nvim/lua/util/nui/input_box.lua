@@ -1,7 +1,7 @@
 local BasePopup = require("util.nui.base_popup")
 local event = require("nui.utils.autocmd").event
 
----@class InputBox: NuiPopup
+---@class util.nui.InputBox: NuiPopup
 ---@field selection SelectionRange|nil
 ---@field super NuiPopup
 local InputBox = BasePopup:extend("InputBox")
@@ -57,8 +57,10 @@ function InputBox:init(opts)
 
   opts = vim.tbl_deep_extend("force", {
     relative = "cursor",
+    -- TODO: remove
     width = opts.size.width,
     height = opts.size.height,
+    --
     position = {
       row = popup_row,
       col = self.popup_col or 0,
@@ -102,7 +104,8 @@ function InputBox:init(opts)
     },
   }, opts or {})
 
-  self.options = opts
+  -- TODO: remove
+  self.opts = opts
   InputBox.super.init(self, opts)
 end
 
@@ -129,15 +132,10 @@ function InputBox:mount()
 
   InputBox.super.mount(self)
 
-  local function close()
-    self.options.on_close()
-    self:unmount()
-  end
-
   local submit_prompt = function()
     local contents = vim.api.nvim_buf_get_lines(self.bufnr, 0, -1, false)
     local result = table.concat(contents, "\n")
-    self.options.on_submit(result)
+    self.opts.on_submit(result)
     self:unmount()
   end
 
@@ -150,19 +148,6 @@ function InputBox:mount()
       callback = submit_prompt,
       desc = "Submit prompt",
       mode = "i",
-    },
-    ["<ESC>"] = {
-      callback = close,
-      desc = "Close",
-    },
-    ["<C-c>"] = {
-      callback = close,
-      desc = "Close",
-      mode = { "n", "i" },
-    },
-    ["Q"] = {
-      callback = close,
-      desc = "Close",
     },
   })
 end

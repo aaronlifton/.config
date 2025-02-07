@@ -2,6 +2,11 @@ return {
   {
     "folke/snacks.nvim",
     opts = {
+      -- Already enabled by LazyVim
+      -- scope = { enabled = true },
+      -- indent = { enabled = true },
+      -- words = { enabled = true },
+      --
       zen = {
         enabled = true,
         toggles = {
@@ -15,9 +20,6 @@ return {
           duration = { step = 10, total = 150 },
         },
       },
-      scope = { enabled = true },
-      indent = { enabled = true },
-      words = { enabled = true },
       notifier = {
         style = "fancy",
       },
@@ -37,22 +39,16 @@ return {
         },
       },
       picker = {
-        -- preset = {
-        --   layout = {
-        --     box = "horizontal",
-        --     width = 0.4,
-        --     min_width = 120,
-        --     height = 0.8,
-        --     {
-        --       box = "vertical",
-        --       border = "rounded",
-        --       title = "{title} {live} {flags}",
-        --       { win = "input", height = 1, border = "bottom" },
-        --       { win = "list", border = "none" },
-        --     },
-        --     { win = "preview", title = "{preview}", border = "rounded", width = 0.8 },
-        --   },
-        -- },
+        win = {
+          input = {
+            keys = {
+              ["<a-c>"] = {
+                "toggle_cwd",
+                mode = { "n", "i" },
+              },
+            },
+          },
+        },
         layouts = {
           default = {
             layout = {
@@ -104,8 +100,9 @@ return {
     keys = {
       -- stylua: ignore start
       { "<leader>bz", function() Snacks.scratch() end, desc = "Toggle Scratch Buffer" },
-      -- In addition to LazyVim's <leader>wm and <leaer>uZ mappings:
+      -- In addition to LazyVim's <leader>wm and <leader>uZ mappings:
       { "<leader>z", function() Snacks.zen.zoom() end, desc = "Zoom" },
+      -- { "<leader>gL", function() Snacks.picker.git_log_line() end, desc = "Git Log Line" },
       -- { "<leader>Z", function() Snacks.zen.zen() end, desc = "Zen" },
       -- { "<leader>LS",  function() Snacks.scratch.select() end, desc = "Select Scratch Buffer" },
       -- { "<leader>S",  function() Snacks.scratch.select() end, desc = "Select Scratch Buffer" },
@@ -115,12 +112,37 @@ return {
       { "<leader>s<M-l>", function() Snacks.picker.lines() end, desc = "Lines" },
       { "<leader>sB", function() Snacks.picker.grep_buffers() end, desc = "Grep Buffers" },
       { "<leader>flp", function() Snacks.picker.lazy() end, desc = "Plugins" },
-      { "<leader>f<C-f>", function() Snacks.picker.files() end, desc = "Find Files (Root Dir)" },
+      -- Override Snacks.picker.notifications keymap
+      { "<leader>n", function() Snacks.notifier.show_history() end, desc = "Notification History" },
       --
+      { "<leader>si", function() Snacks.picker.icons() end, desc = "Icons" },
+      { "<leader>su", function() Snacks.picker.undo() end, desc = "Undotree" },
+      -- Alternate keymaps for testing
+      { "<leader>f<C-f>", function() Snacks.picker.files() end, desc = "Find Files (Root Dir)" },
       { "g<C-d>", function() Snacks.picker.lsp_definitions() end, desc = "Goto Definition" },
       { "g<C-r>", function() Snacks.picker.lsp_references() end, nowait = true, desc = "References" },
-      { "<leader>s<C-s>", function() Snacks.picker.lsp_symbols({ filter = LazyVim.config.kind_filter }) end, desc = "LSP Symbols" },
+      { "<leader>s<C-s>", function()
+        -- Snacks.picker.lsp_symbols({ filter = LazyVim.config.kind_filter })
+        Snacks.picker.lsp_symbols({ filter = LazyVim.config.kind_filter, layout = { preset = "vscode", preview = "main" } })
+      end, desc = "LSP Symbols" },
       { "<leader>s<M-s>", function() Snacks.picker.lsp_workspace_symbols({ filter = LazyVim.config.kind_filter }) end, desc = "LSP Workspace Symbols" },
+      -- Temporary until I figure out which pickers to use
+      { "<leader>sX", function() Snacks.picker() end, desc = "Choose snacks picker" },
+      -- Explorer
+      {
+        "<leader>f<C-e>",
+        function()
+          Snacks.picker.explorer({ cwd = LazyVim.root() })
+        end,
+        desc = "Explorer Snacks (root dir)",
+      },
+      {
+        "<leader>f<M-e>",
+        function()
+          Snacks.picker.explorer()
+        end,
+        desc = "Explorer Snacks (cwd)",
+      },
     },
   },
   {

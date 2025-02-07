@@ -1,6 +1,7 @@
 local Input = require("nui.input")
 local event = require("nui.utils.autocmd").event
 
+---@class util.nui.Input
 local M = {}
 
 --- Shows an input prompt at the cursor position

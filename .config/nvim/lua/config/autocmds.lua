@@ -224,12 +224,17 @@ ac({ "FileType" }, {
   end,
 })
 
-ac({ "FileType" }, {
-  pattern = { "mchat" },
-  callback = function(args)
-    if vim.bo[args.buf].buflisted then require("render-markdown").enable() end
-  end,
-})
+-- Will be automatically enabled by the ft spec in the render-markdown
+-- dependency of model.nvim
+-- ac({ "FileType" }, {
+--   pattern = { "mchat" },
+--   callback = function(args)
+--     if vim.bo[args.buf].buflisted then
+--       vim.api.nvim_echo({ { vim.inspect("here"), "Normal" } }, true, {})
+--       require("render-markdown").enable()
+--     end
+--   end,
+-- })
 
 ac({ "FileType" }, {
   pattern = { "log" },
@@ -299,19 +304,27 @@ ac("User", {
   pattern = "LazyVimKeymaps",
   once = true,
   callback = function()
+    -- Override gitui/snacks.picker keymap with lazygit
     vim.keymap.set("n", "<leader>gl", function()
       Snacks.lazygit.log({ cwd = LazyVim.root.git() })
     end, { desc = "Lazygit Log" })
     -- Use Snacks.git.blame_line until Snacks.picker.git_log_line improves
     vim.keymap.set("n", "<leader>gb", function()
       Snacks.git.blame_line()
-    end, { desc = "Git Blame Line" })
+    end, { desc = "git blame line" })
   end,
 })
 
+vim.api.nvim_create_autocmd("User", {
+  pattern = "LazyLoad",
+  desc = "Initialize Util module",
+  callback = function(args)
+    require("util")
+  end,
+})
 -- require("util.ui.lsp").advanced_lsp_progress_autocmd()
 
--- Already set by smart-splits.nvim (var:IS_NVIM)
+-- already set by smart-splits.nvim (var:is_nvim)
 -- ac({ "VimEnter", "VimResume" }, {
 --   group = vim.api.nvim_create_augroup("KittySetVarVimEnter", { clear = true }),
 --   callback = function()

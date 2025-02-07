@@ -1,6 +1,7 @@
 local fzf_lua = require("fzf-lua")
 local fzf_utils = require("fzf-lua.utils")
 
+---@class util.fzf.grapple
 local M = {}
 
 ---@param idx number

@@ -1,3 +1,4 @@
+---@class util.model.api
 local M = {}
 
 ---@param name string

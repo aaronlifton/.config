@@ -23,7 +23,9 @@ require("lazy").setup({
     version = false, -- always use the latest git commit
     -- version = "*", -- try installing the latest stable version for plugins that support semver
   },
-  install = { colorscheme = { "tokyonight", "habamax" } },
+  -- colorscheme that will be used when installing plugins.
+  -- install = { colorscheme = { "tokyonight", "habamax" } },
+  -- install = { colorscheme = {  "habamax" } },
   checker = { enabled = true }, -- automatically check for plugin updates
   performance = {
     rtp = {
@@ -70,6 +72,22 @@ require("lazy").setup({
     patterns = {},
     -- Fallback to git when local plugin doesn't exist
     fallback = true,
+  },
+  ui = {
+    custom_keys = {
+      ["<localleader>l"] = {
+        function(plugin)
+          require("lazy.util").float_term({ "lazygit", "log" }, {
+            cwd = plugin.dir,
+            env = {
+              -- nvr does not work with lazygit inside of Lazy
+              GIT_EDITOR = "nvim",
+            },
+          })
+        end,
+        desc = "Open lazygit log",
+      },
+    },
   },
   icons = vim.g.icon_size == "small" and { kinds = require("util.icons").kinds } or {},
 })

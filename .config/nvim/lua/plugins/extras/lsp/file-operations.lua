@@ -1,3 +1,5 @@
+-- TODO: check if nvim-lspconfig already implements this
+-- /Users/$USER/.local/share/nvim/lazy/LazyVim/lua/lazyvim/plugins/lsp/init.lua:52
 return {
   "antosha417/nvim-lsp-file-operations",
   lazy = true,
@@ -28,9 +30,7 @@ return {
       callback = function(args)
         if vim.tbl_contains(triggers, args.data) then
           load_plugin()
-          if autocmd then
-            vim.api.nvim_del_autocmd(autocmd)
-          end
+          if autocmd then vim.api.nvim_del_autocmd(autocmd) end
         end
       end,
     })

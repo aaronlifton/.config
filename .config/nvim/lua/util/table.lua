@@ -1,4 +1,5 @@
 ---@class util.table
+---@field get fun(t: table, ...: string): any
 local M = {}
 local TableExt = {}
 

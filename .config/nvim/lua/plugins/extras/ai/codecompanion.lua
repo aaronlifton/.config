@@ -188,6 +188,16 @@ return {
         --     },
         --   })
         -- end,
+        -- deepseek_r1 = function()
+        --   return require("codecompanion.adapters").extend("ollama", {
+        --     name = "deepseek_r1",
+        --     schema = {
+        --       model = {
+        --         default = "deepseek-r1:14b",
+        --       },
+        --     },
+        --   })
+        -- end,
         anthropic = function()
           return require("codecompanion.adapters").extend("anthropic", {
             schema = {
@@ -200,6 +210,7 @@ return {
       },
       strategies = {
         chat = {
+          -- adapter = "deepseek_r1",
           adapter = adapter,
           roles = {
             llm = "  CodeCompanion",

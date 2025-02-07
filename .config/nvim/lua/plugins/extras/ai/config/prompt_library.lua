@@ -124,8 +124,7 @@ return vim.tbl_extend("force", starter_prompts, {
     },
     builder = function(input)
       -- /Users/$USER/.local/share/nvim/lazy/cmp-ai/lua/cmp_ai/backends/codestral.lua
-      local context = require("util.model.context")
-      local ctx = context:get()
+      local ctx = Util.ai.context:get()
       return { prompt = ctx.lines_before }
     end,
   },

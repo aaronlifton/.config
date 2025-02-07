@@ -40,7 +40,8 @@ map("n", "<leader>u<PageUp>", function()
   end
 end, { desc = "Toggle colorcolumn" })
 
--- toggle formatexpr to format paragraphs
+-- Toggle formatexpr
+-- NOTE: Use `gq` to format the current paragraph
 map("n", "<leader>uM", function()
   if o.formatexpr == "" then
     -- o.formatexpr = "v:lua.require'lazyvim.util'.format.formatexpr()"
@@ -238,7 +239,7 @@ local linters = function()
   local buf = vim.api.nvim_get_current_buf()
   local linters_attached = require("lint").get_running(buf)
 
-  if not #linters_attached > 0 then
+  if #linters_attached == 0 then
     vim.notify("No linters attached", vim.log.levels.WARN, { title = "Linter" })
     return
   end
@@ -321,6 +322,7 @@ end, { desc = "Line Diagnostics (Source)" })
 
 -- stylua: ignore start
 
+-- Git
 map({"n", "x" }, "<leader>g<C-y>", function()
   Snacks.gitbrowse({
     open = function(url) vim.fn.setreg("+", url) end,
@@ -345,6 +347,8 @@ map({"n", "x" }, "<leader>g<C-f>", function()
     notify = false,
   })
 end, { desc = "Git Browse (copy file)" })
+
+map("n", "<leader>g<C-b>", function() Snacks.picker.git_log_line() end, { desc = "Git Blame Line" })
 
 -- map({"n", "x" }, "<leader>g<M-f>", function()
 --   vim.ui.select(require("util.git").mru_branches(), { prompt = "Branch: " }, function(branch)
@@ -406,17 +410,6 @@ end, { desc = "Toggle Notepad" })
 map("n", "zV", function()
   require("util.spell_dictionary").add_to_vale_dictionary()
 end, { desc = "Add to Vale dictionary" })
-
--- TreeSJ
-map("n", "gJ", function()
-  require("treesj").toggle({ split = { recursive = false } })
-end, { desc = "SplitJoin" })
-map("n", "g<C-s>", function()
-  require("treesj").toggle({ split = { recursive = true } })
-end, { desc = "SplitJoin (Recursive)" })
--- map("n", "gJ", function()
---   require("treesj").join()
--- end, { desc = "Join" })
 
 -- Git modified date
 map("n", "<leader>gT", function()
@@ -722,6 +715,7 @@ end, { desc = "Open github url from current path" })
 --   vim.cmd([[exe "normal gza]f]a(\<esc>l" | startinsert]])
 -- end, { desc = "Convert to markdown url" })
 
+-- Overrides g<C-h> (Blockwise select mode)
 map("n", "g<C-h>", function()
   local cword = vim.fn.expand("<cword>")
   vim.cmd("help " .. cword)

@@ -1,4 +1,5 @@
 ---@class util.git
+---@field github util.git.github
 local M = {}
 
 function M.mru_branches(count)

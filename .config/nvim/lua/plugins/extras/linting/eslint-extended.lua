@@ -68,14 +68,33 @@ return {
             filter = "eslint",
           })
 
-          -- Override Eslint LSP formatter with EslintFixAll to support
-          -- prettier/prettier diagnostics
+          -- Override Eslint LSP formatter with EslintFixAll to support prettier/prettier diagnostics
           formatter.name = "eslint: EslintFixAll"
           formatter.sources = function(buf)
             local client = get_client(buf)
             return client and { "eslint" } or {}
           end
+
           local old_format = formatter.format
+          local run_eslint_fix_all = function(buf)
+            vim.notify("Running EslintFixAll", "info", { title = "LazyVim" })
+            -- Executes synchronously based on lspconfig/configs/eslint.lua:166
+            -- vim.cmd("EslintFixAll")
+            local _, err = eslint_fix_all({ bufnr = buf, sync = true })
+            if err then vim.notify(("Error:\n%s"):format(err), "error", { title = "EslintFixAll" }) end
+          end
+
+          local run_lsp_format = function(buf)
+            vim.schedule(function()
+              local diag = vim.diagnostic.get(buf, { severity = { vim.diagnostic.severity.ERROR } })
+              if #diag > 0 then
+                -- Then format with vim.lsp.buf.format()
+                vim.notify("Formatting with vim.lsp.buf.format()", "info", { title = "LazyVim" })
+                old_format(buf)
+              end
+            end)
+          end
+
           formatter.format = function(buf)
             -- format with EslintFixAll first
             local client = get_client(buf)
@@ -92,23 +111,9 @@ return {
               end
 
               if has_prettier_diag then
-                vim.notify("Running EslintFixAll", "info", { title = "LazyVim" })
-                -- Executes synchronously based on lspconfig/configs/eslint.lua:166
-                -- vim.cmd("EslintFixAll")
-                local _, err = eslint_fix_all({ bufnr = buf, sync = true })
-                if err then vim.notify(("Error:\n%s"):format(err), "error", { title = "EslintFixAll" }) end
+                run_eslint_fix_all(buf)
 
-                vim.schedule(function()
-                  diag = vim.diagnostic.get(buf, { severity = { vim.diagnostic.severity.ERROR } })
-                  if #diag > 0 then
-                    -- Then format with vim.lsp.buf.format()
-                    vim.notify("Formatting with vim.lsp.buf.format()", "info", { title = "LazyVim" })
-                    old_format(buf)
-                    -- vim.defer_fn(function()
-                    --   old_format(buf)
-                    -- end, 100)
-                  end
-                end)
+                -- run_lsp_format(buf)
               else
                 old_format(buf)
                 return

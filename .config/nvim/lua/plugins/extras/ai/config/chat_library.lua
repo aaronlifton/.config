@@ -128,7 +128,10 @@ Here is the content from the file `%s`:
   --   end,
   -- },
   ["gemini:flash"] = vim.tbl_deep_extend("force", require("model.prompts.chats").gemini, {
-    provider = require("util.model.providers.gemini-flash"),
+    provider = require("util.model.providers.gemini-flash").model("gemini-1.5-flash"),
+  }),
+  ["gemini:flash-2.0"] = vim.tbl_deep_extend("force", require("model.prompts.chats").gemini, {
+    provider = require("util.model.providers.gemini-flash").model("gemini-2.0-flash-exp"),
   }),
   -- Works
   ["together:dolphin-mixtral"] = {

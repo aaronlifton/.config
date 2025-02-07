@@ -7,17 +7,18 @@ return {
     "gsuuon/model.nvim",
     -- Don't need these if lazy = false
     cmd = { "M", "Model", "Mchat" },
-    init = function()
-      vim.filetype.add({
-        extension = {
-          mchat = "mchat",
-        },
-      })
-    end,
+    -- Adds 1.41ms to init time
+    -- init = function()
+    --   vim.filetype.add({
+    --     extension = {
+    --       mchat = "mchat",
+    --     },
+    --   })
+    -- end,
+    build = ":TSInstall mchat",
     ft = "mchat",
     dependencies = {
       {
-        -- Make sure to set this up properly if you have lazy=true
         "MeanderingProgrammer/render-markdown.nvim",
         optional = true,
         opts = {
@@ -54,11 +55,14 @@ return {
           -- vim.cmd(":tab Mchat claude:cache")
           vim.cmd(":tab Mchat claude")
         end,
-        desc = "Toggle Chat (Claude Sonnet (Cache))",
+        desc = "Toggle Chat (Claude Sonnet)",
       },
       { provider_prefix .. "c", function() vim.cmd(":vsplit | Mchat claude") end, desc = "Claude Sonnet" },
       { provider_prefix .. "g", function() vim.cmd(":vsplit | Mchat gemini:flash") end, desc = "Gemini Flash" },
+      { provider_prefix .. "G", "<cmd>tab Mchat gemini:flash-2.0<cr>", desc = "Gemini Flash (2.0)" },
+      -- { provider_prefix .. "g", "<cmd>vsplit | Mchat gemini:flash<cr>", desc = "Gemini Flash" },
       { provider_prefix .. "x", "<cmd>tab Mchat xai<cr>", desc = "xAI" },
+      { provider_prefix .. "p", "<cmd>tab Mchat pplx<cr>", desc = "Perplexity" },
       -- stylua: ignore end
       -- Disabled in favor of Avante edit
       -- {
@@ -99,6 +103,21 @@ return {
         mode = { "n", "v" },
         desc = "Edit Code (Claude Sonnet)",
       },
+      {
+        "<leader>a<C-c>",
+        function()
+          local FloatingWindow = require("util.nui.floating_window")
+          local window = FloatingWindow({
+            title = "Claude Sonnet",
+            on_mount = function(_popup)
+              vim.cmd(":Mchat claude")
+            end,
+          })
+          window:mount()
+        end,
+        mode = "n",
+        desc = "Toggle Floating Chat (Claude Sonnet)",
+      },
     },
     -- To override defaults add a config field and call setup()
     config = function()
@@ -118,8 +137,11 @@ return {
       })
       model.setup({
         default_prompt = hf.default_prompt,
-        chats = util.module.autoload("plugins.extras.ai.config.chat_library"),
-        prompts = util.module.autoload("plugins.extras.ai.config.prompt_library"),
+        -- Autoload
+        -- chats = util.module.autoload("plugins.extras.ai.config.chat_library"),
+        -- prompts = util.module.autoload("plugins.extras.ai.config.prompt_library"),
+        chats = require("plugins.extras.ai.config.chat_library"),
+        prompts = require("plugins.extras.ai.config.prompt_library"),
       })
 
       local augroup = vim.api.nvim_create_augroup("ai_model", {})
@@ -156,11 +178,15 @@ return {
       -- Override elixir-tools :M/:Mix command
       vim.api.nvim_command("command! M Model")
 
-      -- Override mchat filetype to support render-markdown.nvim
-      vim.treesitter.language.register("markdown", "mchat")
-
       -- Setup ruby embeddings functions
       -- require("util.model.store.ruby")
+
+      -- LazyVim.on_very_lazy(function() end)
+      vim.filetype.add({
+        extension = {
+          mchat = "mchat",
+        },
+      })
     end,
   },
   {

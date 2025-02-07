@@ -4,7 +4,14 @@ return {
     lazy = true,
     optional = true,
     dependencies = {
-      "nvim-treesitter/playground",
+      {
+        "nvim-treesitter/playground",
+        -- Lazy load
+        keys = {
+          { "<leader>ciT", "<Cmd>TSHighlightCapturesUnderCursor<CR>", desc = "Treesitter Highlight Groups" },
+          { "<leader>cit", "<Cmd>TSPlaygroundToggle<CR>", desc = "Treesitter Playground" },
+        },
+      },
     },
     build = ":TSInstall query",
     opts = {
@@ -16,10 +23,6 @@ return {
         use_virtual_text = true,
         lint_events = { "BufWrite", "CursorHold" },
       },
-    },
-    keys = {
-      { "<leader>ciT", "<Cmd>TSHighlightCapturesUnderCursor<CR>", desc = "Treesitter Highlight Groups" },
-      { "<leader>cit", "<Cmd>TSPlaygroundToggle<CR>", desc = "Treesitter Playground" },
     },
   },
   {

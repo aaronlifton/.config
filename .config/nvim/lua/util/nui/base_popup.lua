@@ -7,15 +7,16 @@ local event = require("nui.utils.autocmd").event
 ---@field on_mount function
 ---@field on_close function
 ---
----@class BasePopup: NuiPopup
----@field options base_popup_options
+---@class util.nui.BasePopup: NuiPopup
+---@field opts base_popup_options
 ---@field super NuiPopup
 ---@field extend function
 local BasePopup = Popup:extend("BasePopup")
 
----@param options base_popup_options
-function BasePopup:init(options)
-  BasePopup.super.init(self, options)
+---@param opts base_popup_options
+function BasePopup:init(opts)
+  BasePopup.super.init(self, opts)
+  self.opts = opts
 end
 
 function BasePopup:mount()
@@ -25,8 +26,35 @@ function BasePopup:mount()
     self:unmount()
   end)
 
-  if self.options.on_mount then self.options.on_mount(self) end
+  -- local close = self.close
+  local close = function()
+    if self.opts.on_close then self.opts.on_close() end
+    self:unmount()
+  end
+
+  self:set_keymap({
+    ["<ESC>"] = {
+      callback = close,
+      desc = "Close",
+    },
+    ["<C-c>"] = {
+      callback = close,
+      desc = "Close",
+      mode = { "n", "i" },
+    },
+    ["Q"] = {
+      callback = close,
+      desc = "Close",
+    },
+  })
+
+  if self.opts.on_mount then self.opts.on_mount(self) end
 end
+
+-- function BasePopup:close()
+--   self.opts.on_close()
+--   self:unmount()
+-- end
 
 --- Sets keymap for nui popup
 ---@param self NuiPopup
