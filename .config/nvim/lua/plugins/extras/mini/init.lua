@@ -9,13 +9,13 @@ return {
   --   end,
   -- },
   -- Somehow this file adds 3.6 ms to loading time
-  { import = "plugins.extras.mini.mini-files" },
-  { import = "plugins.extras.mini.mini-ai" },
-  { import = "plugins.extras.mini.mini-diff" },
+  { import = "plugins.extras.mini.mini-files-extended" },
+  { import = "plugins.extras.mini.mini-ai-extended" },
+  { import = "plugins.extras.mini.mini-diff-extended" },
   -- { import = "plugins.extras.mini.mini-starter" },
   { import = "plugins.extras.mini.mini-align" },
-  { import = "plugins.extras.mini.mini-pairs" },
+  { import = "plugins.extras.mini.mini-pairs-extended" },
   -- { import = "plugins.extras.mini.mini-animate" },
-  -- { import = "plugins.extras.mini.mini-hipatterns" },
+  { import = "plugins.extras.mini.mini-hipatterns-extended" },
   -- { import = "plugins.extras.mini.mini-icons" },
 }

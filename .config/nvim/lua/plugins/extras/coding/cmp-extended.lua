@@ -46,15 +46,17 @@ return {
       }
 
       -- Format with nvim-highlight-colors
-      local old_format = opts.formatting.format
-      opts.formatting.format = function(entry, item)
-        item = old_format(entry, item)
-        local highlight_colors_avail, highlight_colors = pcall(require, "nvim-highlight-colors")
-        local color_item = highlight_colors_avail and highlight_colors.format(entry, { kind = item.kind })
-        if color_item and color_item.abbr and color_item.abbr_hl_group then
-          item.kind, item.kind_hl_group = color_item.abbr, color_item.abbr_hl_group
+      if vim.g.highlight_provider == "nvim-highlight-colors" then
+        local old_format = opts.formatting.format
+        opts.formatting.format = function(entry, item)
+          item = old_format(entry, item)
+          local highlight_colors_avail, highlight_colors = pcall(require, "nvim-highlight-colors")
+          local color_item = highlight_colors_avail and highlight_colors.format(entry, { kind = item.kind })
+          if color_item and color_item.abbr and color_item.abbr_hl_group then
+            item.kind, item.kind_hl_group = color_item.abbr, color_item.abbr_hl_group
+          end
+          return item
         end
-        return item
       end
 
       -- Max width

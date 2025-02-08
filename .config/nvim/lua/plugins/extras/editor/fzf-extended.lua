@@ -208,6 +208,7 @@ return {
     keys = {
       -- stylua: ignore start
       { "<leader><space>", LazyVim.pick("files", vim.tbl_extend("force", file_opts, { git_icons = false, fd_opts = fd_opts })), desc = "Find Files (Root Dir)" },
+      { "<leader><S-space>", LazyVim.pick("files", vim.tbl_extend("force", file_opts, { git_icons = false, fd_opts = fd_opts, root = false })), desc = "Find Files (cwd)" },
       { "<leader>ff", LazyVim.pick("files", vim.tbl_extend("force", file_opts, { git_icons = false, fd_opts = fd_opts })), desc = "Find Files (Root Dir)" },
       { "<leader>fF", LazyVim.pick("files", vim.tbl_extend("force", file_opts, { root = false, git_icons = false, fd_opts = fd_opts })), desc = "Find Files (cwd)" },
       { "<leader>su", function() pick("grep_cword", live_grep_opts) end, desc = "Word (Root Dir)", mode = "n" },

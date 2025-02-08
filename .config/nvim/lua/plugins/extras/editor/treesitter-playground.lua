@@ -1,11 +1,16 @@
+-- nvim-treesitter/playground is deprecated since the functionality is included in Neovim
+-- use these in place of :TSPlaygroundToggle
+-- - `:Inspect` to show the highlight groups under the cursor
+-- - `:InspectTree` to show the parsed syntax tree ("TSPlayground")
+-- - `:EditQuery` to open the Live Query Editor (Nvim 0.10+)
 return {
   {
     "nvim-treesitter/nvim-treesitter",
-    lazy = true,
     optional = true,
     dependencies = {
       {
         "nvim-treesitter/playground",
+        lazy = true,
         -- Lazy load
         keys = {
           { "<leader>ciT", "<Cmd>TSHighlightCapturesUnderCursor<CR>", desc = "Treesitter Highlight Groups" },
