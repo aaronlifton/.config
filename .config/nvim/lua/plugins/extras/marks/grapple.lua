@@ -55,8 +55,15 @@ return {
   {
     "cbochs/grapple.nvim",
     dependencies = {
-      "nvim-tree/nvim-web-devicons",
-      optional = true,
+      -- This loads nvim-web-devicons, when it is actually mocked via mini.icons by LazyVim
+      -- { "nvim-tree/nvim-web-devicons", optional = true },
+      {
+        "nvim-lualine/lualine.nvim",
+        optional = true,
+        opts = function(_, opts)
+          table.insert(opts.sections.lualine_c, { require("grapple").statusline, cond = require("grapple").exists })
+        end,
+      },
     },
     cmd = { "Grapple" },
     keys = keys,
@@ -92,13 +99,6 @@ return {
           require("telescope").load_extension("grapple")
         end)
       end
-    end,
-  },
-  {
-    "nvim-lualine/lualine.nvim",
-    optional = true,
-    opts = function(_, opts)
-      table.insert(opts.sections.lualine_c, { require("grapple").statusline, cond = require("grapple").exists })
     end,
   },
   {

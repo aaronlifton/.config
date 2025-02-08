@@ -40,6 +40,7 @@ return {
       {
         -- support for image pasting
         "HakonHarnes/img-clip.nvim",
+        cond = false,
         event = "VeryLazy",
         opts = {
           -- recommended settings

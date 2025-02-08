@@ -50,6 +50,7 @@ local set_mini_diff_ref_text = function(buf_id, branch, yadm)
 end
 
 return {
+  { import = "lazyvim.plugins.extras.editor.mini-diff" },
   {
     "echasnovski/mini.diff",
     optional = true,

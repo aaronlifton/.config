@@ -1,16 +1,15 @@
 -- https://www.reddit.com/r/neovim/comments/1fo8wvh/multicursornvim_10_released/
-local function feedkeys_action()
-  local mc = require("multicursor-nvim")
-  mc.action(function(ctx)
-    local cursor = ctx:firstCursor()
-    if cursor == nil then return end
-
-    vim.print(cursor:getLine())
-    cursor:feedkeys("ihello world")
-  end)
-end
-
-vim.api.nvim_create_user_command("WordCount", feedkeys_action, { range = true })
+-- TODO: remove
+-- local function feedkeys_action()
+--   local mc = require("multicursor-nvim")
+--   mc.action(function(ctx)
+--     local cursor = ctx:firstCursor()
+--     if cursor == nil then return end
+--     vim.print(cursor:getLine())
+--     cursor:feedkeys("ihello world")
+--   end)
+-- end
+-- vim.api.nvim_create_user_command("WordCount", feedkeys_action, { range = true })
 
 local function keys()
   -- local mc = require("multicursor-nvim")
@@ -100,15 +99,14 @@ end
 
 return {
   "jake-stewart/multicursor.nvim",
-  event = "VeryLazy", -- needed for Snacks.toggle
+  -- PERF: Try lazy-loading via keys
+  -- event = "VeryLazy", -- needed for Snacks.toggle
   branch = "1.0",
   -- keys = {
   --   { "<leader><cr>", toggle_multicursor_mode, desc = "Toggle Multicursor", mode = { "n", "v" } },
   -- },
   config = function()
-    local mc = require("multicursor-nvim")
-
-    mc.setup()
+    require("multicursor-nvim").setup()
 
     -- Customize how cursors look.
     local hl = vim.api.nvim_set_hl

@@ -57,8 +57,10 @@ return {
         end,
         desc = "Toggle Chat (Claude Sonnet)",
       },
-      { provider_prefix .. "c", function() vim.cmd(":vsplit | Mchat claude") end, desc = "Claude Sonnet" },
-      { provider_prefix .. "g", function() vim.cmd(":vsplit | Mchat gemini:flash") end, desc = "Gemini Flash" },
+      -- { provider_prefix .. "c", function() vim.cmd(":vsplit | Mchat claude") end, desc = "Claude Sonnet" },
+      { provider_prefix .. "c", "<cmd>tab Mchat claude<cr>", desc = "Claude Sonnet" },
+      -- { provider_prefix .. "g", function() vim.cmd(":vsplit | Mchat gemini:flash") end, desc = "Gemini Flash" },
+      { provider_prefix .. "g", "<cmd>tab Mchat gemini:flash<cr>", desc = "Gemini Flash" },
       { provider_prefix .. "G", "<cmd>tab Mchat gemini:flash-2.0<cr>", desc = "Gemini Flash (2.0)" },
       -- { provider_prefix .. "g", "<cmd>vsplit | Mchat gemini:flash<cr>", desc = "Gemini Flash" },
       { provider_prefix .. "x", "<cmd>tab Mchat xai<cr>", desc = "xAI" },
@@ -140,8 +142,9 @@ return {
         -- Autoload
         -- chats = util.module.autoload("plugins.extras.ai.config.chat_library"),
         -- prompts = util.module.autoload("plugins.extras.ai.config.prompt_library"),
-        chats = require("plugins.extras.ai.config.chat_library"),
-        prompts = require("plugins.extras.ai.config.prompt_library"),
+        -- /Users/alifton/.config/nvim/lua/util/model/chat_library.lua
+        chats = require("util.model.chat_library"),
+        prompts = require("util.model.prompt_library"),
       })
 
       local augroup = vim.api.nvim_create_augroup("ai_model", {})
