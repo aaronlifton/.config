@@ -19,9 +19,6 @@ local follow_cursor = false
 return {
   {
     import = "lazyvim.plugins.extras.coding.nvim-cmp",
-    cond = function()
-      return LazyVim.cmp_engine() == "nvim-cmp"
-    end,
   },
   {
     "hrsh7th/nvim-cmp",
@@ -78,7 +75,7 @@ return {
       -- Sources
       -- Make codeium appear before copilot
       set_priority(opts.sources, "codeium", 101)
-      -- Supermaven is too fast, so that buffer/lsp completions come after it, so lower the priority
+      -- Supermaven is too fast, so buffer/lsp completions come after it, so lower the priority
       set_priority(opts.sources, "supermaven", 90)
 
       -- Index 4 is nvim_lsp

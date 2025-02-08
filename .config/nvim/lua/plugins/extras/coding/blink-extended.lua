@@ -1,10 +1,8 @@
 return {
+  { import = "lazyvim.plugins.extras.coding.blink" },
   {
     "saghen/blink.cmp",
     optional = true,
-    cond = function()
-      return LazyVim.cmp_engine() == "blink.cmp"
-    end,
     opts = {
       keymap = {
         ["<C-k>"] = { "select_prev", "fallback" },

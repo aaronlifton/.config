@@ -21,7 +21,6 @@
     "plugins.extras.ai.copilot",
     "plugins.extras.ai.model",
     "plugins.extras.coding.annotation",
-    "plugins.extras.coding.blink-extended",
     "plugins.extras.coding.cmp-extended",
     "plugins.extras.coding.luapad",
     "plugins.extras.coding.mason-extended",
@@ -103,8 +102,9 @@
     "plugins.extras.util.persistence-extended",
     "plugins.extras.util.smart-splits"
   ],
+  "install_version": 7,
   "news": {
     "NEWS.md": "10960"
   },
-  "version": 7
+  "version": 8
 }

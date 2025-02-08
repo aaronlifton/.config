@@ -73,7 +73,7 @@ return {
     })
     opts.presets.lsp_doc_border = true
     -- opts.presets.bottom_search = false
-    if LazyVim.cmp_engine() == "nvim-cmp" then opts.popupmenu = { backend = "cmp" } end
+    if LazyVim.has_extra("coding.nvim-cmp") then opts.popupmenu = { backend = "cmp" } end
   end,
   keys = {
     {
