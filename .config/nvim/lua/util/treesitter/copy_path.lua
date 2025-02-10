@@ -253,4 +253,8 @@ M.copy_ruby_path = function(args)
   })
 end
 
+M.copy_lua_path = function(args)
+  -- Implement this function
+end
+
 return M

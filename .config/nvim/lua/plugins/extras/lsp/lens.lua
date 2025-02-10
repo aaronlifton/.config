@@ -1,3 +1,5 @@
+-- This works well with Lua and JS/TS, but to reduce the performance hit on LSP
+-- servers and number of open file descriptors, it's disabled.
 return {
   "VidocqH/lsp-lens.nvim",
   event = "LspAttach",

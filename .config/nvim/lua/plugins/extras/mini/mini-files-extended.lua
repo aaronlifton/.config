@@ -65,6 +65,7 @@ return {
           set_mark("c", vim.fn.stdpath("config"), "Config") -- path
           set_mark("w", vim.fn.getcwd, "Working directory") -- callable
           set_mark("~", "~", "Home directory")
+          set_mark("C", "~/Code", "Code")
         end,
       })
     end,

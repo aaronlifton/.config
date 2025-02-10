@@ -51,9 +51,9 @@ return {
       -- disable_url_path_completion = false, -- cf Backend
     },
     keys = {
-      -- { "<leader>cI2", "<cmd>CodeiumToggle<cr>", desc = "Toggle Codeium" },
-      { "<leader>cI4", "<cmd>LLMToggleAutoSuggest<cr>", desc = "Toggle HFCC Autosuggest" },
-      { "<leader>cI5", "<cmd>LLMSuggestion<cr>", desc = "Request HFCC Suggestion" },
+      -- { "<leader>aX2", "<cmd>CodeiumToggle<cr>", desc = "Toggle Codeium" },
+      { "<leader>aX4", "<cmd>LLMToggleAutoSuggest<cr>", desc = "Toggle HFCC Autosuggest" },
+      { "<leader>aX5", "<cmd>LLMSuggestion<cr>", desc = "Request HFCC Suggestion" },
     },
     config = function(_, opts)
       require("llm").setup(opts)

@@ -20,14 +20,13 @@ end)
 
 return {
   { import = "lazyvim.plugins.extras.lang.typescript" },
-  { import = "plugins.extras.lang.json-extended" },
-  {
-    "williamboman/mason.nvim",
-    optional = true,
-    opts = {
-      ensure_installed = { "deno" },
-    },
-  },
+  -- {
+  --   "williamboman/mason.nvim",
+  --   optional = true,
+  --   opts = {
+  --     ensure_installed = { "deno" },
+  --   },
+  -- },
   {
     "neovim/nvim-lspconfig",
     optional = true,

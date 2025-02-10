@@ -7,7 +7,7 @@ return {
     "gsuuon/model.nvim",
     -- Don't need these if lazy = false
     cmd = { "M", "Model", "Mchat" },
-    -- Adds 1.41ms to init time
+    -- Adds 0.92 - 1.41ms to init time
     -- init = function()
     --   vim.filetype.add({
     --     extension = {
@@ -15,6 +15,15 @@ return {
     --     },
     --   })
     -- end,
+    -- Doesn't add to init time
+    -- opts = function(_, opts)
+    --   vim.filetype.add({
+    --     extension = {
+    --       mchat = "mchat",
+    --     },
+    --   })
+    -- end,
+    -- If the markdown in the chat is not getting highlighting, run this:
     build = ":TSInstall mchat",
     ft = "mchat",
     dependencies = {

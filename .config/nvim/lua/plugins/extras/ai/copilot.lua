@@ -4,7 +4,7 @@ local copilot_chat_prefix = "<leader>aC"
 local keys = {}
 -- stylua: ignore start
 -- if vim.g.ai_cmp then
---   keys[#keys+1] = { "<leader>cIt", function() require("copilot.suggestion").toggle_auto_trigger() end, desc = "Toggle auto trigger" }
+--   keys[#keys+1] = { "<leader>aXt", function() require("copilot.suggestion").toggle_auto_trigger() end, desc = "Toggle auto trigger" }
 --   if panel_enabled then
 --     keys[#keys+1] ={ "<leader>avp", function() require("copilot.panel").open({ "bottom", 0.25 }) end, desc = "Toggle Copilot Panel" }
 --     keys[#keys+1] ={ "<leader>c]", function() require("copilot.panel").jump_next() end, desc = "Jump next (Copilot Panel)" }
@@ -90,21 +90,22 @@ return {
     --   end
     -- end,
     init = function()
+      -- TODO: fix this
       LazyVim.on_very_lazy(function()
-        vim.keymap.set("n", "<leader>cIc", function()
+        vim.keymap.set("n", "<leader>aXs", function()
           if vim.g.ai_cmp then
             require("copilot").setup({
               suggestion = {
-                enabled = false,
-                auto_trigger = false,
+                enabled = true,
+                hide_during_completion = false,
               },
             })
             vim.g.ai_cmp = false
           else
             require("copilot").setup({
               suggestion = {
-                enabled = true,
-                auto_trigger = true,
+                enabled = false,
+                hide_during_completion = true,
                 keymap = {
                   accept = "<M-CR>",
                   accept_line = "<M-l>",
@@ -171,7 +172,7 @@ return {
         desc = "Toggle (CopilotChat)",
         mode = { "n", "v" },
       },
-      -- Override lazyvim keymaps
+      -- Taken from lazyvim keymaps, since we are not using the copilot-chat extra
       { "<c-s>", "<CR>", ft = "copilot-chat", desc = "Submit Prompt", remap = true },
       { "<leader>a", "", desc = "+ai", mode = { "n", "v" } },
       {

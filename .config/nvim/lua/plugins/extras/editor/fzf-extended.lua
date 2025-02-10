@@ -10,7 +10,7 @@ end
 ---@param path string
 local function _toggle_iglob(opts, path)
   local o = vim.tbl_deep_extend("keep", { resume = true }, opts.__call_opts)
-  vim.api.nvim_echo({ { vim.inspect(o), "Normal" } }, true, {})
+  -- vim.api.nvim_echo({ { vim.inspect(o), "Normal" } }, true, {})
 
   if o.search:find(path, nil, true) then
     o.search = o.search:gsub("%s*" .. vim.pesc(path), "")
@@ -30,7 +30,7 @@ local function _toggle_iglob(opts, path)
 end
 
 local function toggle_iglob(path)
-  return function(selected, opts)
+  return function(_selected, opts)
     _toggle_iglob(opts, path)
   end
 end
@@ -93,7 +93,7 @@ local use_lazyvim_picker = true
 local pick = use_lazyvim_picker and function(name, opts)
   return LazyVim.pick(name, opts)()
 end or function(name, opts)
-  return require("fzf-lua")[name](opts)
+  require("fzf-lua")[name](opts)
 end
 local default_grep_rg_opts = "--column --line-number --no-heading --color=always --smart-case " .. "--max-columns=4096" -- " -e"
 -- TODO: replace with --ignore-file=/Users/$USER/.config/nvim/rules/rg-ignore
@@ -108,6 +108,8 @@ local file_opts = {
   actions = {
     -- https://docs.rs/globset/latest/globset/#syntax
     ["alt-9"] = toggle_fd_exclude_patterns({ "spec/**/*", "**{__tests__,tests?}**", "{test,tests}/" }),
+    ["alt-l"] = toggle_flag("-e lua"),
+    ["alt-r"] = toggle_flag("-e rb"),
   },
 }
 
@@ -135,7 +137,7 @@ local live_grep_opts = {
     -- ctrl-t: trouble
     -- ctrl-r: toggle-root-dir
     -- alt-c: toggle-root-dir
-    ["alt-u"] = toggle_iglob("*.lua !*{test,spec}*"),
+    -- ["alt-u"] = toggle_iglob("*.lua !*{test,spec}*"),
     ["alt-j"] = toggle_iglob("*.{js,ts,tsx} !*{test,spec}*"),
     ["alt-o"] = toggle_iglob("*.{js,ts,tsx} **test**"),
     ["alt-1"] = toggle_iglob("**{test,spec}**"),
@@ -146,7 +148,7 @@ local live_grep_opts = {
     -- ["alt-t"] = toggle_flag("--iglob=*{spec,test}*.{lua,js,ts,tsx,rb}"),
     ["alt-4"] = toggle_iglob("!**{umd,cjs,esm}**"),
     -- ["alt-r"] = toggle_iglob("*.rb !*{test,spec}/"),
-    ["alt-5"] = toggle_iglob("*.rb !*{test,spec}/"),
+    -- ["alt-5"] = toggle_iglob("*.rb !*{test,spec}/"),
     -- stylua: ignore start
     ["alt-6"] = toggle_iglob("app/models/**"),
     ["alt-7"] = toggle_iglob("app/controllers/**"),
@@ -154,8 +156,12 @@ local live_grep_opts = {
     -- ["alt-9"] = toggle_iglob("!spec/**/* !**/test*/** !test/**"),
     ["alt-9"] = toggle_iglob("!spec/**/* !**/test*/** !__tests__"),
     ["alt-p"] = toggle_flag("--pcre2"),
+    -- dotall (?s:.) ; regular (?-s:.)
     ["alt-u"] = toggle_flag("-U"),
-    ["alt-s"] = toggle_flag("--case-sensitive"),
+    ["alt-l"] = toggle_flag("-t lua"),
+    ["alt-r"] = toggle_flag("-t ruby"),
+    ["alt-R"] = toggle_iglob("*.rb !*{test,spec}/"),
+    ["alt-z"] = toggle_live_iglob("*.lua"),
     -- ["alt-x"] = function()
     --   local buf = vim.api.nvim_get_current_buf()
     --   local leap = require("util.leap").get_leap_for_buf(buf)
@@ -176,6 +182,7 @@ return {
     opts = function(_, opts)
       -- if testing telescope
       if not opts then return end
+
       -- opts[1] = "border-fused"
       -- opts[1] = "borderless-full"
       local config = require("fzf-lua.config")
@@ -183,12 +190,11 @@ return {
       config.defaults.actions.files["alt-t"] = require("fzf-lua.actions").file_tabedit
       config.defaults.actions.files["ctrl-q"] = require("fzf-lua.actions").file_sel_to_qf
       config.defaults.actions.files["ctrl-t"] = require("util.fzf.actions").add_selected
-      -- opts.lsp.async_or_timeout = true -- timeout(ms) or 'true' for async calls
-      -- opts.git.branches.cmd = "git branch --all --color=always --sort=-committerdate"
 
       return vim.tbl_extend("force", opts, {
         git = {
           branches = {
+            -- cmd = "git branch --all --color=always --sort=-committerdate",
             cmd = "git branch --color=always --sort=-committerdate",
             preview = "git log --graph --pretty=oneline --abbrev-commit --color --stat {1}",
           },
@@ -207,13 +213,13 @@ return {
     end,
     keys = {
       -- stylua: ignore start
-      { "<leader><space>", LazyVim.pick("files", vim.tbl_extend("force", file_opts, { git_icons = false, fd_opts = fd_opts })), desc = "Find Files (Root Dir)" },
-      { "<leader><S-space>", LazyVim.pick("files", vim.tbl_extend("force", file_opts, { git_icons = false, fd_opts = fd_opts, root = false })), desc = "Find Files (cwd)" },
-      { "<leader>ff", LazyVim.pick("files", vim.tbl_extend("force", file_opts, { git_icons = false, fd_opts = fd_opts })), desc = "Find Files (Root Dir)" },
-      { "<leader>fF", LazyVim.pick("files", vim.tbl_extend("force", file_opts, { root = false, git_icons = false, fd_opts = fd_opts })), desc = "Find Files (cwd)" },
+      { "<leader><space>", function() pick("files", vim.tbl_extend("force", file_opts, { git_icons = false, fd_opts = fd_opts })) end, desc = "Find Files (Root Dir)" },
+      -- { "<leader><S-space>", LazyVim.pick("files", vim.tbl_extend("force", file_opts, { git_icons = false, fd_opts = fd_opts, root = false })), desc = "Find Files (cwd)" },
+      { "<leader>ff", function() pick("files", vim.tbl_extend("force", file_opts, { git_icons = false, fd_opts = fd_opts })) end, desc = "Find Files (Root Dir)" },
+      { "<leader>fF", function() pick("files", vim.tbl_extend("force", file_opts, { git_icons = false, fd_opts = fd_opts, root = false })) end, desc = "Find Files (cwd)" },
       { "<leader>su", function() pick("grep_cword", live_grep_opts) end, desc = "Word (Root Dir)", mode = "n" },
       { "<leader>su", function() pick("grep_visual", live_grep_opts) end, desc = "Selection (Root Dir)", mode = "v" },
-      { "<leader>s<C-w>", "<cmd>lua require('fzf-lua').grep_cWORD()<CR>", desc = "WORD (Root Dir)", mode = "n" },
+      { "<leader>s<C-w>", "<cmd>FzfLua grep_cWORD<CR>", desc = "WORD (Root Dir)", mode = "n" },
       { "<leader>sx", function() pick("live_grep_native", live_grep_opts) end, desc = "Grep (Native)", mode = "n" },
       { "<leader>sw", function() pick("grep_cword", vim.tbl_extend("force", live_grep_opts, { rg_glob = false, git_icons = true })) end, desc = "Word (Root Dir)", mode = "n" },
       { "<leader>sW", function() pick("grep_cword", vim.tbl_extend("force", live_grep_opts, { rg_glob = false, git_icons = true, root = false })) end, desc = "Word (cwd)", mode = "n" },
@@ -221,8 +227,8 @@ return {
       { "<leader>sW", function() pick("grep_visual", vim.tbl_extend("force", live_grep_opts, { rg_glob = false, root = false })) end, desc = "Selection (cwd)", mode = "v" },
       -- { "<leader>sB", "<cmd>lua LazyVim.pick('lgrep_curbuf')()<CR>", desc = "Buffer (Live Grep)", mode = "n" },
       { "<leader>sg", function() pick("live_grep_glob", live_grep_opts_with_reset) end, desc = "Grep (Root Dir)" },
-      { "<leader>sP", function() pick("live_grep_glob", { rg_opts = rg_opts_pcre2, silent = true }) end, desc = "Grep (--pcre2)" },
       { "<leader>sG", function() pick("live_grep_glob", vim.tbl_extend("force", live_grep_opts_with_reset, { root = false })) end, desc = "Grep (cwd)" },
+      { "<leader>sP", function() pick("live_grep_glob", { rg_opts = rg_opts_pcre2, silent = true }) end, desc = "Grep (--pcre2)" },
       { "<leader>sN", function() pick("live_grep_glob", { cwd = "node_modules", rg_opts = "-uu" }) end, desc = "Grep (node_modules)" },
       { "<leader>fM", function() pick("files", { cwd = "node_modules", fd_opts = fd_opts .. " -u" }) end, desc = "Find Files (node_modules)" },
       -- { "<leader><space>", pick("files", { winopts = { height = 0.33, width = 0.33, preview = { hidden = "hidden" } } }), desc = "Find Files (Root Dir)" },
@@ -250,6 +256,20 @@ return {
       { "<leader>mt", function() require("util.fzf.grapple").open() end, desc = "Marks (Fzf)" },
       { "<leader>s<C-d>", function() require("util.fzf.devdocs").open_async({ languages = vim.bo.filetype }) end, desc = "Devdocs" },
       -- stylua: ignore end
+      {
+        "<leader>flp",
+        function()
+          pick(
+            "files",
+            vim.tbl_extend("force", file_opts, {
+              cwd = vim.fn.fnamemodify(get_lazyvim_base_dir(), ":h"),
+              git_icons = false,
+              fd_opts = fd_opts .. " -g '*.lua'",
+            })
+          )
+        end,
+        desc = "Plugins",
+      },
       {
         "<leader>sY",
         function()

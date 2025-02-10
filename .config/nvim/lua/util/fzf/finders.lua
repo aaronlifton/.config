@@ -36,4 +36,11 @@ function M.grep_lazyvim_files(opts)
   })
 end
 
+function M.grep_neovim_plugins(opts)
+  require("fzf-lua").live_grep({
+    prompt = "Neovim plugins>",
+    cwd = vim.fn.fnamemodify(get_lazyvim_base_dir(), ":h"),
+  })
+end
+
 return M

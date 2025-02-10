@@ -111,7 +111,12 @@ return {
       -- Picker
       { "<leader>s<M-l>", function() Snacks.picker.lines() end, desc = "Lines" },
       { "<leader>sB", function() Snacks.picker.grep_buffers() end, desc = "Grep Buffers" },
-      { "<leader>flp", function() Snacks.picker.lazy() end, desc = "Plugins" },
+      { "<leader>s<C-g>", function() Snacks.picker.grep({
+          exclude = { "**/dist/**.js*", "*{-,.}min.js" },
+        })
+      end, desc = "Grep" },
+      { "<leader>fli", function() Snacks.picker.lazy() end, desc = "Plugins (Installed)" },
+      { "<leader>g<C-a>", function() Snacks.picker.git_branches() end, desc = "Git Branches" },
       -- Override Snacks.picker.notifications keymap
       { "<leader>n", function() Snacks.notifier.show_history() end, desc = "Notification History" },
       --
@@ -121,6 +126,7 @@ return {
       { "<leader>f<C-f>", function() Snacks.picker.files() end, desc = "Find Files (Root Dir)" },
       { "g<C-d>", function() Snacks.picker.lsp_definitions() end, desc = "Goto Definition" },
       { "g<C-r>", function() Snacks.picker.lsp_references() end, nowait = true, desc = "References" },
+      -- "<leader>s<C-s>" until this replaces FzfLua lsp_document_symbols
       { "<leader>s<C-s>", function()
         -- Snacks.picker.lsp_symbols({ filter = LazyVim.config.kind_filter })
         Snacks.picker.lsp_symbols({ filter = LazyVim.config.kind_filter, layout = { preset = "vscode", preview = "main" } })

@@ -2,7 +2,8 @@ return {
   "echasnovski/mini.align",
   opts = {},
   keys = {
-    { "ga", mode = { "n", "v" }, desc = "Align" },
+    -- In normal mode, conflicts with leap.nvim treesitter select
+    { "ga", mode = { "v" }, desc = "Align" },
     { "gA", mode = { "n", "v" }, desc = "Align Preview" },
   },
 }

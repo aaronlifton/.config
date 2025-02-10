@@ -100,7 +100,7 @@ end
 return {
   "jake-stewart/multicursor.nvim",
   -- PERF: Try lazy-loading via keys
-  -- event = "VeryLazy", -- needed for Snacks.toggle
+  event = "VeryLazy",
   branch = "1.0",
   -- keys = {
   --   { "<leader><cr>", toggle_multicursor_mode, desc = "Toggle Multicursor", mode = { "n", "v" } },

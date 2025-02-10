@@ -2,65 +2,88 @@
 -- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
 -- Add any additional autocmds here
 
-local function augroup(name)
-  return vim.api.nvim_create_augroup("lazyvim_" .. name, { clear = true })
+local function lazyvim_augroup(name)
+  return vim.api.nvim_create_augroup("lazyvim_" .. name, { clear = false })
 end
 
 local ac = vim.api.nvim_create_autocmd
 local ag = vim.api.nvim_create_augroup
 
-local close_with_q = {
-  -- LazyVim/lua/lazyvim/config/autocmds.lua:53
-  "PlenaryTestPopup",
-  "grug-far",
-  -- "help", -- Removed
-  "lspinfo",
-  "notify",
-  "qf",
-  "query",
-  "spectre_panel",
-  "startuptime",
-  "tsplayground",
-  "neotest-output",
-  "checkhealth",
-  "neotest-summary",
-  "neotest-output-panel",
-  "dbout",
-  "gitsigns-blame",
-  -- Added
-  "toggleterm",
-  "grapple",
-}
-local close_with_esc_or_q = {
-  "neoai-input",
-  "neoai-output",
-  "chatgpt-input",
-  "chatgpt-output",
-}
-vim.list_extend(close_with_esc_or_q, close_with_q)
-vim.api.nvim_clear_autocmds({ group = "lazyvim_close_with_q" })
-ac("FileType", {
-  group = augroup("close_with_q"),
-  pattern = close_with_esc_or_q,
-  callback = function(event)
-    vim.bo[event.buf].buflisted = false
-    vim.keymap.set("n", "q", "<cmd>close<cr>", {
+-- Before
+-- local function augroup(name)
+--   return vim.api.nvim_create_augroup("lazyvim_" .. name, { clear = true })
+-- end
+-- local close_with_q = {
+--   -- LazyVim/lua/lazyvim/config/autocmds.lua:54
+--   "PlenaryTestPopup",
+--   "checkhealth",
+--   "dbout",
+--   "gitsigns-blame",
+--   "grug-far",
+--   -- "help", -- Removed
+--   "lspinfo",
+--   "neotest-output",
+--   "neotest-summary",
+--   "neotest-output-panel",
+--   "notify",
+--   "qf",
+--   "spectre_panel",
+--   "startuptime",
+--   "tsplayground",
+--   -- Added
+--   "query",
+--   "grapple",
+-- }
+-- local close_with_esc_or_q = {
+--   "neoai-input",
+--   "neoai-output",
+--   "chatgpt-input",
+--   "chatgpt-output",
+-- }
+-- vim.list_extend(close_with_esc_or_q, close_with_q)
+-- vim.api.nvim_clear_autocmds({ group = "lazyvim_close_with_q" })
+-- ac("FileType", {
+--   group = augroup("close_with_q"),
+--   pattern = close_with_esc_or_q,
+--   callback = function(event)
+--     vim.bo[event.buf].buflisted = false
+--     vim.schedule(function()
+--       vim.keymap.set("n", "q", function()
+--         vim.cmd("close")
+--         pcall(vim.api.nvim_buf_delete, event.buf, { force = true })
+--       end, {
+--         buffer = event.buf,
+--         silent = true,
+--         desc = "Quit buffer",
+--       })
+--     end)
+--   end,
+-- })
+
+-- After
+local close_buf = function(event)
+  vim.bo[event.buf].buflisted = false
+
+  vim.schedule(function()
+    if not vim.api.nvim_buf_is_valid(event.buf) then return end
+
+    vim.keymap.set("n", "q", function()
+      vim.cmd("close")
+      pcall(vim.api.nvim_buf_delete, event.buf, { force = true })
+    end, {
       buffer = event.buf,
       silent = true,
       desc = "Quit buffer",
     })
-  end,
-})
+  end)
+end
 
--- close some filetypes with <esc>, in addition to <q>
--- ac("FileType", {
---   group = augroup("close_with_esc"),
---   pattern = to_close_with_esc_or_q,
---   callback = function(event)
---     vim.bo[event.buf].buflisted = false
---     vim.keymap.set("n", "<esc>", "<cmd>close<cr>", { buffer = event.buf, silent = true })
---   end,
--- })
+local close_with_q = { "query", "grapple" }
+ac("FileType", {
+  group = lazyvim_augroup("close_with_q"),
+  pattern = close_with_q,
+  callback = close_buf,
+})
 
 -- Disable diagnostics in a .env file
 ac("BufRead", {
@@ -117,14 +140,12 @@ ac("BufRead", {
 -- })
 
 -- Delete number column on terminals (floaterm)
-ac("TermOpen", {
-  callback = function()
-    vim.defer_fn(function()
-      vim.cmd("setlocal listchars= nonumber norelativenumber")
-      vim.cmd("setlocal nospell")
-    end, 1500)
-  end,
-})
+-- ac("TermOpen", {
+--   callback = function()
+--     vim.cmd("setlocal listchars= nonumber norelativenumber")
+--     vim.cmd("setlocal nospell")
+--   end,
+-- })
 
 -- Disable eslint on node_modules
 ac({ "BufNewFile", "BufRead" }, {
@@ -134,30 +155,32 @@ ac({ "BufNewFile", "BufRead" }, {
     vim.diagnostic.enable(false)
   end,
 })
---
--- local numbertoggle = ag("numbertoggle", { clear = true })
--- -- Toggle between relative/absolute line numbers
--- ac({ "BufEnter", "FocusGained", "InsertLeave", "CmdlineLeave", "WinEnter" }, {
---   pattern = "*",
---   group = numbertoggle,
---   callback = function()
---     if vim.o.nu and vim.api.nvim_get_mode().mode ~= "i" then
---       vim.opt.relativenumber = true
---     end
---   end,
--- })
+
+-- Toggle between relative/absolute line numbers
+local numbertoggle = ag("numbertoggle", { clear = true })
+ac({ "BufEnter", "FocusGained", "InsertLeave", "CmdlineLeave", "WinEnter" }, {
+  pattern = "*",
+  group = numbertoggle,
+  callback = function()
+    if vim.o.nu and vim.api.nvim_get_mode().mode ~= "i" then vim.opt.relativenumber = true end
+  end,
+})
+
+ac({ "BufLeave", "FocusLost", "InsertEnter", "CmdlineEnter", "WinLeave" }, {
+  pattern = "*",
+  group = numbertoggle,
+  callback = function()
+    if vim.o.nu then
+      vim.opt.relativenumber = false
+      vim.cmd.redraw()
+    end
+  end,
+})
 
 ac({ "BufEnter" }, {
   pattern = { "*.md", "help" },
   group = ag("readme", { clear = true }),
   callback = function()
-    -- if at project root then disable diagnostics
-    -- if vim.fn.getcwd() == vim.fn.expand("%:p:h") then
-    -- local filename = vim.fn.expand("%:t")
-    -- if filename == "README.md" or filename == "CHANGELOG.md" then
-    --   vim.diagnostic.enable(false)
-    --   vim.api.nvim_echo({ { "Disabled diagnostics", "Special" } }, false, {})
-    -- end
     vim.opt_local.spell = false
   end,
 })
@@ -170,34 +193,24 @@ ac({ "BufNewFile", "BufRead" }, {
   end,
 })
 
--- ac({ "FileType" }, {
---   pattern = { "help" },
---   group = ag("readme", { clear = true }),
---   callback = function(args)
---     vim.api.nvim_command(":sleep 50m<cr>")
---     vim.schedule_wrap(function()
---       vim.treesitter.stop(args.buf)
---     end)
+-- ac("ColorScheme", {
+--   pattern = "*",
+--   group = ag("fix_highlights", { clear = true }),
+--   callback = function()
+--     require("config.highlights").setup()
 --   end,
 -- })
 
-ac("ColorScheme", {
-  pattern = "*",
-  group = ag("fix_highlights", { clear = true }),
-  callback = function()
-    require("config.highlights").setup()
-  end,
-})
-
+-- NOTE: what is this:?
 -- Clear the quickfix window keymap set on BufEnter
-ac({ "BufEnter", "BufWinEnter" }, {
-  pattern = "qf",
-  callback = function()
-    vim.keymap.set("n", "<C-d>", function()
-      vim.fn.setqflist({})
-    end, { buffer = true })
-  end,
-})
+-- ac({ "BufEnter", "BufWinEnter" }, {
+--   pattern = "qf",
+--   callback = function()
+--     vim.keymap.set("n", "<C-d>", function()
+--       vim.fn.setqflist({})
+--     end, { buffer = true })
+--   end,
+-- })
 
 ac({ "FileType" }, {
   pattern = { "json", "javascript" },
@@ -217,6 +230,15 @@ ac({ "FileType" }, {
   end,
 })
 
+-- ac({ "FileType" }, {
+--   pattern = { "javascript", "typescript", "javascriptreact", "typescriptreact" },
+--   callback = function(args)
+--     vim.keymap.set("n", "<leader>ccj", function()
+--       copy_path.copy_javascript_path({ register = "*" })
+--     end, { buffer = args.buf })
+--   end,
+-- })
+
 ac({ "FileType" }, {
   pattern = { "markdown" },
   callback = function(_args)
@@ -224,6 +246,7 @@ ac({ "FileType" }, {
   end,
 })
 
+-- TODO: remove after testing that this is not needed
 -- Will be automatically enabled by the ft spec in the render-markdown
 -- dependency of model.nvim
 -- ac({ "FileType" }, {
@@ -259,14 +282,6 @@ ac({ "FileType" }, {
 --         },
 --       },
 --     })
---   end,
--- })
-
--- Replaced by default keymap <C-w>g<Tab>
--- ac({ "TabLeave" }, {
---   callback = function()
---     local tabpage = vim.api.nvim_get_current_tabpage()
---     vim.g.last_tabpage = tabpage
 --   end,
 -- })
 
@@ -310,7 +325,8 @@ ac("User", {
     end, { desc = "Lazygit Log" })
     -- Use Snacks.git.blame_line until Snacks.picker.git_log_line improves
     vim.keymap.set("n", "<leader>gb", function()
-      Snacks.git.blame_line()
+      Util.git.blame_line()
+      -- Snacks.git.blame_line()
     end, { desc = "git blame line" })
   end,
 })
@@ -322,6 +338,7 @@ vim.api.nvim_create_autocmd("User", {
     require("util")
   end,
 })
+
 -- require("util.ui.lsp").advanced_lsp_progress_autocmd()
 
 -- already set by smart-splits.nvim (var:is_nvim)
@@ -336,51 +353,5 @@ vim.api.nvim_create_autocmd("User", {
 --   group = vim.api.nvim_create_augroup("KittyUnsetVarVimLeave", { clear = true }),
 --   callback = function()
 --     io.stdout:write("\x1b]1337;SetUserVar=in_editor\007")
---   end,
--- })
-
--- ac({ "FileType" }, {
---   pattern = { "javascript", "typescript", "javascriptreact", "typescriptreact" },
---   callback = function(args)
---     vim.keymap.set("n", "<leader>ccj", function()
---       copy_path.copy_javascript_path({ register = "*" })
---     end, { buffer = args.buf })
---   end,
--- })
-
--- ac("WinLeave", {
--- 	pattern = "*",
--- 	group = ag("remember_last_win", { clear = true }),
--- 	callback = function(event)
--- 		vim.print(vim.inspect(event))
--- 		vim.g.last_winid = event.win
--- 	end,
--- })
-
--- local ag_view_activated = ag("view_activated", { clear = true })
--- ac({ "BufWinLeave", "BufWritePost", "WinLeave" }, {
---   group = ag_view_activated,
---   desc = "Save view with mkview for real files",
---   callback = function(event)
---     if vim.b[event.buf].view_activated then
---       vim.api.nvim_echo({ { "Saving view", "Special" } }, false, {})
---       vim.cmd.mkview({ mods = { emsg_silent = true } })
---     end
---   end,
--- })
--- ac("BufWinEnter", {
---   group = ag_view_activated,
---   desc = "Try to load file view if available and enable view saving for real files",
---   callback = function(event)
---     if not vim.b[event.buf].view_activated then
---       local filetype = vim.bo[event.buf].filetype
---       local buftype = vim.bo[event.buf].buftype
---       local ignore_filetypes = { "gitcommit", "gitrebase", "svg", "hgcommit" }
---       if buftype == "" and filetype and filetype ~= "" and not vim.tbl_contains(ignore_filetypes, filetype) then
---         vim.api.nvim_echo({ { "Loading view", "Special" } }, false, {})
---         vim.b[event.buf].view_activated = true
---         vim.cmd.loadview({ mods = { emsg_silent = true } })
---       end
---     end
 --   end,
 -- })

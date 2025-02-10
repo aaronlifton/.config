@@ -33,6 +33,7 @@ M.kinds = {
   Snippet = "",
   String = "",
   Struct = "󰆼",
+  Supermaven = "",
   TabNine = "󰏚",
   Text = "",
   TypeParameter = "",

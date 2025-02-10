@@ -11,8 +11,8 @@ return {
     icons = {
       group = "",
       rules = {
-        -- /Users/alifton/.local/share/nvim/lazy/mini.icons/lua/mini/icons.lua:1853
-        -- /Users/alifton/.local/share/nvim/lazy/which-key.nvim/lua/which-key/icons.lua
+        -- /Users/$USER/.local/share/nvim/lazy/mini.icons/lua/mini/icons.lua:1853
+        -- /Users/$USER/.local/share/nvim/lazy/which-key.nvim/lua/which-key/icons.lua
         -- https://github.com/8bitmcu/NerdFont-Cheat-Sheet/blob/main/nerdfont.txt
         { pattern = "main", cat = "filetype", name = "git" },
         -- { pattern = "main", icon = " ", color = "orange" },
@@ -34,6 +34,7 @@ return {
         { pattern = "%f[%a]keywords", icon = " ", color = "white" },
         { pattern = "%f[%a]avante", icon = "󱜚 ", color = "white" },
         { pattern = "%f[%a]xai", icon = " ", color = "black" },
+        -- { pattern = "%f[%a]ai", icon = " ", color = "green" },
         { pattern = "%f[%a]chat with provider", icon = " ", color = "white" },
         { pattern = "%f[%a]toggle chat %([^%)]+%)", icon = " ", color = "white" },
         { pattern = "%f[%a]edit code %([^%)]+%)", icon = " ", color = "white" },
@@ -50,40 +51,13 @@ return {
     },
     spec = {
       mode = { "n" },
-      -- ["<leader><tab>"] = { name = "󰓩 tabs" },
-      -- ["<leader>b"] = { name = "󰖯 buffer" },
-      -- ["<leader>c"] = { name = " code" },
-      -- ["<leader>f"] = { name = "󰈔 file/find" },
-      -- ["<leader>g"] = { name = " git" },
-      -- ["<leader>q"] = { name = "󰗼 quit/session" },
-      -- ["<leader>s"] = { name = " search" },
-      -- ["<leader>u"] = { name = " ui" },
-      -- ["<leader>w"] = { name = "󱂬 windows" },
-      -- ["<leader>x"] = { name = "󰁨 diagnostics/quickfix" },
-      -- ["<leader>uU"] = { name = "ui utilities" },
       { "<leader>l", group = "lazy" },
-      { "<leader>cI", group = "AI Controls" },
+      { "<leader>a", "", desc = "+ai", mode = { "n", "v" } },
+      { "<leader>aX", group = "+controls", icon = { icon = "󰙵 ", color = "grey" } },
       { "<leader>L", group = "Notepads", icon = { icon = "󰓩 ", color = "green" } },
       { "<leader>cp", group = "Copy path", icon = { icon = "󰓩 " } },
-      { "g<C-r>", group = "Modify register", icon = { icon = "󰈔 ", color = "orange" } },
+      -- { "g<C-r>", group = "Modify register", icon = { icon = "󰈔 ", color = "orange" } },
       { "<leader>fl", group = "My Config", icon = { icon = " " } },
-      -- ---LazyVim
-      -- { "<leader><tab>", group = "tabs" },
-      -- { "<leader>b", group = "buffer" },
-      -- { "<leader>c", group = "code" },
-      -- { "<leader>f", group = "file/find" },
-      -- { "<leader>g", group = "git" },
-      -- { "<leader>gh", group = "hunks" },
-      -- { "<leader>q", group = "quit/session" },
-      -- { "<leader>s", group = "search" },
-      -- { "<leader>u", group = "ui", icon = { icon = "󰙵 ", color = "cyan" } },
-      -- { "<leader>w", group = "windows" },
-      -- { "<leader>x", group = "diagnostics/quickfix", icon = { icon = "󱖫 ", color = "green" } },
-      -- { "[", group = "prev" },
-      -- { "]", group = "next" },
-      -- { "g", group = "goto" },
-      -- { "gz", group = "surround" },
-      -- { "z", group = "fold" },
     },
   },
   keys = {

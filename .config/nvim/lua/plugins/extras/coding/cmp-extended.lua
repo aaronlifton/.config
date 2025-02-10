@@ -1,9 +1,3 @@
-local has_words_before = function()
-  unpack = unpack or table.unpack
-  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-  return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
-end
-
 local function set_priority(sources, target_name, new_priority)
   for _, source in ipairs(sources) do
     if source.name == target_name then
@@ -13,7 +7,6 @@ local function set_priority(sources, target_name, new_priority)
   end
 end
 
-local astrovim_style = false
 local follow_cursor = false
 
 return {
@@ -97,22 +90,6 @@ return {
         }),
       }
 
-      if astrovim_style then
-        opts.preselect = cmp.PreselectMode.None
-        opts.formatting.format = function(entry, item)
-          local highlight_colors_avail, highlight_colors = pcall(require, "nvim-highlight-colors")
-          local color_item = highlight_colors_avail and highlight_colors.format(entry, { kind = item.kind })
-          local icons = require("util.icons").kinds
-          if icons[item.kind] then item.kind = icons[item.kind] end
-          if color_item and color_item.abbr and color_item.abbr_hl_group then
-            item.kind, item.kind_hl_group = color_item.abbr, color_item.abbr_hl_group
-          end
-          return item
-        end
-        opts.formatting.fields = { "kind", "abbr", "menu" }
-        opts.window.completion.col_offset = -2
-      end
-
       if follow_cursor then
         opts.view = {
           entries = {
@@ -140,6 +117,13 @@ return {
       if require("util.table").get(LazyVim.opts("noice.nvim"), "popupmenu", "backend") == "cmp" then
         local cmdline_mapping = cmp.mapping.preset.cmdline({
           ["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
+          -- ["<Tab>"] = cmp.mapping(function(fallback)
+          --   if cmp.visible() then
+          --     cmp.confirm({ select = true })
+          --   else
+          --     fallback()
+          --   end
+          -- end),
         })
         cmp.setup.cmdline(":", {
           mapping = cmdline_mapping,
@@ -169,32 +153,6 @@ return {
         ["<C-k>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
         ["<C-u>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
         ["<C-d>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
-        -- Supertab
-        -- ["<Tab>"] = cmp.mapping(function(fallback)
-        --   if cmp.visible() then
-        --     -- You could replace select_next_item() with confirm({ select = true }) to get VS Code autocompletion behavior
-        --     cmp.select_next_item()
-        --   elseif vim.snippet.active({ direction = 1 }) then
-        --     vim.schedule(function()
-        --       vim.snippet.jump(1)
-        --     end)
-        --   elseif has_words_before() then
-        --     cmp.complete()
-        --   else
-        --     fallback()
-        --   end
-        -- end, { "i", "s" }),
-        -- ["<S-Tab>"] = cmp.mapping(function(fallback)
-        --   if cmp.visible() then
-        --     cmp.select_prev_item()
-        --   elseif vim.snippet.active({ direction = -1 }) then
-        --     vim.schedule(function()
-        --       vim.snippet.jump(-1)
-        --     end)
-        --   else
-        --     fallback()
-        --   end
-        -- end, { "i", "s" }),
       })
 
       if LazyVim.has("supermaven.nvim") and vim.g.ai_accept_word_provider == "supermaven" then

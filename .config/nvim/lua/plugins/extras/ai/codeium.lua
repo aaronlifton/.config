@@ -46,6 +46,7 @@ return {
         DressingInput = false,
         ["neo-tree-popup"] = false,
         ["dap-repl"] = false,
+        ["snacks_picker_input"] = false,
         mchat = false,
         AvanteInput = false,
       }
@@ -86,7 +87,7 @@ return {
         return vim.fn["codeium#Complete"]()
       end, opts)
 
-      vim.keymap.set("n", "<leader>cI2", "<cmd>CodeiumToggle<cr>", { desc = "Toggle Codeium" })
+      vim.keymap.set("n", "<leader>aX2", "<cmd>CodeiumToggle<cr>", { desc = "Toggle Codeium" })
     end,
   },
 

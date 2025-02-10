@@ -10,6 +10,7 @@ table.insert(keys, { "[B", "<cmd>BufferLineMovePrev<cr>", desc = "Move buffer pr
 table.insert(keys, { "]B", "<cmd>BufferLineMoveNext<cr>", desc = "Move buffer next" })
 table.insert(keys, { "<space><", "<cmd>BufferLineMovePrev<cr>", desc = "Move buffer prev" })
 table.insert(keys, { "<space>>", "<cmd>BufferLineMoveNext<cr>", desc = "Move buffer next" })
+-- Consider removing this in favor of snacks scratch buffer
 table.insert(keys, { "<leader>.", "<Cmd>BufferLinePick<CR>", desc = "Pick Buffer" })
 table.insert(keys, { "<leader>b<C-,>", function() require("bufferline").move_to(1) end, desc = "Move buffer to start" })
 table.insert(keys, { "<leader>b<C-.>", function() require("bufferline").move_to(-1) end, desc = "Move buffer to end" })

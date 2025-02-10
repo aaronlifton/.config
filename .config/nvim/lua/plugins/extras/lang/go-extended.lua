@@ -37,35 +37,6 @@ return {
     },
   },
   {
-    "nvimtools/none-ls.nvim",
-    optional = true,
-    dependencies = {
-      {
-        "williamboman/mason.nvim",
-        opts = {
-          ensure_installed = { "gomodifytags", "impl" },
-        },
-      },
-    },
-    opts = function(_, opts)
-      local nls = require("null-ls")
-      opts.sources = vim.list_extend(opts.sources or {}, {
-        -- LazyVim:
-        -- nls.builtins.code_actions.gomodifytags,
-        -- nls.builtins.code_actions.impl,
-        -- nls.builtins.formatting.goimports,
-        -- nls.builtins.formatting.gofumpt,
-        nls.builtins.diagnostics.golangci_lint.with({
-          -- condition = function(utils)
-          --   return utils.root_has_file({ ".golangci.yml" })
-          -- end,
-        }),
-        -- TODO: investigate
-        -- nls.diagnostics.staticcheck
-      })
-    end,
-  },
-  {
     "ray-x/go.nvim",
     enabled = false,
     dependencies = {

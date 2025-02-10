@@ -349,6 +349,9 @@ map({"n", "x" }, "<leader>g<C-f>", function()
 end, { desc = "Git Browse (copy file)" })
 
 map("n", "<leader>g<C-b>", function() Snacks.picker.git_log_line() end, { desc = "Git Blame Line" })
+vim.api.nvim_create_user_command("LazygitYadm", function()
+  Snacks.terminal({ "yadm", "enter", "lazygit" })
+end, { desc = "Lazygit (YADM)" })
 
 -- map({"n", "x" }, "<leader>g<M-f>", function()
 --   vim.ui.select(require("util.git").mru_branches(), { prompt = "Branch: " }, function(branch)
@@ -453,6 +456,8 @@ map("n", "go", "<Cmd>call append(line('.'), repeat([''], v:count1))<CR>", { desc
 -- Insert Mode
 map({ "c", "i", "t" }, "<M-BS>", "<C-w>", { desc = "Delete Word" })
 
+map("n", "zF", ":norm z=1<cr>", { desc = "Choose first spelling suggestion" })
+
 -- Goto definition in vsplit
 map(
   "n",
@@ -467,11 +472,6 @@ map(
   "<cmd>tab split | lua vim.lsp.buf.definition()<cr>",
   { desc = "Goto Definition (tab)", silent = true }
 )
--- local wk = require("which-key")
--- wk.add({
---   mode = "n",
---   { "<C-w>gt", "<cmd>tab split | lua vim.lsp.buf.definition()<cr>", desc = "Goto Definition (tab)", silent = true },
--- })
 
 -- map("n", "<leader>ct", function()
 --   vim.lsp.buf.typehierarchy("subtypes")
@@ -482,20 +482,6 @@ map(
 
 -- see if can get used to <C-w>T instead of this
 -- map("n", "<C-w><C-t>", "<C-w>T", { desc = "Break out into a new tab", remap = true })
-
--- Not needed, default keymap <C-w>T
--- map("n", "<C-w><C-t>", function()
---   local buf = vim.api.nvim_get_current_buf()
---   local win = vim.api.nvim_get_current_win()
---
---   vim.cmd(":tabnew")
---
---   local new_win = vim.api.nvim_get_current_win()
---
---   vim.api.nvim_win_set_buf(new_win, buf)
---
---   vim.api.nvim_win_close(win, false)
--- end, { desc = "Move window to new tab", silent = true })
 
 -- Goto file in vsplit
 -- map("n", "<C-w><C-v>", "vs | gf", { desc = "Goto File (vsplit)", silent = true })
@@ -509,27 +495,25 @@ map("n", "<C-w><C-v>", function()
   end
 end, { desc = "Goto File (vsplit)", silent = true })
 
--- Codeium is <leader>cI2
-map("n", "<leader>cI1", "<cmd>Copilot toggle<cr>", { desc = "Toggle Copilot" })
-map("n", "<leader>cI3", function()
-  vim.api.nvim_command("CodeiumDisable")
-  require("copilot").disable()
-  vim.api.nvim_command("LLMToggleAutoSuggest")
-end, { desc = "Toggle Copilot/Codeium to HFCC" })
-map("n", "<leader>cI3", "Copilot enable", { desc = "Enable Copilot" })
-map("n", "<leader>cId", function()
-  vim.api.nvim_command("CodeiumDisable")
-  vim.api.nvim_command("Copilot disable")
-  vim.api.nvim_echo({
-    { "Disabled AI\n\n", "Title" },
-    { "Copilot ", "Type" },
-    { "Disabled\n", "Comment" },
-    { "Codeium ", "Type" },
-    { "Disabled", "Comment" },
-  }, true, {})
-end, { desc = "Turn off all AI" })
-
-map("n", "zF", ":norm z=1<cr>", { desc = "Choose first spelling suggestion" })
+-- AI Controls
+-- Codeium is <leader>aX2
+-- map("n", "<leader>aX1", "<cmd>Copilot toggle<cr>", { desc = "Toggle Copilot" })
+-- map("n", "<leader>aX3", function()
+--   vim.api.nvim_command("CodeiumDisable")
+--   require("copilot").disable()
+--   vim.api.nvim_command("LLMToggleAutoSuggest")
+-- end, { desc = "Toggle Copilot/Codeium to HFCC" })
+-- map("n", "<leader>aXa", function()
+--   vim.api.nvim_command("CodeiumDisable")
+--   vim.api.nvim_command("Copilot disable")
+--   vim.api.nvim_echo({
+--     { "Disabled AI\n\n", "Title" },
+--     { "Copilot ", "Type" },
+--     { "Disabled\n", "Comment" },
+--     { "Codeium ", "Type" },
+--     { "Disabled", "Comment" },
+--   }, true, {})
+-- end, { desc = "Turn off all AI" })
 
 -- Windows Split
 -- map("n", "<leader>_", "<C-W>s", { desc = "Split Window Below", remap = true })

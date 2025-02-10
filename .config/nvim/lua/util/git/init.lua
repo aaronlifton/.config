@@ -24,4 +24,32 @@ function M.get_git_diff(system_cmd)
   return git_diff
 end
 
+local yadm_cache = {} ---@type table<string, boolean>
+local function is_yadm_root(dir)
+  if yadm_cache[dir] == nil then
+    local files = vim.fn.system({ "yadm", "ls-files", dir })
+    yadm_cache[dir] = files ~= ""
+  end
+  return yadm_cache[dir]
+end
+
+--- Adapted from lazy/snacks.nvim/lua/snacks/git.lua to support YADM
+--- Show git log for the current line.
+---@param opts? snacks.terminal.Opts | {count?: number}
+function M.blame_line(opts)
+  opts = vim.tbl_deep_extend("force", {
+    count = 5,
+    interactive = false,
+    win = { style = "blame_line" },
+  }, opts or {})
+  local cursor = vim.api.nvim_win_get_cursor(0)
+  local line = cursor[1]
+  local file = vim.api.nvim_buf_get_name(0)
+  local root = Snacks.git.get_root()
+  local git = "git"
+  if is_yadm_root(root) then git = "yadm" end
+  local cmd = { git, "-C", root, "log", "-n", opts.count, "-u", "-L", line .. ",+1:" .. file }
+  return Snacks.terminal(cmd, opts)
+end
+
 return M

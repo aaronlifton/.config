@@ -172,6 +172,8 @@ return {
             end,
             desc = "Grep in dir",
           },
+          -- Handled by edgy
+          ["e"] = "",
           unpack(astrovim_style and {
             ["[b"] = "prev_source",
             ["]b"] = "next_source",

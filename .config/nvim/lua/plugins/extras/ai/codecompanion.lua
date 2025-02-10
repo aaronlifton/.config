@@ -5,7 +5,8 @@ local modify_prefix = "<leader>am"
 local user = vim.env.USER or "User"
 -- local adapter = "anthropic"
 -- local adapter = "openai"
-local adapter = "gemini"
+-- local adapter = "gemini"
+local adapter = "deepseek_r1"
 
 vim.api.nvim_create_autocmd("User", {
   pattern = "CodeCompanionChatAdapter",
@@ -58,6 +59,63 @@ return {
       })
     end,
     opts = {
+      adapters = {
+        deepseek_coder = function()
+          -- ollama
+          return require("codecompanion.adapters").extend("deepseek", {
+            name = "deepseek_coder",
+            schema = {
+              model = {
+                default = "deepseek-coder-v2:latest",
+              },
+            },
+          })
+        end,
+        deepseek_r1 = function()
+          return require("codecompanion.adapters").extend("deepseek", {
+            name = "deepseek_r1",
+            schema = {
+              model = {
+                default = "deepseek-r1:14b",
+              },
+            },
+          })
+        end,
+        anthropic = function()
+          return require("codecompanion.adapters").extend("anthropic", {
+            schema = {
+              max_tokens = {
+                default = 8192,
+              },
+            },
+          })
+        end,
+      },
+      strategies = {
+        chat = {
+          -- adapter = "deepseek_r1",
+          adapter = adapter,
+          roles = {
+            llm = "  CodeCompanion",
+            user = " " .. user:sub(1, 1):upper() .. user:sub(2),
+          },
+          keymaps = {
+            close = { modes = { n = "q", i = "<C-c>" } },
+            stop = { modes = { n = "<C-c>" } },
+          },
+        },
+        inline = { adapter = adapter },
+        agent = { adapter = adapter },
+      },
+      display = {
+        chat = {
+          show_settings = true,
+          render_headers = false,
+        },
+        diff = {
+          provider = "mini_diff",
+        },
+      },
       -- prompt_library = require("plugins.extras.ai.config.codecompanion.prompt_library"),
       prompt_library = {
         ["Code Expert"] = {
@@ -175,62 +233,6 @@ return {
               },
             },
           },
-        },
-      },
-      adapters = {
-        -- deepseek_coder = function()
-        --   return require("codecompanion.adapters").extend("ollama", {
-        --     name = "deepseek_coder",
-        --     schema = {
-        --       model = {
-        --         default = "deepseek-coder-v2:latest",
-        --       },
-        --     },
-        --   })
-        -- end,
-        -- deepseek_r1 = function()
-        --   return require("codecompanion.adapters").extend("ollama", {
-        --     name = "deepseek_r1",
-        --     schema = {
-        --       model = {
-        --         default = "deepseek-r1:14b",
-        --       },
-        --     },
-        --   })
-        -- end,
-        anthropic = function()
-          return require("codecompanion.adapters").extend("anthropic", {
-            schema = {
-              max_tokens = {
-                default = 8192,
-              },
-            },
-          })
-        end,
-      },
-      strategies = {
-        chat = {
-          -- adapter = "deepseek_r1",
-          adapter = adapter,
-          roles = {
-            llm = "  CodeCompanion",
-            user = " " .. user:sub(1, 1):upper() .. user:sub(2),
-          },
-          keymaps = {
-            close = { modes = { n = "q", i = "<C-c>" } },
-            stop = { modes = { n = "<C-c>" } },
-          },
-        },
-        inline = { adapter = adapter },
-        agent = { adapter = adapter },
-      },
-      display = {
-        chat = {
-          show_settings = true,
-          render_headers = false,
-        },
-        diff = {
-          provider = "mini_diff",
         },
       },
     },

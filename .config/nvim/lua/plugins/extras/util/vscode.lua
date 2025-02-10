@@ -92,7 +92,7 @@ vim.api.nvim_create_autocmd("User", {
     -- statusline
     map("n", "<leader>uS", vscode_action("workbench.action.toggleStatusbarVisibility"))
     -- codeium
-    map("n", "<leader>cI", vscode_action("codeium.toggleEnable"))
+    map("n", "<leader>aX", vscode_action("codeium.toggleEnable"))
     map({ "n", "v" }, "<leader>id", vscode_action("codeium.generateFunctionDocstring"))
     map("n", "<leader>ic", vscode_action("codeium.openChatView"))
     map("n", "<leader>is", vscode_action("codeium.openSearchView"))
