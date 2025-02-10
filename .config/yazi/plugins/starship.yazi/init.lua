@@ -1,3 +1,5 @@
+--- @since 25.2.7
+
 local save = ya.sync(function(st, cwd, output)
     if cx.active.current.cwd == Url(cwd) then
         st.output = output
@@ -44,20 +46,44 @@ return {
         end
 
         -- Pass current working directory and custom config path (if specified) to the plugin's entry point
-        ps.sub("cd", function()
+        ---Callback for subscribers to update the prompt
+        local callback = function()
             local cwd = cx.active.current.cwd
             if st.cwd ~= cwd then
                 st.cwd = cwd
-                ya.manager_emit("plugin", {
-                    st._id,
-                    args = ya.quote(tostring(cwd), true),
-                })
+
+                if ya.confirm then
+                    -- >= yazi 25.2.7
+                    ya.manager_emit("plugin", {
+                        st._id,
+                        ya.quote(tostring(cwd), true),
+                    })
+                else
+                    -- < yazi 25.2.7
+                    ya.manager_emit("plugin", {
+                        st._id,
+                        args = ya.quote(tostring(cwd), true),
+                    })
+                end
             end
-        end)
+        end
+
+        -- Subscribe to events
+        ps.sub("cd", callback)
+        ps.sub("tab", callback)
     end,
 
-    entry = function(_, args)
-        local command = Command("starship"):arg("prompt"):cwd(args[1]):env("STARSHIP_SHELL", "")
+    entry = function(_, job_or_args)
+        -- yazi 2024-11-29 changed the way arguments are passed to the plugin
+        -- entry point. They were moved inside {args = {...}}. If the user is using
+        -- a version before this change, they can use the old implementation.
+        -- https://github.com/sxyazi/yazi/pull/1966
+        local args = job_or_args.args or job_or_args
+        local command = Command("starship")
+            :arg("prompt")
+            :stdin(Command.INHERIT)
+            :cwd(args[1])
+            :env("STARSHIP_SHELL", "")
 
         -- Point to custom starship config
         local config_file = get_config_file()
