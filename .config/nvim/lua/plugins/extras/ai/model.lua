@@ -121,7 +121,7 @@ return {
         function()
           local FloatingWindow = require("util.nui.floating_window")
           local window = FloatingWindow({
-            title = "Claude Sonnet",
+            title = "Claude",
             on_mount = function(_popup)
               vim.cmd(":Mchat claude")
             end,
@@ -129,7 +129,7 @@ return {
           window:mount()
         end,
         mode = "n",
-        desc = "Toggle Floating Chat (Claude Sonnet)",
+        desc = "Toggle Floating Chat (Claude)",
       },
     },
     -- To override defaults add a config field and call setup()

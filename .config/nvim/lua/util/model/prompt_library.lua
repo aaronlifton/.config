@@ -8,6 +8,35 @@ local starter_prompts = require("model.prompts.starters")
 
 ---@type table<string, Prompt>
 return vim.tbl_extend("force", starter_prompts, {
+  ["anthropic:claude-code"] = {
+    provider = anthropic,
+    mode = mode.INSERT_OR_REPLACE,
+    options = {
+      headers = {
+        ["anthropic-beta"] = nil,
+        ["anthropic-version"] = "2025-02-19",
+      },
+      trim_code = true,
+    },
+    params = {
+      max_tokens = 20480,
+      model = "claude-3-7-sonnet-20250219",
+      system = "You are an expert programmer. Provide code which should go between the before and after blocks of code. Respond only with a markdown code block. Use comments within the code if explanations are necessary.",
+    },
+    builder = function(input, context)
+      local format = require("model.format.claude")
+
+      return vim.tbl_extend(
+        "force",
+        context.selection and format.build_replace(input, context) or format.build_insert(context),
+        {
+          -- TODO this makes it impossible to get markdown in the response content
+          -- eventually we may want to allow markdown in the code-fenced response
+          stop_sequences = { "```" },
+        }
+      )
+    end,
+  },
   NodeJsConvert = {
     provider = openai,
     mode = model.mode.INSERT_OR_REPLACE,
@@ -79,7 +108,7 @@ return vim.tbl_extend("force", starter_prompts, {
       -- end, input)
     end,
   },
-  code = {
+  ["openai:code"] = {
     provider = openai,
     builder = function(input)
       return {

@@ -127,6 +127,12 @@ Here is the content from the file `%s`:
   --     -- add store_results to your messages
   --   end,
   -- },
+  ["claude"] = vim.tbl_deep_extend("force", require("model.prompts.chats").claude, {
+    params = {
+      model = "claude-3-7-sonnet-20250219",
+      max_tokens = 20480,
+    },
+  }),
   ["gemini:flash"] = vim.tbl_deep_extend("force", require("model.prompts.chats").gemini, {
     provider = require("util.model.providers.gemini-flash").model("gemini-1.5-flash"),
   }),
@@ -212,21 +218,6 @@ Here is the content from the file `%s`:
     run = function(messages, _config)
       -- "messages": [{"role": "user", "content": "Write a function for fibonacci"}]
       return { messages = messages }
-    end,
-  },
-  -- https://docs.anthropic.com/en/docs/about-claude/models#prompt-and-output-performance
-  ["claude:opus"] = {
-    provider = require("model.providers.anthropic"),
-    create = input_if_selection,
-    params = {
-      model = "claude-3-opus-20240229",
-      max_tokens = 4096,
-    },
-    run = function(messages, config)
-      return vim.tbl_deep_extend("force", config.params, {
-        messages = messages,
-        system = config.system,
-      })
     end,
   },
   jamba = {
