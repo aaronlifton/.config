@@ -1,11 +1,22 @@
 local logger = require("functions/logger")
-local config_watcher = require("functions/config_watcher")
-local browser = require("functions/browser")
+local configWatcher = require("functions/config_watcher")
+local appWatcher = require("functions/application_watcher")
+local keys = require("keys")
 
 hs.loadSpoon("EmmyLua")
-config_watcher.watch_config_and_reload()
+hs.loadSpoon("ClipboardTool")
 
-require("keys")
+-- NOTE: This needs tobe updated to the latest hammerspoon. Trying Aerospace instead.
+-- can use hs.loadSpoon when it fits the spoon format
+-- HWM = require("functions/hhtwm") -- it's recommended to make `hhtwm` a global object so it's not garbage collected.
+-- HWM.start()
+
+appWatcher:start()
+configWatcher:watch_config_and_reload()
+
+keys.bind_window_management_keymap()
+keys.bind_general_keymap()
+
 -- require("yabai")
 
 --- Hyper key
@@ -30,13 +41,12 @@ end
 hs.hotkey.bind({}, "f19", hyper.pressed, hyper.released)
 
 -- TWM [https://github.com/evantravers/hammerspoon-config/blob/38a7d8c0ad2190d1563d681725628e4399dcbe6c/hyper.lua]
-
 -- local altKey = {"alt"}
 -- local altShiftKey = {"alt", "shift"}
 -- local cocKey = {"ctrl", "alt", "cmd"}
 -- local hyper = "⇧⌃⌥⌘"
 -- local hyper = { "ctrl", "shift", "alt", "cmd" }
-local hyperKey = { "ctrl", "alt", "cmd", "shift" }
+local hyperKey = keys.HYPER
 -- local super = {'ctrl', 'alt', 'cmd'}
 
 --hs.loadSpoon("MinimizedWindowsMenu")

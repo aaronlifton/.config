@@ -1,19 +1,21 @@
-local M = {}
+local ConfigWatcher = {}
+
+---@param files string[]
 local function reload_config(files)
-	doReload = false
+	local should_reload = false
 	for _, file in pairs(files) do
 		if file:sub(-4) == ".lua" then
-			doReload = true
+			should_reload = true
 		end
 	end
-	if doReload then
+	if should_reload then
 		hs.reload()
 	end
 end
 
-function M.watch_config_and_reload()
-	myWatcher = hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reload_config):start()
+function ConfigWatcher.watch_config_and_reload()
+	hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reload_config):start()
 	hs.alert.show("Config loaded")
 end
 
-return M
+return ConfigWatcher

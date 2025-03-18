@@ -1,5 +1,15 @@
-sends_escape = true
-last_mods = {}
+local State = {
+	sends_escape = true,
+	last_mods = {},
+}
+setmetatable(State, {
+	__index = function(self, key)
+		return self[key]
+	end,
+})
+function State:set(key, value)
+	self[key] = value
+end
 
 local control_key_timer = hs.timer.delayed.new(0.15, function()
 	send_escape = false
