@@ -5,6 +5,8 @@ alias fzf-git-status _fzf_search_git_status
 alias zz=zoxide
 alias lazy="cd $lazy_path"
 alias lazyvim="cd $lazy_path/LazyVim"
+alias astronvim="NVIM_APPNAME=astronvim nvim"
+alias nvd="/usr/local/bin/neovide"
 alias vp="vimpager"
 alias pdfmerge='/System/Library/Automator/Combine\ PDF\ Pages.action/Contents/MacOS/join'
 # alias documents='cd "/Users/$USER/Library/Mobile Documents/com~apple~CloudDocs/"'
@@ -12,7 +14,6 @@ alias pdfmerge='/System/Library/Automator/Combine\ PDF\ Pages.action/Contents/Ma
 # alias icat="kitty +kitten icat"
 # alias s="kitty +kitten icat"
 alias docker-gui="open -a Docker"
-alias nvd="/usr/local/bin/neovide"
 #alias nvim2="NVIM_APPNAME=lazy-starter nvim"
 
 # Ueberzug for LazyVim

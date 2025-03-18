@@ -759,3 +759,6 @@ bind --erase --preset \ck
 bind \ek backward-kill-line
 
 bind \e\cz fzf-zoxide
+
+# Generated for envman. Do not edit.
+test -s ~/.config/envman/load.fish; and source ~/.config/envman/load.fish

@@ -189,3 +189,6 @@ set -xg STARSHIP_LOG error
 set -xg GOPRIVATE git.synack.com
 
 # set -xg PRETTIERD_DEFAULT_CONFIG /Users/alifton/.config/nvim/rules/.prettierrc.json
+
+# helix-gpt
+set -xg HANDLER copilot
