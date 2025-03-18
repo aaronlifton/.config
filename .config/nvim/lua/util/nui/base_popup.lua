@@ -11,6 +11,8 @@ local event = require("nui.utils.autocmd").event
 ---@field opts base_popup_options
 ---@field super NuiPopup
 ---@field extend function
+---@field id string|nil
+---@field hidden boolean
 local BasePopup = Popup:extend("BasePopup")
 
 ---@param opts base_popup_options
@@ -23,7 +25,7 @@ function BasePopup:mount()
   BasePopup.super.mount(self)
 
   self:on(event.BufLeave, function()
-    self:unmount()
+    if not self.hidden then self:unmount() end
   end)
 
   -- local close = self.close

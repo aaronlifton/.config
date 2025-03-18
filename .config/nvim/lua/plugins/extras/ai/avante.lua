@@ -148,7 +148,7 @@ return {
         --   --- Disable by setting to -1.
         --   override_timeoutlen = 500,
       },
-      disabled_tools = { "python" }, -- Claude 3.7 overuses the python tool
+      disabled_tools = { "python", "git_commit" }, -- Claude 3.7 overuses the python tool
       custom_tools = {
         {
           name = "run_go_tests", -- Unique name for the tool

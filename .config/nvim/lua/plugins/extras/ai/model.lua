@@ -121,6 +121,7 @@ return {
         function()
           local FloatingWindow = require("util.nui.floating_window")
           local window = FloatingWindow({
+            id = "model-claude-chat",
             title = "Claude",
             on_mount = function(_popup)
               vim.cmd(":Mchat claude")
