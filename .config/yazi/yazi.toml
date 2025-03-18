@@ -77,3 +77,13 @@ bizarre_retry = 5
 
 [log]
 enabled = false
+
+# [[plugin.prepend_fetchers]]
+# id = "git"
+# name = "*"
+# run = "git"
+#
+# [[plugin.prepend_fetchers]]
+# id = "git"
+# name = "*/"
+# run = "git"
