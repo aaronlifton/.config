@@ -70,6 +70,16 @@ return {
           skip = true,
         },
       },
+      {
+        filter = {
+          event = "notify",
+          -- [Fzf-lua] Unable to init vim.regex...
+          find = "Unable to init vim.regex",
+        },
+        opts = {
+          skip = true,
+        },
+      },
     })
     opts.presets.lsp_doc_border = true
     -- opts.presets.bottom_search = false

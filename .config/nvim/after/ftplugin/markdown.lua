@@ -16,28 +16,30 @@ if LazyVim.has("markdowny.nvim") then
 end
 -- stylua: ignore end
 
-local spec_pair = require("mini.ai").gen_spec.pair
-vim.b.miniai_config = {
-  custom_textobjects = {
-    ["*"] = spec_pair("*", "*", { type = "greedy" }),
-    ["_"] = spec_pair("_", "_", { type = "greedy" }),
-    S = {
-      {
-        "%b{}",
-        "\n%s*\n()().-()\n%s*\n[%s]*()", -- normal paragraphs
-        "^()().-()\n%s*\n[%s]*()", -- paragraph at start of file
-        "\n%s*\n()().-()()$", -- paragraph at end of file
-      },
-      {
-        -- ("[%.?!][%s]+()().-[^%s].-()[%.?!]()[%s]"):format(), -- normal sentence
-        "[%.?!][%s]+()().-[^%s].-()[%.?!]()[%s]", -- normal sentence
-        "^[%{%[]?[%s]*()().-[^%s].-()[%.?!]()[%s]", -- sentence at start of paragraph
-        "[%.?!][%s]+()().-[^%s].-()()[\n%}%]]?$", -- sentence at end of paragraph
-        "^[%s]*()().-[^%s].-()()[%s]+$", -- sentence at that fills paragraph (no final punctuation)
+if LazyVim.has("mini.ai") then
+  local spec_pair = require("mini.ai").gen_spec.pair
+  vim.b.miniai_config = {
+    custom_textobjects = {
+      ["*"] = spec_pair("*", "*", { type = "greedy" }),
+      ["_"] = spec_pair("_", "_", { type = "greedy" }),
+      S = {
+        {
+          "%b{}",
+          "\n%s*\n()().-()\n%s*\n[%s]*()", -- normal paragraphs
+          "^()().-()\n%s*\n[%s]*()", -- paragraph at start of file
+          "\n%s*\n()().-()()$", -- paragraph at end of file
+        },
+        {
+          -- ("[%.?!][%s]+()().-[^%s].-()[%.?!]()[%s]"):format(), -- normal sentence
+          "[%.?!][%s]+()().-[^%s].-()[%.?!]()[%s]", -- normal sentence
+          "^[%{%[]?[%s]*()().-[^%s].-()[%.?!]()[%s]", -- sentence at start of paragraph
+          "[%.?!][%s]+()().-[^%s].-()()[\n%}%]]?$", -- sentence at end of paragraph
+          "^[%s]*()().-[^%s].-()()[%s]+$", -- sentence at that fills paragraph (no final punctuation)
+        },
       },
     },
-  },
-}
+  }
+end
 
 -- NOTE: Enable for better workflow with markdown tables
 -- local table_keymap_active = false

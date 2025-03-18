@@ -269,6 +269,8 @@ Here is the content from the file `%s`:
   },
   xai = {
     provider = require("model.providers.openai"),
+    -- For figuring out parsing extra data like citations
+    -- provider = require("util.model.providers.xai"),
     runOptions = function()
       return {
         model = "grok-beta",

@@ -53,7 +53,7 @@ return {
       mode = { "n" },
       { "<leader>l", group = "lazy" },
       { "<leader>a", "", desc = "+ai", mode = { "n", "v" } },
-      { "<leader>aX", group = "+controls", icon = { icon = "󰙵 ", color = "grey" } },
+      { "<leader>ax", group = "+controls", icon = { icon = "󰙵 ", color = "grey" } },
       { "<leader>L", group = "Notepads", icon = { icon = "󰓩 ", color = "green" } },
       { "<leader>cp", group = "Copy path", icon = { icon = "󰓩 " } },
       -- { "g<C-r>", group = "Modify register", icon = { icon = "󰈔 ", color = "orange" } },

@@ -3,7 +3,6 @@ if LazyVim.has("cmp") then
     sources = {
       { name = "buffer" },
       { name = "path" },
-      { name = "path" },
       -- Disable codeium
       -- { name = "codeium" },
     },

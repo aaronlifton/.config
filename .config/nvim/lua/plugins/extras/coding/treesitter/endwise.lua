@@ -33,5 +33,9 @@ return {
         },
       },
     },
+    init = function()
+      vim.g.treesitter_endwise_filetypes = { "ruby", "lua", "vim", "bash", "elixir", "fish", "julia" }
+      -- vim.g.treesitter_endwise_filetypes_disable = { "norg" }
+    end,
   },
 }

@@ -344,8 +344,13 @@ return {
             end
           end,
           condition = function(ctx)
+            -- Determine if buffer has ruby-lsp:
+            -- local lsp_clients =
+            --   require("conform.lsp_format").get_format_clients({ bufnr = vim.api.nvim_get_current_buf() })
+            -- local has_lsp_formatter = not vim.tbl_isempty(lsp_clients)
+
             -- Ruby LSP contains rubocop diagnostics itself
-            return not use_ruby_lsp_rubocop and require("util.ruby.gems").has_rubocop()
+            return vim.b.disable_lsp_format or use_ruby_lsp_rubocop and require("util.ruby.gems").has_rubocop()
           end,
         },
         rubyfmt = {

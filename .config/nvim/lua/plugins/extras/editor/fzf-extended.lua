@@ -110,6 +110,7 @@ local file_opts = {
     ["alt-9"] = toggle_fd_exclude_patterns({ "spec/**/*", "**{__tests__,tests?}**", "{test,tests}/" }),
     ["alt-l"] = toggle_flag("-e lua"),
     ["alt-r"] = toggle_flag("-e rb"),
+    ["alt-s"] = toggle_flag("--newer 7day"),
   },
 }
 
@@ -152,7 +153,7 @@ local live_grep_opts = {
     -- stylua: ignore start
     ["alt-6"] = toggle_iglob("app/models/**"),
     ["alt-7"] = toggle_iglob("app/controllers/**"),
-    ["alt-8"] = toggle_iglob("spec/**/*.rb **/test*/** __tests__"),
+    ["alt-8"] = toggle_iglob("spec/**/*.rb **/test*/** **/__tests__/**"),
     -- ["alt-9"] = toggle_iglob("!spec/**/* !**/test*/** !test/**"),
     ["alt-9"] = toggle_iglob("!spec/**/* !**/test*/** !__tests__"),
     ["alt-p"] = toggle_flag("--pcre2"),
@@ -161,7 +162,8 @@ local live_grep_opts = {
     ["alt-l"] = toggle_flag("-t lua"),
     ["alt-r"] = toggle_flag("-t ruby"),
     ["alt-R"] = toggle_iglob("*.rb !*{test,spec}/"),
-    ["alt-z"] = toggle_live_iglob("*.lua"),
+    ["alt-s"] = toggle_flag("--sortr=created"),
+    -- ["alt-z"] = toggle_live_iglob("*.lua"),
     -- ["alt-x"] = function()
     --   local buf = vim.api.nvim_get_current_buf()
     --   local leap = require("util.leap").get_leap_for_buf(buf)
@@ -240,6 +242,8 @@ return {
       { "<leader>sA", "<cmd>FzfLua treesitter<cr>", desc = "Treesiter Symbols" },
       -- { "<leader>sX", "<cmd>FzfLua treesitter<cr>", desc = "Treesiter Symbols" },
       -- { "<leader><C-s>", "<cmd>FzfLua spell_suggest<cr>", desc = "Spelling" },
+      -- Disabled in favor of Snacks.picker (syntax highlighting, etc.)
+      { "<leader>sm", false },
       -- stylua: ignore end
       {
         "<leader>sF",
@@ -271,6 +275,20 @@ return {
         desc = "Plugins",
       },
       {
+        "<leader>flP",
+        function()
+          pick(
+            "live_grep",
+            vim.tbl_extend("force", live_grep_opts, {
+              cwd = vim.fn.fnamemodify(get_lazyvim_base_dir(), ":h"),
+              git_icons = false,
+              rg_opts = default_grep_rg_opts .. " -t lua -e",
+            })
+          )
+        end,
+        desc = "Grep plugins",
+      },
+      {
         "<leader>sY",
         function()
           local cwd = vim.fn.expand("%:p:h")
@@ -300,15 +318,16 @@ return {
         end,
         desc = "Recently commited",
       },
-      {
-        "<C-x><C-f>",
-        function()
-          require("fzf-lua").complete_path({ winopts = { height = 0.33, width = 0.5 } })
-        end,
-        mode = { "n", "v", "i" },
-        silent = true,
-        desc = "Fuzzy complete path",
-      },
+      -- interferes with ins-completion, which is unused
+      -- {
+      --   "<C-x><C-f>",
+      --   function()
+      --     require("fzf-lua").complete_path({ winopts = { height = 0.33, width = 0.5 } })
+      --   end,
+      --   mode = { "n", "v", "i" },
+      --   silent = true,
+      --   desc = "Fuzzy complete path",
+      -- },
       {
         "<leader>sZ",
         function()

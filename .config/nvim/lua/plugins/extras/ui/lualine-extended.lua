@@ -26,6 +26,21 @@ local linter = function()
   return "󱉶 "
 end
 
+local lsp_status = {
+  "lsp_status",
+  icon = "", -- f013
+  symbols = {
+    -- Standard unicode symbols to cycle through for LSP progress:
+    spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" },
+    -- Standard unicode symbol for when LSP is done:
+    done = " ", -- "✓"
+    -- Delimiter inserted between LSP names:
+    separator = " ",
+  },
+  -- List of LSP names to ignore (e.g., `null-ls`):
+  ignore_lsp = {},
+}
+
 -- local starship = function()
 --   return require("util.lualine.starship")()
 -- end
@@ -46,10 +61,12 @@ return {
     }
 
     if vim.g.lualine_info_extras == true then
+      -- table.insert(opts.sections.lualine_x, 2, lsp_status)
       table.insert(opts.sections.lualine_x, 2, lsp)
       table.insert(opts.sections.lualine_x, 2, formatter)
       table.insert(opts.sections.lualine_x, 2, linter)
       table.insert(opts.sections.lualine_x, 2, require("util.lualine.codecompanion"))
+      table.insert(opts.sections.lualine_x, 2, require("util.lualine.avante"))
       -- table.insert(opts.sections.lualine_x, 2, starship)
     end
     opts.sections.lualine_y = { "progress" }

@@ -4,7 +4,7 @@ local copilot_chat_prefix = "<leader>aC"
 local keys = {}
 -- stylua: ignore start
 -- if vim.g.ai_cmp then
---   keys[#keys+1] = { "<leader>aXt", function() require("copilot.suggestion").toggle_auto_trigger() end, desc = "Toggle auto trigger" }
+--   keys[#keys+1] = { "<leader>axt", function() require("copilot.suggestion").toggle_auto_trigger() end, desc = "Toggle auto trigger" }
 --   if panel_enabled then
 --     keys[#keys+1] ={ "<leader>avp", function() require("copilot.panel").open({ "bottom", 0.25 }) end, desc = "Toggle Copilot Panel" }
 --     keys[#keys+1] ={ "<leader>c]", function() require("copilot.panel").jump_next() end, desc = "Jump next (Copilot Panel)" }
@@ -92,7 +92,7 @@ return {
     init = function()
       -- TODO: fix this
       LazyVim.on_very_lazy(function()
-        vim.keymap.set("n", "<leader>aXs", function()
+        vim.keymap.set("n", "<leader>axS", function()
           if vim.g.ai_cmp then
             require("copilot").setup({
               suggestion = {
@@ -129,6 +129,22 @@ return {
     branch = "canary",
     cmd = "CopilotChat",
     build = "make tiktoken", -- TODO: is this needed?
+    dependencies = {
+      {
+        "folke/which-key.nvim",
+        opts = {
+          spec = {
+            mode = { "n", "v" },
+            {
+              copilot_chat_prefix,
+              group = "CopilotChat",
+              icon = { icon = " ", color = "orange" },
+              mode = { "n", "v" },
+            },
+          },
+        },
+      },
+    },
     opts = function()
       local user = vim.env.USER or "User"
       user = user:sub(1, 1):upper() .. user:sub(2)
@@ -204,15 +220,6 @@ return {
       { copilot_chat_prefix .. "d", M.pick("help"), desc = "Diagnostic Help (CopilotChat)", mode = { "n", "v" } },
       -- Show prompts actions with telescope
       { copilot_chat_prefix .. "p", M.pick("prompt"), desc = "Prompt Actions (CopilotChat)", mode = { "n", "v" } },
-    },
-  },
-  {
-    "folke/which-key.nvim",
-    opts = {
-      spec = {
-        mode = { "n", "v" },
-        { copilot_chat_prefix, group = "CopilotChat", icon = { icon = " ", color = "orange" }, mode = { "n", "v" } },
-      },
     },
   },
 }

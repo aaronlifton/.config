@@ -18,7 +18,7 @@ return {
     opts = {
       servers = {
         emmet_language_server = {
-          filetypes = { "html" },
+          filetypes = { "html", "javascript" },
         },
         -- emmet_ls = {
         --   filetypes = {

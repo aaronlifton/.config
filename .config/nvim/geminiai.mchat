@@ -1,0 +1,416 @@
+gemini:flash
+
+File: `lua/util/neovide/Easing.lua` (1-323)
+```lua
+local Easing = {}
+Easing.__index = Easing
+
+---@class Easing
+function Easing.new()
+  local self = setmetatable({}, Easing)
+  return self
+end
+
+--- @class keyframe
+--- @field phase number
+--- @field curl number
+
+--- @class EasingConfig
+--- @field easedValues keyframe[]
+--- @field type string
+--- @field level number
+--- @field steps number
+--- @field keyframes? table
+--- @field currentConfig keyframe
+--- @field configs EasingConfig[]
+local EasingConfig = {}
+EasingConfig.__index = EasingConfig
+
+---@param type? string Easing type ("bezier", "linear", "android")
+---@param keyframes? table Keyframes for "android" easing
+---@param opts? table Additional options like steps
+function EasingConfig.new(type, keyframes, opts)
+  local self = setmetatable({}, Easing)
+  opts = opts or {}
+  self.type = type or "bezier"
+  self.keyframes = keyframes
+  self.steps = opts.steps or 10
+
+  if self.type == "android" and not self.keyframes then error("keyframes are required for 'android' easing type") end
+
+  return self
+end
+
+---@param configs EasingConfig[]
+---@return self
+function EasingConfig:set_configs(configs)
+  self.configs = configs
+  return self
+end
+
+---Cubic Bézier ease-in-out approximation
+---@param t number Input value between 0 and 1 representing animation progress
+---@return number Smoothed value between 0 and 1
+function Easing:bezierEaseInOut(t)
+  if t < 0.5 then
+    return 4 * t * t * t
+  else
+    return 1 - (-2 * t + 2) ^ 3 / 2
+  end
+end
+
+--- Linear interpolation
+---@param a number Starting value
+---@param b number Ending value
+---@param t number Interpolation factor between 0 and 1
+---@return number Interpolated value
+local function lerp(a, b, t)
+  return a + (b - a) * t
+end
+
+--- Interpolates between two keyframes
+---@param key1 table Keyframe 1
+---@param key2 table Keyframe 2
+---@param t number Interpolation factor (0-1)
+---@return keyframe Interpolated keyframe
+local function interpolateKeyframes(key1, key2, t)
+  return {
+    phase = lerp(key1.phase, key2.phase, t),
+    curl = lerp(key1.curl, key2.curl, t),
+  }
+end
+
+--- Calculates eased values based on easing type and parameters.
+---@param type string Easing type ("bezier", "linear", "android")
+---@param level number Intensity level (1-4, for bezier only)
+---@param time number Animation progress (0-1)
+---@param keyframes table Keyframes for "android" easing
+---@return keyframe|nil Eased values, or nil on error
+function Easing:calculateEasedValues(type, level, time, keyframes)
+  if type == "bezier" then
+    level = math.max(1, math.min(4, level))
+    local normalizedTime = (level - 1) / 3
+    local easedTime = self:bezierEaseInOut(normalizedTime)
+    return self:getKeyframeFromLevel(level, easedTime)
+  elseif type == "linear" then
+    return { phase = level * time, curl = level * time } -- Linear mapping with time
+  elseif type == "android" then
+    if not keyframes or #keyframes < 2 then return nil end
+    local keyframeIndex = math.floor(time * (#keyframes - 1)) --Corrected index calculation
+    local key1 = keyframes[keyframeIndex + 1] or keyframes[1] --Handle edge cases
+    local key2 = keyframes[keyframeIndex + 2] or keyframes[#keyframes] --Handle edge cases
+    local t = (time * (#keyframes - 1)) - keyframeIndex --Corrected time calculation
+
+    return interpolateKeyframes(key1, key2, t)
+  else
+    return nil -- Unknown easing type
+  end
+end
+
+---Helper function to get keyframe based on level and easedTime
+---@param level number Level (1-4)
+---@param easedTime number Eased Time (0-1)
+function Easing:getKeyframeFromLevel(level, easedTime)
+  local modifiers = {
+    [1] = { phase = 1.5, curl = 1.0 },
+    [2] = { phase = 2.0, curl = 2.5 },
+    [4] = { phase = 3.5, curl = 6.0 },
+    [3] = { phase = 2.8, curl = 4.0 },
+  }
+
+  local key1, key2
+  if level <= 2 then
+    key1 = modifiers[1]
+    key2 = modifiers[2]
+  elseif level <= 3 then
+    key1 = modifiers[2]
+    key2 = modifiers[3]
+  else
+    key1 = modifiers[3]
+    key2 = modifiers[4]
+  end
+  if not key1 or not key2 then return nil end
+  return interpolateKeyframes(key1, key2, easedTime)
+end
+
+--- Generates a table of eased values over time.
+---@param type string Easing type ("bezier", "linear", "android")
+---@param level number Intensity level (1-4, for bezier only)
+---@param keyframes table Keyframes for "android" easing
+---@param steps number Number of steps (default 10)
+---@return keyframe[] Table of eased values
+function Easing:generateEasedValues(type, level, keyframes, steps)
+  steps = steps or 10
+  local values = {}
+  for i = 1, steps do
+    local time = i / steps
+    local easedValues = self:calculateEasedValues(type, level, time, keyframes)
+    if easedValues then table.insert(values, easedValues) end
+  end
+  return values
+end
+
+---
+---@param config EasingConfig
+local function log_config(config)
+  local str = vim
+    .iter(pairs(config.currentConfig))
+    :map(function(k, v)
+      return string.format("%s: [%s]", k:sub(1, 1):upper() .. k:sub(2), v)
+    end)
+    :join(", ")
+  print(str)
+  print(string.format("[Type: %s, Steps: %d] %s", config.type, config.steps, str))
+end
+
+---@param configs EasingConfig[]
+local function log_configs(configs)
+  local output = {}
+  for _, config in ipairs(configs) do
+    if config.currentConfig then
+      local values = {}
+      for k, v in pairs(config.currentConfig) do
+        table.insert(values, string.format("%s %s", k, v))
+      end
+      local value_str = table.concat(values, " ")
+      table.insert(output, string.format("{%s}", value_str))
+    end
+  end
+
+  -- Create header with first config's type and steps
+  local header = ""
+  if configs[1] then header = string.format("[Type: %s, Steps: %d]:", configs[1].type, configs[1].steps) end
+  print(header)
+  print(configs)
+
+  -- Join all parts with newlines
+  -- vim.notify(
+  -- 	string.format(header .. "\n" .. table.concat(output, "\n")),
+  -- 	vim.log.levels.INFO,
+  -- 	{ title = "EasingConfig 󰫨 " }
+  -- )
+end
+
+---@param config EasingConfig
+---Sets attributes from another EasingConfig instance to the current instance
+function EasingConfig:set_attributes(config)
+  -- Copy basic properties
+  self.type = config.type
+  self.level = config.level
+  self.steps = config.steps
+  self.keyframes = config.keyframes
+
+  -- Deep copy eased values array
+  self.easedValues = {}
+  for i, value in ipairs(config.easedValues) do
+    self.easedValues[i] = {
+      phase = value.phase,
+      curl = value.curl,
+    }
+  end
+
+  -- Copy current config if it exists
+  if config.currentConfig then
+    self.currentConfig = {
+      phase = config.currentConfig.phase,
+      curl = config.currentConfig.curl,
+    }
+  end
+end
+
+---@class GenerateConfigOpts
+---@field keyframes table Keyframes for "android" easing (required if type is "android")
+---@field steps number Number of steps per config (default 10)
+
+--- Generates a table of eased configurations using generateEasedValues.
+---@param n integer number of configs to generate
+---@param min_level? integer minimum intensity level (default: 1)
+---@param max_level? integer maximum intensity level (default: 4)
+---@param opts? table Additional options
+function Easing:generateConfigs(n, min_level, max_level, opts)
+  opts = opts or {}
+  local steps = opts.steps or self.steps
+  min_level = min_level or 1
+  max_level = max_level or 4
+
+  ---@type EasingConfig[]
+  local configs = {}
+
+  for i = 1, n do
+    local time = (i - 1) / (n - 1)
+    local level = min_level + math.floor(((max_level - min_level) * time))
+    local config = EasingConfig.new(self.type, level, steps, self.keyframes)
+    config.easedValues = self:generateEasedValues(self.type, level, self.keyframes, steps)
+    if config.easedValues and #config.easedValues > 0 then
+      local step = math.random(1, #config.easedValues)
+      config.currentConfig = config.easedValues[step]
+      -- log_config(config, type, step)
+      configs[i] = config.currentConfig
+    else
+      print("Warning: Failed to generate eased values for config " .. i)
+    end
+  end
+  log_configs(configs)
+  config:set_configs(configs)
+  return self
+end
+
+---@param n number number from the list of eased configurations based on bezier curve
+function Easing:setConfig(n)
+  print(self.configs)
+
+  local config = self.configs[math.max(math.min(0, n), #self.configs)]
+  if not config.currentConfig then
+    print("Warning: Invalid config at index " .. n)
+    return {}
+  end
+
+  for k, v in pairs(config.currentConfig) do
+    local config_key = "neovide_cursor_vfx_particle_" .. k
+    print(string.format("Setting %s to:\n %s: %d", config_key, k:sub(1, 1):upper() .. k:sub(2), v))
+    vim.g[config_key] = v
+  end
+  self.currentConfig = config
+  return self
+end
+
+--- Apply a specific eased value from the config
+---@param self EasingConfig
+---@param index number Index of the eased value to apply
+function Easing:applyEasedValue(index)
+  if not self.easedValues then
+    print("here")
+    return
+  end
+
+  index = math.min(math.max(1, index), #self.easedValues)
+  local newEasingConfig = self.easedValues[index]
+  self.currentConfig = newEasingConfig
+
+  for k, v in pairs(newEasingConfig) do
+    local config_key = "neovide_cursor_vfx_particle_" .. k
+    vim.g[config_key] = v
+  end
+
+  return self.currentConfig
+end
+
+print(1)
+--Usage
+local function test()
+  -- Example using bezier easing with fluent interface:
+  local config = Easing.new("bezier"):generateConfigs(5, 1, 4):setConfig(1)
+  print(config)
+  local c2 = config:applyEasedValue(3)
+  print(c2)
+  log_config(config)
+
+  -- Example using linear easing:
+  local linear_easing = Easing.new("linear")
+  local c3 = linear_easing:generateConfigs(2, 1, 4):setConfig(1)
+  print(c3)
+
+  -- Android example with keyframes:
+  local androidKeyframes = {
+    { phase = 1.0, curl = 1.0 },
+    { phase = 2.5, curl = 3.0 },
+    { phase = 3.5, curl = 5.0 },
+    { phase = 4, curl = 6 },
+  }
+
+  -- Create android easing with keyframes
+  local android_easing = Easing.new("android", androidKeyframes, { steps = 5 })
+  android_easing:generateConfigs(3):setConfig(1) -- No need for nil parameters anymore
+  print(android_easing.current_config)
+end
+test()
+print(1)
+```
+Greatly simplify this code. Feel feel to remove code.
+
+I just want a class that can do what test() does, feel free to change the rest
+of the file however you want to make it as simple as possible:
+
+======
+```lua
+local Easing = {}
+Easing.__index = Easing
+
+function Easing.new(type, keyframes, opts)
+  local self = setmetatable({}, Easing)
+  self.type = type or "bezier"
+  self.keyframes = keyframes
+  self.steps = opts and opts.steps or 10
+  return self
+end
+
+function Easing:bezierEaseInOut(t)
+  return t < 0.5 and 4 * t ^ 3 or 1 - (-2 * t + 2) ^ 3 / 2
+end
+
+function Easing:lerp(a, b, t)
+  return a + (b - a) * t
+end
+
+function Easing:generateConfigs(n, min_level, max_level)
+  min_level = min_level or 1
+  max_level = max_level or 4
+  local configs = {}
+  for i = 1, n do
+    local t = (i - 1) / (n - 1)
+    local level = min_level + math.floor((max_level - min_level) * t)
+    local config = self:generateConfig(level)
+    if config then configs[i] = config end
+  end
+  return configs
+end
+
+function Easing:generateConfig(level)
+  if self.type == "bezier" then
+    local t = (level - 1) / 3
+    local easedT = self:bezierEaseInOut(t)
+    return { phase = level * easedT, curl = level * easedT }
+  elseif self.type == "linear" then
+    return { phase = level, curl = level }
+  elseif self.type == "android" then
+    if not self.keyframes or #self.keyframes < 2 then return nil end
+    local t = math.random()
+    local i = math.floor(t * (#self.keyframes - 1)) + 1
+    local k1, k2 = self.keyframes[i], self.keyframes[i+1] or self.keyframes[#self.keyframes]
+    return { phase = self:lerp(k1.phase, k2.phase, t), curl = self:lerp(k1.curl, k2.curl, t)}
+  end
+end
+
+
+function Easing:setConfig(n, config)
+  if not config then return end
+  for k, v in pairs(config) do
+    vim.g["neovide_cursor_vfx_particle_" .. k] = v
+  end
+end
+
+
+local function test()
+  local bezier = Easing.new("bezier")
+  local configs = bezier:generateConfigs(5)
+  bezier:setConfig(configs[1])
+
+  local linear = Easing.new("linear")
+  local linearConfigs = linear:generateConfigs(2)
+  linear:setConfig(linearConfigs[1])
+
+  local androidKeyframes = {
+    { phase = 1.0, curl = 1.0 },
+    { phase = 2.5, curl = 3.0 },
+    { phase = 3.5, curl = 5.0 },
+    { phase = 4, curl = 6 },
+  }
+  local android = Easing.new("android", androidKeyframes)
+  local androidConfigs = android:generateConfigs(3)
+  android:setConfig(androidConfigs[1])
+end
+
+test()
+
+```
+======

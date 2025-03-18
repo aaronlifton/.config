@@ -9,6 +9,10 @@ end
 local ac = vim.api.nvim_create_autocmd
 local ag = vim.api.nvim_create_augroup
 
+local enabled_autocommands = {
+  numbertoggle = false,
+}
+
 -- Before
 -- local function augroup(name)
 --   return vim.api.nvim_create_augroup("lazyvim_" .. name, { clear = true })
@@ -157,25 +161,27 @@ ac({ "BufNewFile", "BufRead" }, {
 })
 
 -- Toggle between relative/absolute line numbers
-local numbertoggle = ag("numbertoggle", { clear = true })
-ac({ "BufEnter", "FocusGained", "InsertLeave", "CmdlineLeave", "WinEnter" }, {
-  pattern = "*",
-  group = numbertoggle,
-  callback = function()
-    if vim.o.nu and vim.api.nvim_get_mode().mode ~= "i" then vim.opt.relativenumber = true end
-  end,
-})
+if enabled_autocommands.numbertoggle then
+  local numbertoggle = ag("numbertoggle", { clear = true })
+  ac({ "BufEnter", "FocusGained", "InsertLeave", "CmdlineLeave", "WinEnter" }, {
+    pattern = "*",
+    group = numbertoggle,
+    callback = function()
+      if vim.o.nu and vim.api.nvim_get_mode().mode ~= "i" then vim.opt.relativenumber = true end
+    end,
+  })
 
-ac({ "BufLeave", "FocusLost", "InsertEnter", "CmdlineEnter", "WinLeave" }, {
-  pattern = "*",
-  group = numbertoggle,
-  callback = function()
-    if vim.o.nu then
-      vim.opt.relativenumber = false
-      vim.cmd.redraw()
-    end
-  end,
-})
+  ac({ "BufLeave", "FocusLost", "InsertEnter", "CmdlineEnter", "WinLeave" }, {
+    pattern = "*",
+    group = numbertoggle,
+    callback = function()
+      if vim.o.nu then
+        vim.opt.relativenumber = false
+        vim.cmd.redraw()
+      end
+    end,
+  })
+end
 
 ac({ "BufEnter" }, {
   pattern = { "*.md", "help" },
@@ -246,24 +252,40 @@ ac({ "FileType" }, {
   end,
 })
 
--- TODO: remove after testing that this is not needed
--- Will be automatically enabled by the ft spec in the render-markdown
--- dependency of model.nvim
--- ac({ "FileType" }, {
---   pattern = { "mchat" },
---   callback = function(args)
---     if vim.bo[args.buf].buflisted then
---       vim.api.nvim_echo({ { vim.inspect("here"), "Normal" } }, true, {})
---       require("render-markdown").enable()
---     end
---   end,
--- })
+ac({ "FileType" }, {
+  pattern = { "markdown", "mchat" },
+  callback = function(args)
+    vim.keymap.set("n", "]n", function()
+      require("util.movement").find_next_ordered_list_item()
+    end, { desc = "Next in ordered list", remap = true, buffer = true })
+    vim.keymap.set("n", "[n", function()
+      require("util.movement").find_prev_ordered_list_item()
+    end, { desc = "Prev in ordered list", remap = true, buffer = true })
+  end,
+})
+
+-- render-markdown.nvim is automatically enabled by the ft spec in the
+-- render-markdown dependency of model.nvim, but it still needs to be enabled
+-- for mchat buffers
+ac({ "FileType" }, {
+  pattern = { "mchat" },
+  callback = function(args)
+    if vim.bo[args.buf].buflisted then require("render-markdown").enable() end
+  end,
+})
 
 ac({ "FileType" }, {
   pattern = { "log" },
   callback = function(_args)
     vim.opt_local.spell = false
     vim.diagnostic.enable(false)
+  end,
+})
+
+ac({ "FileType" }, {
+  pattern = { "*js.snap" },
+  callback = function(_args)
+    vim.cmd("set ft=html")
   end,
 })
 

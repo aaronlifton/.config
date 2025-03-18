@@ -75,4 +75,60 @@ function M.editor_bufs()
     end)
     :totable()
 end
+
+--- Returns the window ID of the window with the highest ID with a buffer of
+--- filetype `ft`
+---@param ft string filetype
+---@return number|nil
+function M.last_window_with_ft(ft)
+  local wins = vim.api.nvim_list_wins()
+  local max_id = -1
+  local target_win = nil
+
+  -- Find highest ID window with minifiles buffer
+  for _, win in ipairs(wins) do
+    local buf = vim.api.nvim_win_get_buf(win)
+    local buf_ft = vim.bo[buf].filetype
+    if buf_ft == ft and win > max_id then
+      max_id = win
+      target_win = win
+    end
+  end
+
+  return target_win
+end
+
+--- Returns the window ID of the window with the lowest ID with a buffer of filetype `ft`
+---@param ft string
+---@return number|nil
+function M.window_with_ft(ft)
+  local wins = vim.api.nvim_list_wins()
+  for _, win in ipairs(wins) do
+    local buf = vim.api.nvim_win_get_buf(win)
+    local buf_ft = vim.bo[buf].filetype
+    if buf_ft == ft then return win end
+  end
+  return nil
+end
+
+--- Scrolls a window by `delta` lines
+---@param win number
+---@param delta number
+function M.scroll(win, delta)
+  local buf = vim.api.nvim_win_get_buf(win)
+  local info = vim.fn.getwininfo(win)[1] or {}
+  local top = info.topline or 1
+  local content_height = #vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+  vim.api.nvim_echo({ { vim.inspect(content_height), "Normal" } }, true, {})
+  top = top + delta
+  top = math.max(top, 1)
+  top = math.min(top, content_height - info.height + 1)
+
+  vim.defer_fn(function()
+    vim.api.nvim_buf_call(buf, function()
+      vim.api.nvim_command("normal! " .. top .. "zt")
+    end)
+  end, 0)
+end
+
 return M

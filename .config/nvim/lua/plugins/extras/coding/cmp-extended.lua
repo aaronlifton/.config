@@ -6,6 +6,12 @@ local function set_priority(sources, target_name, new_priority)
     end
   end
 end
+local cmdline_has_words_before = function()
+  unpack = unpack or table.unpack
+  local line = vim.fn.getcmdline()
+  local col = vim.fn.getcmdpos()
+  return col ~= 1 and line:sub(col - 1, col - 1):match("%s") == nil
+end
 
 local follow_cursor = false
 
@@ -29,8 +35,10 @@ return {
 
       -- Performance
       opts.performance = {
-        debounce = 20,
-        throttle = 20,
+        -- debounce = 20,
+        -- throttle = 20,
+        debounce = 0,
+        throttle = 0,
         fetching_timeout = 20,
         -- fetching_timeout = 500,
         confirm_resolve_timeout = 20,
@@ -117,13 +125,16 @@ return {
       if require("util.table").get(LazyVim.opts("noice.nvim"), "popupmenu", "backend") == "cmp" then
         local cmdline_mapping = cmp.mapping.preset.cmdline({
           ["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
-          -- ["<Tab>"] = cmp.mapping(function(fallback)
-          --   if cmp.visible() then
-          --     cmp.confirm({ select = true })
-          --   else
-          --     fallback()
-          --   end
-          -- end),
+          ["<Tab>"] = cmp.mapping(function(fallback)
+            if cmp.visible() then
+              cmp.confirm({ select = true })
+              -- cmp.select_next_item()
+            elseif cmdline_has_words_before() then
+              cmp.complete()
+            else
+              fallback()
+            end
+          end, { "c" }),
         })
         cmp.setup.cmdline(":", {
           mapping = cmdline_mapping,

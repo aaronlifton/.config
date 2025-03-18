@@ -149,6 +149,14 @@
   },
   "waitFor": {
     "prefix": "wf",
-    "body": "await waitFor(() => {\n${0}\n}"
+    "body": "await waitFor(() => {\n${0}\n})"
+  },
+  "constContainer": {
+    "prefix": "cc",
+    "body": "const container = { "
+  },
+  "expectMatchSnapshot": {
+    "prefix": "ems",
+    "body": "expect(${1:element}).toMatchSnapshot()"
   }
 }

@@ -34,18 +34,19 @@ return {
       end
     end,
     keys = {
-      {
-        "<leader>sy",
-        function()
-          if LazyVim.pick.picker.name == "telescope" then
-            require("telescope").extensions.yank_history.yank_history({})
-          else
-            vim.cmd([[YankyRingHistory]])
-          end
-        end,
-        mode = { "n", "v" },
-        desc = "Yank History",
-      },
+      -- {
+      --   -- interferes with leap
+      --   "<leader>sy",
+      --   function()
+      --     if LazyVim.pick.picker.name == "telescope" then
+      --       require("telescope").extensions.yank_history.yank_history({})
+      --     else
+      --       vim.cmd([[YankyRingHistory]])
+      --     end
+      --   end,
+      --   mode = { "n", "v" },
+      --   desc = "Yank History",
+      -- },
     },
   },
 }

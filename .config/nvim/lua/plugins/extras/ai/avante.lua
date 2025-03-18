@@ -39,9 +39,11 @@ return {
       -- "zbirenbaum/copilot.lua", -- for providers='copilot'
       {
         -- support for image pasting
+        -- requires osascript (OSX builtin) and pngpaste (brew install pngpaste)
         "HakonHarnes/img-clip.nvim",
-        cond = false,
-        event = "VeryLazy",
+        -- cond = false,
+        -- event = "VeryLazy",
+        ft = { "AvanteInput" },
         opts = {
           -- recommended settings
           default = {
@@ -54,6 +56,10 @@ return {
             use_absolute_path = true,
           },
         },
+        -- cmd = { "PasteImage" },
+        -- keys = {
+        --   { "<M-p>", "<cmd>PasteImage<cr>", desc = "Paste image", ft = { "markdown", "tex" }, mode = { "n", "v" } },
+        -- },
       },
       {
         -- Make sure to set this up properly if you have lazy=true
@@ -67,12 +73,13 @@ return {
     },
     --- @type avante.Config
     opts = {
-      -- Defaults
+      -- Defaults: ~/.local/share/nvim/lazy/avante.nvim/lua/avante/config.lua:189
       -- provider = "claude",
       -- auto_suggestions_provider = "claude",
       -- claude = {
       --   endpoint = "https://api.anthropic.com",
-      --   model = "claude-3-5-sonnet-20241022",
+      --   -- model = "claude-3-5-sonnet-20241022",
+      --   model = "claude-3-7-sonnet-20250219"
       --   temperature = 0,
       --   max_tokens = 4096,
       -- },
@@ -84,18 +91,31 @@ return {
       --   auto_set_keymaps = true,
       --   auto_apply_diff_after_generation = false,
       --   jump_result_buffer_on_finish = false,
-      -- jump_to_result_buffer_on_finish = true,
+      --   -- jump_to_result_buffer_on_finish = true,
       --   support_paste_from_clipboard = false,
       --   minimize_diff = true,
       -- },
-      -- Defaults: ~/.local/share/nvim/lazy/avante.nvim/lua/avante/config.lua
+      -- Default keybindings: ~/.local/share/nvim/lazy/avante.nvim/lua/avante/config.lua:329
       mappings = {
         ask = "<leader>aa", -- <leader>aa
         edit = "<leader>ae", -- <leader>ate
-        refresh = "<leader>atr", -- <leader>ar
-        chat = "<leader>atc", -- <leader>ac
+        refresh = "<leader>ar", -- <leader>ar
+        chat = "<leader>aC", -- <leader>ac
         files = {
           add_current = "<leader>aA",
+        },
+        toggle = {
+          -- default = "<leader>at",
+          debug = "<leader>axd",
+          hint = "<leader>axh",
+          suggestion = "<leader>axs",
+          -- TODO: move to <leader>auR (AI Util category)
+          -- repomap = "<leader>aR",
+        },
+        sidebar = {
+          -- retry_user_request = "r",
+          -- edit_user_request = "e",
+          close_from_input = { normal = "<C-q>" },
         },
       },
       hints = {
@@ -105,7 +125,6 @@ return {
         ---@type "right" | "left" | "top" | "bottom"
         position = "right", -- the position of the sidebar
         wrap = true, -- similar to vim.o.wrap
-        -- width = 40, -- default 30% of available width
       },
       repo_map = {
         -- stylua: ignore start
@@ -128,6 +147,42 @@ return {
         --   --- Helps to avoid entering operator-pending mode with diff mappings starting with `c`.
         --   --- Disable by setting to -1.
         --   override_timeoutlen = 500,
+      },
+      disabled_tools = { "python" }, -- Claude 3.7 overuses the python tool
+      custom_tools = {
+        {
+          name = "run_go_tests", -- Unique name for the tool
+          description = "Run Go unit tests and return results", -- Description shown to AI
+          command = "go test -v ./...", -- Shell command to execute
+          param = { -- Input parameters (optional)
+            type = "table",
+            fields = {
+              {
+                name = "target",
+                description = "Package or directory to test (e.g. './pkg/...' or './internal/pkg')",
+                type = "string",
+                optional = true,
+              },
+            },
+          },
+          returns = { -- Expected return values
+            {
+              name = "result",
+              description = "Result of the fetch",
+              type = "string",
+            },
+            {
+              name = "error",
+              description = "Error message if the fetch was not successful",
+              type = "string",
+              optional = true,
+            },
+          },
+          func = function(params, on_log, on_complete) -- Custom function to execute
+            local target = params.target or "./..."
+            return vim.fn.system(string.format("go test -v %s", target))
+          end,
+        },
       },
       completion = {
         cmp = {
@@ -164,12 +219,13 @@ return {
       -- stylua: ignore start
       local mappings = {
         { "<M-->", function() require("avante.api").ask() end, desc = "avante: ask", mode = { "n", "v" } },
-        -- { "<leader>ata", function() require("avante.api").ask() end, desc = "avante: ask", mode = { "n", "v" } },
         { opts.mappings.ask, function() require("avante.api").ask() end, desc = "avante: ask", mode = { "n", "v" } },
         { opts.mappings.refresh, function() require("avante.api").refresh() end, desc = "avante: refresh", mode = "v" },
         { opts.mappings.edit, function() require("avante.api").edit() end, desc = "avante: edit", mode = { "n", "v" } },
-        { opts.mappings.chat, function() vim.cmd("AvanteChat") end, desc = "avante: chat", mode = { "n" } },
-        { "<leader>ats", function() require("avante.api").get_suggestion():suggest() end, desc = "avante: suggest", mode = { "n" } },
+        { opts.mappings.chat, "<Plug>(AvanteChat)", desc = "avante: chat", mode = { "n" } },
+        { opts.mappings.toggle.suggestion, function() require("avante").toggle.suggestion() end, desc = "avante: suggest", mode = { "n" } },
+        { opts.mappings.toggle.hint, function() require("avante").toggle.hint() end, desc = "avante: hint", mode = { "n" } },
+        { opts.mappings.toggle.debug, function() require("avante").toggle.debug() end, desc = "avante: debug", mode = { "n" } },
       }
       -- stylua: ignore end
 

@@ -19,6 +19,8 @@ return {
           ["<c-y>"] = "PeekFile",
         },
       },
+      prompt_force_push = false,
+      graph_style = "kitty",
     },
     keys = {
     -- stylua: ignore start

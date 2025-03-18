@@ -36,7 +36,7 @@ return {
       local ai = require("mini.ai")
       local MiniExtra = require("mini.extra")
       local custom_textobjects = {
-        -- LazyVim uses: a,i,f,c,t,d,e,g,u,U,o
+        -- LazyVim uses: o,f,c,t,d,e,g,u,U
         C = ai.gen_spec.treesitter({ a = "@comment.outer", i = "@comment.outer" }),
         k = ai.gen_spec.treesitter({
           i = { "@assignment.lhs", "@key.inner" },
@@ -57,7 +57,7 @@ return {
             "\n%s*\n()().-()()$", -- paragraph at end of file
           },
         },
-        { -- normal sentence}
+        S = { -- normal sentence
           "[%.?!][%s]+()().-[^%s].-()[%.?!]()[%s]",
           "^[%{%[]?[%s]*()().-[^%s].-()[%.?!]()[%s]",
           "[%.?!][%s]+()().-[^%s].-()()[\n%}%]]?$",
@@ -67,12 +67,47 @@ return {
         W = { {
           "()()%f[%w%p][%w%p]+()[ \t]*()",
         } },
+        -- Word, with camelCase support (supports only Latin alphabet) TestTest
+        -- LazyVim maps this as `e`, so not needed. But kept as an example for
+        -- mapping complex keybindings.
+        -- Could also use the keycode <C-w> = "\23"
+        -- [vim.api.nvim_replace_termcodes("<C-w>", true, false, true)] = {
+        --   {
+        --     "%u[%l%d]+%f[^%l%d]",
+        --     "%f[%S][%l%d]+%f[^%l%d]",
+        --     "%f[%P][%l%d]+%f[^%l%d]",
+        --     "^[%l%d]+%f[^%l%d]",
+        --   },
+        --   "^().*()$",
+        -- },
+        -- TODO: see if this is interfering with the `h` textobject from mini.diff
         h = LazyVim.has("gitsigns") and mini_ai_git_signs or nil,
         -- Match the strart and end of a markdown code fence
         -- ["`"] = ai.gen_spec.treesitter({
         --   a = "@fenced_code_block.outer",
         --   i = "@code_fence_content",
         -- }),
+        -- Word, ignoring punctuation and digits
+        -- w = { "()()%f[%w_][%w_]+()[ \t]*()" },
+        -- Lua block '%[%[().-()%]%]'
+        -- date '()%d%d%d%d%-%d%d%-%d%d()'
+        -- ["$"] = ai.gen_spec.pair("$", "$", { type = "balanced" }),
+        -- <https://www.reddit.com/r/neovim/comments/wa819w/comment/ilfpkbd/?utm_source=share&utm_medium=web2x&context=3>
+        -- C = function(_, _, _)
+        --   local res = {}
+        --   for i = 1, vim.api.nvim_buf_line_count(0) do
+        --     local cur_line = vim.fn.getline(i)
+        --     if vim.fn.strdisplaywidth(cur_line) > 80 then
+        --       local region = {
+        --         from = { line = i, col = 1 },
+        --         to = { line = i, col = cur_line:len() },
+        --       }
+        --       table.insert(res, region)
+        --     end
+        --   end
+        --   return res
+        -- end,
+        -- TODO: Convert this example for something useful; this just clones vif
         F = function()
           local ts_utils = require("nvim-treesitter.ts_utils")
           local current_node = ts_utils.get_node_at_cursor()
@@ -124,38 +159,6 @@ return {
 
           return { from = from, to = to }
         end,
-        -- Word, ignoring punctuation and digits
-        -- w = { "()()%f[%w_][%w_]+()[ \t]*()" },
-        -- Word, with camelCase support (supports only Latin alphabet) TestTest
-        -- enables vinw, vanw, etc.
-        -- w = {
-        --   {
-        --     "%u[%l%d]+%f[^%l%d]",
-        --     "%f[%S][%l%d]+%f[^%l%d]",
-        --     "%f[%P][%l%d]+%f[^%l%d]",
-        --     "^[%l%d]+%f[^%l%d]",
-        --   },
-        --   "^().*()$",
-        -- },
-        -- Lua block '%[%[().-()%]%]'
-        -- date '()%d%d%d%d%-%d%d%-%d%d()'
-        -- ["$"] = ai.gen_spec.pair("$", "$", { type = "balanced" }),
-        -- F = MiniExtra.gen_ai_spec.function_call({ name_pattern = "[%w_]" }),
-        -- <https://www.reddit.com/r/neovim/comments/wa819w/comment/ilfpkbd/?utm_source=share&utm_medium=web2x&context=3>
-        -- C = function(_, _, _)
-        --   local res = {}
-        --   for i = 1, vim.api.nvim_buf_line_count(0) do
-        --     local cur_line = vim.fn.getline(i)
-        --     if vim.fn.strdisplaywidth(cur_line) > 80 then
-        --       local region = {
-        --         from = { line = i, col = 1 },
-        --         to = { line = i, col = cur_line:len() },
-        --       }
-        --       table.insert(res, region)
-        --     end
-        --   end
-        --   return res
-        -- end,
       }
 
       return vim.tbl_deep_extend("keep", opts, { custom_textobjects = custom_textobjects })

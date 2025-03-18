@@ -7,6 +7,10 @@ return {
   },
   opts = {
     show_success_message = true,
+    print_var_statements = {
+      js = "console.log({'%s': %s})",
+      ts = "console.log({'%s': %s})",
+    },
   },
   -- stylua: ignore
   keys = {

@@ -2,35 +2,37 @@
 --   vim.treesitter.language.register("markdown", "mdx")
 -- end)
 
+local fts = {
+  "markdown",
+  "norg",
+  -- "text",
+  -- "tex",
+  -- "plaintex",
+}
+
 return {
   { import = "lazyvim.plugins.extras.lang.markdown" },
   {
     "gaoDean/autolist.nvim",
-    ft = {
-      "markdown",
-      "text",
-      "tex",
-      "plaintex",
-      "norg",
-    },
+    ft = fts,
     opts = {},
     keys = {
-      { "<tab>", "<cmd>AutolistTab<cr>", mode = { "i" } },
-      { "<s-tab>", "<cmd>AutolistShiftTab<cr>", mode = { "i" } },
-      { "<CR>", "<CR><cmd>AutolistNewBullet<cr>", mode = { "i" } },
-      { "o", "o<cmd>AutolistNewBullet<cr>", mode = { "n" } },
-      { "O", "O<cmd>AutolistNewBulletBefore<cr>", mode = { "n" } },
-      { "<CR>", "<cmd>AutolistToggleCheckbox<cr><CR>", mode = { "n" } },
-      { "<S-CR>", "<cmd>AutolistToggleCheckbox<cr><CR>", mode = { "n" } },
+      { "<tab>", "<cmd>AutolistTab<cr>", mode = { "i" }, ft = fts },
+      { "<s-tab>", "<cmd>AutolistShiftTab<cr>", mode = { "i" }, ft = fts },
+      { "<CR>", "<CR><cmd>AutolistNewBullet<cr>", mode = { "i" }, ft = fts },
+      { "o", "o<cmd>AutolistNewBullet<cr>", mode = { "n" }, ft = fts },
+      { "O", "O<cmd>AutolistNewBulletBefore<cr>", mode = { "n" }, ft = fts },
+      { "<CR>", "<cmd>AutolistToggleCheckbox<cr><CR>", mode = { "n" }, ft = fts },
+      { "<S-CR>", "<cmd>AutolistToggleCheckbox<cr><CR>", mode = { "n" }, ft = fts },
       -- { "<C-r>", "<cmd>AutolistRecalculate<cr>", mode = { "n" } },
 
-      { "].", "<cmd>AutolistCycleNext<cr>", mode = { "n" }, desc = "Next List Type" },
-      { "[.", "<cmd>AutolistCyclePrev<cr>", mode = { "n" }, desc = "Prev List Type" },
+      { "],", "<cmd>AutolistCycleNext<cr>", mode = { "n" }, ft = fts, desc = "Next List Type" },
+      { "[.", "<cmd>AutolistCyclePrev<cr>", mode = { "n" }, ft = fts, desc = "Prev List Type" },
 
-      { ">>", ">><cmd>AutolistRecalculate<cr>", mode = { "n" } },
-      { "<<", "<<<cmd>AutolistRecalculate<cr>", mode = { "n" } },
-      { "dd", "dd<cmd>AutolistRecalculate<cr>", mode = { "n" } },
-      { "d", "d<cmd>AutolistRecalculate<cr>", mode = { "v" } },
+      { ">>", ">><cmd>AutolistRecalculate<cr>", mode = { "n" }, ft = fts },
+      { "<<", "<<<cmd>AutolistRecalculate<cr>", mode = { "n" }, ft = fts },
+      { "dd", "dd<cmd>AutolistRecalculate<cr>", mode = { "n" }, ft = fts },
+      { "d", "d<cmd>AutolistRecalculate<cr>", mode = { "v" }, ft = fts },
     },
   },
   {
@@ -45,6 +47,16 @@ return {
     optional = true,
     opts = {
       file_types = { "markdown", "norg", "rmd", "org", "mchat", "Avante" },
+    },
+  },
+  {
+    "mfussenegger/nvim-lint",
+    opts = {
+      linters = {
+        ["markdownlint-cli2"] = {
+          prepend_args = { "--config", os.getenv("HOME") .. "/.config/nvim/rules/.markdownlint-cli2.yaml", "--" },
+        },
+      },
     },
   },
   {
@@ -70,20 +82,6 @@ return {
     opts = {
       ensure_installed = {
         "markdown",
-      },
-    },
-  },
-  {
-    "stevearc/conform.nvim",
-    optional = true,
-    opts = {
-      formatters_by_ft = {
-        markdown = function(bufnr)
-          return { require("util.conform").first(bufnr, "prettier", "dprint"), "markdownlint-cli2", "markdown-toc" }
-        end,
-        ["markdown.mdx"] = function(bufnr)
-          return { require("util.conform").first(bufnr, "prettier", "dprint"), "markdownlint-cli2", "markdown-toc" }
-        end,
       },
     },
   },

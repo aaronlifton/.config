@@ -61,7 +61,16 @@ return {
         "nvim-lualine/lualine.nvim",
         optional = true,
         opts = function(_, opts)
-          table.insert(opts.sections.lualine_c, { require("grapple").statusline, cond = require("grapple").exists })
+          -- Lazy-load lualine section
+          table.insert(opts.sections.lualine_c, {
+            function()
+              return "󰛢 " .. require("grapple").name_or_index()
+              -- return require("grapple").statusline()
+            end,
+            cond = function()
+              return package.loaded["grapple"] and require("grapple").exists()
+            end,
+          })
         end,
       },
     },

@@ -87,7 +87,7 @@ return {
         return vim.fn["codeium#Complete"]()
       end, opts)
 
-      vim.keymap.set("n", "<leader>aX2", "<cmd>CodeiumToggle<cr>", { desc = "Toggle Codeium" })
+      vim.keymap.set("n", "<leader>ax2", "<cmd>CodeiumToggle<cr>", { desc = "Toggle Codeium" })
     end,
   },
 

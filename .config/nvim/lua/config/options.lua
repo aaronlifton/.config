@@ -38,10 +38,10 @@ o.shell = "fish"
 -- g.gui_font_face = "FiraCode Nerd Font"
 -- g.gui_font_face = "MesloLGLDZ Nerd Font Mono"
 -- g.gui_font_face = "MonaLisa Nerd Font Mono"
-g.gui_font_face = "Sauce Code Pro Nerd Font Mono"
-g.gui_font_size = 18
+-- g.gui_font_face = "Sauce Code Pro Nerd Font Mono"
+-- g.gui_font_size = 18
 
-g.lazyvim_picker = "fzf"
+-- g.lazyvim_picker = "fzf" -- Already enabled by LazyVim fzf extra
 -- g.lazyvim_picker = "telescope" -- for testing plugins
 g.cmp_widths = { abbr = 80, menu = 30 }
 g.lsp_goto_source = "fzf" -- "fzf", "glance"

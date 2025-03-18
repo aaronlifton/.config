@@ -317,7 +317,7 @@ wezterm
 wez
 VSCode
 microsoft
-alacritty
+#lacritty
 systempreferences
 ActivityMonitor
 lunarvim
@@ -785,3 +785,18 @@ repo
 qa
 fedprod
 TTL
+BroadcastChannel
+listing/!
+fie/!
+alacritty/!
+Nerd
+unmarshal
+map/!
+linter
+commit
+golangci
+composable
+declaratively
+Zeitwork
+namespace
+isDisabled

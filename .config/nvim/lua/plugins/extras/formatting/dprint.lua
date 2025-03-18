@@ -89,6 +89,13 @@ return {
             return {}
           end,
         },
+        -- Add dprint to the first formatter in the list
+        markdown = function(bufnr)
+          return { require("util.conform").first(bufnr, "prettier", "dprint"), "markdownlint-cli2", "markdown-toc" }
+        end,
+        ["markdown.mdx"] = function(bufnr)
+          return { require("util.conform").first(bufnr, "prettier", "dprint"), "markdownlint-cli2", "markdown-toc" }
+        end,
       })
     end,
   },

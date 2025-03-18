@@ -5,28 +5,38 @@ return {
   {
     "williamboman/mason.nvim",
     opts = {
-      ensure_installed = { "golangci-lint" },
+      ensure_installed = { "golangci-lint", "golangci-lint-langserver" },
     },
   },
   {
-    "mfussenegger/nvim-lint",
-    optional = true,
+    "neovim/nvim-lspconfig",
     opts = {
-      linters_by_ft = {
-        go = { "golangcilint" },
-        gomod = { "golangcilint" },
-        gowork = { "golangcilint" },
+      servers = {
+        golangci_lint_ls = {},
       },
     },
   },
-  {
-    "stevearc/conform.nvim",
-    opts = {
-      formatters_by_ft = {
-        go = { "gofmt" },
-      },
-    },
-  },
+  -- {
+  --   "mfussenegger/nvim-lint",
+  --   optional = true,
+  --   opts = {
+  --     linters_by_ft = {
+  --       go = { "golangcilint" },
+  --       gomod = { "golangcilint" },
+  --       gowork = { "golangcilint" },
+  --     },
+  --   },
+  -- },
+  --
+  -- LazyVim sets this as { "goimports", "gofumpt" }
+  -- {
+  --   "stevearc/conform.nvim",
+  --   opts = {
+  --     formatters_by_ft = {
+  --       go = { "gofmt" },
+  --     },
+  --   },
+  -- },
   {
     "luckasRanarison/nvim-devdocs",
     optional = true,
@@ -91,24 +101,5 @@ return {
   --   config = function()
   --     require("gotests").setup()
   --   end,
-  -- },
-  -- {
-  --   "neovim/nvim-lspconfig",
-  --   optional = true,
-  --   opts = {
-  --     setup = {
-  --       gopls = function(_, opts)
-  --         LazyVim.lsp.on_attach(function(client, _)
-  --           -- `vim.lsp.handlers["textDocument/signatureHelp"]` has been overwritten by another plugin?
-  --           -- Either disable the other plugin or set `config.lsp.signature.enabled = false` in your **Noice** config.
-  --           --   - plugin: nvim
-  --           --   - file: /Users/aaron/.local/share/bob/nightly/nvim-macos/share/nvim/runtime/lua/vim/lsp.lua
-  --           --   - line: 1390
-  --           require("lsp_signature").on_attach({ bind = true, handler_opts = { border = "rounded" } }, bufnr)
-  --           -- vim.lsp.codelens.refresh()
-  --         end)
-  --       end,
-  --     },
-  --   },
   -- },
 }

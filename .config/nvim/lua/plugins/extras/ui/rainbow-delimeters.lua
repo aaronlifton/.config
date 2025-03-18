@@ -16,10 +16,9 @@ local function init_strategy(threshold)
   end
 end
 
+-- Not compatible with nvim 11?
 return {
   "HiPhish/rainbow-delimiters.nvim",
-  -- Not compatible with nvim 11?
-  enabled = false,
   event = "LazyFile",
   config = function()
     require("rainbow-delimiters.setup").setup({})

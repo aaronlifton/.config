@@ -20,26 +20,56 @@ end)
 
 return {
   { import = "lazyvim.plugins.extras.lang.typescript" },
-  -- {
-  --   "williamboman/mason.nvim",
-  --   optional = true,
-  --   opts = {
-  --     ensure_installed = { "deno" },
-  --   },
-  -- },
+  {
+    "williamboman/mason.nvim",
+    optional = true,
+    opts = {
+      ensure_installed = { "deno" },
+    },
+  },
   {
     "neovim/nvim-lspconfig",
     optional = true,
     opts = {
       servers = {
+        -- For using with nx monorepos
+        -- https://github.com/yardnsm/.config/blob/3bb50e434c65aa80370e47f249bf0c5fc1a7bcd2/nvim/lua/yardnsm/lsp/settings/vtsls.lua#L12
         vtsls = {
           handlers = {
             -- The requires adds 004.357msec to startup time
-            ["textdocument/publishdiagnostics"] = require("util.lsp").publish_to_ts_error_translator,
+            ["textDocument/publishDiagnostics"] = require("util.lsp").publish_to_ts_error_translator,
           },
-          init_options = {
-            preferences = {
-              disableSuggestions = true,
+          -- https://github.com/yioneko/vtsls/blob/main/packages/service/configuration.schema.json
+          settings = {
+            vtsls = {
+              experimental = {
+                completion = {
+                  entriesLimit = 50,
+                },
+              },
+            },
+            typescript = {
+              tsserver = {
+                maxTsServerMemory = 8192,
+                preferences = {
+                  -- https://github.com/search?q=path%3A**%2Fnvim%2F**%2F*.lua+autoImportFileExcludePatterns&type=code
+                  -- autoImportFileExcludePatterns = { "**/node_modules/**/*", "**/dist/**/*" },
+                },
+              },
+              inlayHints = {
+                enumMemberValues = { enabled = true },
+                functionLikeReturnTypes = { enabled = true },
+                parameterNames = { enabled = "literals", suppressWhenArgumentMatchesName = true },
+                parameterTypes = { enabled = false },
+                propertyDeclarationTypes = { enabled = true },
+                variableTypes = { enabled = false },
+              },
+              javascript = {
+                updateImportsOnFileMove = { enabled = "always" },
+                suggest = {
+                  completeFunctionCalls = true,
+                },
+              },
             },
           },
         },

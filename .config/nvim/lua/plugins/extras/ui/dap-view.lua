@@ -20,7 +20,7 @@ return {
             function()
               require("dap-view").add_expr()
             end,
-            desc = "Dapp View - Add Expr",
+            desc = "Dap View - Add Expr",
           },
         },
       },

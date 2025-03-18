@@ -55,6 +55,10 @@
     "body": "vim.api.nvim_echo({ { vim.inspect(${1:string}), \"Normal\" } }, true, {})",
     "prefix": "echo"
   },
+  "nvim_echo2": {
+    "body": "vim.api.nvim_echo({ { \"${1:string}\\n\", \"Title\"}, { vim.inspect(${2:string}), \"Normal\" } }, true, {})",
+    "prefix": "echo2"
+  },
   "vim.inspect": {
     "body": "vim.inspect(${1:string})",
     "prefix": "ins"

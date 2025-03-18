@@ -58,6 +58,21 @@ M.copy_rel_file_line = function()
   M.set_clipboard(file_line)
 end
 
+M.copy_rel_pwd = function()
+  local pwd = vim.fn.expand("%:p:h")
+  local rel_pwd = vim.fn.fnamemodify(pwd, ":.")
+  M.echo(rel_pwd)
+  M.set_clipboard(rel_pwd)
+end
+
+M.copy_rel_pwd_rg_glob = function()
+  local pwd = vim.fn.expand("%:p:h")
+  local rel_pwd = vim.fn.fnamemodify(pwd, ":.")
+  local rg_glob = rel_pwd .. "/**"
+  M.echo(rg_glob)
+  M.set_clipboard(rg_glob)
+end
+
 M.copy_abs_file_line = function()
   local file_line = M.abs_file_line()
   M.set_clipboard(file_line)

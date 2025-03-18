@@ -1,15 +1,10 @@
-local prefix = "<leader>O"
+local prefix = "<leader>o"
 
 return {
   { import = "plugins.extras.lang.markdown-extended" },
   {
-    "MeanderingProgrammer/render-markdown.nvim",
-    opts = {
-      preset = "obsidian",
-    },
-  },
-  {
-    "epwalsh/obsidian.nvim",
+    -- "epwalsh/obsidian.nvim",
+    "obsidian-nvim/obsidian.nvim", -- NOTE: Using a fork from the community
     ft = "markdown",
     keys = {
       { prefix .. "o", "<cmd>ObsidianOpen<CR>", desc = "Open on App" },
@@ -20,10 +15,10 @@ return {
       { prefix .. "b", "<cmd>ObsidianBacklinks<CR>", desc = "Backlinks" },
       { prefix .. "t", "<cmd>ObsidianTags<CR>", desc = "Tags" },
       { prefix .. "t", "<cmd>ObsidianTemplate<CR>", desc = "Template" },
-      { prefix .. "l", "<cmd>ObsidianLink<CR>", desc = "Link" },
+      { prefix .. "l", "<cmd>ObsidianLink<CR>", mode = "v", desc = "Link" },
       { prefix .. "L", "<cmd>ObsidianLinks<CR>", desc = "Links" },
-      { prefix .. "N", "<cmd>ObsidianLinkNew<CR>", desc = "New Link" },
-      { prefix .. "e", "<cmd>ObsidianExtractNote<CR>", desc = "Extract Note" },
+      { prefix .. "N", "<cmd>ObsidianLinkNew<CR>", mode = "v", desc = "New Link" },
+      { prefix .. "e", "<cmd>ObsidianExtractNote<CR>", mode = "v", desc = "Extract Note" },
       { prefix .. "w", "<cmd>ObsidianWorkspace<CR>", desc = "Workspace" },
       { prefix .. "r", "<cmd>ObsidianRename<CR>", desc = "Rename" },
       { prefix .. "i", "<cmd>ObsidianPasteImg<CR>", desc = "Paste Image" },
@@ -44,6 +39,15 @@ return {
         date_format = "%Y-%m-%d",
         alias_format = "%B %-d, %Y",
         template = "_data_/templates/journal/daily_entry.md",
+      },
+
+      completion = {
+        nvim_cmp = false,
+        blink = true,
+      },
+
+      picker = {
+        name = "snacks.pick",
       },
 
       mappings = {
@@ -80,13 +84,15 @@ return {
       attachments = {
         img_folder = "_data_/media",
       },
+
+      ui = { enable = false },
     },
   },
   {
     "folke/which-key.nvim",
     opts = {
       spec = {
-        { prefix, group = "obsidian", icon = " " },
+        { prefix, group = "obsidian", icon = " ", mode = { "n", "v" } },
       },
     },
   },

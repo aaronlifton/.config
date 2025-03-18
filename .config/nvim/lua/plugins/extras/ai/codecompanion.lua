@@ -7,6 +7,12 @@ local user = vim.env.USER or "User"
 -- local adapter = "openai"
 -- local adapter = "gemini"
 local adapter = "deepseek_r1"
+local adapter_providers = {
+  deepseek_r1 = "ollama",
+  deepseek_coder = "ollama",
+  -- deepseek_r1 = "deepseek",
+  -- deepseek_coder = "ollama",
+}
 
 vim.api.nvim_create_autocmd("User", {
   pattern = "CodeCompanionChatAdapter",
@@ -19,7 +25,7 @@ vim.api.nvim_create_autocmd("User", {
 return {
   {
     "olimorris/codecompanion.nvim",
-    cmd = { "CodeCompanion", "CodeCompanionActions", "CodeCompanionChat" },
+    cmd = { "CodeCompanion", "CodeCompanionActions", "CodeCompanionChat", "CodeCompanionToggle", "CodeCompanionAdd" },
     dependencies = {
       {
         -- Make sure to set this up properly if you have lazy=true
@@ -62,7 +68,7 @@ return {
       adapters = {
         deepseek_coder = function()
           -- ollama
-          return require("codecompanion.adapters").extend("deepseek", {
+          return require("codecompanion.adapters").extend(adapter_providers.deepseek, {
             name = "deepseek_coder",
             schema = {
               model = {
@@ -72,7 +78,7 @@ return {
           })
         end,
         deepseek_r1 = function()
-          return require("codecompanion.adapters").extend("deepseek", {
+          return require("codecompanion.adapters").extend(adapter_providers.deepseek, {
             name = "deepseek_r1",
             schema = {
               model = {

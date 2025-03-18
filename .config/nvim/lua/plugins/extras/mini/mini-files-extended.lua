@@ -52,6 +52,22 @@ return {
         callback = function(args)
           local b = args.data.buf_id
           vim.keymap.set("n", "gy", yank_path, { buffer = b, desc = "Yank path" })
+
+          vim.keymap.set("n", "<M-E>", function()
+            local target_win = Util.win.last_window_with_ft("minifiles")
+            if target_win then
+              local width = math.floor(vim.o.columns * 0.5) -- 50% of total width
+              vim.api.nvim_win_set_width(target_win, width)
+            end
+          end, { buffer = b, desc = "Expand preview window" })
+
+          vim.keymap.set("n", "<M-e>", function()
+            local current_win = vim.api.nvim_get_current_win()
+            if current_win then
+              local width = math.floor(vim.o.columns * 0.25) -- 25% of total width
+              vim.api.nvim_win_set_width(current_win, width)
+            end
+          end, { buffer = b, desc = "Expand current window" })
         end,
       })
 
@@ -65,7 +81,13 @@ return {
           set_mark("c", vim.fn.stdpath("config"), "Config") -- path
           set_mark("w", vim.fn.getcwd, "Working directory") -- callable
           set_mark("~", "~", "Home directory")
+          set_mark("H", "~", "Home directory")
           set_mark("C", "~/Code", "Code")
+          set_mark("?", function()
+            vim.ui.input({ prompt = "Enter path:" }, function(path)
+              if path ~= nil and path ~= "" then set_mark("?", path, path) end
+            end)
+          end, "Code")
         end,
       })
     end,

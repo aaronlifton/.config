@@ -38,6 +38,7 @@ return {
     },
     keys = {
       -- Chat keymaps
+      -- { "<C-m>", "", ft = "mchat", group = "+model" },
       { "<C-m>a", ":M<cr>", ft = "mchat", mode = "n", desc = "Run a completion prompt" },
       { "<C-m><space>", ":Mchat<cr>", ft = "mchat", mode = "n", desc = "Open a chat buffer" },
       { "<C-m>d", ":Mdelete<cr>", ft = "mchat", mode = "n", desc = "Delete" },
@@ -46,7 +47,8 @@ return {
       { "<C-m>md", ":MCremove<cr>", ft = "mchat", mode = "n", desc = "Remove the current file into context" },
       { "<C-m>mD", ":MCclear<cr>", ft = "mchat", mode = "n", desc = "Clear the current context" },
       { "<C-m>mp", ":MCpaste<cr>", ft = "mchat", mode = "n", desc = "Paste file into context" },
-      { "<C-m>c", "<cmd>Model codestral:fim<cr>", desc = "Complete (Codestral FIM)" },
+      -- Neovim maps this as <CR>c which conflicts with neorg
+      -- { "<C-m>c", "<cmd>Model codestral:fim<cr>", desc = "Complete (Codestral FIM)" },
       -- Editor keymaps
       { gen_prefix .. "c", "<cmd>Model commit:gemini<cr>", desc = "Commit message (Gemini)" },
       { gen_prefix .. "v", "<cmd>Model commit:openai<cr>", desc = "Commit message (OpenAI)" },
@@ -206,7 +208,16 @@ return {
     optional = true,
     opts = {
       spec = {
-        { "<C-m>", group = "AI (Model)", icon = " " },
+        {
+          "<C-m>",
+          "",
+          group = "+model",
+          icon = { icon = " ", color = "white" },
+          cond = function()
+            local buf = vim.api.nvim_get_current_buf()
+            return vim.bo[buf].filetype == "mchat"
+          end,
+        },
         { gen_prefix, group = "+generate" },
         { provider_prefix, group = "+Chat with provider" },
       },

@@ -19,6 +19,12 @@ return {
                     name = ".luarc.json",
                     url = "https://github.com/LuaLS/vscode-lua/raw/master/setting/schema.json",
                   },
+                  -- {
+                  --   description = "Zed Theme Schema 0.2.0",
+                  --   fileMatch = ".zedtheme.json",
+                  --   name = ".zedtheme.json",
+                  --   url = "https://zed.dev/schema/themes/v0.2.0.json",
+                  -- },
                 },
               })
             )

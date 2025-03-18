@@ -1,5 +1,227 @@
 # Notes
 
+### `g<C-a>`
+
+```help
+|v_CTRL-A| CTRL-A 2 add N to number in highlighted text |v_CTRL-C| CTRL-C stop Visual mode
+|v_CTRL-X|	CTRL-X		2  subtract N from number in highlighted text
+|v_CTRL-G|	CTRL-G		   toggle between Visual mode and Select mode
+|v_CTRL-O|	CTRL-O		   switch from Select to Visual mode for one
+           command
+|v_CTRL-V|	CTRL-V		   make Visual mode blockwise or stop Visual
+|v_<Esc>|	<Esc>		   stop Visual mode
+|v_:|		:		   start a command-line with the highlighted
+|v_b_A|		A		2  block mode: append same text in all lines,
+|v_C|		C		2  delete the highlighted lines and start
+|v_b_I|		I		2  block mode: insert same text in all lines,
+before the highlighted area
+insert
+after the highlighted area
+lines as a range
+|v_R|		R		2  delete the highlighted lines and start
+           insert
+|v_S|		S		2  delete the highlighted lines and start
+           insert
+|v_U|		U		2  make highlighted area uppercase
+|v_V|		V		   make Visual mode linewise or stop Visual
+           mode
+|v_X|		X		2  delete the highlighted lines
+|v_Y|		Y		   yank the highlighted lines
+|v_g_CTRL-A|	g CTRL-A	2  add N to number in highlighted text
+|v_g_CTRL-X|	g CTRL-X	2  subtract N from number in highlighted text
+|v_gJ|		gJ		2  join the highlighted lines without
+           inserting spaces
+|v_gq|		gq		2  format the highlighted lines
+|v_gv|		gv		   exchange current and previous highlighted
+           area
+|v_iquote|	i"		   extend highlighted area with a double
+           quoted string (without quotes)
+|v_i'|		i'		   extend highlighted area with a single
+           quoted string (without quotes)
+|v_i(|		i(		   same as ib
+|v_i)|		i)		   same as ib
+|v_o|		o		   move cursor to other corner of area
+|v_p|		p		   replace highlighted area with register
+                      contents; deleted text in unnamed register
+|v_r|		r		2  replace highlighted area with a character
+|v_s|		s		2  delete highlighted area and start insert
+|v_u|		u		2  make highlighted area lowercase
+|v_v|		v		   make Visual mode charwise or stop
+				   Visual mode
+|v_x|		x		2  delete the highlighted area
+|v_y|		y		   yank the highlighted area
+|v_~|		~		2  swap case for the highlighted area
+
+tag		char		action in Operator-pending mode	~
+------------------------------------------------------------------------------ ~
+|o_v|		v		force operator to work charwise
+|o_V|		V		force operator to work linewise
+|o_CTRL-V|	CTRL-V		force operator to work blockwise
+```
+
+## Async code references
+
+```
+  fzf resume  1
+   └╴󰢱  ~/.local/share/nvim/lazy/codecompanion.nvim/lua/codecompanion/utils/log.lua  1
+     └╴local a = require("plenary.async") [57, 22]
+  fzf   5
+   ├╴󰢱  ~/.local/share/nvim/lazy/crates.nvim/lua/crates/core.lua  1
+   │ └╴local async = require("crates.async") [2, 7]
+   ├╴󰢱  ~/.local/share/nvim/lazy/fzf-lua/lua/fzf-lua/core.lua  1
+   │ └╴if is_async then [125, 17]
+   ├╴󰢱  ~/.local/share/nvim/lazy/fzf-lua/lua/fzf-lua/providers/lsp.lua  1
+   │ └╴local async_buf_request = function() [565, 15]
+   ├╴󰢱  ~/.local/share/nvim/lazy/fzf-lua/lua/fzf-lua/utils.lua  1
+   │ └╴M.read_file_async = function(filepath, callback) [310, 13]
+   └╴󰢱  ~/.local/share/nvim/lazy/nvim-cmp/lua/cmp/utils/async.lua  1
+     └╴async.throttle = function(fn, timeout) [30, 1]
+```
+
+## zz
+
+`:h zz`
+
+```
+z{height}<CR>		Redraw, make window {height} lines tall.  This is
+      useful to make the number of lines small when screen
+      updating is very slow.  Cannot make the height more
+      than the physical screen height.
+
+*zs*
+zs			Scroll the text horizontally to position the cursor
+at the start (left side) of the screen.  This only
+works when 'wrap' is off.
+
+*ze*
+ze			Scroll the text horizontally to position the cursor
+at the end (right side) of the screen.  This only
+works when 'wrap' is off.
+
+```
+
+## Helpfiles
+
+`:h pattern` - for regex syntax when searching
+
+```help
+Overview of ordinary atoms.				*/ordinary-atom*
+More explanation and examples below, follow the links.
+
+      ordinary atom ~
+      magic   nomagic	matches ~
+|/^|	^	^	start-of-line (at start of pattern) |/zero-width|
+|/\^|	\^	\^	literal '^'
+|/\_^|	\_^	\_^	start-of-line (used anywhere) |/zero-width|
+|/$|	$	$	end-of-line (at end of pattern) |/zero-width|
+|/\$|	\$	\$	literal '$'
+|/\_$|	\_$	\_$	end-of-line (used anywhere) |/zero-width|
+|/.|	.	\.	any single character (not an end-of-line)
+|/\_.|	\_.	\_.	any single character or end-of-line
+|/\<|	\<	\<	beginning of a word |/zero-width|
+|/\>|	\>	\>	end of a word |/zero-width|
+|/\zs|	\zs	\zs	anything, sets start of match
+|/\ze|	\ze	\ze	anything, sets end of match
+|/\%^|	\%^	\%^	beginning of file |/zero-width|		*E71*
+|/\%$|	\%$	\%$	end of file |/zero-width|
+|/\%V|	\%V	\%V	inside Visual area |/zero-width|
+|/\%#|	\%#	\%#	cursor position |/zero-width|
+|/\%'m|	\%'m	\%'m	mark m position |/zero-width|
+|/\%l|	\%23l	\%23l	in line 23 |/zero-width|
+|/\%c|	\%23c	\%23c	in column 23 |/zero-width|
+|/\%v|	\%23v	\%23v	in virtual column 23 |/zero-width|
+
+Character classes:					*/character-classes*
+      magic   nomagic	matches ~
+|/\i|	\i	\i	identifier character (see 'isident' option)
+|/\I|	\I	\I	like "\i", but excluding digits
+|/\k|	\k	\k	keyword character (see 'iskeyword' option)
+|/\K|	\K	\K	like "\k", but excluding digits
+|/\f|	\f	\f	file name character (see 'isfname' option)
+|/\F|	\F	\F	like "\f", but excluding digits
+|/\p|	\p	\p	printable character (see 'isprint' option)
+|/\P|	\P	\P	like "\p", but excluding digits
+|/\s|	\s	\s	whitespace character: <Space> and <Tab>
+|/\S|	\S	\S	non-whitespace character; opposite of \s
+|/\d|	\d	\d	digit:				[0-9]
+|/\D|	\D	\D	non-digit:			[^0-9]
+|/\x|	\x	\x	hex digit:			[0-9A-Fa-f]
+|/\X|	\X	\X	non-hex digit:			[^0-9A-Fa-f]
+|/\o|	\o	\o	octal digit:			[0-7]
+|/\O|	\O	\O	non-octal digit:		[^0-7]
+|/\w|	\w	\w	word character:			[0-9A-Za-z_]
+|/\W|	\W	\W	non-word character:		[^0-9A-Za-z_]
+|/\h|	\h	\h	head of word character:		[A-Za-z_]
+|/\H|	\H	\H	non-head of word character:	[^A-Za-z_]
+|/\a|	\a	\a	alphabetic character:		[A-Za-z]
+|/\A|	\A	\A	non-alphabetic character:	[^A-Za-z]
+|/\l|	\l	\l	lowercase character:		[a-z]
+|/\L|	\L	\L	non-lowercase character:	[^a-z]
+|/\u|	\u	\u	uppercase character:		[A-Z]
+|/\U|	\U	\U	non-uppercase character		[^A-Z]
+|/\_|	\_x	\_x	where x is any of the characters above: character
+			class with end-of-line included
+(end of character classes)
+
+      magic   nomagic	matches ~
+|/\e|	\e	\e	<Esc>
+|/\t|	\t	\t	<Tab>
+|/\r|	\r	\r	<CR>
+|/\b|	\b	\b	<BS>
+|/\n|	\n	\n	end-of-line
+|/~|	~	\~	last given substitute string
+|/\1|	\1	\1	same string as matched by first \(\)
+|/\2|	\2	\2	Like "\1", but uses second \(\)
+	   ...
+|/\9|	\9	\9	Like "\1", but uses ninth \(\)
+								*E68*
+|/\z1|	\z1	\z1	only for syntax highlighting, see |:syn-ext-match|
+	   ...
+|/\z1|	\z9	\z9	only for syntax highlighting, see |:syn-ext-match|
+
+	x	x	a character with no special meaning matches itself
+
+|/[]|	[]	\[]	any character specified inside the []
+|/\%[]|	\%[]	\%[]	a sequence of optionally matched atoms
+
+|/\c|	\c	\c	ignore case, do not use the 'ignorecase' option
+|/\C|	\C	\C	match case, do not use the 'ignorecase' option
+|/\Z|	\Z	\Z	ignore differences in Unicode "combining characters".
+			Useful when searching voweled Hebrew or Arabic text.
+
+      magic   nomagic	matches ~
+|/\m|	\m	\m	'magic' on for the following chars in the pattern
+|/\M|	\M	\M	'magic' off for the following chars in the pattern
+|/\v|	\v	\v	the following chars in the pattern are "very magic"
+|/\V|	\V	\V	the following chars in the pattern are "very nomagic"
+|/\%#=|   \%#=1   \%#=1   select regexp engine |/zero-width|
+
+|/\%d|	\%d	\%d	match specified decimal character (eg \%d123)
+|/\%x|	\%x	\%x	match specified hex character (eg \%x2a)
+|/\%o|	\%o	\%o	match specified octal character (eg \%o040)
+|/\%u|	\%u	\%u	match specified multibyte character (eg \%u20ac)
+|/\%U|	\%U	\%U	match specified large multibyte character (eg
+			\%U12345678)
+|/\%C|	\%C	\%C	match any composing characters
+
+Example			matches ~
+\<\I\i*		or
+\<\h\w*
+\<[a-zA-Z_][a-zA-Z0-9_]*
+			An identifier (e.g., in a C program).
+
+\(\.$\|\. \)		A period followed by <EOL> or a space.
+
+[.!?][])"']*\($\|[ ]\)	A search pattern that finds the end of a sentence,
+			with almost the same definition as the ")" command.
+
+cat\Z			Both "cat" and "càt" ("a" followed by 0x0300)
+			Does not match "càt" (character 0x00e0), even
+			though it may look the same.
+
+
+```
+
 ## Reselect previous selection
 
 `gv`

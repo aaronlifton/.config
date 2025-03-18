@@ -41,21 +41,30 @@ map("n", "<leader>u<PageUp>", function()
 end, { desc = "Toggle colorcolumn" })
 
 -- Toggle formatexpr
--- NOTE: Use `gq` to format the current paragraph
-map("n", "<leader>uM", function()
+local prev_textwidth = vim.o.textwidth
+local function toggle_formatexpr(textwidth)
   if o.formatexpr == "" then
-    -- o.formatexpr = "v:lua.require'lazyvim.util'.format.formatexpr()"
-    -- o.formatexpr = "v:lua.vim.lsp.formatexpr()"
     o.formatexpr = lazyutil.formatexpr()
+    if textwidth then o.textwidth = textwidth end
   else
     o.formatexpr = ""
+    o.textwidth = prev_textwidth
   end
   if o.formatexpr == "" then
     LazyVim.info("Disabled formatexpr")
   else
-    LazyVim.info("Reset formatexpr")
+    LazyVim.info("Reset formatexpr (width: " .. textwidth .. ")")
   end
+end
+-- NOTE: Use `gq` to format the current paragraph
+map("n", "<leader>uM", function()
+  toggle_formatexpr()
 end, { desc = "Toggle formatexpr" })
+
+-- Toggle formatexpr with textwidth=120
+map("n", "<leader>u<PageDown>", function()
+  toggle_formatexpr(120)
+end, { desc = "Toggle formatexpr (width=120)" })
 
 -- Cursor navigation on insert mode
 map("i", "<M-h>", "<left>", { desc = "Move cursor left" })
@@ -117,10 +126,6 @@ map("n", "<leader><tab>\\", "<C-w>g<Tab>", { desc = "Alt Tab", remap = true })
 
 map({ "n", "x" }, "gw", "*N", { desc = "Search word under cursor" })
 
--- Indentation
--- map("n", "<", "<<", { desc = "Deindent" })
--- map("n", ">", ">>", { desc = "Indent" })
-
 -- CMD keys
 map({ "n", "v", "s", "i" }, "<D-s>", "<cmd>w<cr>", { noremap = true })
 
@@ -149,11 +154,24 @@ map("n", "<M-v>", "cw<C-r>0<ESC>", { desc = "Change word under cursor with regis
 -- Move to beginning/end of line
 map({ "n", "x", "o" }, "<M-l>", "$", { desc = "Last Character of Line", noremap = true })
 map({ "n", "x", "o" }, "<M-h>", "_", { desc = "First character of Line" })
+map({ "n", "x", "o" }, "<M-b>", "b", { desc = "Previous Word", noremap = true })
+map({ "n", "x", "o" }, "<M-w>", "w", { desc = "Next Word", noremap = true })
 
--- Delete and change without yanking
+-- Helix
+-- TODO: implement the following:
+-- [x] "Move to end of the parent node (<A-e>)", "Move to beginning of the parent node (<A-b>)",
+-- [x] "Expand selection to parent syntax node (<A-o> <A-up>)", "Shrink selection to previously expanded syntax node (<A-down> <A-i>)",
+-- [ ] "Select next sibling in syntax tree (<A-n> <A-right>)", "Select previous sibling in syntax tree (<A-left> <A-p>)"
+--
+-- Delete and change without yanking (from Helix)
 map({ "n", "x" }, "<M-d>", '"_d', { desc = "Delete without yanking" })
 map({ "n", "x" }, "<M-c>", '"_c', { desc = "Change without yanking" })
 map({ "n", "x" }, "<C-c>", '"_ciw', { desc = "Change word without yanking" })
+
+-- Replacement for H and L
+-- map("n", "gL", "L", { desc = "Move to bottom of window", noremap = true })
+-- map("n", "gc", "M", { desc = "Move to center of window", noremap = true })
+-- map("n", "gT", "M", { desc = "Move to top of window", noremap = true })
 
 -- Enable delete to end of line in NUI inputs. Gets overriden by LSP keymap
 -- otherwise.
@@ -180,6 +198,10 @@ map("x", "#", [[y?\V<C-R>=escape(@", '?\')<CR><CR>]], { desc = "Search Selected 
 -- Currently set by better-escape.nvim
 -- Press jk fast to enter
 -- map("i", "jk", "<ESC>", { silent = true })
+
+-- commenting (override LazyVim keymap to save to unnamed register)
+map("n", "gco", 'o<esc>V"_cx<esc><cmd>normal gcc<cr>fxa<bs>', { desc = "Add Comment Below" })
+map("n", "gcO", 'O<esc>V"_cx<esc><cmd>normal gcc<cr>fxa<bs>', { desc = "Add Comment Above" })
 
 -- Dashboard
 map("n", "<leader>fd", function()
@@ -279,6 +301,13 @@ map("n", "<leader>wh", function()
   require("util.win").switch_to_highest_window()
 end)
 
+-- Folds
+map("n", "z<C-t>", function()
+  local start_line = vim.fn.search("{", "bcn")
+  local end_line = vim.fn.search("}", "n")
+  if start_line > 0 and end_line > 0 then vim.cmd(string.format("%d,%dfold", start_line, end_line)) end
+end, { desc = "Fold table contents" })
+
 -- Disabled in favor of Avante/Parrot
 -- map("n", "<M-->", "<cmd>ChatGPT<CR>", { desc = "ChatGPT" })
 
@@ -299,6 +328,9 @@ end, { desc = "Copy relative path to clipboard", silent = true })
 map("n", "<leader>cpl", function()
   path_util.copy_rel_file_line()
 end, { desc = "Copy relative path:line to clipboard", silent = true })
+map("n", "<leader>cpP", function()
+  path_util.copy_rel_pwd_rg_glob()
+end, { desc = "Copy pwd rg glob to clipboard", silent = true })
 map("n", "<leader>cpL", function()
   path_util.copy_abs_file_line()
 end, { desc = "Copy absolute path:line to clipboard", silent = true })
@@ -348,7 +380,6 @@ map({"n", "x" }, "<leader>g<C-f>", function()
   })
 end, { desc = "Git Browse (copy file)" })
 
-map("n", "<leader>g<C-b>", function() Snacks.picker.git_log_line() end, { desc = "Git Blame Line" })
 vim.api.nvim_create_user_command("LazygitYadm", function()
   Snacks.terminal({ "yadm", "enter", "lazygit" })
 end, { desc = "Lazygit (YADM)" })
@@ -465,12 +496,27 @@ map(
   "<cmd>vsplit | lua vim.lsp.buf.definition()<cr>",
   { desc = "Goto Definition (vsplit)", silent = true }
 )
+
 -- Goto definition in new tab
 map(
   "n",
   "<C-w>gt",
   "<cmd>tab split | lua vim.lsp.buf.definition()<cr>",
   { desc = "Goto Definition (tab)", silent = true }
+)
+
+-- Goto type definition
+map(
+  "n",
+  "<C-w>gy",
+  "<cmd>tab split | lua vim.lsp.buf.type_definition()<cr>",
+  { desc = "Goto Type Definition (tab)", silent = true }
+)
+map(
+  "n",
+  "<C-w><C-y>",
+  "<cmd>vsplit | lua vim.lsp.buf.type_definition()<cr>",
+  { desc = "Goto Type Definition (vsplit)", silent = true }
 )
 
 -- map("n", "<leader>ct", function()
@@ -496,14 +542,14 @@ map("n", "<C-w><C-v>", function()
 end, { desc = "Goto File (vsplit)", silent = true })
 
 -- AI Controls
--- Codeium is <leader>aX2
--- map("n", "<leader>aX1", "<cmd>Copilot toggle<cr>", { desc = "Toggle Copilot" })
--- map("n", "<leader>aX3", function()
+-- Codeium is <leader>ax2
+-- map("n", "<leader>ax1", "<cmd>Copilot toggle<cr>", { desc = "Toggle Copilot" })
+-- map("n", "<leader>ax3", function()
 --   vim.api.nvim_command("CodeiumDisable")
 --   require("copilot").disable()
 --   vim.api.nvim_command("LLMToggleAutoSuggest")
 -- end, { desc = "Toggle Copilot/Codeium to HFCC" })
--- map("n", "<leader>aXa", function()
+-- map("n", "<leader>axa", function()
 --   vim.api.nvim_command("CodeiumDisable")
 --   vim.api.nvim_command("Copilot disable")
 --   vim.api.nvim_echo({
@@ -518,6 +564,25 @@ end, { desc = "Goto File (vsplit)", silent = true })
 -- Windows Split
 -- map("n", "<leader>_", "<C-W>s", { desc = "Split Window Below", remap = true })
 -- map("n", "<leader>\\", "<C-W>v", { desc = "Split Window Right", remap = true })
+
+-- Center when scrolling
+if Snacks.scroll.enabled then
+  map("n", "<C-d>", function()
+    vim.wo.scrolloff = 999
+    vim.defer_fn(function()
+      vim.wo.scrolloff = 8
+    end, 500)
+    return "<c-d>"
+  end, { expr = true })
+
+  map("n", "<C-u>", function()
+    vim.wo.scrolloff = 999
+    vim.defer_fn(function()
+      vim.wo.scrolloff = 8
+    end, 500)
+    return "<c-u>"
+  end, { expr = true })
+end
 
 -- Kittens
 local kitten = require("util.kitty").kitten
@@ -717,3 +782,30 @@ map("n", "<leader>13", function()
     vim.api.nvim_echo({ { vim.inspect(ctx), "Normal" } }, true, {})
   end)
 end)
+
+-- Override LSP/Conform formatter
+map("n", "<leader>c<C-f>", function()
+  vim.b.disable_lsp_format = true
+  Util.format()
+end, { desc = "Format (Override LSP)" })
+Snacks.toggle({
+  name = "LSP Format",
+  get = function()
+    return vim.b.disable_lsp_format
+  end,
+  set = function(value)
+    vim.b.disable_lsp_format = value
+  end,
+}):map("<leader>u<C-f>")
+
+map("n", "<leader>c<C-c>", function()
+  local word = vim.fn.expand("<cword>")
+  local camelCase = vim.fn.substitute(word, "\\(_\\)\\([a-z]\\)", "\\u\\2", "g")
+  return "ciw" .. camelCase .. "<esc>b"
+end, { expr = true, desc = "Convert to camel case" })
+
+map("n", "<leader>c<C-s>", function()
+  local word = vim.fn.expand("<cword>")
+  local snakeCase = vim.fn.substitute(word, "[a-z]\\@<=[A-Z]", "_\\l&", "g")
+  return "ciw" .. snakeCase .. "<esc>b"
+end, { expr = true, desc = "Convert to snake case" })

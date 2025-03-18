@@ -2,15 +2,33 @@ local conflict_prefix = "<leader>gC"
 local file_history_prefix = "<leader>gH"
 local diffview_prefix = "<leader>gD"
 
+local function toggle_diffview(cmd)
+  if next(require("diffview.lib").views) == nil then
+    vim.cmd(cmd)
+  else
+    vim.cmd("DiffviewClose")
+  end
+end
+
 return {
   {
     "sindrets/diffview.nvim",
     keys = {
-      { file_history_prefix .. "h", "<cmd>DiffviewFileHistory<CR>", desc = "Diff File History" },
+      -- { file_history_prefix .. "h", "<cmd>DiffviewFileHistory<CR>", desc = "Diff File History" },
+      {
+        file_history_prefix .. "h",
+        function()
+          toggle_diffview("DiffviewFileHistory")
+        end,
+        desc = "Diff File History",
+      },
+      -- stylua: ignore start
+      { file_history_prefix .. "f", function() toggle_diffview("DiffviewFileHistory %") end, desc = "Diff Current File" },
       { file_history_prefix .. "m", "<cmd>DiffviewFileHistory master<CR>", desc = "Diff File History (master)" },
       { file_history_prefix .. "M", "<cmd>DiffviewFileHistory main<CR>", desc = "Diff File History (main)" },
       { file_history_prefix .. "h", ":'<,'>DiffviewFileHistory", desc = "Diff View (Selection)", mode = "v" },
-      { diffview_prefix .. "h", "<cmd>DiffviewOpen<CR>", desc = "Diff View" },
+      -- { diffview_prefix .. "h", "<cmd>DiffviewOpen<CR>", desc = "Diff View" },
+      { diffview_prefix .. "h", function() toggle_diffview("DiffviewOpen") end, desc = "Diff View" },
       { diffview_prefix .. "H", "<cmd>DiffviewOpen HEAD~1<CR>", desc = "Diff View (HEAD~1)" },
       { diffview_prefix .. "m", "<cmd>DiffviewOpen master<CR>", desc = "Diff View (master)" },
       { diffview_prefix .. "M", "<cmd>DiffviewOpen main<CR>", desc = "Diff View (main)" },
@@ -32,14 +50,7 @@ return {
         end,
         desc = "Diff View (pick - current file)",
       },
-      -- Alternative mappings
-      -- { "<leader>gd", "<cmd>DiffviewFileHistory<CR>", desc = "Diff File History" },
-      -- { "<leader>gF", "<cmd>DiffviewFileHistory master<CR>", desc = "Diff File History (master)" },
-      -- { "<leader>gF", ":'<,'>DiffviewFileHistory", desc = "Diff View (Selection)", mode = "v" },
-      -- { prefix3, "<cmd>DiffviewOpen<CR>", desc = "Diff View Open" },
-      -- { "<leader>gM", "<cmd>DiffviewOpen master<CR>", desc = "Diff View (master)" },
-      -- { "<leader>gm", "<cmd>DiffviewOpen master -- " .. vim.fn.expand("%") .. "<CR>", desc = "Diff View (master)" },
-      -- { prefix2, "<cmd>DiffviewOpen HEAD~1<CR>", desc = "Diff View (HEAD~1)" },
+      -- stylua: ignore end
     },
     opts = function(_, opts)
       local actions = require("diffview.actions")
@@ -54,7 +65,7 @@ return {
         diff_buf_read = function(bufnr)
           -- vim.notify("here")
           vim.b[bufnr].view_activated = false
-          require("git-conflict").setup()
+          require("git-conflict").setup(LazyVim.opts("diffview.nvim"))
           vim.api.nvim_command("GitConflictRefresh")
         end,
         -- view_opened = function(view)

@@ -39,6 +39,14 @@ return {
         },
       },
       picker = {
+        previewers = {
+          git = {
+            builtin = false,
+          },
+        },
+        matcher = {
+          frecency = true,
+        },
         win = {
           input = {
             keys = {
@@ -46,6 +54,10 @@ return {
                 "toggle_cwd",
                 mode = { "n", "i" },
               },
+              ["<c-u>"] = { "preview_scroll_up", mode = { "i", "n" } },
+              ["<a-j>"] = { "list_scroll_down", mode = { "i", "n" } },
+              ["<c-d>"] = { "preview_scroll_down", mode = { "i", "n" } },
+              ["<a-k>"] = { "list_scroll_up", mode = { "i", "n" } },
             },
           },
         },
@@ -66,6 +78,12 @@ return {
               { win = "preview", title = "{preview}", border = "rounded", width = 0.6 },
             },
           },
+        },
+      },
+      image = {
+        enabled = true,
+        doc = {
+          inline = false,
         },
       },
       dashboard = {
@@ -99,10 +117,11 @@ return {
     },
     keys = {
       -- stylua: ignore start
-      { "<leader>bz", function() Snacks.scratch() end, desc = "Toggle Scratch Buffer" },
+      { "<leader>\\", function() Snacks.scratch() end, desc = "Toggle Scratch Buffer" },
       -- In addition to LazyVim's <leader>wm and <leader>uZ mappings:
       { "<leader>z", function() Snacks.zen.zoom() end, desc = "Zoom" },
       -- { "<leader>gL", function() Snacks.picker.git_log_line() end, desc = "Git Log Line" },
+      {"<leader>g<C-l>", function() Snacks.picker.git_log_line() end, { desc = "Git Blame Line" }},
       -- { "<leader>Z", function() Snacks.zen.zen() end, desc = "Zen" },
       -- { "<leader>LS",  function() Snacks.scratch.select() end, desc = "Select Scratch Buffer" },
       -- { "<leader>S",  function() Snacks.scratch.select() end, desc = "Select Scratch Buffer" },
@@ -122,9 +141,10 @@ return {
       --
       { "<leader>si", function() Snacks.picker.icons() end, desc = "Icons" },
       { "<leader>su", function() Snacks.picker.undo() end, desc = "Undotree" },
+      { "<leader>sm", function() Snacks.picker.marks() end, desc = "Marks" },
       -- Alternate keymaps for testing
       { "<leader>f<C-f>", function() Snacks.picker.files() end, desc = "Find Files (Root Dir)" },
-      { "g<C-d>", function() Snacks.picker.lsp_definitions() end, desc = "Goto Definition" },
+      -- { "g<C-d>", function() Snacks.picker.lsp_definitions() end, desc = "Goto Definition" },
       { "g<C-r>", function() Snacks.picker.lsp_references() end, nowait = true, desc = "References" },
       -- "<leader>s<C-s>" until this replaces FzfLua lsp_document_symbols
       { "<leader>s<C-s>", function()
@@ -176,7 +196,7 @@ return {
   -- {
   --   "neovim/nvim-lspconfig",
   --   opts = function()
-  --     if LazyVim.pick.want() ~= "snacks" then return end
+  --     if vim.g.lazyvim_picker ~= "snacks" then return end
   --     local Keys = require("lazyvim.plugins.lsp.keymaps").get()
   --       -- stylua: ignore
   --       vim.list_extend(Keys, {

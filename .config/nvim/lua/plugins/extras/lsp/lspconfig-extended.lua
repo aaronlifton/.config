@@ -75,7 +75,8 @@ return {
       -- stylua: ignore
       vim.list_extend(Keys, {
         { prefix, false },
-        { "<leader>cil", "<cmd>LspInfo<cr>", desc = "Lsp" },
+        -- { "<leader>cil", "<cmd>LspInfo<cr>", desc = "Lsp" },
+        { "<leader>cil", function() Snacks.picker.lsp_config() end, desc = "Lsp" },
         { prefix .. "r", "<cmd>LspRestart<cr>", desc = "Restart Lsp" },
         { prefix .. "s", "<cmd>LspStart<cr>", desc = "Start Lsp" },
         { prefix .. "S", "<cmd>LspStop<cr>", desc = "Stop Lsp" },

@@ -23,6 +23,11 @@ local function toggle_auto_expand_width(win)
     return
   end
 
+  vim.api.nvim_echo(
+    { { "state.window.last_user_width\n", "Title" }, { vim.inspect(state.window.last_user_width), "Normal" } },
+    true,
+    {}
+  )
   neotree_toggle_auto_expand_width(state)
   while win_width < state.win_width + 1 do
     win:resize("width", 1)
