@@ -5,10 +5,80 @@
 	email = alifton@synack.com
 	signingKey = A5ACD3327CECF3D95AD7E6CC93D3E9320BF8BC47
 [alias]
+  aliases = config --get-regexp alias
+
+  a = add --all
+  ai = add -i
+
+  ap = apply
+  as = apply --stat
+  ac = apply --check
+
+  b = branch
+  ba = branch -a ; --all (remote + local)
+  bd = branch -d ; --delete
+  bdd = branch -D ; --delete --force
+  br = branch -r ; remotes
+  bc = rev-parse --abbrev-ref HEAD ; --current branch
+  bu = !git rev-parse --abbrev-ref --symbolic-full-name "@{u}" ; upstream
+  bs = !git-branch-status
+	brd = "!git branch --sort=-committerdate | head -n 10" ; recent branches
+	br = branch -v ; --verbose
+
+  c = commit
+  ca = commit -a
+  cm = commit -m
+  cam = commit -am
+  cem = commit --allow-empty -m
+  cd = commit --amend
+  cad = commit -a --amend
+  ced = commit --allow-empty --amend
+
+  cl = clone
+  cld = clone --depth 1
+  clg = !sh -c 'git clone https://github.com/$1 $(basename $1)' -
+  clgp = !sh -c 'git clone git@github.com:$1 $(basename $1)' -
+  clgu = !sh -c 'git clone git@github.com:$(git config --get user.username)/$1 $1' -
+
+  cp = cherry-pick
+  cpa = cherry-pick --abort
+  cpc = cherry-pick --continue
+
+  d = diff
+  dp = diff --patience
+  dc = diff --cached
+  dk = diff --check
+  dck = diff --cached --check
+  dt = difftool
+  dct = difftool --cached
+
+  f = fetch
+  fo = fetch origin
+  fu = fetch upstream
+
+  fp = format-patch ; create patch files
+
+  fk = fsck ; Verifies the connectivity and validity of the objects in the database
+
+  ; show-function
+  ; Show the preceding line that contains the function name of the match, unless
+  ; the matching line is a function name itself. The name is determined in the
+  ; same way as git diff works out patch hunk headers.
+  g = grep -p 
+
+  ; use -n 10 to limit the number of lines
+  l = log --oneline --graph --decorate
+  lg = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+
+  ls = ls-files
+  lsf = !git ls-files | grep -i
+  ls-unchanged = "!git ls-files -v | grep ^h"
+
+
+
+
 	st = status
 	co = checkout
-	br = branch -v
-	brd = "!git branch --sort=-committerdate | head -n 10"
 	ci = commit
 	ls = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate
 	ll = log --pretty=format:"%C(yellow)%h%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --numstat
@@ -16,8 +86,16 @@
 	lds = log --pretty=format:"%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=short
 	ld = log --pretty=format:"%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=relative
 	le = log --oneline --decorate
+  lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+  mre10 = log --oneline --name-only HEAD~10..HEAD
+  logtree = log --graph --oneline --decorate --all
+  glg = log --graph --oneline --all
+  gla = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --branches
+  lp = "log --graph --oneline --all"
+  ; logba = "!git log --pretty="format:%at %H" | sort -g | cut -d' ' -f2"
 	filelog = log -u
 	fl = log -u
+  last = log -1 HEAD
 	dl = "!git ll -1"
 	dlc = diff --cached HEAD^
 	grep = grep -Ii
@@ -28,32 +106,23 @@
 	rh = reset --hard
 	rh1 = reset HEAD^ --hard
 	rh2 = reset HEAD^^ --hard
-	logtree = log --graph --oneline --decorate --all
 	brq = "!git branch -v | grep '*'"
-	glg = log --graph --oneline --all
-	gla = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --branches
 	brd2 = "!git branch -v --sort=-committerdate | head -n 20"
 	sq = "!git reset --soft HEAD~2 && git commit --edit -m \"$(git log --format=%B --reverse HEAD..HEAD@{1})\""
 	camp = "!git commit -am $1 && git push"
 	pfwl = push --force-with-lease
-	pd = pull origin dev
 	sq2 = "!git add . && git commit -m fixup && git rebase -i HEAD~2"
 	dsf = "!f() { [ -z \"$GIT_PREFIX\" ] || cd \"$GIT_PREFIX\" && git diff --color \"$@\" | diff-so-fancy  | less --tabs=4 -RFXS; }; f"
-	lp = "log --graph --oneline --all"
-	logba = "!git log --pretty="format:%at %H" | sort -g | cut -d' ' -f2);"
 	pager = "diff-so-fancy | less --tabs=4 -RF"
 	; excludesfile = ~/.gitignore_global
 	editor = nvim
-	last = log -1 HEAD
 	latest = show --name-only --oneline HEAD
 	down = pull --rebase origin main
 	up = push -u origin main
 	save = "!git add -A; git commit ."
 	uptags = push --follow-tags
 	downtags = fetch --tags
-	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
 	xdsf = !"git -c interactive.diffFilter='less --tabs=4 -RFX' \"$@\" # Don't use DSF"
-        mre10 = log --oneline --name-only HEAD~10..HEAD
 [color "diff-highlight"]
 	oldNormal = red bold
 	oldHighlight = red bold 52
