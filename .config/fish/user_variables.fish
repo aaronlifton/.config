@@ -6,7 +6,7 @@ set -x nvm_default_version v21.7.1
 fish_add_path /usr/local/bin/
 fish_add_path -m /Users/$USER/.asdf/shims
 fish_add_path -m /opt/homebrew/bin
-fish_add_path -m /Users/$USER/.local/share/bob/nvim-bin
+# fish_add_path -m /Users/$USER/.local/share/bob/nvim-bin
 fish_add_path -m /Users/$USER/Code/venv/bin
 # fish_add_path /opt/homebrew/opt/asdf/lib/exec/bin
 # fish_add_path /opt/homebrew/opt/ccache/libexec
