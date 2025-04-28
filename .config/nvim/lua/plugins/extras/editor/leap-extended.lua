@@ -1,4 +1,59 @@
 local paste_on_remote_yank = true
+local use_new_defaults = true
+local use_clever_r = true
+local trigger_remote_v_immediately = false
+local keys = {
+  {
+    "<C-s>",
+    function()
+      require("leap.treesitter").select()
+    end,
+    mode = { "n", "x", "o" },
+    desc = "Treesitter Select (Leap)",
+  },
+  {
+    "<M-s>",
+    'V<cmd>lua require("leap.treesitter").select()<cr>',
+    mode = { "n", "x", "o" },
+    desc = "Treesitter Select (Leap - Line)",
+  },
+  {
+    "gS",
+    function()
+      require("leap.remote").action()
+    end,
+    mode = { "n", "x", "o" },
+    desc = "Leap Remote",
+  },
+}
+if use_new_defaults then
+  keys = {
+    {
+      -- Example: `gs{leap}yap`, `vgs{leap}apy`, or `ygs{leap}ap` yank the
+      -- paragraph at the position specified by `{leap}`.
+      "gs",
+      function()
+        if trigger_remote_v_immediately then
+          -- Trigger visual selection right away, so that you can `gs{leap}apy`:
+          require("leap.remote").action({ input = "v" })
+        else
+          require("leap.remote").action()
+        end
+      end,
+      mode = { "n", "x", "o" },
+      desc = "Leap Remote",
+    },
+    {
+      -- Forced linewise version:
+      "gS",
+      function()
+        require("leap.remote").action({ input = "V" })
+      end,
+      mode = { "n", "o" },
+      desc = "Leap Remote",
+    },
+  }
+end
 
 local function enable_leap_anywhere_mappings()
   vim.keymap.del({ "n", "x", "o" }, "s")
@@ -24,32 +79,7 @@ return {
   {
     "ggandor/leap.nvim",
     optional = true,
-    keys = {
-      {
-        "<C-s>",
-        function()
-          require("leap.treesitter").select()
-        end,
-        mode = { "n", "x", "o" },
-        desc = "Treesitter Select (Leap)",
-      },
-      {
-        "<M-s>",
-        'V<cmd>lua require("leap.treesitter").select()<cr>',
-        mode = { "n", "x", "o" },
-        desc = "Treesitter Select (Leap - Line)",
-      },
-      {
-        -- Example: `gs{leap}yap`, `vgs{leap}apy`, or `ygs{leap}ap` yank the
-        -- paragraph at the position specified by `{leap}`.
-        "gS",
-        function()
-          require("leap.remote").action()
-        end,
-        -- mode = { "n", "o" },
-        mode = { "n", "x", "o" },
-        desc = "Leap Remote",
-      },
+    keys = vim.list_extend(keys, {
       -- Remote K:
       {
         "g<M-k>",
@@ -66,33 +96,11 @@ return {
       --   end,
       --   desc = "Leap Remote gx",
       -- },
-
-      -- format is different: <op>r<leap><motion/textobject>
-      -- e.g. crle<cr>i"<esc>
-      -- e.g. cr[first 2 letters]af to change a remote function
-      -- repeat the operator for line: crle<cr>c<esc>
-      -- not for visual mode, since r is useful there
-      -- {
-      --   "r",
-      --   function()
-      --     require("leap.remote").action()
-      --   end,
-      --   mode = { "o" },
-      --   desc = "Leap Remote",
-      -- },
-      -- {
-      --   "gV",
-      --   function()
-      --     require("leap.remote").action({ input = "V" })
-      --   end,
-      --   mode = { "n", "o" },
-      --   desc = "Leap Remote",
-      -- },
-    },
+    }),
     opts = {
       equivalence_classes = { " \t\r\n", "([{", ")]}", "'\"`" },
       -- equivalence_classes = { " \t\r\n", "([", ")]", "'\"`" },
-      -- substitute_chars = { ["\r"] = "¬" },
+      substitute_chars = { ["\r"] = "¬" },
       -- Three characters as arguments:
       --  - the character preceding the match (might be an empty string)
       --  - the matched pair itself
@@ -100,17 +108,20 @@ return {
         -- Disable preview altogether.
         -- return false
 
+        -- Skip the pair if it begins with whitespace or mid-word alphanumeric
+        -- character: foobar[quux]
+        --            ^    ^^^  ^^
         -- return not (
         --   (ch1:match("%s") or ch2:match("%s")) -- skip when the first or second character of the pair is whitespace
         --   or (ch0:match("%w") and ch1:match("%w") and ch2:match("%w")) -- skip middle of alphanumerics
         -- )
 
-        -- Skip the pair if it begins with whitespace or mid-word alphanumeric
-        -- character: foobar[quux]
-        --            ^    ^^^  ^^
+        -- Skip the middle of alphabetic words:
+        --   foobar[quux]
+        --   ^----^^^--^^
         return not (
           ch1:match("%s") -- skip when the first character of the pair is whitespace
-          or ch0:match("%w") and ch1:match("%w") and ch2:match("%w") -- skip middle of alphanumerics
+          or ch0:match("%a") and ch1:match("%a") and ch2:match("%a") -- skip middle of alphanumerics
         )
       end,
     },
@@ -120,23 +131,56 @@ return {
       for k, v in pairs(opts) do
         leap.opts[k] = v
       end
-      leap.add_default_mappings(true)
-      vim.keymap.del({ "x", "o" }, "x")
-      vim.keymap.del({ "x", "o" }, "X")
+
+      if use_new_defaults then
+        -- s, S (new defaults)
+        require("leap.user").set_default_mappings()
+      else
+        -- s, S, gs (legacy, sneak style)
+        require("leap.user").add_default_mappings(true)
+        vim.keymap.del({ "x", "o" }, "x")
+        vim.keymap.del({ "x", "o" }, "X")
+      end
 
       -- enable_leap_anywhere_mappings()
 
       require("leap.user").set_repeat_keys("<enter>", "<backspace>")
 
-      vim.keymap.set({ "n", "x", "o" }, "ga", function()
-        local sk = vim.deepcopy(require("leap").opts.special_keys)
-        -- The items in `special_keys` can be both strings or tables - the
-        -- shortest workaround might be the below one:
-        sk.next_target = vim.fn.flatten(vim.list_extend({ "a" }, { sk.next_target }))
-        sk.prev_target = vim.fn.flatten(vim.list_extend({ "A" }, { sk.prev_target }))
+      if use_new_defaults then
+        if use_clever_r then
+          -- "clever-R"
+          -- vim.keymap.set({ "n", "x", "o" }, "R", function()
+          vim.keymap.set({ "x", "o" }, "R", function()
+            local sk = vim.deepcopy(require("leap").opts.special_keys)
+            -- The items in `special_keys` can be both strings or tables - the
+            -- shortest workaround might be the below one:
+            sk.next_target = vim.fn.flatten(vim.list_extend({ "R" }, { sk.next_target }))
+            sk.prev_target = vim.fn.flatten(vim.list_extend({ "r" }, { sk.prev_target }))
+            -- Remove the temporary traversal keys from `safe_labels`.
+            local sl = {}
+            for _, label in ipairs(vim.deepcopy(require("leap").opts.safe_labels)) do
+              if label ~= "R" and label ~= "r" then table.insert(sl, label) end
+            end
+            require("leap.treesitter").select({
+              opts = { special_keys = sk, safe_labels = sl },
+            })
+          end)
+        else
+          vim.keymap.set({ "x", "o" }, "R", function()
+            require("leap.treesitter").select()
+          end)
+        end
+      else
+        vim.keymap.set({ "n", "x", "o" }, "ga", function()
+          local sk = vim.deepcopy(require("leap").opts.special_keys)
+          -- The items in `special_keys` can be both strings or tables - the
+          -- shortest workaround might be the below one:
+          sk.next_target = vim.fn.flatten(vim.list_extend({ "a" }, { sk.next_target }))
+          sk.prev_target = vim.fn.flatten(vim.list_extend({ "A" }, { sk.prev_target }))
 
-        require("leap.treesitter").select({ opts = { special_keys = sk } })
-      end, { desc = "Treesitter Select (Leap)" })
+          require("leap.treesitter").select({ opts = { special_keys = sk } })
+        end, { desc = "Treesitter Select (Leap)" })
+      end
 
       -- Helix keymaps
       -- (<A-o> <A-up>) Expand selection to parent syntax node
@@ -150,8 +194,6 @@ return {
       --
       --   require("leap.treesitter").select({ opts = { special_keys = sk } })
       -- end, { desc = "Treesitter Select (Leap)" })
-
-      -- vim.keymap.set({ "n", "x", "o" }, "gA", "V<CMD>lua require('leap.treesitter').select()<CR>")
 
       -- Single line
       -- vim.keymap.set({ "x", "o" }, "rr", function()
@@ -229,6 +271,8 @@ return {
         -- { "arw", desc = "word" },
         mode = { "o", "x" },
       }, { notify = false })
+
+      return opts
     end,
   },
   -- {

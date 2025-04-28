@@ -7,7 +7,7 @@ local M = {}
 function M.tab(findstart, base)
   if findstart == 1 then return 0 end
 
-  local choices = { "Dev", "Test", "Doc", "AI" }
+  local choices = { "Dev", "Test", "Doc", "AI", "Rails", "NPM" }
   local matches = {}
 
   -- If base is empty, return all choices

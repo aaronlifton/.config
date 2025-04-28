@@ -1,6 +1,8 @@
 ---@class util.win
 local M = {}
 
+local NOTIFY_TITLE = "  util.win"
+
 function M.switch_to_highest_window()
   local windows = vim.api.nvim_list_wins()
   local highest_win = windows[1]
@@ -11,6 +13,11 @@ function M.switch_to_highest_window()
       highest_zindex = vim.api.nvim_win_get_config(highest_win).zindex
       break
     end
+  end
+
+  if not highest_win then
+    vim.notify("No windows found ", vim.log.levels.WARN, { title = NOTIFY_TITLE })
+    return
   end
 
   vim.schedule(function()

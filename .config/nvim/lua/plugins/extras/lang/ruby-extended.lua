@@ -314,6 +314,7 @@ return {
         eruby = { "erb_format" },
       },
       formatters = {
+        --- ruby /Users/$USER/.local/share/nvim/mason/packages/rubocop/bin/rubocop -c .rubocop_ci.yml --force-exclusion --server -a -f quiet --stderr --stdin $path
         rubocop = {
           -- Bundle version (1.50.2 does not work with nvim)
           -- command = "bundle",
@@ -350,7 +351,7 @@ return {
             -- local has_lsp_formatter = not vim.tbl_isempty(lsp_clients)
 
             -- Ruby LSP contains rubocop diagnostics itself
-            return vim.b.disable_lsp_format or use_ruby_lsp_rubocop and require("util.ruby.gems").has_rubocop()
+            return vim.b.disable_lsp_format or (not use_ruby_lsp_rubocop and require("util.ruby.gems").has_rubocop())
           end,
         },
         rubyfmt = {

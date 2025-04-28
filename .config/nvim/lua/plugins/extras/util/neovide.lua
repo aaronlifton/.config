@@ -3,32 +3,10 @@ if not vim.g.neovide then return {} end
 local map = vim.keymap.set
 local g = vim.g
 
--- Font
--- See https://github.com/neovide/neovide/blob/main/website/docs/configuration.md#display
--- 0
--- g.gui_font_face = "FiraCode Nerd Font"
--- g.gui_font_face = "MesloLGLDZ Nerd Font Mono"
--- vim.o.guifont = "Berkeley Mono Trial:h16"
--- 1
--- vim.o.guifont = "MonoLisa Nerd Font Mono:h16" -- 15
--- g.gui_font_face = "MonoLisa Nerd Font Mono"
--- g.neovide_scale_factor = 1.0
--- 2
--- g.gui_font_face = "GeistMono Nerd Font Mono"
--- vim.o.guifont = "GeistMono Nerd Font Mono:h16"
--- vim.o.guifont = "Hack Nerd Font Mono:h15"
--- 3
--- vim.o.guifont = "Fira Code,Symbols Nerd Font Mono:h34"
--- g.neovide_scale_factor = 0.3
--- 4
--- vim.o.guifont = {"Cascadia Code Light,MesloLGS NF,Hack Nerd Font", ":h15"}
--- 5
--- g.gui_font_face = "Iosevka SS08"
--- vim.o.guifont = "Iosevka SS08 Light:h18:#e-subpixelantialias"
--- 6 -- enabled
--- g.gui_font_face = "JetBrainsMono Nerd Font"
--- g.gui_font_size = 14
--- vim.o.guifont = "JetBrainsMono Nerd Font:h14"
+local state = {
+  current_font = nil,
+}
+local default_linespace = 8 -- default 0
 
 -- Font
 -- See https://github.com/neovide/neovide/blob/main/website/docs/configuration.md#display
@@ -47,8 +25,9 @@ local fonts = {
   },
   monolisa = {
     face = "MonoLisa Nerd Font Mono",
-    size = 16,
-    scale = 1.0,
+    size = 15,
+    scale = 0.9,
+    linespace = 12,
   },
   geist = {
     face = "GeistMono Nerd Font Mono",
@@ -68,13 +47,14 @@ local fonts = {
     size = 15,
   },
   iosevka = {
-    face = "Iosevka SS08",
+    face = "Iosevka SS08 Light",
     size = 18,
     options = "#e-subpixelantialias",
   },
   jetbrains = {
     face = "JetBrainsMono Nerd Font",
     size = 14,
+    linespace = 0,
   },
 }
 
@@ -89,15 +69,27 @@ local function set_font(name)
   g.gui_font_size = font.size
   vim.o.guifont = font.face .. ":h" .. font.size .. (font.options or "")
   if font.scale then g.neovide_scale_factor = font.scale end
+
+  if font.linespace then
+    vim.opt.linespace = font.linespace
+  else
+    vim.opt.linespace = default_linespace
+  end
+
+  state.current_font = name
 end
 
 -- Set default font
 -- set_font("jetbrains")
--- set_font("monolisa")
+set_font("monolisa")
+
+vim.opt.winblend = 20
+
 --------------------------------------------------------------------------------
 
 RefreshGuiFont = function()
   vim.opt.guifont = string.format("%s:h%s", g.gui_font_face, g.gui_font_size)
+  -- SetGuiFont(g.gui_font_face, g.gui_font_size)
 end
 
 ResizeGuiFont = function(delta)
@@ -106,7 +98,7 @@ ResizeGuiFont = function(delta)
 end
 
 ResetGuiFont = function()
-  g.gui_font_size = 20
+  vim.g.gui_font_size = fonts[state.current_font].size
   RefreshGuiFont()
 end
 
@@ -130,19 +122,18 @@ local function set_scale_factor(factor)
   RefreshGuiFont()
 end
 
+local scale_increment = 0.05 -- 0.25
 map("n", "<D-=>", function()
-  update_scale_factor(1.25)
+  update_scale_factor(1 + scale_increment)
 end)
 map("n", "<D-->", function()
-  update_scale_factor(1 / 1.25)
+  update_scale_factor(1 / (1 + scale_increment))
 end)
 map("n", "<D-0>", function()
   set_scale_factor(1)
 end)
 
-vim.opt.linespace = 8
--- g.neovide_theme = "auto"
-g.neovide_theme = "dark"
+g.neovide_theme = "dark" -- "auto"
 g.neovide_hide_mouse_when_typing = true
 g.neovide_fullscreen = false
 
@@ -159,10 +150,11 @@ g.neovide_padding_bottom = 0
 g.neovide_window_blurred = true
 g.neovide_floating_blur_amount_x = 5.0
 g.neovide_floating_blur_amount_y = 5.0
-g.neovide_floating_shadow = true -- Prev: true
+-- g.neovide_floating_blur_amount_x = 2.0
+-- g.neovide_floating_blur_amount_y = 2.0
+g.neovide_floating_shadow = true
 g.neovide_floating_z_height = 10
-g.neovide_floating_blur_amount_x = 2.0
-g.neovide_floating_blur_amount_y = 2.0
+
 -- g.neovide_light_angle_degrees = 45
 -- g.neovide_light_angle_degrees = 45
 -- g.neovide_light_radius = 5
@@ -182,28 +174,29 @@ g.neovide_cursor_animate_in_insert_mode = true
 -- g.neovide_cursor_animate_in_replace_mode = true
 -- g.neovide_cursor_animate_in_command_mode = true
 
-g.neovide_cursor_vfx_mode = "pixiedust" -- railgun, torpedo, pixiedust, sonicboom, ripple, wireframe
-g.neovide_cursor_vfx_opacity = 195.0
-g.neovide_cursor_vfx_particle_speed = 30.0
-g.neovide_cursor_vfx_particle_lifetime = 0.3
-g.neovide_cursor_vfx_particle_density = 1.0
+-- g.neovide_cursor_vfx_mode = "pixiedust" -- railgun, torpedo, pixiedust, sonicboom, ripple, wireframe
 
 -- Railgun
 g.neovide_cursor_vfx_mode = "railgun" -- railgun, torpedo, pixiedust, sonicboom, ripple, wireframe
 g.neovide_cursor_vfx_particle_phase = 1.5 -- railgun
 g.neovide_cursor_vfx_particle_curl = 1.0 -- railgun
 
+g.neovide_cursor_vfx_opacity = 195.0 -- 200.0
+g.neovide_cursor_vfx_particle_speed = 30.0 -- 10.0
+g.neovide_cursor_vfx_particle_lifetime = 0.3 -- 0.5 (railgun, torpedo, pixiedust)
+-- g.neovide_cursor_vfx_particle_highlight_lifetime = 0.2 -- 0.2 (sonicboom, ripple, wireframe)
+g.neovide_cursor_vfx_particle_density = 1.0 -- 0.7
+
 -- Railgun easing
-local Easing = require("util.neovide.Easing") -- Path to your Easing.lua
+local Easing = require("util.neovide.Easing")
 Easing.bezier()
 local bezier = Easing.new("bezier")
 local configs = bezier:generateConfigs(5)
 bezier:setConfig(configs[1])
 
-vim.opt.winblend = 20
 -- This setting is only effective when not using vsync, for example by passing --no-vsync on the commandline.
--- g.neovide_refresh_rate = 60 -- StudioDisplay @ 60Hz
-g.neovide_refresh_rate = 120 -- StudioDisplay @ ProMotion (120hz)
+g.neovide_refresh_rate = 60 -- StudioDisplay @ 60Hz
+-- g.neovide_refresh_rate = 120 -- StudioDisplay @ ProMotion (120hz) (Not released yet, rumored for 2025)
 g.neovide_show_border = true
 g.neovide_remember_window_size = true
 
@@ -226,20 +219,30 @@ end
 -- set_gamma("alacritty")
 set_gamma("kitty_osx")
 
-map("n", "<D-v>", "<cmd>norm gpa<cr>", { noremap = true })
-map({ "v", "t" }, "<D-v>", '"+P') -- Paste normal mode
-map("c", "<D-v>", "<C-R>+") -- Paste command mode
-map("i", "<D-v>", '<C-r>"') -- Paste insert mode
-map("v", "<D-c>", '"+y') -- Copy
--- map("i", "<D-v>", '<ESC>l"+Pli') -- Paste insert mode
+-- https://neovide.dev/faq.html#how-can-i-use-cmd-ccmd-v-to-copy-and-paste
+-- if g.neovide then
+--   vim.keymap.set("n", "<D-s>", ":w<CR>") -- Save
+--   vim.keymap.set("v", "<D-c>", '"+y') -- Copy
+--   vim.keymap.set("n", "<D-v>", '"+P') -- Paste normal mode
+--   vim.keymap.set("v", "<D-v>", '"+P') -- Paste visual mode
+--   vim.keymap.set("c", "<D-v>", "<C-R>+") -- Paste command mode
+--   vim.keymap.set("i", "<D-v>", '<ESC>l"+Pli') -- Paste insert mode
+--   vim.keymap.set({ "v", "t" }, "<D-v>", '"+P', { noremap = true })
+-- end
 
-map("n", "<D-s>", "<cmd>w<cr>", { noremap = true }) -- Save
+-- Allow clipboard copy paste in neovim
+-- vim.api.nvim_set_keymap("", "<D-v>", "+p<CR>", { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap("!", "<D-v>", "<C-R>+", { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap("t", "<D-v>", "<C-R>+", { noremap = true, silent = true })
+-- -- so as to nto interfere with fzf <C-r> mapping in fish
+-- vim.api.nvim_set_keymap("t", "<D-v>", '"+P', { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap("v", "<D-v>", "<C-R>+", { noremap = true, silent = true })
 
-map("n", "<C-S>", '"+P') -- Paste normal mode
-map("v", "<C-S>", '"+P') -- Paste visual mode
+-- https://github.com/neovide/neovide/issues/1263#issuecomment-1972013043
+vim.keymap.set({ "n", "v", "s", "x", "o", "i", "l", "c", "t" }, "<D-v>", function()
+  vim.api.nvim_paste(vim.fn.getreg("+"), true, -1)
+end, { noremap = true, silent = true })
 
-map("n", "<C-S-v>", '"+P') -- Paste normal mode
-map("v", "<C-S-v>", '"+P') -- Paste visual mode
 -- map("i", "<C-S-v>", '<ESC>l"+Pli') -- Paste insert mode
 -- KEYS
 -- map("n", "æ", "<A-a>", symbol_key_opts)

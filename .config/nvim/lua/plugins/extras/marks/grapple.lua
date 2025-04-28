@@ -37,6 +37,11 @@ table.insert(keys, { "<D-H>", "<cmd>Grapple select index=1<cr>", desc = "File 1"
 table.insert(keys, { "<D-J>", "<cmd>Grapple select index=2<cr>", desc = "File 2" })
 table.insert(keys, { "<D-K>", "<cmd>Grapple select index=3<cr>", desc = "File 3" })
 table.insert(keys, { "<D-L>", "<cmd>Grapple select index=4<cr>", desc = "File 4" })
+table.insert(keys, { "<S-D-;>", "<cmd>Grapple select index=5<cr>", desc = "File 5" })
+table.insert(keys, { "<S-D-'>", "<cmd>Grapple select index=6<cr>", desc = "File 6" })
+
+
+
 table.insert(keys, { "<C-S-L>", "<cmd>Grapple cycle forward<CR>", desc = "Next Mark" })
 table.insert(keys, { "<C-S-H>", "<cmd>Grapple cycle backward<CR>", desc = "Prev Mark" })
 -- table.insert(keys, { "]k", "<cmd>Grapple cycle forward<CR>", desc = "Next Mark" })

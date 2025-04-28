@@ -48,7 +48,7 @@
     "prefix": "ead"
   },
   "Insert frozen literal string": {
-    "body": ["# frozen_string_literal: true", "", "", ""],
+    "body": ["# frozen_string_literal: true", ""],
     "prefix": "frozen"
   },
   "Insert inctance variable cache": {

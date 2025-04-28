@@ -188,6 +188,28 @@ return {
           cmp.mapping(cmp.mapping.confirm({ select = false, behavior = cmp.ConfirmBehavior.Replace }))
       end
 
+      local emmet_comparator = function(entry1, entry2)
+        if entry1.source.name == "nvim_lsp" and entry2.source.name == "nvim_lsp" then
+          local source1 = entry1.source.source
+          local source2 = entry2.source.source
+
+          local client_name1 = source1.client and source1.client.name or ""
+          local client_name2 = source2.client and source2.client.name or ""
+
+          -- If one is emmet-ls and the other isn't, prioritize the non-emmet one
+          if client_name1 == "emmet_language_server" and client_name2 ~= "emmet_language_server" then
+            return false
+          elseif client_name1 ~= "emmet_language_server" and client_name2 == "emmet_language_server" then
+            return true
+          end
+        end
+
+        return nil
+      end
+
+      opts.sorting.comparators = opts.sorting.comparators or {}
+      opts.sorting.comparators[#opts.sorting.comparators + 1] = emmet_comparator
+
       return opts
     end,
   },

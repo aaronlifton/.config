@@ -133,11 +133,35 @@ Here is the content from the file `%s`:
       max_tokens = 20480,
     },
   }),
-  ["gemini:flash"] = vim.tbl_deep_extend("force", require("model.prompts.chats").gemini, {
-    provider = require("util.model.providers.gemini-flash").model("gemini-1.5-flash"),
+  -- https://ai.google.dev/gemini-api/docs/models
+  -- https://aistudio.google.com/prompts/new_chat
+  -- ["gemini:flash-2.0"] = vim.tbl_deep_extend("force", require("model.prompts.chats").gemini, {
+  --   provider = require("util.model.providers.gemini").model("gemini-2.0-flash"),
+  -- }),
+  ["gemini:pro-2.5"] = vim.tbl_deep_extend("force", require("model.prompts.chats").gemini, {
+    -- gemini-2.5-pro-preview-03-25
+    -- Pricing: over/under 200k tokens
+    -- * Reason over complex problems
+    -- * Tackle difficult code, math and STEM problems
+    -- * Use the long context for analyzing large datasets, codebases or documents
+    -- "Gemini 2.5 Pro Preview doesn't have a free quota tier. Please use Gemini 2.5 Pro Experimental
+    -- (models/gemini-2.5-pro-exp-03-25) instead. For more information on this error, head to:
+    -- https://ai.google.dev/gemini-api/docs/rate-limits."
+    provider = require("util.model.providers.gemini").model("gemini-2.5-pro-exp-03-25"),
   }),
-  ["gemini:flash-2.0"] = vim.tbl_deep_extend("force", require("model.prompts.chats").gemini, {
-    provider = require("util.model.providers.gemini-flash").model("gemini-2.0-flash-exp"),
+  ["gemini:flash-2.5"] = vim.tbl_deep_extend("force", require("model.prompts.chats").gemini, {
+    -- Pricing: Thinking/Non-thinking
+    -- * Reason over complex problems
+    -- * Show the thinking process of the model
+    -- * Call tools natively
+    provider = require("util.model.providers.gemini").model("gemini-2.5-flash-preview-04-17", {
+      thinkingConfig = {
+        -- includeThoughts = true
+        -- thinkingBudget = 1024, -- default 4096
+      },
+    }, {
+      -- { googleSearch = {} },
+    }),
   }),
   -- Works
   ["together:dolphin-mixtral"] = {

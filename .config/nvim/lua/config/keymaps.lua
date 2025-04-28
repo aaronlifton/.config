@@ -42,27 +42,29 @@ end, { desc = "Toggle colorcolumn" })
 
 -- Toggle formatexpr
 local prev_textwidth = vim.o.textwidth
+local prev_formatexpr = vim.o.formatexpr
 local function toggle_formatexpr(textwidth)
-  if o.formatexpr == "" then
-    o.formatexpr = lazyutil.formatexpr()
-    if textwidth then o.textwidth = textwidth end
+  if vim.o.formatexpr == "" then
+    vim.o.formatexpr = prev_formatexpr
+    vim.o.textwidth = prev_textwidth
+    LazyVim.info("Reset formatexpr (width: " .. prev_textwidth .. ")")
   else
-    o.formatexpr = ""
-    o.textwidth = prev_textwidth
-  end
-  if o.formatexpr == "" then
-    LazyVim.info("Disabled formatexpr")
-  else
-    LazyVim.info("Reset formatexpr (width: " .. textwidth .. ")")
+    vim.o.formatexpr = ""
+    vim.o.textwidth = textwidth
+    LazyVim.info("Set textwidth to " .. textwidth)
   end
 end
 -- NOTE: Use `gq` to format the current paragraph
-map("n", "<leader>uM", function()
-  toggle_formatexpr()
+map("n", "<leader>u<C-w>1", function()
+  -- Toggle formatexpr with default (textwidth=80)
+  toggle_formatexpr(prev_textwidth)
 end, { desc = "Toggle formatexpr" })
 
--- Toggle formatexpr with textwidth=120
-map("n", "<leader>u<PageDown>", function()
+map("n", "<leader>u<C-w>2", function()
+  toggle_formatexpr(100)
+end, { desc = "Toggle formatexpr (width=100)" })
+
+map("n", "<leader>u<C-w>3", function()
   toggle_formatexpr(120)
 end, { desc = "Toggle formatexpr (width=120)" })
 
@@ -354,31 +356,34 @@ end, { desc = "Line Diagnostics (Source)" })
 
 -- stylua: ignore start
 
--- Git
-map({"n", "x" }, "<leader>g<C-y>", function()
+-- Git Browse (copy)
+map({"n", "x" }, "<leader>gYM", function()
+  ---@diagnostic disable-next-line: missing-fields
   Snacks.gitbrowse({
     open = function(url) vim.fn.setreg("+", url) end,
     branch = "main",
     notify = false,
   })
-end, { desc = "Git Browse (copy - main)" })
+end, { desc = "file:line (main)" })
 
-map({"n", "x" }, "<leader>g<M-y>", function()
+map({"n", "x" }, "<leader>gYm", function()
+---@diagnostic disable-next-line: missing-fields
   Snacks.gitbrowse({
     open = function(url) vim.fn.setreg("+", url) end,
-    branch = "main",
+    branch = "master",
     notify = false,
   })
-end, { desc = "Git Browse (copy - master)" })
+end, { desc = "file:line (master)" })
 
-map({"n", "x" }, "<leader>g<C-f>", function()
+map({"n", "x" }, "<leader>gYf", function()
+  ---@diagnostic disable-next-line: missing-fields
   Snacks.gitbrowse({
     open = function(url)
       vim.fn.setreg("+", url:gsub("#L%d+%-?L?%d*", ""))
     end,
     notify = false,
   })
-end, { desc = "Git Browse (copy file)" })
+end, { desc = "file" })
 
 vim.api.nvim_create_user_command("LazygitYadm", function()
   Snacks.terminal({ "yadm", "enter", "lazygit" })
@@ -487,7 +492,8 @@ map("n", "go", "<Cmd>call append(line('.'), repeat([''], v:count1))<CR>", { desc
 -- Insert Mode
 map({ "c", "i", "t" }, "<M-BS>", "<C-w>", { desc = "Delete Word" })
 
-map("n", "zF", ":norm z=1<cr>", { desc = "Choose first spelling suggestion" })
+-- map("n", "zF", ":norm z=1<cr>", { desc = "Choose first spelling suggestion" })
+map("n", "zF", "z=1<cr>", { noremap = true, desc = "Choose first spelling suggestion" })
 
 -- Goto definition in vsplit
 map(
@@ -798,14 +804,28 @@ Snacks.toggle({
   end,
 }):map("<leader>u<C-f>")
 
-map("n", "<leader>c<C-c>", function()
+map("n", "gCc", function()
   local word = vim.fn.expand("<cword>")
   local camelCase = vim.fn.substitute(word, "\\(_\\)\\([a-z]\\)", "\\u\\2", "g")
   return "ciw" .. camelCase .. "<esc>b"
 end, { expr = true, desc = "Convert to camel case" })
 
-map("n", "<leader>c<C-s>", function()
+map("n", "gCs", function()
   local word = vim.fn.expand("<cword>")
-  local snakeCase = vim.fn.substitute(word, "[a-z]\\@<=[A-Z]", "_\\l&", "g")
+  local snakeCase = ""
+
+  if #word > 0 then snakeCase = string.lower(string.sub(word, 1, 1)) end
+
+  for i = 2, #word do
+    local char = string.sub(word, i, i)
+    if char:match("[A-Z]") then
+      -- Add underscore before uppercase letters
+      snakeCase = snakeCase .. "_" .. string.lower(char)
+    else
+      -- Keep other characters as is
+      snakeCase = snakeCase .. char
+    end
+  end
+
   return "ciw" .. snakeCase .. "<esc>b"
 end, { expr = true, desc = "Convert to snake case" })

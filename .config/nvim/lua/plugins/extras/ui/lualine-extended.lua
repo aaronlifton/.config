@@ -60,6 +60,15 @@ return {
       }),
     }
 
+    opts.sections.lualine_x[2] = LazyVim.lualine.status(LazyVim.config.icons.kinds.Copilot, function()
+      local clients = package.loaded["copilot"] and LazyVim.lsp.get_clients({ name = "copilot", bufnr = 0 }) or {}
+      if #clients > 0 then
+        -- client = clients[1]
+        -- local status = require("copilot.api").check_status(client).data.status
+        -- return (status == "InProgress" and "pending") or (status == "Warning" and "error") or "ok"
+        return "Unknown"
+      end
+    end)
     if vim.g.lualine_info_extras == true then
       -- table.insert(opts.sections.lualine_x, 2, lsp_status)
       table.insert(opts.sections.lualine_x, 2, lsp)

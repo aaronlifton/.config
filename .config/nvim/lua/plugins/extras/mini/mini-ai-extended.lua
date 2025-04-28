@@ -17,6 +17,20 @@ local mini_ai_git_signs = function()
   return hunks
 end
 
+local custom_mappings = {
+  { "C", desc = "comment" },
+  { "k", desc = "key, assignment" },
+  { "v", desc = "value, assignment rhs, return" },
+  { "N", desc = "number" },
+  { "L", desc = "line" },
+  { "D", desc = "diagnostic" },
+  { "E", desc = "diagnostic (error)" },
+  { "p", desc = "paragraph" },
+  { "S", desc = "sentence" },
+  { "W", desc = "word" },
+  { "h", desc = "hunk" },
+}
+
 return {
   {
     "echasnovski/mini.ai",

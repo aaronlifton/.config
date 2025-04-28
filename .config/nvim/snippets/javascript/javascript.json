@@ -153,10 +153,14 @@
   },
   "constContainer": {
     "prefix": "cc",
-    "body": "const container = { "
+    "body": "const { container } = "
   },
   "expectMatchSnapshot": {
     "prefix": "ems",
     "body": "expect(${1:element}).toMatchSnapshot()"
+  },
+  "consoleLogBrackets": {
+    "prefix": "cll",
+    "body": "console.log({ $0 })"
   }
 }

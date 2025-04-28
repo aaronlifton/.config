@@ -39,7 +39,8 @@ if LazyVim.is_loaded("nvim-treesitter") and LazyVim.is_loaded("nvim-treesitter-t
           ["[D"] = "@jest.describe",
         },
         goto_previous_end = {
-          ["[D"] = "@jest.describe",
+          -- [<C-d>
+          ["[a\4"] = "@jest.describe",
           ["[I"] = "@jest.it",
         },
       },

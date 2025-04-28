@@ -14,14 +14,13 @@ return vim.tbl_extend("force", starter_prompts, {
     options = {
       headers = {
         ["anthropic-beta"] = nil,
-        ["anthropic-version"] = "2025-02-19",
       },
       trim_code = true,
     },
     params = {
       max_tokens = 20480,
       model = "claude-3-7-sonnet-20250219",
-      system = "You are an expert programmer. Provide code which should go between the before and after blocks of code. Respond only with a markdown code block. Use comments within the code if explanations are necessary.",
+      system = "You are an expert programmer. Provide code which should go etween the before and after blocks of code. Respond only with a markdown code block. Use comments within the code if explanations are necessary.",
     },
     builder = function(input, context)
       local format = require("model.format.claude")
