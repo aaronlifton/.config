@@ -52,11 +52,11 @@ abbr --add nvimcd nvim -c "cd %:p:h"
 #### Nvim AI
 abbr --add chat-gemini nvim -o1 -c \"Mchat gemini\"
 abbr --add chat-pplx nvim -o1 -c \"Mchat pplx\"
-abbr --add llm-gemini --set-cursor "llm -m gemini-1.5-pro-latest --system \"You are a helpful assistant. You will receive questions from a user who is asking you questions via his Kitty terminal on OSX, and he is a software engineer.\" \"%\""
-abbr --add llm-gemini-flash --set-cursor "llm -m gemini-1.5-flash-latest --system \"You are a helpful assistant. You will receive questions from a user who is asking you questions via his Kitty terminal on OSX, and he is a software engineer.\" \"%\""
-# abbr --add llm-gemini-flash --set-cursor "llm -m gemini-1.5-flash-latest --system \"You are a helpful assistant. You will receive questions from a user who is asking you questions via his Kitty terminal on OSX, and he is a software engineer.\" \"%\" | glow"
+abbr --add llm-gemini --set-cursor "llm -m gemini-2.5-pro-exp-03-25 --system \"You are a helpful assistant. You will receive questions from a user who is asking you questions via his Kitty terminal on OSX, and he is a software engineer.\" \"%\""
+abbr --add llm-gemini-flash --set-cursor "llm -m gemini-2.5-flash-preview-04-17 --system \"You are a helpful assistant. You will receive questions from a user who is asking you questions via his Kitty terminal on OSX, and he is a software engineer.\" \"%\""
 
 #### Development
+abbr --add be bundle exec
 abbr --add ber bundle exec rspec
 abbr --add njest APP_ENV=development TZ=UTC npx jest --projects src/jest.config.rtl.js --watch --color --silent
 abbr --add jest-debug node --inspect-brk node_modules/.bin/jest --projects src/jest.config.js --no-coverage --colors
