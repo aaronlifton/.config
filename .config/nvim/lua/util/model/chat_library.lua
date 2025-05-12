@@ -154,14 +154,96 @@ Here is the content from the file `%s`:
     -- * Reason over complex problems
     -- * Show the thinking process of the model
     -- * Call tools natively
+    provider = require("util.model.providers.gemini").model("gemini-2.5-flash-preview-04-17"),
+  }),
+  ["gemini:flash-2.5-think"] = vim.tbl_deep_extend("force", require("model.prompts.chats").gemini, {
+    -- Pricing: Thinking/Non-thinking
+    -- * Reason over complex problems
+    -- * Show the thinking process of the model
+    -- * Call tools natively
     provider = require("util.model.providers.gemini").model("gemini-2.5-flash-preview-04-17", {
       thinkingConfig = {
-        -- includeThoughts = true
+        includeThoughts = true,
         -- thinkingBudget = 1024, -- default 4096
       },
-    }, {
-      -- { googleSearch = {} },
+      tools = {
+        { googleSearch = {} },
+      },
     }),
+  }),
+  ["gemini:pr-review"] = vim.tbl_deep_extend("force", require("model.prompts.chats").gemini, {
+    -- Pricing: Thinking/Non-thinking
+    -- * Reason over complex problems
+    -- * Show the thinking process of the model
+    -- * Call tools natively
+    provider = require("util.model.providers.gemini").model("gemini-2.5-flash-preview-04-17"),
+    system = "You are an expert programmer that gives constructive feedback. Review the changes in the user's git diff and the full context of modified files. Don't describe what the user has done. This is a diff of a pull request ready for review, and the user is trying to proof read it and check for any issues before marking it as ready for review.",
+    create = function()
+      -- Get the diff against the main branch.
+      -- You might want to adjust this if your main branch has a different name (e.g., "master").
+      -- Using --staged will only show staged changes. If you want all uncommitted changes against main:
+      -- local git_diff = vim.fn.system({ "git", "--no-pager", "diff", "main" })
+      -- If you want staged changes against main (like a pre-commit PR review):
+      local git_diff = vim.fn.system({ "git", "--no-pager", "diff", "--staged", "main" })
+
+      vim.api.nvim_echo({ { "Length of diff for PR Review:\n", "Title" }, { tostring(#git_diff), "Number" } }, true, {})
+
+      -- Basic error check for git diff command
+      if not git_diff or git_diff == "" then
+        -- If there's no diff, you might want to inform the user or handle it gracefully.
+        -- For now, let's assume an empty diff means no changes to review.
+        -- You could also error out: error("No changes to review against main.")
+        -- Or return a message indicating no diff:
+        return {
+          contents = {
+            {
+              parts = {
+                {
+                  text = "No changes found when diffing against main. Nothing to review.",
+                },
+              },
+            },
+          },
+        }
+      end
+
+      -- Handle potential errors if git diff returns an error message (e.g., not a git repo)
+      -- A more robust check might be needed depending on how `vim.fn.system` handles errors.
+      -- For simplicity, we'll proceed, but in a real scenario, you might check `v:shell_error`.
+
+      -- Truncate long diffs to avoid exceeding token limits (e.g., ~7000 words as a heuristic)
+      local words = {}
+      local token_limit = require("avante.config").claude.max_tokens
+      for word in git_diff:gmatch("%S+") do
+        table.insert(words, word)
+        if #words >= token_limit then break end
+      end
+      local truncated_diff = table.concat(words, " ")
+
+      if #words >= token_limit then
+        vim.api.nvim_echo({ { "Diff was truncated for PR Review due to length.", "WarningMsg" } }, true, {})
+      end
+
+      local prompt_text = "Please review the following code changes (diff against the main branch). "
+        .. "Identify potential bugs, areas for improvement, and any deviations from best practices. "
+        .. "Focus on the functionality, maintainability, and clarity of the code. "
+        .. "Provide specific feedback and suggestions where possible.\n\n"
+        .. "Git diff: ```diff\n" -- Using diff language hint for better formatting by the model
+        .. truncated_diff
+        .. "\n```"
+
+      return {
+        contents = {
+          {
+            parts = {
+              {
+                text = prompt_text,
+              },
+            },
+          },
+        },
+      }
+    end,
   }),
   -- Works
   ["together:dolphin-mixtral"] = {

@@ -466,7 +466,7 @@ textobj
 textobjects
 scm
 querySelectorAll
-let
+#et
 currentIndex
 intervalTime
 const
@@ -803,3 +803,7 @@ isDisabled
 unstaged
 renderer
 Internal/!
+formatters
+RBAC
+Figma
+let/!

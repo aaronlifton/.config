@@ -29,6 +29,7 @@ if vim.g.fastmode then
   }
 else
   spec = {
+    -- { "LazyVim/LazyVim", import = "lazyvim.plugins", branch = "fix/mason-v2" },
     { "LazyVim/LazyVim", import = "lazyvim.plugins" },
     { import = "lazyvim.plugins.extras.vscode" },
     { import = "plugins" },

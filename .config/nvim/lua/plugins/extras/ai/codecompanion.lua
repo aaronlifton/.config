@@ -5,8 +5,8 @@ local modify_prefix = "<leader>am"
 local user = vim.env.USER or "User"
 -- local adapter = "anthropic"
 -- local adapter = "openai"
--- local adapter = "gemini"
-local adapter = "deepseek_r1"
+local adapter = "gemini"
+-- local adapter = "deepseek_r1"
 local adapter_providers = {
   deepseek_r1 = "ollama",
   deepseek_coder = "ollama",
@@ -66,23 +66,33 @@ return {
     end,
     opts = {
       adapters = {
-        deepseek_coder = function()
-          -- ollama
-          return require("codecompanion.adapters").extend(adapter_providers.deepseek, {
-            name = "deepseek_coder",
+        -- deepseek_coder = function()
+        --   -- ollama
+        --   return require("codecompanion.adapters").extend(adapter_providers.deepseek, {
+        --     name = "deepseek_coder",
+        --     schema = {
+        --       model = {
+        --         default = "deepseek-coder-v2:latest",
+        --       },
+        --     },
+        --   })
+        -- end,
+        -- deepseek_r1 = function()
+        --   return require("codecompanion.adapters").extend(asdapter_providers.deepseek, {
+        --     name = "deepseek_r1",
+        --     schema = {
+        --       model = {
+        --         default = "deepseek-r1:14b",
+        --       },
+        --     },
+        --   })
+        -- end,
+        gemini = function()
+          return require("codecompanion.adapters").extend("gemini", {
             schema = {
               model = {
-                default = "deepseek-coder-v2:latest",
-              },
-            },
-          })
-        end,
-        deepseek_r1 = function()
-          return require("codecompanion.adapters").extend(adapter_providers.deepseek, {
-            name = "deepseek_r1",
-            schema = {
-              model = {
-                default = "deepseek-r1:14b",
+                -- default = "gemini-2.5-pro-exp-03-25",
+                default = "gemini-2.5-flash-preview-04-17",
               },
             },
           })
@@ -91,7 +101,7 @@ return {
           return require("codecompanion.adapters").extend("anthropic", {
             schema = {
               max_tokens = {
-                default = 8192,
+                default = 20480,
               },
             },
           })
@@ -112,6 +122,53 @@ return {
         },
         inline = { adapter = adapter },
         agent = { adapter = adapter },
+        slash_commands = {
+          ["buffer"] = {
+            opts = {
+              provider = "fzf_lua",
+            },
+          },
+          ["file"] = {
+            opts = {
+              provider = "fzf_lua",
+            },
+          },
+          ["help"] = {
+            opts = {
+              provider = "fzf_lua",
+            },
+          },
+          ["symbols"] = {
+            opts = {
+              provider = "fzf_lua",
+            },
+          },
+        },
+        keymaps = {
+          completion = {
+            modes = {
+              i = "<Tab>",
+              index = 1,
+            },
+          },
+          close = {
+            modes = {
+              n = "q",
+              i = "<C-q>",
+            },
+            index = 4,
+            callback = "keymaps.close",
+            description = "Close Chat",
+          },
+          stop = {
+            modes = {
+              n = "<C-c>",
+            },
+            index = 5,
+            callback = "keymaps.stop",
+            description = "Stop Request",
+          },
+        },
       },
       display = {
         chat = {

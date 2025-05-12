@@ -47,6 +47,25 @@ return {
           end, { buffer = event.buf })
         end,
       })
+      vim.ap.nvim_create_autocmd("FileType", {
+        pattern = "NeogitCommitView", -- Buffer name: NeogitStashView
+        callback = function(event)
+          vim.keymap.set("n", "<C-y>", function()
+            local StashListView = require("neogit.buffers.stash_list_view")
+            local yank = StashListView.buffer.ui:get_commit_under_cursor()
+            if not yank then return end
+
+            vim.system({ "git", "diff", yank, yank .. "^", "--name-only" }, {}, function(result)
+              -- stylua: ignore
+              vim.api.nvim_echo({ { vim.inspect({code = result.code, signal = result.signal, stdout = result.stdout, stderr = result.stderr}), "Normal" } }, true, {})
+
+              local content = result.stdout
+              -- stylua: ignore
+              vim.api.nvim_echo({ { vim.inspect({ { "Stashed files:\n", "Title" }, { content, "Normal" } }), "Normal" } }, true, {})
+            end)
+          end, { buffer = event.buf })
+        end,
+      })
 
       -- Already handled by <C-n> and <C-p>
       -- vim.api.nvim_create_autocmd("FileType", {

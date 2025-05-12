@@ -354,36 +354,42 @@ map("n", "<leader>cq", function()
   vim.diagnostic.open_float(nil, { source = true })
 end, { desc = "Line Diagnostics (Source)" })
 
--- stylua: ignore start
-
 -- Git Browse (copy)
-map({"n", "x" }, "<leader>gYM", function()
-  ---@diagnostic disable-next-line: missing-fields
-  Snacks.gitbrowse({
-    open = function(url) vim.fn.setreg("+", url) end,
-    branch = "main",
-    notify = false,
-  })
-end, { desc = "file:line (main)" })
-
-map({"n", "x" }, "<leader>gYm", function()
----@diagnostic disable-next-line: missing-fields
-  Snacks.gitbrowse({
-    open = function(url) vim.fn.setreg("+", url) end,
-    branch = "master",
-    notify = false,
-  })
-end, { desc = "file:line (master)" })
-
-map({"n", "x" }, "<leader>gYf", function()
-  ---@diagnostic disable-next-line: missing-fields
-  Snacks.gitbrowse({
+local gitbrowse_prefix = "<leader>gY"
+local gitbrowse_mappings = {
+  c = { desc = "file:line (current branch)" },
+  f = {
+    desc = "file",
     open = function(url)
       vim.fn.setreg("+", url:gsub("#L%d+%-?L?%d*", ""))
     end,
-    notify = false,
-  })
-end, { desc = "file" })
+  },
+  M = {
+    desc = "file:line (main)",
+    branch = "main",
+  },
+  m = {
+    desc = "file:line (master)",
+    branch = "master",
+  },
+}
+
+for key, opts in pairs(gitbrowse_mappings) do
+  map({ "n", "x" }, gitbrowse_prefix .. key, function()
+    ---@diagnostic disable-next-line: missing-fields
+    Snacks.gitbrowse({
+      open = function(url)
+        if opts.open then
+          opts.open(url)
+        else
+          vim.fn.setreg("+", url)
+        end
+      end,
+      branch = opts.branch,
+      notify = false,
+    })
+  end, { desc = opts.desc })
+end
 
 vim.api.nvim_create_user_command("LazygitYadm", function()
   Snacks.terminal({ "yadm", "enter", "lazygit" })

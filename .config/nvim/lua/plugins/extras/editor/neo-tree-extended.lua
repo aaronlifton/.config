@@ -148,18 +148,25 @@ return {
             end,
             desc = "copy path to clipboard",
           },
-          ["S"] = function()
-            local leap_util = require("util.leap")
-            local buf = vim.api.nvim_get_current_buf()
-            local leap = leap_util.get_leap_for_buf(buf)
-            leap()
-          end,
-          ["s"] = function()
-            local leap_util = require("util.leap")
-            local buf = vim.api.nvim_get_current_buf()
-            local leap = leap_util.get_leap_for_buf(buf)
-            leap()
-          end,
+          -- set_default_mappings() found conflicting mapping for S: <Lua 1265: ~/.local/share/nvim/lazy/neo-tree.nvim/lua/neo-tree/ui/renderer.lua:856>
+          -- set_default_mappings() found conflicting mapping for s: <Lua 1237: ~/.local/share/nvim/lazy/neo-tree.nvim/lua/neo-tree/ui/renderer.lua:856>
+          -- ["S"] = function()
+          --   local leap_util = require("util.leap")
+          --   local buf = vim.api.nvim_get_current_buf()
+          --   local leap = leap_util.get_leap_for_buf(buf)
+          --   leap()
+          -- end,
+          ["s"] = {
+            function()
+              if not package.loaded["leap"] then return end
+
+              local leap_util = require("util.leap")
+              local buf = vim.api.nvim_get_current_buf()
+              local leap = leap_util.get_leap_for_buf(buf)
+              leap()
+            end,
+            desc = "Leap",
+          },
           ["'"] = "copy_absolute_path",
           ['"'] = "copy_relative_path",
           ["G"] = {

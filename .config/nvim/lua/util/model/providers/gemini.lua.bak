@@ -1,0 +1,254 @@
+local util = require("model.util")
+local sse = require("model.util.sse")
+
+local M = {}
+
+--- Defines the Google Search tool configuration for the API request.
+-- @return table The API-compatible tool configuration table.
+local function create_google_search_tool_config()
+  return {
+    googleSearch = {}, -- Represents the Google Search tool with default configuration
+  }
+end
+
+--- Creates the full API request body with optional generation config and tools.
+-- @param params table The base parameters (like contents).
+-- @param generation_config table|nil Optional generation configuration.
+-- @param tools table|nil Optional list of tool configurations.
+-- @return table The complete API request body.
+local function build_request_body(params, generation_config, tools)
+  local body = params
+
+  if generation_config then body.generationConfig = generation_config end
+
+  if tools and #tools > 0 then
+    -- Explicitly create a Lua array/list for the 'tools' field
+    body.tools = {}
+    for i, tool_config_object in ipairs(tools) do
+      -- Ensure we're assigning to numerically indexed keys for Lua array behavior
+      body.tools[i] = tool_config_object
+    end
+  end
+
+  return body
+end
+
+-- --- Important: Also check for grounding metadata if needed ---
+-- If you want to access grounding metadata like in the Python example:
+-- print(response.candidates[0].grounding_metadata.search_entry_point.rendered_content)
+-- You would need to process `item.candidates[1].grounding_metadata` here
+-- and potentially pass it to your handler or store it.
+-- Note: Grounding metadata is typically only present in the final chunk.
+-- The structure is usually `groundingMetadata: { searchEntryPoint: { renderedContent: "..." } }`
+local function check_grounding_metadata(candidate)
+  if candidate.groundingMetadata and candidate.groundingMetadata.searchEntryPoint then
+    local grounding_content = candidate.groundingMetadata.searchEntryPoint.renderedContent
+    -- You might want to have a dedicated handler method for grounding info
+    -- handler.on_grounding(grounding_content)
+    -- Or just print it for now:
+    vim.api.nvim_echo({ { vim.inspect({ grounding_metadata = grounding_content }), "Normal" } }, true, {})
+  end
+end
+
+---@class GeminiGenerationConfig
+---@field temperature? number # Value that controls the degree of randomness in token selection (0.0 to 1.0)
+---@field topP? number # Tokens are selected from most to least probable until the sum of their probabilities equals this value (0.0 to 1.0)
+---@field topK? number # For each token selection step, the top_k tokens with the highest probabilities are sampled (1 to infinity)
+---@field candidateCount? number # Number of response variations to return
+---@field maxOutputTokens? number # Maximum number of tokens that can be generated in the response
+---@field stopSequences? string[] # List of strings that tells the model to stop generating text if encountered
+---@field responseLogprobs? boolean # Whether to return the log probabilities of the tokens that were chosen by the model at each step
+---@field logprobs? number # Number of top candidate tokens to return the log probabilities for at each generation step
+---@field presencePenalty? number # Positive values penalize tokens that already appear in the generated text
+---@field frequencyPenalty? number # Positive values penalize tokens that repeatedly appear in the generated text
+---@field seed? number # When fixed to a specific number, the model makes a best effort to provide the same response for repeated requests
+---@field responseMimeType? string # Output response media type of the generated candidate text
+---@field responseSchema? table # Schema that the generated candidate text must adhere to
+---@field routingConfig? table # Configuration for model router requests
+---@field modelSelectionConfig? table # Configuration for model selection
+---@field safetySettings? table[] # Safety settings to block unsafe content in the response
+---@field mediaResolution? string # If specified, the media resolution specified will be used
+---@field speechConfig? table # The speech generation configuration
+---@field audioTimestamp? boolean # If enabled, audio timestamp will be included in the request to the model
+---@field thinkingConfig? table # The thinking features configuration
+
+---@class GeminiFunctionCall
+---@field name string # The name of the function to call
+---@field args table # The arguments to pass to the function
+
+---@class GeminiThought
+---@field text string # The text content of the thought
+
+---@class GeminiContentPart
+---@field text? string # The text content of the part
+---@field functionCall? GeminiFunctionCall # Function call information if this part is a function call
+---@field thought? string # Thought content if this part contains model's thinking process
+---@field inlineData? table # Inline data if this part contains media
+
+---@class GeminiContent
+---@field role? string # The role of the content (e.g., "user", "model")
+---@field parts GeminiContentPart[] # The parts that make up the content
+
+---@class GeminiSafetyRating
+---@field category string # The harm category (e.g., "HARM_CATEGORY_HARASSMENT")
+---@field probability string # The probability of the content being harmful (e.g., "NEGLIGIBLE", "LOW", "MEDIUM", "HIGH")
+
+---@class GeminiGroundingMetadata
+---@field searchEntryPoint? table # Search entry point information
+---@field webSearchQueries? string[] # Web search queries used for grounding
+
+---@class GeminiCandidate
+---@field content? GeminiContent # The content of the candidate response
+---@field finishReason? string # The reason why the model stopped generating (e.g., "STOP", "MAX_TOKENS", "SAFETY")
+---@field finishMessage? string # Additional message about why generation finished
+---@field index? number # The index of the candidate
+---@field safetyRatings? GeminiSafetyRating[] # Safety ratings for the generated content
+---@field groundingMetadata? GeminiGroundingMetadata # Metadata related to grounding information
+
+---@class GeminiPromptFeedback
+---@field blockReason? string # The reason why the prompt was blocked (e.g., "SAFETY")
+---@field safetyRatings? GeminiSafetyRating[] # Safety ratings for the prompt
+
+---@class GeminiGenerateContentResponse
+---@field candidates? GeminiCandidate[] # The generated candidate responses
+---@field promptFeedback? GeminiPromptFeedback # Feedback about the prompt
+---@field usageMetadata? table # Metadata about token usage
+
+---
+---@param model_name - The name of the model to use (e.g., "gemini-1.5-flash")
+---@param generation_config   GeminiGenerationConfig|nil  Optional generation configuration
+---@param tools unknown
+---@return unknown
+function M.model(model_name, generation_config, tools)
+  generation_config = generation_config or nil
+  tools = tools or {}
+  ---@type Provider|function
+  return {
+    request_completion = function(handler, params)
+      -- `params` here should contain the "contents" field
+      -- Example `params`: { contents = { { parts = { { text = "your prompt" } }, role = "user" } } }
+
+      -- Build the request body, including the Google Search tool
+      local body = build_request_body(
+        params,
+        generation_config, -- Use the generation_config passed to M.model
+        tools -- Add the Google Search tool in a list
+      )
+
+      local json_body_string = vim.json.encode(body)
+      vim.notify("Request JSON Body:\n" .. json_body_string, vim.log.levels.INFO)
+
+      return sse.curl_client({
+        url = string.format(
+          "https://generativelanguage.googleapis.com/v1beta/models/%s:streamGenerateContent?alt=sse&key=",
+          model_name
+        ) .. util.env("GOOGLE_API_KEY"),
+        headers = {
+          ["Content-Type"] = "application/json",
+        },
+        body = body,
+      }, {
+        on_message = function(msg, raw)
+          -- reference: js-genai/src/models.ts:168
+          local item = util.json.decode(msg.data)
+          if item and item.candidates then
+            local candidate
+            if item.candidates[1] then
+              candidate = item.candidates[1]
+              if candidate.content and candidate.content.parts then
+                local text_parts = candidate.content.parts
+                for _, part in ipairs(text_parts) do
+                  -- Handle thoughts
+                  if part.thought then
+                    handler.on_partial(part.thought)
+                  -- Handle tool calls
+                  elseif part.functionCall then
+                    -- https://github.com/default-anton/llm-sidekick.nvim/blob/3f262324f014af82e2d3f038bd0732d11f3ab2f7/lua/llm-sidekick/gemini.lua#L210
+                    vim.g.llm_sidekick_gemini_tool_call_counter = (vim.g.llm_sidekick_gemini_tool_call_counter or 0) + 1
+                    local message = string.format(
+                      "Tool call (%d): %s with parameters: %s",
+                      vim.g.llm_sidekick_gemini_tool_call_counter,
+                      part.functionCall.name,
+                      vim.inspect(part.functionCall.args)
+                    )
+                    handler.on_partial(message)
+                  -- Handle text parts
+                  else
+                    -- The API might return different part types, only handle text for now
+                    if part.text then handler.on_partial(part.text) end
+                  end
+                end
+              end
+
+              check_grounding_metadata(candidate)
+            end
+
+            -- Candidate might exist but be blocked etc.
+            if item.promptFeedback and item.promptFeedback.blockReason then
+              if candidate and candidate.finishReason == "SAFETY" then
+                vim.api.nvim_echo({ { vim.inspect({ safetyRatings = candidate.safetyRatings }), "Normal" } }, true, {})
+              end
+              handler.on_error("Prompt blocked: " .. item.promptFeedback.blockReason)
+            end
+          else
+            -- Handle top-level errors outside of candidates
+            local err_response = util.json.decode(raw)
+            if err_response and err_response.error then
+              handler.on_error(
+                "API Error: " .. err_response.error.message .. " (Code: " .. err_response.error.code .. ")"
+              )
+            elseif err_response then
+              handler.on_error(err_response)
+            else
+              handler.on_error("Unrecognized SSE response or empty candidates")
+            end
+          end
+        end,
+        on_error = handler.on_error,
+        on_other = handler.on_error,
+        on_exit = handler.on_finish,
+      })
+    end,
+  }
+end
+
+------@type Provider
+---local M = {
+---  request_completion = function(handler, params)
+---    return sse.curl_client({
+---      url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?alt=sse&key="
+---        .. util.env("GOOGLE_API_KEY"),
+---      headers = {
+---        ["Content-Type"] = "application/json",
+---      },
+---      body = params,
+---    }, {
+---      on_message = function(msg, raw)
+---        local item = util.json.decode(msg.data)
+---        if item and item.candidates then
+---          if item.candidates[1].content then
+---            local text_parts = item.candidates[1].content.parts
+---            for _, part in ipairs(text_parts) do
+---              handler.on_partial(part.text)
+---            end
+---          else
+---            handler.on_error(item)
+---          end
+---        else
+---          local err_response = util.json.decode(raw)
+---
+---          if err_response then
+---            handler.on_error(err_response)
+---          else
+---            handler.on_error("Unrecognized SSE response")
+---          end
+---        end
+---      end,
+---      on_error = handler.on_error,
+---      on_other = handler.on_error,
+---      on_exit = handler.on_finish,
+---    })
+---  end,
+---}
+
+return M

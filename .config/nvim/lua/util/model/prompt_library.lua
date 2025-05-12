@@ -3,6 +3,7 @@ local mode = require("model").mode
 local extract = require("model.prompts.extract")
 local openai = require("model.providers.openai")
 local gemini = require("model.providers.gemini")
+local gemini_custom = require("util.model.providers.gemini")
 local anthropic = require("model.providers.anthropic")
 local starter_prompts = require("model.prompts.starters")
 
@@ -191,6 +192,77 @@ return vim.tbl_extend("force", starter_prompts, {
       }
     end,
   },
+  ["PrReview"] = {
+    provider = gemini_custom.model("gemini-2.5-flash-preview-04-17"),
+    mode = mode.BUFFER,
+    builder = function()
+      -- Get the diff against the main branch.
+      -- You might want to adjust this if your main branch has a different name (e.g., "master").
+      -- Using --staged will only show staged changes. If you want all uncommitted changes against main:
+      -- local git_diff = vim.fn.system({ "git", "--no-pager", "diff", "main" })
+      -- If you want staged changes against main (like a pre-commit PR review):
+      local git_diff = vim.fn.system({ "git", "--no-pager", "diff", "--staged", "main" })
+
+      vim.api.nvim_echo({ { "Length of diff for PR Review:\n", "Title" }, { tostring(#git_diff), "Number" } }, true, {})
+
+      -- Basic error check for git diff command
+      if not git_diff or git_diff == "" then
+        -- If there's no diff, you might want to inform the user or handle it gracefully.
+        -- For now, let's assume an empty diff means no changes to review.
+        -- You could also error out: error("No changes to review against main.")
+        -- Or return a message indicating no diff:
+        return {
+          contents = {
+            {
+              parts = {
+                {
+                  text = "No changes found when diffing against main. Nothing to review.",
+                },
+              },
+            },
+          },
+        }
+      end
+
+      -- Handle potential errors if git diff returns an error message (e.g., not a git repo)
+      -- A more robust check might be needed depending on how `vim.fn.system` handles errors.
+      -- For simplicity, we'll proceed, but in a real scenario, you might check `v:shell_error`.
+
+      -- Truncate long diffs to avoid exceeding token limits (e.g., ~7000 words as a heuristic)
+      local words = {}
+      local token_limit = require("avante.config").claude.max_tokens
+      for word in git_diff:gmatch("%S+") do
+        table.insert(words, word)
+        if #words >= token_limit then break end
+      end
+      local truncated_diff = table.concat(words, " ")
+
+      if #words >= token_limit then
+        vim.api.nvim_echo({ { "Diff was truncated for PR Review due to length.", "WarningMsg" } }, true, {})
+      end
+
+      local prompt_text = "Please review the following code changes (diff against the main branch). "
+        .. "Identify potential bugs, areas for improvement, and any deviations from best practices. "
+        .. "Focus on the functionality, maintainability, and clarity of the code. "
+        .. "Provide specific feedback and suggestions where possible.\n\n"
+        .. "Git diff: ```diff\n" -- Using diff language hint for better formatting by the model
+        .. truncated_diff
+        .. "\n```"
+
+      return {
+        contents = {
+          {
+            parts = {
+              {
+                text = prompt_text,
+              },
+            },
+          },
+        },
+      }
+    end,
+  },
+
   ["commit:gemini"] = {
     provider = gemini,
     mode = mode.INSERT,

@@ -24,7 +24,9 @@ return {
     "williamboman/mason.nvim",
     optional = true,
     opts = {
-      ensure_installed = { "deno" },
+      -- TODO: uncommenting this doesn't let this work for some reason:
+      -- ~/.local/share/nvim/lazy/LazyVim/lua/lazyvim/plugins/lsp/init.lua:279
+      -- ensure_installed = { "deno" },
     },
   },
   {
@@ -73,18 +75,19 @@ return {
             },
           },
         },
-        denols = {
-          on_new_config = function(new_config)
-            local configs = { "deno.json", "deno.jsonc" }
-            local root = require("lazyvim.util.root").get()
-
-            for _, config in ipairs(configs) do
-              if vim.fn.filereadable(root .. "/" .. config) == 1 then return true end
-            end
-
-            new_config.enabled = false
-          end,
-        },
+        -- denols = {
+        --   enabled = false,
+        --   on_new_config = function(new_config)
+        --     local configs = { "deno.json", "deno.jsonc" }
+        --     local root = require("lazyvim.util.root").get()
+        --
+        --     for _, config in ipairs(configs) do
+        --       if vim.fn.filereadable(root .. "/" .. config) == 1 then return true end
+        --     end
+        --
+        --     new_config.enabled = false
+        --   end,
+        -- },
       },
       -- setup = {
       -- vtsls = function(server, server_opts)

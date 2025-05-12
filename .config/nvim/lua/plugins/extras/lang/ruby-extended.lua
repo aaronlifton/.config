@@ -2,6 +2,7 @@ LazyVim.on_very_lazy(function()
   vim.filetype.add({
     yml = "yaml",
   })
+  vim.treesitter.language.register("yaml", "yml")
 end)
 
 local has_rubocop_config = function()
@@ -118,6 +119,7 @@ return {
   { "tpope/vim-bundler", ft = "ruby" },
   {
     "neovim/nvim-lspconfig",
+    optional = true,
     ---@class PluginLspOpts
     opts = {
       ---@type lspconfig.options
@@ -175,7 +177,38 @@ return {
                 "log/**",
                 "public/**",
                 "script/**",
-                "spec/**",
+                -- "spec/**",
+                -- Spec sub-folders
+                "spec/controllers/**",
+                "spec/db/**",
+                "spec/decorators/**",
+                "spec/deprecations/**",
+                "spec/emails/**",
+                "spec/factories/**",
+                "spec/fixtures/**",
+                "spec/helpers/**",
+                "spec/http_services/**",
+                "spec/integration/**",
+                "spec/legacy_policies/**",
+                "spec/lib/**",
+                "spec/mailers/**",
+                "spec/models/**",
+                "spec/modules/**",
+                "spec/policies/**",
+                "spec/presenters/**",
+                "spec/queries/**",
+                "spec/resources/**",
+                "spec/routes/**",
+                "spec/services/**",
+                "spec/shared_contexts/**",
+                "spec/support/**",
+                "spec/tasks/**",
+                "spec/validators/**",
+                "spec/values/**",
+                "spec/vendor/**",
+                "spec/vendors/**",
+                "spec/workers/**",
+                -- /Spec sub-folders
                 "swagger/**",
                 "test/**",
                 "tmp/**",
@@ -243,23 +276,23 @@ return {
           },
         },
       },
-      setup = {
-        sorbet = function(_, opts)
-          local function sorbet_root_pattern(...)
-            local patterns = { "sorbet/config" }
-            return require("lspconfig.util").root_pattern(unpack(patterns))(...)
-          end
-
-          require("lspconfig").sorbet.setup(vim.tbl_extend("force", {
-            -- cmd = {"srb", "tc", "--typed", "true", "--enable-all-experimental-lsp-features", "--lsp", "--disable-watchman",},
-            cmd = { "srb", "tc", "--lsp" }, -- optionally "bundle", "exec", "--disable-watchman"
-            filetypes = { "ruby" },
-            root_dir = function(fname)
-              return sorbet_root_pattern(fname)
-            end,
-          }, opts))
-        end,
-      },
+      -- setup = {
+      --   sorbet = function(_, opts)
+      --     local function sorbet_root_pattern(...)
+      --       local patterns = { "sorbet/config" }
+      --       return require("lspconfig.util").root_pattern(unpack(patterns))(...)
+      --     end
+      --
+      --     require("lspconfig").sorbet.setup(vim.tbl_extend("force", {
+      --       -- cmd = {"srb", "tc", "--typed", "true", "--enable-all-experimental-lsp-features", "--lsp", "--disable-watchman",},
+      --       cmd = { "srb", "tc", "--lsp" }, -- optionally "bundle", "exec", "--disable-watchman"
+      --       filetypes = { "ruby" },
+      --       root_dir = function(fname)
+      --         return sorbet_root_pattern(fname)
+      --       end,
+      --     }, opts))
+      --   end,
+      -- },
     },
   },
   {

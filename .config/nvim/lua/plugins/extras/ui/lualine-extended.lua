@@ -77,6 +77,9 @@ return {
       table.insert(opts.sections.lualine_x, 2, require("util.lualine.codecompanion"))
       table.insert(opts.sections.lualine_x, 2, require("util.lualine.avante"))
       -- table.insert(opts.sections.lualine_x, 2, starship)
+      if package.loaded["mcphub"] then
+        table.insert(opts.sections.lualine_x, 2, require("mcphub.extensions.lsp_status"))
+      end
     end
     opts.sections.lualine_y = { "progress" }
     opts.sections.lualine_z = {

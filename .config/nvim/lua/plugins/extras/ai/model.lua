@@ -73,6 +73,7 @@ return {
       -- { provider_prefix .. "g", function() vim.cmd(":vsplit | Mchat gemini:flash") end, desc = "Gemini Flash" },
       { provider_prefix .. "g", "<cmd>tab Mchat gemini:flash-2.5<cr>", desc = "Gemini Flash 2.5" },
       { provider_prefix .. "G", "<cmd>tab Mchat gemini:pro-2.5<cr>", desc = "Gemini Pro 2.5" },
+      { provider_prefix .. "s", "<cmd>tab Mchat gemini:flash-2.5-think<cr>", desc = "Gemini Flash 2.5 (Search Tool)" },
       -- { provider_prefix .. "g", "<cmd>vsplit | Mchat gemini:flash<cr>", desc = "Gemini Flash" },
       { provider_prefix .. "x", "<cmd>tab Mchat xai<cr>", desc = "xAI" },
       { provider_prefix .. "p", "<cmd>tab Mchat pplx<cr>", desc = "Perplexity" },
@@ -152,10 +153,9 @@ return {
       model.setup({
         default_prompt = hf.default_prompt,
         -- Autoload
-        -- chats = util.module.autoload("plugins.extras.ai.config.chat_library"),
-        -- prompts = util.module.autoload("plugins.extras.ai.config.prompt_library"),
-        -- /Users/alifton/.config/nvim/lua/util/model/chat_library.lua
-        chats = require("util.model.chat_library"),
+        chats = util.module.autoload("util.model.chat_library"),
+        -- prompts = util.module.autoload("util.model.prompt_library"),
+        -- chats = require("util.model.chat_library"),
         prompts = require("util.model.prompt_library"),
       })
 

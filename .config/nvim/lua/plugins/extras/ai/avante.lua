@@ -12,6 +12,14 @@ local _vendors = {
   },
 }
 
+-- local cwd = vim.fn.getcwd()
+-- local normalized_parent = vim.fn.fnamemodify(parent_path, ":p")
+-- local normalized_cwd = vim.fn.fnamemodify(cwd, ":p")
+-- local is_config_subdirectory = vim.startswith(normalized_cwd, normalized_parent)
+-- local use_cwd_as_project_root = false
+-- if is_config_subdirectory and LazyVim.root.get() ~= normalized_cwd then use_cwd_as_project_root = true end
+local use_mcphub_tools = false
+
 return {
   {
     "yetone/avante.nvim",
@@ -74,14 +82,15 @@ return {
     --- @type avante.Config
     opts = {
       -- Defaults: ~/.local/share/nvim/lazy/avante.nvim/lua/avante/config.lua:189
-      -- provider = "claude",
+      provider = "claude",
+      -- mode = "agentic", -- The default mode for interaction. "agentic" uses tools to automatically generate code, "legacy" uses the old planning method to generate code.
       -- auto_suggestions_provider = "claude",
       -- claude = {
       --   endpoint = "https://api.anthropic.com",
-      --   -- model = "claude-3-5-sonnet-20241022",
-      --   model = "claude-3-7-sonnet-20250219"
+      --   model = "claude-3-7-sonnet-20250219",
+      --   timeout = 30000, -- Timeout in milliseconds
       --   temperature = 0,
-      --   max_tokens = 4096,
+      --   max_tokens = 20480,
       -- },
       behaviour = {
         -- auto_focus_sidebar = true,
@@ -94,9 +103,8 @@ return {
         -- support_paste_from_clipboard = false,
         -- minimize_diff = true,
         -- enable_token_counting = true,
-        -- enable_cursor_planning_mode = false,
-        enable_claude_text_editor_tool_mode = true,
-        -- use_cwd_as_project_root = false,
+        use_cwd_as_project_root = false,
+        -- auto_focus_on_diff_view = false,
       },
       -- Default keybindings: ~/.local/share/nvim/lazy/avante.nvim/lua/avante/config.lua:329
       mappings = {
@@ -128,6 +136,9 @@ return {
         ---@type "right" | "left" | "top" | "bottom"
         position = "right", -- the position of the sidebar
         wrap = true, -- similar to vim.o.wrap
+        input = {
+          height = 12, -- Height of the input window in vertical layout
+        },
       },
       repo_map = {
         -- stylua: ignore start
@@ -143,50 +154,83 @@ return {
         provider = "fzf",
       },
       --- @class AvanteConflictUserConfig
-      diff = {
-        ---@type string | fun(): any
-        list_opener = "Trouble quickfix",
-        --   --- Override the 'timeoutlen' setting while hovering over a diff (see :help timeoutlen).
-        --   --- Helps to avoid entering operator-pending mode with diff mappings starting with `c`.
-        --   --- Disable by setting to -1.
-        --   override_timeoutlen = 500,
-      },
-      disabled_tools = { "python", "git_commit" }, -- Claude 3.7 overuses the python tool
-      custom_tools = {
-        {
-          name = "run_go_tests", -- Unique name for the tool
-          description = "Run Go unit tests and return results", -- Description shown to AI
-          command = "go test -v ./...", -- Shell command to execute
-          param = { -- Input parameters (optional)
-            type = "table",
-            fields = {
+      disabled_tools = { "run_python", "git_commit" }, -- Claude 3.7 overuses the python tool
+      custom_tools = function()
+        if use_mcphub_tools then return {
+          require("mcphub.extensions.avante").mcp_tool(),
+        } end
+        return {
+          {
+            name = "run_go_tests", -- Unique name for the tool
+            description = "Run Go unit tests and return results", -- Description shown to AI
+            command = "go test -v ./...", -- Shell command to execute
+            param = { -- Input parameters (optional)
+              type = "table",
+              fields = {
+                {
+                  name = "target",
+                  description = "Package or directory to test (e.g. './pkg/...' or './internal/pkg')",
+                  type = "string",
+                  optional = true,
+                },
+              },
+            },
+            returns = { -- Expected return values
               {
-                name = "target",
-                description = "Package or directory to test (e.g. './pkg/...' or './internal/pkg')",
+                name = "result",
+                description = "Result of the fetch",
+                type = "string",
+              },
+              {
+                name = "error",
+                description = "Error message if the fetch was not successful",
                 type = "string",
                 optional = true,
               },
             },
+            func = function(params, on_log, on_complete) -- Custom function to execute
+              local target = params.target or "./..."
+              return vim.fn.system(string.format("go test -v %s", target))
+            end,
           },
-          returns = { -- Expected return values
-            {
-              name = "result",
-              description = "Result of the fetch",
-              type = "string",
+          {
+            name = "run_rspec_tests", -- Unique name for the tool
+            description = "Run RSpec unit tests and return results", -- Description shown to AI
+            command = "bundle exec rspec", -- Shell command to execute
+            param = { -- Input parameters (optional)
+              type = "table",
+              fields = {
+                {
+                  name = "paths",
+                  description = "comma-seperated file paths, or file regex patterns to test. ",
+                  type = "string",
+                },
+              },
             },
-            {
-              name = "error",
-              description = "Error message if the fetch was not successful",
-              type = "string",
-              optional = true,
+            returns = { -- Expected return values
+              {
+                name = "result",
+                description = "Result of the test run",
+                type = "string",
+              },
+              {
+                name = "error",
+                description = "Error message if the test run was not successful",
+                type = "string",
+                optional = true,
+              },
             },
+            func = function(params, on_log, on_complete) -- Custom function to execute
+              local paths = params.paths
+              local command = string.format("bundle exec rspec --format json %s", paths)
+              on_log("Running command: " .. command)
+              local rspec_output = vim.fn.system(command)
+              local markdown_output = "```json\n" .. rspec_output .. "\n```"
+              return markdown_output
+            end,
           },
-          func = function(params, on_log, on_complete) -- Custom function to execute
-            local target = params.target or "./..."
-            return vim.fn.system(string.format("go test -v %s", target))
-          end,
-        },
-      },
+        }
+      end,
       completion = {
         cmp = {
           input_container = {
