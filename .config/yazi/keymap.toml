@@ -9,15 +9,18 @@ prepend_keymap = [
   { on = [
     "f",
   ], run = "plugin jump-to-char", desc = "Jump to char" },
-  { on  = [
-    "O"
+  { on = [
+    "e",
   ], run = 'shell --block --confirm "nvim $@"', desc = "Open in Neovim" },
+  { on = [
+    "O",
+  ], run = 'shell "open -a Finder ./"', desc = "Open in Neovim" },
 ]
 
 append_keymap = [
-  { on = [
-    "e",
-  ], run = "open", desc = "Open the selected files" },
+  # { on = [
+  #   "e",
+  # ], run = "open", desc = "Open the selected files" },
   { on = [
     "E",
   ], run = "open --interactive", desc = "Open the selected files interactively" },
