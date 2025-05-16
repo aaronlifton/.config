@@ -30,6 +30,9 @@ abbr --add rg8 rg -m 80 -M 80 -u
 abbr --add rg-mr --position command --set-cursor "rg -l \"%\" | xargs lsd -lt"
 abbr -a --position anywhere -- --fwm --files-with-matches
 
+### Fd
+abbr --add --position anywhere -- --fdtree "| tree --fromfile"
+
 ### Git
 abbr --add glp git log --pretty="format:%h %G? %aN %s"
 abbr --add gdiffhead git diff HEAD^ -- . '!:node_modules'
