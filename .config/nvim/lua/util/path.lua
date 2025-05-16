@@ -1,36 +1,43 @@
 ---@class util.path
----@field current_abs_path fun():string
----@field current_rel_path fun():string
+---@field absolute fun():string
+---@field relative fun():string
 ---@field file_line fun():string
 ---@field echo fun(string)
 ---@field set_clipboard fun(string)
----@field copy_abs_file_line fun():string
----@field copy_rel_file_line fun():string
+---@field copy_abs_file_line fun()
+---@field copy_rel_file_line fun()
 local M = {}
 
-M.current_abs_path = function()
+local function set_clipboard(str)
+  vim.api.nvim_call_function("setreg", { "+", str })
+end
+
+--- Get the absolute path of the current file.
+M.absolute = function()
   return vim.fn.expand("%:p")
 end
 
-M.current_rel_path = function()
-  local abs_path = vim.fn.expand("%:p")
-  return vim.fn.fnamemodify(abs_path, ":.")
+-- NOTE: this has been replaced by function below
+-- M.current_rel_path = function()
+--   local abs_path = vim.fn.expand("%:p")
+--   return vim.fn.fnamemodify(abs_path, ":.")
+-- end
+
+--- Get the relative path of the current file.
+M.relative = function()
+  return vim.fn.fnamemodify(vim.fn.expand("%"), ":~:.")
 end
 
-M.rel_file_line = function()
-  local rel_path = M.current_rel_path()
+M.relative_file_line = function()
+  local rel_path = M.relative()
   local current_line = vim.fn.line(".")
   return rel_path .. ":" .. tostring(current_line)
 end
 
-M.abs_file_line = function()
-  local abs_path = M.current_abs_path()
+M.absolute_file_line = function()
+  local abs_path = M.absolute()
   local current_line = vim.fn.line(".")
   return abs_path .. ":" .. tostring(current_line)
-end
-
-M.set_clipboard = function(str)
-  vim.api.nvim_call_function("setreg", { "+", str })
 end
 
 M.echo = function(path)
@@ -41,28 +48,28 @@ M.echo = function(path)
 end
 
 M.copy_abs_path = function()
-  local abs_path = M.current_abs_path()
+  local abs_path = M.absolute()
   M.echo(abs_path)
-  M.set_clipboard(abs_path)
+  set_clipboard(abs_path)
 end
 
 M.copy_rel_path = function()
-  local rel_path = M.current_rel_path()
+  local rel_path = M.relative()
   M.echo(rel_path)
-  M.set_clipboard(rel_path)
+  set_clipboard(rel_path)
 end
 
 M.copy_rel_file_line = function()
-  local file_line = M.rel_file_line()
+  local file_line = M.relative_file_line()
   M.echo(file_line)
-  M.set_clipboard(file_line)
+  set_clipboard(file_line)
 end
 
 M.copy_rel_pwd = function()
   local pwd = vim.fn.expand("%:p:h")
   local rel_pwd = vim.fn.fnamemodify(pwd, ":.")
   M.echo(rel_pwd)
-  M.set_clipboard(rel_pwd)
+  set_clipboard(rel_pwd)
 end
 
 M.copy_rel_pwd_rg_glob = function()
@@ -70,12 +77,12 @@ M.copy_rel_pwd_rg_glob = function()
   local rel_pwd = vim.fn.fnamemodify(pwd, ":.")
   local rg_glob = rel_pwd .. "/**"
   M.echo(rg_glob)
-  M.set_clipboard(rg_glob)
+  set_clipboard(rg_glob)
 end
 
 M.copy_abs_file_line = function()
-  local file_line = M.abs_file_line()
-  M.set_clipboard(file_line)
+  local file_line = M.absolute_file_line()
+  set_clipboard(file_line)
 end
 
 return M

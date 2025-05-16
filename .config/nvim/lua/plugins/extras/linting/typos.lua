@@ -1,6 +1,6 @@
 return {
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = {
       ensure_installed = { "typos" },
     },
@@ -12,6 +12,7 @@ return {
       linters_by_ft = {
         markdown = { "typos" },
         ["markdown.mdx"] = { "typos" },
+        ["go"] = { "typos" },
       },
     },
   },

@@ -20,7 +20,7 @@ return {
     },
   },
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     optional = true,
     opts = function(_, opts)
       vim.list_extend(opts.ensure_installed, { "codelldb" })

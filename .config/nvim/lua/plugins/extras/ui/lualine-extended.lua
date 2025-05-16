@@ -69,9 +69,11 @@ return {
         return "Unknown"
       end
     end)
+
     if vim.g.lualine_info_extras == true then
       -- table.insert(opts.sections.lualine_x, 2, lsp_status)
-      table.insert(opts.sections.lualine_x, 2, lsp)
+      table.insert(opts.sections.lualine_x, 2, { "lsp_status" })
+      -- table.insert(opts.sections.lualine_x, 2, lsp)
       table.insert(opts.sections.lualine_x, 2, formatter)
       table.insert(opts.sections.lualine_x, 2, linter)
       table.insert(opts.sections.lualine_x, 2, require("util.lualine.codecompanion"))

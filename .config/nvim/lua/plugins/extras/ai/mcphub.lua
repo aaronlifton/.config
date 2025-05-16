@@ -34,12 +34,12 @@ return {
         end
         return hub:get_active_servers_prompt()
       end,
-      -- The custom_to=ols type supports both a list and a function that returns a list. Using a function here prevents requiring mcphub before it's loaded
-      custom_tools = function()
-        return {
-          require("mcphub.extensions.avante").mcp_tool(),
-        }
-      end,
+      -- The custom_tools type supports both a list and a function that returns a list. Using a function here prevents requiring mcphub before it's loaded
+      -- custom_tools = function()
+      --   return {
+      --     require("mcphub.extensions.avante").mcp_tool(),
+      --   }
+      -- end,
       disabled_tools = {
         "list_files",
         "search_files",

@@ -1,13 +1,13 @@
 return {
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     keys = {
       { "<leader>cm", false },
       { "<leader>cim", "<cmd>Mason<cr>", desc = "Mason" },
     },
   },
   -- {
-  --   "williamboman/mason.nvim",
+  --   "mason-org/mason.nvim",
   --   -- dependencies = {
   --   --   "zapling/mason-lock.nvim",
   --   --   cmd = { "MasonLock", "MasonLockRestore" },

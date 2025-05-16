@@ -21,7 +21,7 @@ end)
 return {
   { import = "lazyvim.plugins.extras.lang.typescript" },
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     optional = true,
     opts = {
       -- TODO: uncommenting this doesn't let this work for some reason:
@@ -256,7 +256,7 @@ return {
   --   optional = true,
   --   dependencies = {
   --     {
-  --       "williamboman/mason.nvim",
+  --       "mason-org/mason.nvim",
   --       opts = function(_, opts)
   --         opts.ensure_installed = opts.ensure_installed or {}
   --         table.insert(opts.ensure_installed, "chrome-debug-adapter")

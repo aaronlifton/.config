@@ -17,14 +17,15 @@ return {
     ft = fts,
     opts = {},
     keys = {
-      { "<tab>", "<cmd>AutolistTab<cr>", mode = { "i" }, ft = fts },
-      { "<s-tab>", "<cmd>AutolistShiftTab<cr>", mode = { "i" }, ft = fts },
+      -- freezing when hitting the tab key (https://github.com/gaoDean/autolist.nvim/issues/79)
+      -- { "<tab>", "<cmd>AutolistTab<cr>", mode = { "i" }, ft = fts },
+      -- { "<s-tab>", "<cmd>AutolistShiftTab<cr>", mode = { "i" }, ft = fts },
       { "<CR>", "<CR><cmd>AutolistNewBullet<cr>", mode = { "i" }, ft = fts },
       { "o", "o<cmd>AutolistNewBullet<cr>", mode = { "n" }, ft = fts },
       { "O", "O<cmd>AutolistNewBulletBefore<cr>", mode = { "n" }, ft = fts },
       { "<CR>", "<cmd>AutolistToggleCheckbox<cr><CR>", mode = { "n" }, ft = fts },
-      { "<S-CR>", "<cmd>AutolistToggleCheckbox<cr><CR>", mode = { "n" }, ft = fts },
-      -- { "<C-r>", "<cmd>AutolistRecalculate<cr>", mode = { "n" } },
+      -- { "<S-CR>", "<cmd>AutolistToggleCheckbox<cr><CR>", mode = { "n" }, ft = fts },
+      { "<C-r>", "<cmd>AutolistRecalculate<cr>", mode = { "n" }, ft = fts },
 
       { "],", "<cmd>AutolistCycleNext<cr>", mode = { "n" }, ft = fts, desc = "Next List Type" },
       { "[.", "<cmd>AutolistCyclePrev<cr>", mode = { "n" }, ft = fts, desc = "Prev List Type" },
@@ -60,8 +61,16 @@ return {
     },
   },
   {
+    "MeanderingProgrammer/render-markdown.nvim",
+    optional = true,
+    opts = {
+      file_types = { "markdown", "norg", "rmd", "org", "mchat", "Avante" },
+    },
+  },
+  {
     -- Install markdown preview, use npx if available.
     "iamcco/markdown-preview.nvim",
+    enabled = false,
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
     ft = { "markdown" },
     build = function(plugin)

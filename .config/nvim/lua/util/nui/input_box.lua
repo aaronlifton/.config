@@ -38,7 +38,7 @@ function InputBox:init(opts)
     self.popup_col = -cursor_col + 1
   else
     self.start_row = self.selection.start.lnum - 1
-    self.start_col = self.selection.start.col - 1
+    self.start_col = math.self.selection.start.col - 1
     self.end_row = self.selection.finish.lnum - 1
     self.end_col = math.min(self.selection.finish.col, #code_lines[self.selection.finish.lnum])
 

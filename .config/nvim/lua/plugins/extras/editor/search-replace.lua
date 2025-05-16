@@ -56,11 +56,11 @@ return {
         "<leader>srf",
         function()
           local grug = require("grug-far")
-          local current_file_relpath = vim.fn.fnamemodify(vim.fn.expand("%"), ":~:.")
+          local current_relpath = Util.path.relative()
           grug.open({
             transient = true,
             prefills = {
-              filesFilter = current_file_relpath,
+              paths = current_relpath,
             },
           })
         end,

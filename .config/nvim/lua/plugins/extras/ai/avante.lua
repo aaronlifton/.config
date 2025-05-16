@@ -18,7 +18,6 @@ local _vendors = {
 -- local is_config_subdirectory = vim.startswith(normalized_cwd, normalized_parent)
 -- local use_cwd_as_project_root = false
 -- if is_config_subdirectory and LazyVim.root.get() ~= normalized_cwd then use_cwd_as_project_root = true end
-local use_mcphub_tools = false
 
 return {
   {
@@ -156,9 +155,10 @@ return {
       --- @class AvanteConflictUserConfig
       disabled_tools = { "run_python", "git_commit" }, -- Claude 3.7 overuses the python tool
       custom_tools = function()
-        if use_mcphub_tools then return {
-          require("mcphub.extensions.avante").mcp_tool(),
-        } end
+        local mcphub_tool = {}
+        local ok, mcphub_ext = pcall(require, "mcphub.extensions.avante")
+        if ok then mcphub_tool = mcphub_ext.mcp_tool() end
+
         return {
           {
             name = "run_go_tests", -- Unique name for the tool
@@ -229,6 +229,7 @@ return {
               return markdown_output
             end,
           },
+          mcphub_tool,
         }
       end,
       completion = {

@@ -15,6 +15,7 @@
 ---@field treesitter util.treesitter
 ---@field bufferline util.bufferline
 ---@field format util.format
+---@field path util.path
 local M = {}
 
 setmetatable(M, {

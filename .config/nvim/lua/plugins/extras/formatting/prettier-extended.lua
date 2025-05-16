@@ -20,7 +20,7 @@ local config_file_names = {
 return {
   { import = "lazyvim.plugins.extras.formatting.prettier" },
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = {
       ensure_installed = {
         "prettierd",

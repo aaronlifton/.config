@@ -34,7 +34,7 @@ return {
 
   -- LSP and completion
   { "neovim/nvim-lspconfig" },
-  { "williamboman/mason.nvim" },
+  { "mason-org/mason.nvim" },
   { "hrsh7th/nvim-cmp" },
   { "hrsh7th/cmp-nvim-lsp" },
   { "L3MON4D3/LuaSnip" },

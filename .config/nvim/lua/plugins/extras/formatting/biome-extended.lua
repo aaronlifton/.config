@@ -1,6 +1,8 @@
 -- Adapted from lazyvim.extras.formatters.biome to support global prettier
 -- config (vim.g.lazyvim_prettier_needs_config = true)
 
+local biome_needs_config = false
+
 -- https://biomejs.dev/internals/language-support/
 local supported = {
   "astro",
@@ -21,10 +23,21 @@ local supported = {
 
 return {
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = { ensure_installed = { "biome" } },
   },
-
+  {
+    "neovim/nvim-lspconfig",
+    optional = true,
+    ---@class PluginLspOpts
+    opts = {
+      servers = {
+        biome = {
+          enabled = true,
+        },
+      },
+    },
+  },
   {
     "stevearc/conform.nvim",
     optional = true,
@@ -38,7 +51,7 @@ return {
 
       opts.formatters = opts.formatters or {}
       opts.formatters.biome = {
-        require_cwd = true,
+        -- require_cwd = biome_needs_config,
       }
     end,
   },

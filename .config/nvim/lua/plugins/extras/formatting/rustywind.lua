@@ -2,7 +2,7 @@ local lsp_util = require("util.lsp")
 
 return {
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = {
       ensure_installed = { "rustywind" },
     },

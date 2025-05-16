@@ -9,6 +9,7 @@ local remove_from_edgebar = function(edgebar, title)
     end
   end
 end
+
 ---@param win Edgy.Window
 local function toggle_auto_expand_width(win)
   -- to load the filetypes
@@ -23,11 +24,6 @@ local function toggle_auto_expand_width(win)
     return
   end
 
-  vim.api.nvim_echo(
-    { { "state.window.last_user_width\n", "Title" }, { vim.inspect(state.window.last_user_width), "Normal" } },
-    true,
-    {}
-  )
   neotree_toggle_auto_expand_width(state)
   while win_width < state.win_width + 1 do
     win:resize("width", 1)
@@ -36,6 +32,7 @@ local function toggle_auto_expand_width(win)
 end
 
 return {
+  { import = "lazyvim.plugins.extras.ui.edgy" },
   {
     "folke/edgy.nvim",
     event = "VeryLazy",
@@ -50,14 +47,15 @@ return {
       -- end
 
       -- Move DBUI to bottom of right edgebar
-      local dbui_idx = nil
-      for idx, win in ipairs(opts.right) do
-        if win.title == "Database" then
-          dbui_idx = idx
-          break
-        end
-      end
-      opts.right[#opts.right + 1] = table.remove(opts.right, dbui_idx)
+      -- local dbui_idx = nil
+      -- for idx, win in ipairs(opts.right) do
+      --   if win.title == "Database" then
+      --     dbui_idx = idx
+      --     break
+      --   end
+      -- end
+      -- if dbui_idx then opts.right[#opts.right + 1] = table.remove(opts.right, dbui_idx) end
+
       opts.keys["e"] = toggle_auto_expand_width
 
       return opts

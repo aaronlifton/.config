@@ -289,4 +289,10 @@ M.restore_selection = function(bufnr)
   end
 end
 
+M.is_visual_mode = function(mode)
+  mode = mode or vim.fn.mode()
+  -- '\22' is an escaped `<C-v>`
+  return mode == "v" or mode == "V" or mode == "\22", mode
+end
+
 return M

@@ -3,16 +3,26 @@
 return {
   { import = "lazyvim.plugins.extras.lang.go" },
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = {
-      ensure_installed = { "golangci-lint", "golangci-lint-langserver" },
+      ensure_installed = {
+        -- "golangci-lint", -- Installed v1 locally
+        "golangci-lint-langserver",
+      },
     },
   },
   {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
-        golangci_lint_ls = {},
+        -- https://github.com/nvimtools/none-ls.nvim/commit/2f6a433e62d0fab6a03dadf2c207fcbe409416c4
+        golangci_lint_ls = {
+          init_options = {
+            -- nvim-lspconfig @ b542bd594a8b9ab76926721e9815ec4b0b1b3c16
+            command = { "golangci-lint", "run", "--out-format", "json" },
+            -- command = { "golangci-lint", "run", "--out-format=json", "--show-stats=false" },
+          },
+        },
       },
     },
   },

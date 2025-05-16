@@ -94,7 +94,7 @@ return {
         "<leader>gdH",
         function()
           local buf_id = vim.api.nvim_get_current_buf()
-          set_mini_diff_ref_text(buf_id, ":1")
+          set_mini_diff_ref_text(buf_id, "@{1}")
         end,
         desc = "MiniDiff (HEAD~1)",
       },

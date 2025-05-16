@@ -4,7 +4,7 @@ return {
   { import = "lazyvim.plugins.extras.util.octo" },
   -- { import = "plugins.extras.lang.git-extended" },
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = {
       ensure_installed = { "gh" },
     },

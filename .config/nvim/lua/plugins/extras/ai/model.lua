@@ -102,7 +102,7 @@ return {
                   "anthropic:claude-code",
                   require("model").mode.INSERT_OR_REPLACE,
                   content,
-                  { visual = true }
+                  { visual = Util.selection.is_visual_mode() }
                 )
               end)
             end,

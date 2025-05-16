@@ -158,7 +158,8 @@ return {
           -- end,
           ["s"] = {
             function()
-              if not package.loaded["leap"] then return end
+              -- if not package.loaded["leap"] then return end
+              if not package.loaded["leap"] then vim.cmd([[Lazy load leap.nvim]]) end
 
               local leap_util = require("util.leap")
               local buf = vim.api.nvim_get_current_buf()

@@ -765,7 +765,7 @@ map("v", "<leader>gU", function()
 end, { desc = "Resolve github url from path" })
 
 map("n", "<leader>g<C-r>", function()
-  local path_with_line = path_util.abs_file_line()
+  local path_with_line = path_util.absolute_file_line()
   local url = resolve_github_url_from_text(path_with_line)
   if not url then return end
   vim.notify("Opening: " .. url, vim.log.levels.INFO, { title = "Github" })
