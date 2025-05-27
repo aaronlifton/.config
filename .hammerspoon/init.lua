@@ -3,10 +3,52 @@ local configWatcher = require("functions/config_watcher")
 local appWatcher = require("functions/application_watcher")
 local keys = require("keys")
 
+-- https://github.com/indirect/miro-windows-manager/blob/61b5a4cb261645b4704f1ee40057d82c55cb88fa/MiroWindowsManager.spoon/init.lua#L35
+-- Patch hs.window to work around accessibility forcing animations
+local function axHotfix(win)
+	if not win then
+		win = hs.window.frontmostWindow()
+	end
+
+	local axApp = hs.axuielement.applicationElement(win:application())
+	local wasEnhanced = axApp.AXEnhancedUserInterface
+	axApp.AXEnhancedUserInterface = false
+
+	return function()
+		hs.timer.doAfter(hs.window.animationDuration * 2, function()
+			axApp.AXEnhancedUserInterface = wasEnhanced
+		end)
+	end
+end
+
+local function withAxHotfix(fn, position)
+	if not position then
+		position = 1
+	end
+	return function(...)
+		local revert = axHotfix(select(position, ...))
+		fn(...)
+		revert()
+	end
+end
+
+local windowMT = hs.getObjectMetatable("hs.window")
+windowMT.setFrame = withAxHotfix(windowMT.setFrame)
+windowMT.maximize = withAxHotfix(windowMT.maximize)
+windowMT.moveToUnit = withAxHotfix(windowMT.moveToUnit)
+
 hs.loadSpoon("EmmyLua")
 hs.loadSpoon("ClipboardTool")
+-- local EnhancedSpaces = hs.loadSpoon("EnhancedSpaces")
+-- EnhancedSpaces:new({
+-- 	mSpaces = { "1", "2", "3" }, -- default { '1', '2', '3' }
+-- 	startmSpace = "2", -- default 2
+-- 	modifierSnap1 = { "" }, -- default: { 'cmd', 'alt' }
+-- 	modifierSnap2 = { "" }, -- default: { 'cmd', 'ctrl' }
+-- 	modifierSnap3 = { "" }, -- default: { 'cmd', 'shift' }
+-- })
 
--- NOTE: This needs tobe updated to the latest hammerspoon. Trying Aerospace instead.
+-- NOTE: This needs to be updated to the latest hammerspoon. Trying Aerospace instead.
 -- can use hs.loadSpoon when it fits the spoon format
 -- HWM = require("functions/hhtwm") -- it's recommended to make `hhtwm` a global object so it's not garbage collected.
 -- HWM.start()
@@ -16,6 +58,7 @@ configWatcher:watch_config_and_reload()
 
 keys.bind_window_management_keymap()
 keys.bind_general_keymap()
+keys.bind_app_keymap()
 
 -- require("yabai")
 
@@ -72,6 +115,7 @@ end)
 hs.hotkey.bind(hyperKey, "9", function()
 	hs.application.launchOrFocus("System Preferences")
 end)
+
 -- hs.hotkey.bind("cmd", "q", function()
 --     hs.alert.show("Cmd+Q is disabled", 1)
 -- end)

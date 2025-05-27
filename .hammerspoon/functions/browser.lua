@@ -1,3 +1,5 @@
+local logger = require("functions/logger")
+
 local M = {}
 
 M.jump = function(browserName)
@@ -29,6 +31,7 @@ end
 
 -- Function to create a new tab to the right in Chrome
 M.newTabToRight = function()
+	logger.d('Selecting "newTabToRight"')
 	local app = hs.application.find("Chrome")
 	app:selectMenuItem({ "Tab", "New Tab to the Right" })
 end

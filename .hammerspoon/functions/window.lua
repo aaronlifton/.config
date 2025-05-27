@@ -1,4 +1,13 @@
+local window = require("hs.window")
 local logger = require("functions/logger")
+local grid = require("hs.grid")
+
+window.animationDuration = 0
+grid.MARGINX = 0
+grid.MARGINY = 0
+grid.GRIDWIDTH = 2
+grid.GRIDHEIGHT = 2
+
 local M = {}
 
 M.restorable_frames = {}
@@ -122,5 +131,7 @@ end
 -- 	end
 -- end
 --
+
+M.maximize_window = grid.maximizeWindow
 
 return M

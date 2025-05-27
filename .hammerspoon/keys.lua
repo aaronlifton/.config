@@ -77,8 +77,73 @@ function M.bind_window_management_keymap()
 		end
 	end
 
+	-- function axHotfix(win)
+	-- 	if not win then
+	-- 		win = hs.window.frontmostWindow()
+	-- 	end
+	--
+	-- 	local axApp = hs.axuielement.applicationElement(win:application())
+	-- 	local wasEnhanced = axApp.AXEnhancedUserInterface
+	-- 	if wasEnhanced then
+	-- 		axApp.AXEnhancedUserInterface = false
+	-- 	end
+	--
+	-- 	return function()
+	-- 		if wasEnhanced then
+	-- 			axApp.AXEnhancedUserInterface = true
+	-- 		end
+	-- 	end
+	-- end
+	--
+	-- function withAxHotfix(fn, position)
+	-- 	if not position then
+	-- 		position = 1
+	-- 	end
+	-- 	return function(...)
+	-- 		local args = { ... }
+	-- 		local revert = axHotfix(args[position])
+	-- 		fn(...)
+	-- 		revert()
+	-- 	end
+	-- end
+	--
+	-- local windowMT = hs.getObjectMetatable("hs.window")
+	-- windowMT.maximize = withAxHotfix(windowMT.maximize)
+	-- windowMT.moveToUnit = withAxHotfix(windowMT.moveToUnit)
+
+	-- https://github.com/Hammerspoon/hammerspoon/issues/3277
+	function maximize_window()
+		-- full screen window
+		local win = hs.window.focusedWindow()
+		local f = win:frame()
+		local screen = win:screen()
+		local max = screen:frame()
+
+		f.x = max.x
+		f.y = max.y
+		f.w = max.w
+		f.h = max.h
+		win:setFrame(f, 0)
+	end
+
+	-- https://github.com/Hammerspoon/hammerspoon/issues/3224#issuecomment-1304468476
+	function fullscreen(win)
+		local screenFrame = win:screen():frame()
+
+		win:setTopLeft(screenFrame.x, screenFrame.y)
+
+		-- Waiting 0.4 seconds to make the two step transition work
+		-- You might need to adjust this.
+		hs.timer.usleep(0.4 * 1000 * 1000)
+
+		win:SetFrame(screenFrame)
+
+		return win
+	end
+
 	hs.hotkey.bind("⌘⇧", "left", thunk_left_or_move)
 	hs.hotkey.bind("⌘⇧", "right", thunk_right_or_move)
+
 	-- hs.hotkey.bind({ "ctrl" }, "space", function()
 	-- 	local app = hs.application.get("kitty")
 	-- 	if app then
@@ -101,6 +166,8 @@ function M.bind_window_management_keymap()
 	-- fullscreen
 	-- hs.hotkey.bind("⌘⌥", "return", window.thunk_push({ width = 1, height = 1 }))
 	bind_with_restore("⌘⌥", "return", window.thunk_push({ top = 0, left = 0, width = 1, height = 1 }))
+	-- bind_with_restore("⌘⌥", "return", fullscreen)
+	-- bind_with_restore("⌘⌥", "return", maximize_window)
 
 	-- quarter screens
 	hs.hotkey.bind("⌘⌥", "u", window.thunk_push({ top = 0, left = 0, width = 1 / 2, height = 1 / 2 }))
@@ -133,6 +200,7 @@ function M.bind_window_management_keymap()
 	-- hs.hotkey.bind("⌃⌥⌘", "t", new_tab_next_to_current_tab_chrome)
 
 	-- Between monitors
+	-- Doesn't work since sequoia
 	local duration = 0
 	hs.hotkey.bind({ "alt", "ctrl", "cmd" }, "Right", function()
 		local win = hs.window.focusedWindow()
@@ -142,6 +210,14 @@ function M.bind_window_management_keymap()
 		local win = hs.window.focusedWindow()
 		win:moveOneScreenNorth(false, true, duration)
 	end)
+	-- function moveWindowToNextScreen()
+	-- 	return function()
+	-- 		local focused_window = hs.window.focusedWindow()
+	-- 		local screen = focused_window:screen():next()
+	-- 		focused_window:moveToScreen(screen)
+	-- 	end
+	-- end
+	--  hs.hotkey.bind({ "ctrl", "alt", "cmd" }, "Right", moveWindowToNextScreen())
 end
 
 function M.bind_general_keymap()
@@ -183,6 +259,21 @@ function M.bind_general_keymap()
   end
 
   hs.hotkey.bind({ "cmd", "shift" }, "T", browser.newTabToRight)
+end
+
+function M.bind_app_keymap()
+	hs.hotkey.bind({ "alt", "shift" }, "k", function()
+		hs.application.launchOrFocus("kitty")
+	end)
+	hs.hotkey.bind({ "cmd", "shift" }, "C", function()
+		hs.application.launchOrFocus("Google Chrome")
+	end)
+	-- hs.hotkey.bind({ "alt", "shift" }, "S", function()
+	-- 	hs.application.launchOrFocus("Slack")
+	-- end)
+	-- hs.hotkey.bind( "ctrl", "alt" }, "c", function()
+	-- 	hs.application.launchOrFocus("Chrome")
+	-- end)
 end
 
 -- require("functions/control_escape")

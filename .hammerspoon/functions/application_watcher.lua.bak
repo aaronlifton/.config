@@ -3,7 +3,10 @@ local browser = require("functions/browser")
 local logger = require("functions/logger")
 
 local chrome_modal = hs.hotkey.modal.new({}, nil, nil)
-chrome_modal:bind({ "alt" }, "t", "Opening tab to the right", browser.newTabToRight)
+chrome_modal:bind({ "alt" }, "t", browser.newTabToRight)
+
+-- Track the current active application
+local currentApp = nil
 
 --- Application watcher
 ---@param appName string
@@ -11,18 +14,33 @@ chrome_modal:bind({ "alt" }, "t", "Opening tab to the right", browser.newTabToRi
 ---@param appObject hs.application
 local function application_watcher(appName, eventType, appObject)
 	logger.d(appName, eventType == hs.application.watcher.activated and "activated" or "deactivated")
+
+	-- Handle activation events
 	if eventType == hs.application.watcher.activated then
+		-- Store the current active application
+		currentApp = appName
+
+		-- If Chrome is activated, enter Chrome modal
 		if appName == CHROME then
 			logger.d("Entered Chrome modal")
 			chrome_modal:enter()
+		else
+			-- If any other app is activated, ensure Chrome modal is exited
+			chrome_modal:exit()
 		end
 	end
+
+	-- Handle deactivation events
 	if eventType == hs.application.watcher.deactivated then
-		if appName == CHROME then
+		-- Only exit Chrome modal if Chrome is deactivated AND the new active app isn't Chrome
+		-- This prevents issues with the order of deactivation/activation events
+		if appName == CHROME and currentApp ~= CHROME then
 			logger.d("Exited Chrome modal")
 			chrome_modal:exit()
 		end
 	end
+
+	-- Commented out Kitty modal code preserved for reference
 	-- if eventType == hs.application.watcher.activated then
 	-- 	if appName == "Kitty" then
 	-- 		fk_modal:enter()
