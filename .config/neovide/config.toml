@@ -1,10 +1,10 @@
 # Defaults
 # backtraces_path = "/path/to/neovide_backtraces.log" # see below for the default platform specific location
-# fork = false
-# frame = "full"
+fork = false
+frame = "full"
 # idle = true
-# maximized = false
-# mouse-cursor-icon = "arrow"
+maximized = false
+mouse-cursor-icon = "arrow"
 # neovim-bin = "/usr/bin/nvim"                        # in reality found dynamically on $PATH if unset
 # no-multigrid = false
 # srgb = false
@@ -15,34 +15,78 @@
 # wsl = false
 
 # idle = false
-neovim_bin = "/Users/$USER/.local/share/bob/nvim-bin/nvim"
+# neovim_bin = "/Users/$USER/.local/share/bob/nvim-bin/nvim"
+neovim_bin = "/Users/$USER/.local/bin/km-nvim.sh"
+# neovim_bin = "/Users/$USER/.local/bin/lvim.sh"
+# neovim_bin = "/Users/$USER/.local/bin/astronvim.sh"
 # no-multigrid = true
 no-multigrid = false
 srgb = true
 tabs = true
 theme = "dark"
-vsync = false
-# vsync = true
+title_hidden=true
+# vsync = false
+vsync = true
 wsl = false
 
 # This defaults to true because out-of-sync rendering on macOS can cause kernel panics (macOS 14.4+) and performance issues for external displays over some hardware such as DisplayLink. If you want to minimize input latency, set this to false with the known aforementioned risks.
 [font]
 # normal = []             # Will use the bundled Fira Code Nerd Font by default
-normal = "MonoLisa Nerd Font Mono"
+# normal = "MonoLisa Nerd Font Mono"
+normal = "Maple Mono NF"
+bold = "MapleMono-NF-Bold"
+bold_italic = "MapleMono-NF-BoldItalic"
+hinting = true
 size = 16.0
 # allow_float_size = true
 [font.features]
-"MonoLisa Nerd Font Mono" = ["+calt", "+liga", "+zero", "+ss02"]
-MonoLisa = [
-  "+ss01",
-  "+ss07",
-  "+ss11",
-  "-calt",
-  "+ss09",
+"MonoLisa Nerd Font Mono" = [
+  "+calt",
+  "+liga",
+  "+zero",
   "+ss02",
+  "-ss01",
+  "+ss02",
+  "-ss03",
+  "+ss04",
+  "+ss05",
+  "-ss06",
+  "-ss07",
+  "-ss08",
+  "-ss09",
+  "+ss10",
+  "+ss11",
+  "+ss12",
+  "-ss13",
   "+ss14",
+  "+ss15",
   "+ss16",
   "+ss17",
+  "+ss18"
+]
+MonoLisa = [
+  "+calt",
+  "+liga",
+  "+zero",
+  "+ss02",
+  "-ss01",
+  "+ss02",
+  "-ss03",
+  "+ss04",
+  "+ss05",
+  "-ss06",
+  "-ss07",
+  "-ss08",
+  "-ss09",
+  "+ss10",
+  "+ss11",
+  "+ss12",
+  "-ss13",
+  "+ss14",
+  "+ss15",
+  "+ss16",
+  "+ss17",
+  "+ss18"
 ]
 "MonaspaceNeon Nerd Font" = [
   "+ss01",
@@ -56,4 +100,36 @@ MonoLisa = [
   "+calt",
   "+liga",
   "+dlig",
+]
+"Maple Mono NF" = [
+  # -calt; +cv01; +cv07; +cv34; +cv61; +cv62; +cv64; +ss03; +ss08; +ss09; +ss10; +ss11; +zer
+  # "-calt", # default ligatures
+  # "+cv01",# remove gaps
+  # "+cv02",# alt a
+  # "+cv04", # alt l
+  # "+cv06", # alt i (unsure about this one)
+  # "+cv07", # alt J
+  # "+cv08", # alt r
+  # "+cv61", # alt comma
+  # "+cv62", # alt ?
+  # "+cv64", # alt left and right arrow
+  # "+cv34", # italic loop k
+  # "+cv34", # italic loop k
+  # "+cv35", # alt l
+  # "+ss03", # arbitrary tag
+  # "+ss10", # approx. equal
+  # "+ss11", # |==
+  "-calt",
+  "+cv01;",
+  "+cv07;",
+  "+cv34;",
+  "+cv61;",
+  "+cv62;",
+  "+cv64;",
+  "+ss03;",
+  "+ss08;",
+  "+ss09;",
+  "+ss10;",
+  "+ss11;",
+  "+zero"
 ]
