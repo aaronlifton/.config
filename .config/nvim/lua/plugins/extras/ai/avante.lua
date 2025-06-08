@@ -163,7 +163,6 @@ return {
           {
             name = "run_go_tests", -- Unique name for the tool
             description = "Run Go unit tests and return results", -- Description shown to AI
-            command = "go test -v ./...", -- Shell command to execute
             param = { -- Input parameters (optional)
               type = "table",
               fields = {
@@ -173,6 +172,12 @@ return {
                   type = "string",
                   optional = true,
                 },
+              },
+              {
+                name = "tag_name",
+                description = "Optional build tag to use when running tests (e.g. 'unit')",
+                type = "string",
+                optional = true,
               },
             },
             returns = { -- Expected return values
@@ -190,13 +195,89 @@ return {
             },
             func = function(params, on_log, on_complete) -- Custom function to execute
               local target = params.target or "./..."
-              return vim.fn.system(string.format("go test -v %s", target))
+              local cmd = "go test -v"
+              if params.tag_name then cmd = cmd .. " -tags=" .. params.tag_name end
+              return vim.fn.system(string.format("%s %s", cmd, target))
+            end,
+          },
+          {
+            name = "find_go_package_path",
+            description = "Finds the filesystem path containing the 'package' definition for each provided Go import path.",
+            param = {
+              type = "table",
+              fields = {
+                {
+                  name = "import_lines",
+                  description = "A comma-separated string of Go import paths (e.g., 'fmt, os, example.com/mymodule/mypackage').",
+                  type = "string",
+                },
+              },
+            },
+            returns = {
+              {
+                name = "result",
+                description = "A newline-separated string where each line is 'import_path: file_path' or 'import_path: Not Found'.",
+                type = "string",
+              },
+            },
+            func = function(params, on_log, on_complete)
+              local import_lines_str = params and params.import_lines
+              if not import_lines_str or import_lines_str:gsub("%s", "") == "" then
+                return "No import lines provided."
+              end
+
+              local import_paths = vim.split(import_lines_str, ",", { trimempty = true })
+              local results = {}
+
+              for _, import_path in ipairs(import_paths) do
+                local trimmed_path = import_path:match("^%s*(.-)%s*$") -- Trim whitespace
+                if trimmed_path == "" then
+                  goto continue -- Skip empty paths after trimming
+                end
+
+                -- Extract package name (last component after '/')
+                local package_name = trimmed_path:match("[^/]+$")
+                if not package_name then
+                  -- If no '/' is found, the whole path is the package name (e.g., "fmt")
+                  package_name = trimmed_path
+                end
+
+                -- Construct rg command to find files with "package <package_name>" at the start of a line
+                -- Using -- to separate command options from the pattern
+                local search_pattern = string.format("^package\\s+%s$", package_name:gsub("'", "''")) -- Escape single quotes for the pattern string
+                local cmd = string.format([[rg --files-with-matches -- '%s']], search_pattern)
+
+                -- Execute rg command
+                local rg_output = vim.fn.system(cmd)
+
+                -- Process rg output: get the first non-empty line as the file path
+                local files = vim.split(rg_output, "\n", { trimempty = true })
+                local found_file = "Not Found"
+                for _, file_line in ipairs(files) do
+                  -- Take the first non-empty line that doesn't seem like a status indicator (like '.')
+                  if file_line ~= "" and file_line ~= "." then
+                    found_file = file_line
+                    break
+                  end
+                end
+
+                table.insert(results, trimmed_path .. ": " .. found_file)
+
+                ::continue::
+              end
+
+              if #results == 0 and import_lines_str:gsub("%s", "") ~= "" then
+                return "Could not process any valid import paths."
+              elseif #results == 0 then
+                return "No import lines provided." -- Should be caught by the initial check, but good fallback
+              end
+
+              return table.concat(results, "\n")
             end,
           },
           {
             name = "run_rspec_tests", -- Unique name for the tool
             description = "Run RSpec unit tests and return results", -- Description shown to AI
-            command = "bundle exec rspec", -- Shell command to execute
             param = { -- Input parameters (optional)
               type = "table",
               fields = {

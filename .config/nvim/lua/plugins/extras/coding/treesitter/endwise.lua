@@ -17,9 +17,7 @@ return {
   --   },
   -- },
   {
-    -- https://github.com/RRethy/nvim-treesitter-endwise/issues/41
-    -- "RRethy/nvim-treesitter-endwise",
-    "brianhuster/nvim-treesitter-endwise",
+    "RRethy/nvim-treesitter-endwise",
     ft = { "ruby", "lua", "vimscript", "bash", "elixir", "fish", "julia" },
     -- event = { "BufReadPost", "BufNewFile" },
     event = { "InsertEnter" },

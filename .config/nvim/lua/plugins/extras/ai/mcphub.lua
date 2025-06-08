@@ -2,14 +2,16 @@
 return {
   {
     "ravitemer/mcphub.nvim",
+    event = "VeryLazy",
     dependencies = {
       "nvim-lua/plenary.nvim",
     },
     build = "npm install -g mcp-hub@latest",
     config = function()
       require("mcphub").setup({
-        port = 3000,
-        config = vim.fn.stdpath("config") .. "/mcpservers.json",
+        port = 37373,
+        -- config = vim.fn.stdpath("config") .. "/mcpservers.json",
+        config = vim.fn.expand("~/.config/mcphub/servers.json"),
         extensions = {
           avante = {
             make_slash_commands = true, -- make /slash commands from MCP server prompts
@@ -19,6 +21,7 @@ return {
 
       -- Load custom MCP servers
       pcall(require, "custom.mcp_servers.nvim_helper")
+      -- pcall(require, "custom.mcp_servers.git_helper")
     end,
   },
   {

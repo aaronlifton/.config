@@ -15,6 +15,7 @@ return {
     "neovim/nvim-lspconfig",
     opts = {
       servers = {
+        -- https://github.com/nametake/golangci-lint-langserver/issues/60
         -- https://github.com/nvimtools/none-ls.nvim/commit/2f6a433e62d0fab6a03dadf2c207fcbe409416c4
         golangci_lint_ls = {
           init_options = {
@@ -23,9 +24,29 @@ return {
             -- command = { "golangci-lint", "run", "--out-format=json", "--show-stats=false" },
           },
         },
+        gopls = {
+          settings = {
+            -- https://github.com/golang/tools/blob/master/gopls/doc/settings.md
+            gopls = {
+              gofumpt = false,
+              buildFlags = { "-tags", "integration,unit,build" },
+            },
+          },
+        },
       },
     },
   },
+  -- {
+  --   "nvim-neotest/neotest",
+  --   dependencies = {
+  --     "nvim-contrib/nvim-ginkgo",
+  --   },
+  --   opts = {
+  --     adapters = {
+  --       ["nvim-ginkgo"] = {},
+  --     },
+  --   },
+  -- },
   -- {
   --   "mfussenegger/nvim-lint",
   --   optional = true,

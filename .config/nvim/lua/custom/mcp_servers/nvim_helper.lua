@@ -1,4 +1,4 @@
-e- Custom MCP Server for Neovim helper functions
+-- Custom MCP Server for Neovim helper functions
 local mcphub = require("mcphub")
 
 -- Add tools for buffer management

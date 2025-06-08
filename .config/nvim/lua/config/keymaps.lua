@@ -228,6 +228,10 @@ vim.api.nvim_create_user_command("SaveJsonDiags", function()
   vim.notify("Saved diagnostics to " .. path, vim.log.levels.INFO, { title = "Diagnostics" })
 end, { desc = "Save Json Diagnostics" })
 
+vim.api.nvim_create_user_command("LeapReload", function()
+  require("leap.user").set_default_mappings()
+end, { desc = "Re-set default Leap key mappings" })
+
 -- Comment box
 map("n", "]/", "/\\S\\zs\\s*╭<CR>zt", { desc = "Next Block Comment" })
 map("n", "[/", "?\\S\\zs\\s*╭<CR>zt", { desc = "Prev Block Comment" })
@@ -501,28 +505,12 @@ map({ "c", "i", "t" }, "<M-BS>", "<C-w>", { desc = "Delete Word" })
 -- map("n", "zF", ":norm z=1<cr>", { desc = "Choose first spelling suggestion" })
 map("n", "zF", "z=1<cr>", { noremap = true, desc = "Choose first spelling suggestion" })
 
--- Goto definition in vsplit
+-- Goto in vsplit
 map(
   "n",
   "<C-w><C-f>",
   "<cmd>vsplit | lua vim.lsp.buf.definition()<cr>",
   { desc = "Goto Definition (vsplit)", silent = true }
-)
-
--- Goto definition in new tab
-map(
-  "n",
-  "<C-w>gt",
-  "<cmd>tab split | lua vim.lsp.buf.definition()<cr>",
-  { desc = "Goto Definition (tab)", silent = true }
-)
-
--- Goto type definition
-map(
-  "n",
-  "<C-w>gy",
-  "<cmd>tab split | lua vim.lsp.buf.type_definition()<cr>",
-  { desc = "Goto Type Definition (tab)", silent = true }
 )
 map(
   "n",
@@ -530,6 +518,54 @@ map(
   "<cmd>vsplit | lua vim.lsp.buf.type_definition()<cr>",
   { desc = "Goto Type Definition (vsplit)", silent = true }
 )
+map(
+  "n",
+  "<C-w><C-i>",
+  "<cmd>tab split | lua vim.lsp.buf.implementation()<cr>",
+  { desc = "Goto Implementation (vsplit)", silent = true }
+)
+
+-- Goto in new tab
+map(
+  "n",
+  "<C-w>gt",
+  "<cmd>tab split | lua vim.lsp.buf.definition()<cr>",
+  { desc = "Goto Definition (tab)", silent = true }
+)
+map(
+  "n",
+  "<C-w>gy",
+  "<cmd>tab split | lua vim.lsp.buf.type_definition()<cr>",
+  { desc = "Goto Type Definition (tab)", silent = true }
+)
+
+map("n", "<C-w><C-i>", function()
+  local params = vim.lsp.util.make_position_params(0, "utf-8")
+  vim.lsp.buf_request(0, "textDocument/implementation", params, function(err, result, ctx, config)
+    if err or not result or vim.tbl_isempty(result) then
+      vim.notify("No implementations found", vim.log.levels.ERROR)
+      return
+    end
+
+    if #result == 1 then
+      -- Single implementation - open in vsplit
+      vim.cmd("vsplit")
+      vim.lsp.util.show_document(result[1], "utf-8", { focus = true })
+    else
+      local items = vim.lsp.util.locations_to_items(result, "utf-8")
+      vim.fn.setqflist(items)
+      -- Make a picker if more than 2?
+      -- local all_filepaths = vim
+      --   .iter(items)
+      --   :map(function(item)
+      --     return item.filename
+      --   end)
+      --   :join("\n")
+
+      vim.cmd("vsplit | cfirst | normal! zz")
+    end
+  end)
+end, { desc = "Goto implementation (vsplit)", silent = true })
 
 -- map("n", "<leader>ct", function()
 --   vim.lsp.buf.typehierarchy("subtypes")

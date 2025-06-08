@@ -174,7 +174,7 @@ return {
       -- {
       --   provider_prefix .. "x",
       --   function()
-      --     open_parrot_chat("xai", "grok-beta")
+      --     open_parrot_chat("xai", "grok-3-beta")
       --   end,
       --   desc = "xAI",
       -- },

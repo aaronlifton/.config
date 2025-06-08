@@ -23,7 +23,10 @@ return {
     "hrsh7th/nvim-cmp",
     optional = true,
     dependencies = {
-      { "hrsh7th/cmp-cmdline", lazy = true },
+      -- "hrsh7th/cmp-nvim-lsp",
+      -- "hrsh7th/cmp-buffer",
+      -- "hrsh7th/cmp-path",
+      -- { "hrsh7th/cmp-cmdline", lazy = true },
       { "hrsh7th/cmp-nvim-lua", lazy = true },
     },
     keys = {
@@ -77,9 +80,9 @@ return {
 
       -- Sources
       -- Make codeium appear before copilot
-      set_priority(opts.sources, "codeium", 101)
+      -- set_priority(opts.sources, "codeium", 101)
       -- Supermaven is too fast, so buffer/lsp completions come after it, so lower the priority
-      set_priority(opts.sources, "supermaven", 90)
+      -- set_priority(opts.sources, "supermaven", 90)
 
       -- Index 4 is nvim_lsp
       table.insert(opts.sources, 3, { name = "nvim_lua", group_index = 1 })
@@ -125,16 +128,16 @@ return {
       if require("util.table").get(LazyVim.opts("noice.nvim"), "popupmenu", "backend") == "cmp" then
         local cmdline_mapping = cmp.mapping.preset.cmdline({
           ["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
-          ["<Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-              cmp.confirm({ select = true })
-              -- cmp.select_next_item()
-            elseif cmdline_has_words_before() then
-              cmp.complete()
-            else
-              fallback()
-            end
-          end, { "c" }),
+          -- ["<Tab>"] = cmp.mapping(function(fallback)
+          --   if cmp.visible() then
+          --     cmp.confirm({ select = true })
+          --     -- cmp.select_next_item()
+          --   elseif cmdline_has_words_before() then
+          --     cmp.complete()
+          --   else
+          --     fallback()
+          --   end
+          -- end, { "c" }),
         })
         cmp.setup.cmdline(":", {
           mapping = cmdline_mapping,

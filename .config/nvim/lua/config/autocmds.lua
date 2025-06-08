@@ -97,6 +97,15 @@ ac("BufRead", {
   end,
 })
 
+-- https://nvchad.com/docs/recipes
+ac("VimEnter", {
+  command = ":silent !kitty @ set-spacing padding=0 margin=0",
+})
+
+ac("VimLeavePre", {
+  command = ":silent !kitty @ set-spacing padding=20 margin=10",
+})
+
 -- local auto_close_filetype = {
 --   "lazy",
 --   "mason",

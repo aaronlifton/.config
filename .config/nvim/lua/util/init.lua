@@ -16,6 +16,7 @@
 ---@field bufferline util.bufferline
 ---@field format util.format
 ---@field path util.path
+---@field lazy util.lazy
 local M = {}
 
 setmetatable(M, {

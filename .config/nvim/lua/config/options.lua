@@ -15,6 +15,78 @@ end
 -- Fix for https://github.com/neovim/neovim/issues/31675
 vim.hl = vim.highlight
 
+o.autowrite = true -- Enable auto write
+-- only set clipboard if not in ssh, to make sure the OSC 52
+-- integration works automatically. Requires Neovim >= 0.10.0
+o.clipboard = vim.env.SSH_TTY and "" or "unnamedplus" -- Sync with system clipboard
+o.completeopt = "menu,menuone,noselect"
+o.conceallevel = 2 -- Hide * markup for bold and italic, but not markers with substitutions
+o.confirm = true -- Confirm to save changes before exiting modified buffer
+o.cursorline = true -- Enable highlighting of the current line
+o.expandtab = true -- Use spaces instead of tabs
+o.fillchars = {
+  foldopen = "",
+  foldclose = "",
+  fold = " ",
+  foldsep = " ",
+  diff = "╱",
+  eob = " ",
+}
+o.foldlevel = 99
+o.formatexpr = "v:lua.require'lazyvim.util'.format.formatexpr()"
+o.formatoptions = "jcroqlnt" -- tcqj
+o.grepformat = "%f:%l:%c:%m"
+o.grepprg = "rg --vimgrep"
+o.ignorecase = true -- Ignore case
+o.inccommand = "nosplit" -- preview incremental substitute
+o.jumpoptions = "view"
+o.laststatus = 3 -- global statusline
+o.linebreak = true -- Wrap lines at convenient points
+o.list = true -- Show some invisible characters (tabs...
+o.mouse = "a" -- Enable mouse mode
+o.number = true -- Print line number
+o.pumblend = 10 -- Popup blend
+o.pumheight = 10 -- Maximum number of entries in a popup
+o.relativenumber = true -- Relative line numbers
+o.ruler = false -- Disable the default ruler
+o.scrolloff = 4 -- Lines of context
+o.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp", "folds" }
+o.shiftround = true -- Round indent
+o.shiftwidth = 2 -- Size of an indent
+o.shortmess:append({ W = true, I = true, c = true, C = true })
+o.showmode = false -- Dont show mode since we have a statusline
+o.sidescrolloff = 8 -- Columns of context
+o.signcolumn = "yes" -- Always show the signcolumn, otherwise it would shift the text each time
+o.smartcase = true -- Don't ignore case with capitals
+o.smartindent = true -- Insert indents automatically
+o.spelllang = { "en" }
+o.splitbelow = true -- Put new windows below current
+o.splitkeep = "screen"
+o.splitright = true -- Put new windows right of current
+o.statuscolumn = [[%!v:lua.require'snacks.statuscolumn'.get()]]
+o.tabstop = 2 -- Number of spaces tabs count for
+o.termguicolors = true -- True color support
+o.timeoutlen = vim.g.vscode and 1000 or 300 -- Lower than default (1000) to quickly trigger which-key
+o.undofile = true
+o.undolevels = 10000
+o.updatetime = 200 -- Save swap file and trigger CursorHold
+o.virtualedit = "block" -- Allow cursor to move where there is no text in visual block mode
+o.wildmode = "longest:full,full" -- Command-line completion mode
+o.winminwidth = 5 -- Minimum window width
+o.wrap = false -- Disable line wrap
+
+if vim.fn.has("nvim-0.10") == 1 then
+  o.smoothscroll = true
+  o.foldexpr = "v:lua.require'lazyvim.util'.ui.foldexpr()"
+  o.foldmethod = "expr"
+  o.foldtext = ""
+else
+  o.foldmethod = "indent"
+  o.foldtext = "v:lua.require'lazyvim.util'.ui.foldtext()"
+end
+
+-- Fix markdown indentation settings
+vim.g.markdown_recommended_style = 0
 -- o.autoindent = true -- LazyVim uses smartindent instead
 -- o.breakindent = true
 o.backspace = { "eol", "start", "indent" }

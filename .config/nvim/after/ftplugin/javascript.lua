@@ -2,7 +2,7 @@ if LazyVim.has("mini.ai") then
   local ai = require("mini.ai")
   vim.b.miniai_config = {
     custom_textobjects = {
-      j = ai.gen_spec.treesitter({
+      j = ai.den_spec.treesitter({
         a = { "@jsx.attr" },
         i = { "@jsx.attr" },
       }),

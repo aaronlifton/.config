@@ -1,23 +1,22 @@
 #!.venv/bin/python3.13
 from __future__ import annotations
-from typing import cast
-from kitty.boss import Boss, Window, json
+
 from kittens.tui.handler import result_handler
-from kitty.window import ChildType, ProcessDesc
-from kitty.types import WindowGeometry
-from kitty.fast_data_types import get_boss, get_options
+from kitty.boss import Boss, Window, json
+from kitty.fast_data_types import get_boss
+
 # import pynvim as nvim
 
 
-def main(args: list[str]) -> None:
+def main(_args: list[str]) -> None:
     pass
 
 
-def get_window_by_id(window_id: int) -> Optional["Window"]:
+def get_window_by_id(window_id: int) -> Window | None:
     return get_boss().window_id_map.get(window_id)
 
 
-def get_tab_by_id(tab_id: int) -> Optional["Tab"]:
+def get_tab_by_id(tab_id: int) -> object | None:
     return get_boss().tab_for_id(tab_id)
 
 
@@ -63,9 +62,10 @@ def setup_tab(dir: str, cmd: str, name: str, boss: Boss):
 
 
 # Docs: kitten @ --help
-@result_handler(no_ui=True)
+# Ignore the decorator warning as it's from an external library
+@result_handler(no_ui=True)  # type: ignore
 def handle_result(
-    args: list[str], answer: str, target_window_id: int, boss: Boss
+    _args: list[str], _answer: str, target_window_id: int, boss: Boss
 ) -> None:
     win = boss.window_id_map.get(target_window_id)
     tab = boss.active_tab
@@ -76,7 +76,7 @@ def handle_result(
 
     # /Users/$USER/Code/kitty/kitty/launch.py:696
     # /Users/$USER/Code/kitty/docs/remote-control.rst
-    setup_tab("~/synack/frontend_researcher", "nvim .", "frontend_researcher ", boss)
+    setup_tab("~/synack/client-modulith/", "nvim .", "client-modulith ", boss)
     setup_tab("~/synack/frontend_client", "nvim .", "frontend_client ", boss)
 
 

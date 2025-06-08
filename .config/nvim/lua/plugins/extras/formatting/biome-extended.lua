@@ -7,7 +7,7 @@ local biome_needs_config = false
 local supported = {
   "astro",
   "css",
-  "graphql",
+  -- "graphql",
   -- "html",
   "javascript",
   "javascriptreact",

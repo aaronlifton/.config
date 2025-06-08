@@ -354,13 +354,13 @@ Here is the content from the file `%s`:
     -- provider = require("util.model.providers.xai"),
     runOptions = function()
       return {
-        model = "grok-beta",
+        model = "grok-3-beta",
         url = "https://api.x.ai/v1/", -- chat/completions
         authorization = ("Bearer %s"):format(require("model.util").env("XAI_API_KEY")),
       }
     end,
     params = {
-      model = "grok-beta",
+      model = "grok-3-beta",
     },
     create = input_if_selection,
     system = "You're an assistant",

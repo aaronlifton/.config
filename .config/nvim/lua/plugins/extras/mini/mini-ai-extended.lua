@@ -17,6 +17,19 @@ local mini_ai_git_signs = function()
   return hunks
 end
 
+local line_textobj = function()
+  return function(ai_type)
+    local line_num = vim.fn.line(".")
+    local line = vim.fn.getline(line_num)
+    -- Ignore indentation for `i` textobject
+    local from_col = ai_type == "a" and 1 or (line:match("^(%s*)"):len() + 1)
+    -- Don't select `\n` past the line to operate within a line
+    local to_col = line:len()
+
+    return { from = { line = line_num, col = from_col }, to = { line = line_num, col = to_col } }
+  end
+end
+
 local custom_mappings = {
   { "C", desc = "comment" },
   { "k", desc = "key, assignment" },
@@ -48,7 +61,7 @@ return {
     },
     opts = function(_, opts)
       local ai = require("mini.ai")
-      local MiniExtra = require("mini.extra")
+      -- local MiniExtra = require("mini.extra")
       local custom_textobjects = {
         -- LazyVim uses: o,f,c,t,d,e,g,u,U
         C = ai.gen_spec.treesitter({ a = "@comment.outer", i = "@comment.outer" }),
@@ -60,10 +73,10 @@ return {
           i = { "@assignment.rhs", "@value.inner", "@return.inner" },
           a = { "@assignment.outer", "@value.inner", "@return.outer" },
         }),
-        N = MiniExtra.gen_ai_spec.number(),
-        L = MiniExtra.gen_ai_spec.line(),
-        D = MiniExtra.gen_ai_spec.diagnostic(),
-        E = MiniExtra.gen_ai_spec.diagnostic({ severity = vim.diagnostic.severity.ERROR }),
+        -- N = MiniExtra.gen_ai_spec.number(),
+        -- D = MiniExtra.gen_ai_spec.diagnostic(),
+        -- E = MiniExtra.gen_ai_spec.diagnostic({ severity = vim.diagnostic.severity.ERROR }),
+        L = line_textobj(),
         p = {
           {
             "\n%s*\n()().-()\n%s*\n()[%s]*", -- normal paragraphs

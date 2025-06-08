@@ -84,6 +84,8 @@ return {
     opts.presets.lsp_doc_border = true
     -- opts.presets.bottom_search = false
     if LazyVim.has_extra("coding.nvim-cmp") then opts.popupmenu = { backend = "cmp" } end
+
+    -- opts.lsp.override["cmp.entry.get_documentation"].enabled = false
   end,
   keys = {
     {

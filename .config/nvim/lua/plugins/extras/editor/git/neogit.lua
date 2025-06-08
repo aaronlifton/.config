@@ -47,7 +47,7 @@ return {
           end, { buffer = event.buf })
         end,
       })
-      vim.ap.nvim_create_autocmd("FileType", {
+      vim.api.nvim_create_autocmd("FileType", {
         pattern = "NeogitCommitView", -- Buffer name: NeogitStashView
         callback = function(event)
           vim.keymap.set("n", "<C-y>", function()

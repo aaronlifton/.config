@@ -1,0 +1,116 @@
+{
+  "global": {"check_for_updates_on_startup": false},
+  "profiles": [
+    {
+      "complex_modifications": {
+        "rules": [
+          {
+            "description": "Change caps_lock key to command+control+option+shift. (Use shift+caps_lock as caps_lock)",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "caps_lock",
+                  "modifiers": {
+                    "mandatory": ["shift"],
+                    "optional": ["caps_lock"]
+                  }
+                },
+                "to": [{"key_code": "caps_lock"}],
+                "type": "basic"
+              },
+              {
+                "conditions": [
+                  {
+                    "bundle_identifiers": ["net.kovidgoyal.kitty", "io.alacritty", "com.mitchellh.ghostty"],
+                    "type": "frontmost_application_unless"
+                  }
+                ],
+                "from": {
+                  "key_code": "caps_lock",
+                  "modifiers": {"optional": ["any"]}
+                },
+                "to": [
+                  {
+                    "key_code": "left_shift",
+                    "modifiers": ["left_command", "left_control", "left_option"]
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "Change caps_lock to control if pressed with other keys, to escape if pressed alone.",
+            "enabled": false,
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "caps_lock",
+                  "modifiers": {"optional": ["any"]}
+                },
+                "to": [{"key_code": "left_control"}],
+                "to_if_alone": [{"key_code": "escape"}],
+                "type": "basic"
+              }
+            ]
+          },
+          {
+            "description": "CapsLock to Esc when press & to Control when hold",
+            "manipulators": [
+              {
+                "conditions": [
+                  {
+                    "bundle_identifiers": ["net.kovidgoyal.kitty", "io.alacritty", "com.mitchellh.ghostty"],
+                    "type": "frontmost_application_if"
+                  }
+                ],
+                "from": {
+                  "key_code": "caps_lock",
+                  "modifiers": {"optional": ["any"]}
+                },
+                "to": [{"key_code": "right_control"}],
+                "to_if_alone": [{"key_code": "escape"}],
+                "type": "basic"
+              },
+              {
+                "from": {
+                  "key_code": "caps_lock",
+                  "modifiers": {"optional": ["any"]}
+                },
+                "to": [{"key_code": "right_gui"}],
+                "to_if_alone": [{"key_code": "escape"}],
+                "type": "basic"
+              }
+            ]
+          }
+        ]
+      },
+      "devices": [
+        {
+          "identifiers": {
+            "is_keyboard": true,
+            "product_id": 22356,
+            "vendor_id": 222
+          },
+          "simple_modifications": [
+            {
+              "from": {"key_code": "right_control"},
+              "to": [{"key_code": "right_command"}]
+            }
+          ]
+        }
+      ],
+      "fn_function_keys": [
+        {
+          "from": {"key_code": "f3"},
+          "to": [{"key_code": "mission_control"}]
+        },
+        {
+          "from": {"key_code": "f4"},
+          "to": [{"key_code": "launchpad"}]
+        }
+      ],
+      "virtual_hid_keyboard": {"keyboard_type_v2": "ansi"}
+    }
+  ]
+}
