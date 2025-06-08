@@ -11,6 +11,7 @@ abbr -a t gtrash
 abbr -a grep rg
 abbr -a find fd
 abbr -a cat bat --style grid
+abbr -a b brew
 
 abbr --add tar 'tar -zxvf'
 
@@ -46,6 +47,8 @@ abbr -a L --position anywhere --set-cursor "% | less"
 ### Functions
 abbr --add zn z-nvim
 abbr --add fr fzf-rg-bat
+
+abbr --add font-patcher fontforge -script font-patcher
 
 ### Helpfiles
 abbr --add help-kw bat ~/.config/kitty/kitty.conf -r 100:150
@@ -87,3 +90,9 @@ abbr --add jbe TZ=utc NODE_ENV=test npx jest --projects jest.config.enz.js --wat
 ## Cucumber
 abbr --add cucumber-e2e LOG_LEVEL=debug BROWSER=chromium:headless npx cucumber-js --tags
 abbr --add gulp-e2e --set-cursor "npx gulp test --group=%"
+
+## Modulith
+abbr --add run-server-test go test -tags=unit ./modules/asset-service/v2/internal/impl/standard/service/
+abbr --add run-service-test go test -tags=unit ./modules/asset-service/v2/internal/impl/standard/service/
+abbr --add mod-ginkgo-component --set-cursor "godotenv -f .env.test ginkgo --tags=component -v --focus=\"%\" ./modules/asset-service/v2/internal/test/component/"
+abbr --add mod-server godotenv -f .env.test go run cmd/server/main.go

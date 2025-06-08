@@ -1,5 +1,6 @@
 # Commands to run in interactive sessions can go here
 if status is-interactive
+    atuin init fish | source
 end
 
 # Custom fisher path
@@ -762,3 +763,10 @@ bind \e\cz fzf-zoxide
 
 # Generated for envman. Do not edit.
 test -s ~/.config/envman/load.fish; and source ~/.config/envman/load.fish
+
+if status is-interactive
+    printf '\eP$f{"hook": "SourcedRcFileForWarp", "value": { "shell": "fish"}}\x9c'
+end
+
+string match -q "$TERM_PROGRAM" vscode
+and . (code --locate-shell-integration-path fish)

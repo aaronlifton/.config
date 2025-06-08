@@ -27,6 +27,11 @@ fish_add_path /Users/$USER/.deno/bin
 # fish_add_path /Users/$USER/.luarocks/bin 
 fish_add_path /opt/homebrew/opt/postgresql@16/bin
 fish_add_path /usr/sbin # for chown
+if test -d "/Applications/Emacs.app/Contents/MacOS/bin"
+    fish_add_path "/Applications/Emacs.app/Contents/MacOS/bin"
+    alias emacs="emacs -nw" # Always launch "emacs" in terminal mode.
+end
+fish_add_path /Users/$USER/.config/emacs/bin
 # fish_add_path /opt/homebrew/sbin
 
 # XDG
@@ -192,3 +197,4 @@ set -xg GOPRIVATE git.synack.com
 
 # helix-gpt
 set -xg HANDLER copilot
+set -xg MODULITH_RULES /Users/alifton/synack/client-modulith/.cursor/

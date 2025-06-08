@@ -1,5 +1,4 @@
 alias fd="fd --one-file-system"
-alias emacs="emacs -nw"
 alias fzf-git-log _fzf_search_git_log
 alias fzf-git-status _fzf_search_git_status
 alias zz=zoxide
