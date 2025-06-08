@@ -1,0 +1,137 @@
+{
+  "factorybot.factory": {
+    "prefix": "factorybot.factory",
+    "body": [
+      "FactoryBot.define do\n  factory :${1:model} do\n    ${2:attribute} { '${3:value}' }\n  end\nend"
+    ],
+    "description": "Generate a new FactoryBot factory"
+  },
+  "rspec.model.valid": {
+    "prefix": "rspec.model.valid",
+    "body": [
+      "it 'should be valid with valid attributes' do\n    expect(build(:${1:factory})).to be_valid\nend"
+    ],
+    "description": "Generates a valid model expectation"
+  },
+  "rspec.request.post.params": {
+    "prefix": "rspec.request.post.params",
+    "body": [
+      "post ${1:name}_path, params: { ${2:key}: ${3:property} }"
+    ],
+    "description": "Post with params"
+  },
+  "factorybot.include": {
+    "prefix": "factorybot.include",
+    "body": [
+      "config.include FactoryBot::Syntax::Methods"
+    ],
+    "description": "Add FactoryBot configuration include line to rails_helper.rb"
+  },
+  "rspec.expect_to_be_between": {
+    "prefix": "expect",
+    "body": [
+      "expect(${1:subject}).to be_between(${2:minimum}, ${3:maximum}).${4:inclusive|exclusive}"
+    ],
+    "description": "Add expectation between two values"
+  },
+  "rspec.expect_to_match": {
+    "prefix": "expect",
+    "body": [
+      "expect(${1:subject}).to match(/${2:expression}/)"
+    ],
+    "description": "Add expectation to match regular expression"
+  },
+  "rspec.expect_to_start_with": {
+    "prefix": "expect",
+    "body": [
+      "expect(${1:subject}).to start_with ${2:value}"
+    ],
+    "description": "Add expectation to start with specific value"
+  },
+  "rspec.expect_to_end_with": {
+    "prefix": "expect",
+    "body": [
+      "expect(${1:subject}).to end_with ${2:value}"
+    ],
+    "description": "Add expectation to end with specific value"
+  },
+  "rspec.expect_to_be_eq": {
+    "prefix": "expect",
+    "body": [
+      "expect(${1:subject}).to eq ${2:value}"
+    ],
+    "description": "Add expectation to be equal to a specific value"
+  },
+  "rspec.expect_to_be_instance": {
+    "prefix": "expect",
+    "body": [
+      "expect(${1:subject}).to be_instance_of(${2:class})"
+    ],
+    "description": "Add expectation to be an instance of some class"
+  },
+  "rspec.expect_to_be_kind_of": {
+    "prefix": "expect",
+    "body": [
+      "expect(${1:subject}).to be_kind_of(${2:class})"
+    ],
+    "description": "Add expectation to be of a specific kind"
+  },
+  "rspec.expect_to_respond_to": {
+    "prefix": "expect",
+    "body": [
+      "expect(${1:subject}).to respond_to(${2:method})"
+    ],
+    "description": "Add expectation to respond to some method"
+  },
+  "rspec.expect_to_be_truthy": {
+    "prefix": "expect",
+    "body": [
+      "expect(${1:subject}).to be_truthy"
+    ],
+    "description": "Add expectation to be truthy (if nil or false)"
+  },
+  "rspec.expect_to_be_falsey": {
+    "prefix": "expect",
+    "body": [
+      "expect(${1:subject}).to be_falsey"
+    ],
+    "description": "Add expectation to be falsey (if nil or false)"
+  },
+  "rspec.expect_to_be_true": {
+    "prefix": "expect",
+    "body": [
+      "expect(${1:subject}).to be_true"
+    ],
+    "description": "Add expectation to be true (if subject == true)"
+  },
+  "rspec.expect_to_be_false": {
+    "prefix": "expect",
+    "body": [
+      "expect(${1:subject}).to be_false"
+    ],
+    "description": "Add expectation to be false (if subject == false)"
+  },
+  "rspec.expect_to_be_nil": {
+    "prefix": "expect",
+    "body": [
+      "expect(${1:subject}).to be_nil"
+    ],
+    "description": "Add expectation to be nil"
+  },
+  "rspec.expect_to_exist": {
+    "prefix": "expect",
+    "body": [
+      "expect(${1:subject}).to exist"
+    ],
+    "description": "Add expectation to exist"
+  },
+  "context": {
+    "prefix": "context",
+    "body": [
+      "context 'when $1' do",
+      "  $2",
+      "end"
+    ],
+    "description": "Add test context"
+  }
+}

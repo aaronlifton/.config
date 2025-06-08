@@ -1,0 +1,86 @@
+{
+  "turbostream.broadcast_prepend": {
+    "prefix": "turbostream.broadcast_prepend",
+    "body": [
+      "broadcast_prepend_to(:${1:name}, partial: '${2:partial}')"
+    ],
+    "description": "Add turbostream broadcast prepend call"
+  },
+  "turbostream.broadcast_remove": {
+    "prefix": "turbostream.broadcast_remove",
+    "body": [
+      "broadcast_remove_to(:${1:name})"
+    ],
+    "description": "Add turbostream broadcast remove call"
+  },
+  "format.turbo_stream": {
+    "prefix": "format.turbo_stream",
+    "body": [
+      "format.turbo_stream { flash[:notice] = '${2:notice_text}' }"
+    ],
+    "description": "Respond using turbostream"
+  },
+  "format.html": {
+    "prefix": "format.html",
+    "body": [
+      "format.html { redirect_to ${1:path}, notice: '${2:notice_text}' }"
+    ],
+    "description": "Respond using html"
+  },
+  "flash": {
+    "prefix": "flash",
+    "body": [
+      "flash[:error] = @post.errors.full_messages"
+    ],
+    "description": "Create a flash"
+  },
+  "session": {
+    "prefix": "session",
+    "body": [
+      "session[:${1:name}] = ${2:value}"
+    ],
+    "description": "Set a session value"
+  },
+  "map": {
+    "prefix": "map",
+    "body": [
+      "${1:array}.map do |name|\n  ${2:something}\nend"
+    ],
+    "description": "Map an array"
+  },
+  "bootstrap_alert_classes": {
+    "prefix": "bootstrap_alert_classes",
+    "body": [
+      "def flash_classes(flash_type)\nflash_base = 'alert'\n{\nerror: 'alert-danger #{flash_base}',\ninfo: 'alert-info #{flash_base}',\nnotice: 'alert-success #{flash_base}',\nsuccess: 'alert-success #{flash_base}'\n}.stringify_keys[flash_type.to_s] || flash_type.to_s\nend"
+    ],
+    "description": "Add a bootstrap alert class helper"
+  },
+  "map_with_join": {
+    "prefix": "map_with_join",
+    "body": [
+      "${1:array}.map(&:${2:property}).join(', ')"
+    ],
+    "description": "Map an array with a join"
+  },
+  "helper_method": {
+    "prefix": "helper_method",
+    "body": [
+      "helper_method :${1:method_symbol}"
+    ],
+    "description": "Declare a controller method as a helper making them available to the view"
+  },
+  "i18n.string_translation": {
+    "prefix": "i18n.string_translation",
+    "body": [
+      "I18n.t '${1:key}'"
+    ],
+    "description": "Adds a string translation (reference: https://guides.rubyonrails.org/i18n.html)"
+  },
+  "i18n.locale_translation": {
+    "prefix": "i18n.locale_translation",
+    "body": [
+      "I18n.l ${1:Time.now}, format: :${2:short}"
+    ],
+    "description": "Adds a locale translation (reference: https://guides.rubyonrails.org/i18n.html#adding-date-time-formats)"
+  }
+}

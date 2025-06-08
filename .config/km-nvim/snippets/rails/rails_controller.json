@@ -1,0 +1,57 @@
+{
+  "redirect_to": {
+    "prefix": "redirect_to",
+    "body": [
+      "redirect_to ${1:route_path}"
+    ],
+    "description": "Add redirect_to a specific route path"
+  },
+  "respond_to_json": {
+    "prefix": "respond_to_json",
+    "body": [
+      "respond_to do |format|",
+      "  format.html",
+      "  format.json { render json: @${1:resource} }",
+      "end"
+    ],
+    "description": "An action implicitly responds to all formats, but formats can also be explicitly enumerated."
+  },
+  "respond_to_turbo_stream": {
+    "prefix": "respond_to_turbo_stream",
+    "body": [
+      "respond_to do |format|",
+      "  format.html",
+      "  format.turbo_stream { flash.now[:notice] = '${1:message}' }",
+      "end"
+    ],
+    "description": "An action implicitly responds to all formats, but formats can also be explicitly enumerated."
+  },
+  "before_action": {
+    "prefix": "before_action",
+    "body": [
+      "before_action :${1:method}, only: [:${2:index}]"
+    ],
+    "description": "Append a callback before actions. If the callback renders or redirects, the action will not run. If there are additional callbacks scheduled to run after that callback, they are also cancelled."
+  },
+  "after_action": {
+    "prefix": "after_action",
+    "body": [
+      "after_action :${1:method}, only: [:${2:index}]"
+    ],
+    "description": "Append a callback after actions"
+  },
+  "params.require": {
+    "prefix": "params.require",
+    "body": [
+      "params.require(:${1:model}).permit(:${2:model_property}, :${3:another_model_property})"
+    ],
+    "description": "Add permitted parameters"
+  },
+  "status_unprocessable_entity": {
+    "prefix": "status:",
+    "body": [
+      "status: :unprocessable_entity"
+    ],
+    "description": "Add unprocessable_entity status"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "lineWidth": 80,
+  "useTabs": false,
+  "typescript": {
+    "lineWidth": 80,
+  },
+  "json": {
+    "indentWidth": 2,
+  },
+  "markdown": {},
+  "biome": {},
+  "excludes": ["**/node_modules", "**/*-lock.json"],
+  "plugins": [
+    "https://plugins.dprint.dev/typescript-0.90.0.wasm",
+    "https://plugins.dprint.dev/json-0.19.2.wasm",
+    "https://plugins.dprint.dev/markdown-0.16.4.wasm",
+    "https://plugins.dprint.dev/biome-0.4.4.wasm",
+  ],
+}

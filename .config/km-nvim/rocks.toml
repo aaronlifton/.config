@@ -1,0 +1,8 @@
+[plugins."fugit2.nvim"]
+version = "0.2.1"
+install_args = [
+  "GIT2_DIR=/opt/homebrew"
+]
+
+[plugins."fugit2.nvim".config]
+libgit2_path = "/opt/homebrew/lib/libgit2.dylib"
