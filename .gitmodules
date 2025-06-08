@@ -1,0 +1,3 @@
+[submodule ".hammerspoon/Spoons/EnhancedSpaces.spoon"]
+	path = .hammerspoon/Spoons/EnhancedSpaces.spoon
+	url = git@github.com:franzbu/EnhancedSpaces.spoon.git

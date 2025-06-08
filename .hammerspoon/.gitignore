@@ -1,4 +1,6 @@
 backup/
 Spoons/**/
+# Allow specific Spoons as submodules
+!Spoons/EnhancedSpaces.spoon/
 .bak
 */*.bak

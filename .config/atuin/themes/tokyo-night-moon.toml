@@ -1,0 +1,13 @@
+[theme]
+name = "tokyo-night-moon"
+parent = "default"
+
+[colors]
+AlertInfo = "#4fd6be"
+AlertWarn = "#ffc777"
+AlertError = "#ff757f"
+Annotation = "#444a73"
+Base = "#828bb8"
+Guidance = "#ff966c"
+Important = "#82aaff"
+Title = "#c099ff"
