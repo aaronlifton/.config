@@ -339,3 +339,10 @@ local linters = function()
 end
 map("n", "<leader>ciL", linters, { desc = "Lint" })
 map("n", "<leader>cir", "<cmd>LazyRoot<cr>", { desc = "Root" })
+
+map("n", "<leader>fk", function()
+  vim.cmd(":e ~/.config/kitty/kitty.conf")
+end, { desc = "Edit kitty.conf" })
+map("n", "<leader>fH", function()
+  vim.cmd(":e ~/.hammerspoon")
+end, { desc = "Edit hammerspoon" })

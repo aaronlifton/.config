@@ -9,85 +9,6 @@
 --    :Lazy update
 --
 -- NOTE: Here is where you install your plugins.
-local spec = {
-
-  -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
-  --    This is the easiest way to modularize your config.
-  --
-  --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- { import = 'custom.plugins' },
-  { import = "custom.plugins.ai.avante" },
-  { import = "custom.plugins.ai.mcphub" },
-  -- { import = 'custom.plugins.ai.model' },
-  -- { import = 'custom.plugins.cmp.autopairs' },
-  { import = "custom.plugins.coding.annotation" },
-  -- { import = 'custom.plugins.coding.cmp' },
-  -- { import = 'custom.plugins.coding.luapad' },
-  -- { import = 'custom.plugins.coding.mason' },
-  { import = "custom.plugins.coding.nvim-snippets" },
-  { import = "custom.plugins.treesitter.sibling-swap" },
-  { import = "custom.plugins.treesitter.treesitter" },
-  { import = "custom.plugins.treesitter.treesj" },
-  { import = "custom.plugins.editor.docs.devdocs" },
-  -- { import = 'custom.plugins.editor.fzf' },
-  -- { import = 'custom.plugins.editor.git.blame' },
-  -- { import = 'custom.plugins.editor.git.diffview' },
-  -- { import = 'custom.plugins.editor.git.git-conflict' },
-  { import = "custom.plugins.editor.git.neogit" },
-  -- { import = 'custom.plugins.editor.leap' },
-  -- { import = 'custom.plugins.editor.neo-tree' },
-  { import = "custom.plugins.editor.nvim-colorizer" },
-  { import = "custom.plugins.editor.search-replace" },
-  -- { import = 'custom.plugins.editor.trouble' },
-  { import = "custom.plugins.formatting.prettier" },
-  { import = "custom.plugins.formatting.trim_newlines" },
-  { import = "custom.plugins.lang.bash" },
-  { import = "custom.plugins.lang.docker" },
-  { import = "custom.plugins.lang.git" },
-  { import = "custom.plugins.lang.go" },
-  { import = "custom.plugins.lang.json" },
-  { import = "custom.plugins.lang.kitty" },
-  { import = "custom.plugins.lang.lua" },
-  { import = "custom.plugins.lang.markdown" },
-  { import = "custom.plugins.lang.python" },
-  { import = "custom.plugins.lang.ruby" },
-  { import = "custom.plugins.lang.sql" },
-  { import = "custom.plugins.lang.tilt" },
-  { import = "custom.plugins.lang.web.html-css" },
-  { import = "custom.plugins.lang.web.tailwind" },
-  { import = "custom.plugins.lang.web.typescript" },
-  { import = "custom.plugins.lang.xml" },
-  { import = "custom.plugins.lang.yaml" },
-  { import = "custom.plugins.linting.eslint" },
-  { import = "custom.plugins.linting.stylelint" },
-  { import = "custom.plugins.lsp.lspconfig" },
-  { import = "custom.plugins.marks.grapple" },
-  -- { import = 'custom.plugins.mini.mini-ai' },
-  -- { import = 'custom.plugins.mini.mini-diff' },
-  -- { import = 'custom.plugins.mini.mini-files' },
-  -- { import = 'custom.plugins.mini.mini-surround' },
-  -- { import = 'custom.plugins.ui.bufferline' },
-  { import = "custom.plugins.ui.dap-view" },
-  -- { import = 'custom.plugins.ui.edgy' },
-  { import = "custom.plugins.ui.helpview" },
-  { import = "custom.plugins.ui.log-highlight" },
-  -- { import = 'custom.plugins.ui.lualine' },
-  -- { import = 'custom.plugins.ui.noice' },
-  -- { import = 'custom.plugins.ui.smooth-scrolling' },
-  { import = "custom.plugins.ui.snacks" },
-  { import = "custom.plugins.editor.snacks_picker" },
-  -- { import = "custom.plugins.editor.snacks_explorer" },
-  { import = "custom.plugins.ui.which-key" },
-  { import = "custom.plugins.util.better-escape" },
-  -- { import = 'custom.plugins.util.persistence' },
-  { import = "custom.plugins.util.smart-splits" },
-  { import = "custom.plugins.coding.multicursor" },
-  --
-  -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
-  -- Or use telescope!
-  -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
-  -- you can continue same window with `<space>sr` which resumes last telescope search
-}
 
 require("util.lazy.config").init()
 require("lazy").setup({
@@ -160,22 +81,24 @@ require("lazy").setup({
   -- require("kickstart.plugins.debug"),
   require("kickstart.plugins.indent_line"),
   require("kickstart.plugins.lint"),
-  require("kickstart.plugins.autopairs"),
   require("kickstart.plugins.triptych"),
-  -- require 'kickstart.plugins.leap',
-  require("kickstart.plugins.flash"),
+  -- require("kickstart.plugins.flash"),
   -- require 'kickstart.plugins.neo-tree',
+  require("custom.plugins.editor.mini"),
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
   -- { import = 'custom.plugins' },
+  -- { import = "custom.plugins.editor.leap" },
+  { import = "custom.plugins.editor.mini-jump2d" },
   { import = "custom.plugins.ai.avante" },
   { import = "custom.plugins.ai.mcphub" },
   -- { import = 'custom.plugins.ai.model' },
   -- { import = 'custom.plugins.cmp.autopairs' },
   { import = "custom.plugins.coding.annotation" },
+  { import = "custom.plugins.coding.yanky" },
   -- { import = 'custom.plugins.coding.cmp' },
   -- { import = 'custom.plugins.coding.luapad' },
   -- { import = 'custom.plugins.coding.mason' },
@@ -189,7 +112,6 @@ require("lazy").setup({
   -- { import = 'custom.plugins.editor.git.diffview' },
   -- { import = 'custom.plugins.editor.git.git-conflict' },
   { import = "custom.plugins.editor.git.neogit" },
-  -- { import = 'custom.plugins.editor.leap' },
   -- { import = 'custom.plugins.editor.neo-tree' },
   { import = "custom.plugins.editor.nvim-colorizer" },
   { import = "custom.plugins.editor.search-replace" },
@@ -233,7 +155,7 @@ require("lazy").setup({
   { import = "custom.plugins.editor.snacks_picker" },
   -- { import = "custom.plugins.editor.snacks_explorer" },
   { import = "custom.plugins.ui.which-key" },
-  { import = "custom.plugins.util.better-escape" },
+  { import = "custom.plugins.ui.quicker" },
   -- { import = 'custom.plugins.util.persistence' },
   { import = "custom.plugins.util.smart-splits" },
   { import = "custom.plugins.coding.multicursor" },

@@ -57,6 +57,7 @@ return {
       auto_install = true,
       highlight = {
         enable = true,
+        use_languagetree = true,
         -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
         --  If you are experiencing weird indenting issues, add the language to
         --  the list of additional_vim_regex_highlighting and disabled languages for indent.
@@ -87,14 +88,24 @@ return {
           floating_preview_opts = { maximum_height = 12 },
           peek_definition_code = {
             -- Overrides <C-w>p - previous window
-            ["<C-w>p"] = "@function.outer",
-            ["g<C-d>"] = "@function.outer",
-            ["g<C-c>"] = "@class.outer",
-            ["g<C-k>"] = "@function.outer",
+            ["grp"] = "@function.outer",
+            ["grc"] = "@class.outer",
             ["g<C-f>"] = "@function.outer",
             -- ["df"] = "@function.outer",
             -- ["dF"] = "@class.outer",
           },
+          -- select = {
+          --   enable = true,
+          --   lookahead = true,
+          --   keymaps = {
+          --     ["af"] = "@function.outer",
+          --     ["if"] = "@function.inner",
+          --     ["ab"] = "@block.outer",
+          --     ["ib"] = "@block.inner",
+          --     ["as"] = "@scope.outer",
+          --     ["is"] = "@scope.inner",
+          --   },
+          -- },
         },
         move = {
           enable = true,

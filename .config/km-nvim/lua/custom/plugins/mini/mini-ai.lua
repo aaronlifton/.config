@@ -49,14 +49,6 @@ return {
     "echasnovski/mini.ai",
     optional = true,
     dependencies = {
-      -- {
-      --   "echasnovski/mini.nvim",
-      --   lazy = true,
-      --   vscode = true,
-      --   config = function()
-      --     require("mini.extra").setup()
-      --   end,
-      -- },
       { "echasnovski/mini.extra", version = "*" },
     },
     opts = function(_, opts)

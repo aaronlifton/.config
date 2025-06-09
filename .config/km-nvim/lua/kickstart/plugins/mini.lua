@@ -1,9 +1,7 @@
 local mini_ai_git_signs = function()
   local bufnr = vim.api.nvim_get_current_buf()
-  local gitsigns_cache = require('gitsigns.cache').cache[bufnr]
-  if not gitsigns_cache then
-    return
-  end
+  local gitsigns_cache = require("gitsigns.cache").cache[bufnr]
+  if not gitsigns_cache then return end
   local hunks = gitsigns_cache.hunks
   hunks = vim.tbl_map(function(hunk)
     local from_line = hunk.added.start
@@ -21,10 +19,10 @@ end
 
 local line_textobj = function()
   return function(ai_type)
-    local line_num = vim.fn.line '.'
+    local line_num = vim.fn.line(".")
     local line = vim.fn.getline(line_num)
     -- Ignore indentation for `i` textobject
-    local from_col = ai_type == 'a' and 1 or (line:match('^(%s*)'):len() + 1)
+    local from_col = ai_type == "a" and 1 or (line:match("^(%s*)"):len() + 1)
     -- Don't select `\n` past the line to operate within a line
     local to_col = line:len()
 
@@ -34,7 +32,7 @@ end
 
 return {
   { -- Collection of various small independent plugins/modules
-    'echasnovski/mini.nvim',
+    "echasnovski/mini.nvim",
     config = function()
       -- Better Around/Inside textobjects
       --
@@ -42,38 +40,38 @@ return {
       --  - va)  - [V]isually select [A]round [)]paren
       --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
       --  - ci'  - [C]hange [I]nside [']quote
-      local ai = require 'mini.ai'
+      local ai = require("mini.ai")
       local custom_textobjects = {
         -- Util.lazy uses: o,f,c,t,d,e,g,u,U
-        C = ai.gen_spec.treesitter { a = '@comment.outer', i = '@comment.outer' },
-        k = ai.gen_spec.treesitter {
-          i = { '@assignment.lhs', '@key.inner' },
-          a = { '@assignment.outer', '@key.inner' },
-        },
-        v = ai.gen_spec.treesitter {
-          i = { '@assignment.rhs', '@value.inner', '@return.inner' },
-          a = { '@assignment.outer', '@value.inner', '@return.outer' },
-        },
+        C = ai.gen_spec.treesitter({ a = "@comment.outer", i = "@comment.outer" }),
+        k = ai.gen_spec.treesitter({
+          i = { "@assignment.lhs", "@key.inner" },
+          a = { "@assignment.outer", "@key.inner" },
+        }),
+        v = ai.gen_spec.treesitter({
+          i = { "@assignment.rhs", "@value.inner", "@return.inner" },
+          a = { "@assignment.outer", "@value.inner", "@return.outer" },
+        }),
         -- N = MiniExtra.gen_ai_spec.number(),
         -- D = MiniExtra.gen_ai_spec.diagnostic(),
         -- E = MiniExtra.gen_ai_spec.diagnostic({ severity = vim.diagnostic.severity.ERROR }),
         L = line_textobj(),
         p = {
           {
-            '\n%s*\n()().-()\n%s*\n()[%s]*', -- normal paragraphs
-            '^()().-()\n%s*\n[%s]*()', -- paragraph at start of file
-            '\n%s*\n()().-()()$', -- paragraph at end of file
+            "\n%s*\n()().-()\n%s*\n()[%s]*", -- normal paragraphs
+            "^()().-()\n%s*\n[%s]*()", -- paragraph at start of file
+            "\n%s*\n()().-()()$", -- paragraph at end of file
           },
         },
         S = { -- normal sentence
-          '[%.?!][%s]+()().-[^%s].-()[%.?!]()[%s]',
-          '^[%{%[]?[%s]*()().-[^%s].-()[%.?!]()[%s]',
-          '[%.?!][%s]+()().-[^%s].-()()[\n%}%]]?$',
-          '^[%s]*()().-[^%s].-()()[%s]+$',
+          "[%.?!][%s]+()().-[^%s].-()[%.?!]()[%s]",
+          "^[%{%[]?[%s]*()().-[^%s].-()[%.?!]()[%s]",
+          "[%.?!][%s]+()().-[^%s].-()()[\n%}%]]?$",
+          "^[%s]*()().-[^%s].-()()[%s]+$",
         },
         -- Imitate word ignoring digits and punctuation (supports only Latin alphabet):
         W = { {
-          '()()%f[%w%p][%w%p]+()[ \t]*()',
+          "()()%f[%w%p][%w%p]+()[ \t]*()",
         } },
         -- Word, with camelCase support (supports only Latin alphabet) TestTest
         -- Util.lazy maps this as `e`, so not needed. But kept as an example for
@@ -89,7 +87,7 @@ return {
         --   "^().*()$",
         -- },
         -- TODO: see if this is interfering with the `h` textobject from mini.diff
-        h = Util.lazy.has_plugin 'gitsigns' and mini_ai_git_signs or nil,
+        h = Util.lazy.has_plugin("gitsigns") and mini_ai_git_signs or nil,
         -- Match the strart and end of a markdown code fence
         -- ["`"] = ai.gen_spec.treesitter({
         --   a = "@fenced_code_block.outer",
@@ -117,31 +115,27 @@ return {
         -- end,
         -- TODO: Convert this example for something useful; this just clones vif
         F = function()
-          local ts_utils = require 'nvim-treesitter.ts_utils'
+          local ts_utils = require("nvim-treesitter.ts_utils")
           local current_node = ts_utils.get_node_at_cursor()
 
           -- Traverse up the tree to find the function definition node
-          while current_node and current_node:type() ~= 'function_definition' do
+          while current_node and current_node:type() ~= "function_definition" do
             current_node = current_node:parent()
           end
 
-          if not current_node then
-            return nil
-          end
+          if not current_node then return nil end
 
           -- Find the block node by iterating through children
           local body_node
           for i = 0, current_node:named_child_count() - 1 do
             local child = current_node:named_child(i)
-            if child and child:type() == 'block' then
+            if child and child:type() == "block" then
               body_node = child
               break
             end
           end
 
-          if not body_node then
-            return nil
-          end
+          if not body_node then return nil end
 
           local start_row, start_col, end_row, end_col = body_node:range()
           local bufnr = vim.api.nvim_get_current_buf()
@@ -162,7 +156,7 @@ return {
             first_child_col = first_child_col,
             last_line_length = #last_line,
           }
-          vim.api.nvim_echo({ { vim.inspect(debugvars), 'Normal' } }, true, {})
+          vim.api.nvim_echo({ { vim.inspect(debugvars), "Normal" } }, true, {})
 
           -- Adjust start and end positions with correct column positions
           -- 'from' starts at first character, 'to' ends at last character
@@ -172,39 +166,50 @@ return {
           return { from = from, to = to }
         end,
       }
-      require('mini.ai').setup(vim.tbl_deep_extend('keep', { n_lines = 500 }, { custom_textobjects = custom_textobjects }))
+      require("mini.ai").setup(
+        vim.tbl_deep_extend("keep", { n_lines = 500 }, { custom_textobjects = custom_textobjects })
+      )
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
-      require('mini.surround').setup {
+      require("mini.surround").setup({
+        mappings = {
+          add = "gsa", -- Add surrounding in Normal and Visual modes
+          delete = "gsd", -- Delete surrounding
+          find = "gsf", -- Find surrounding (to the right)
+          find_left = "gsF", -- Find surrounding (to the left)
+          highlight = "gsh", -- Highlight surrounding
+          replace = "gsr", -- Replace surrounding
+          update_n_lines = "gsn", -- Update `n_lines`
+        },
         custom_surroundings = {
           M = {
-            output = { left = '```\n', right = '\n```' },
+            output = { left = "```\n", right = "\n```" },
           },
           -- Markdown URL surround
           L = {
             -- input = { "%[().*()%]%(.*%)" }, -- Matches [text](url)
-            output = { left = '[', right = ']()' },
+            output = { left = "[", right = "]()" },
           },
         },
-      }
+      })
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
-      local statusline = require 'mini.statusline'
+      local statusline = require("mini.statusline")
       -- set use_icons to true if you have a Nerd Font
-      statusline.setup { use_icons = vim.g.have_nerd_font }
+      statusline.setup({ use_icons = vim.g.have_nerd_font })
 
       -- You can configure sections in the statusline by overriding their
       -- default behavior. For example, here we set the section for
       -- cursor location to LINE:COLUMN
       ---@diagnostic disable-next-line: duplicate-set-field
       statusline.section_location = function()
-        return '%2l:%-2v'
+        return "%2l:%-2v"
       end
 
       -- ... and there is more!

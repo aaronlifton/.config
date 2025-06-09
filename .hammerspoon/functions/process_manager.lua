@@ -12,6 +12,17 @@ ProcessManager.search_strings = {
   gitC = "git -C /Users/alifton",
 }
 
+function ProcessManager.scan()
+  --  -- Using nmap to scan your entire subnet
+  -- local nmap -sn {{your_network_range}}
+  --
+  -- -- # Using ping sweep (requires knowing your network range)
+  -- for i in {1..254}; do ping -c 1 -W 1 {{network_prefix}}.$i &> /dev/null && echo "{{network_prefix}}.$i is up"; done
+  --
+  -- -- # Using Bonjour service discovery
+  -- exec dns-sd -B _services._dns-sd._udp
+end
+
 -- Command to find PIDs of processes whose command line contains the search string
 -- ps aux: List all processes (user, PID, %CPU, %MEM, etc.)
 -- grep "%s": Filter lines containing the search string (%%s is Lua format specifier for string)

@@ -59,6 +59,19 @@ return {
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
+        ["<C-e>"] = { "hide", "fallback" },
+        ["<CR>"] = { "accept", "fallback" },
+
+        ["<Tab>"] = { "snippet_forward", "select_next", "fallback" },
+        ["<S-Tab>"] = { "snippet_backward", "select_prev", "fallback" },
+
+        ["<Up>"] = { "select_prev", "fallback" },
+        ["<Down>"] = { "select_next", "fallback" },
+
+        ["<C-u>"] = { "scroll_documentation_up", "fallback" },
+        ["<C-d>"] = { "scroll_documentation_down", "fallback" },
+
+        ["<C-space>"] = { "show" },
       },
 
       appearance = {
@@ -68,9 +81,39 @@ return {
       },
 
       completion = {
+        list = { max_items = 5 },
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
-        documentation = { auto_show = true, auto_show_delay_ms = 500 },
+        documentation = {
+          window = {
+            border = "rounded",
+            winhighlight = "Normal:Normal,FloatBorder:Normal",
+          },
+          auto_show = true,
+          auto_show_delay_ms = 500,
+        },
+        menu = {
+          border = "rounded",
+          winhighlight = "Normal:Normal,FloatBorder:Normal",
+          draw = {
+            columns = { { "kind_icon" }, { "label", "label_description", gap = 1 }, { "source_name" } },
+            treesitter = { "lsp" },
+            components = {
+              source_name = {
+                text = function(ctx)
+                  local source_names = {
+                    lsp = "[LSP]",
+                    buffer = "[Buffer]",
+                    path = "[Path]",
+                    snippets = "[Snippet]",
+                    cmdline = "[Cmd]",
+                  }
+                  return source_names[ctx.source_name] or ("[" .. ctx.source_name .. "]")
+                end,
+              },
+            },
+          },
+        },
       },
 
       sources = {

@@ -94,7 +94,6 @@ return {
           -- Jump to the definition of the word under your cursor.
           --  This is where a variable was first declared, or where a function is defined, etc.
           --  To jump back, press <C-t>.
-          vim.notify("setting grd mapping for Snacks.picker.lsp_definitions()", vim.log.levels.INFO)
           map("grd", function()
             Snacks.picker.lsp_definitions()
           end, "[G]oto [D]efinition")

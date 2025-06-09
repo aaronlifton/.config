@@ -1,0 +1,4574 @@
+{
+  "global" : {
+    "ask_for_confirmation_before_quitting" : true,
+    "check_for_updates_on_startup" : true,
+    "show_in_menu_bar" : true,
+    "show_profile_name_in_menu_bar" : false,
+    "unsafe_ui" : true
+  },
+  "profiles" : [ {
+    "complex_modifications" : {
+      "parameters" : {
+        "basic.simultaneous_threshold_milliseconds" : 50,
+        "basic.to_delayed_action_delay_milliseconds" : 500,
+        "basic.to_if_alone_timeout_milliseconds" : 1000,
+        "basic.to_if_held_down_threshold_milliseconds" : 500
+      },
+      "rules" : [ {
+        "description" : "Auto generated layer conditions",
+        "manipulators" : [ {
+          "type" : "basic",
+          "to" : [ {
+            "set_variable" : {
+              "name" : "tab_layer",
+              "value" : 1
+            }
+          } ],
+          "from" : {
+            "key_code" : "tab"
+          },
+          "to_after_key_up" : [ {
+            "set_variable" : {
+              "name" : "tab_layer",
+              "value" : 0
+            }
+          } ],
+          "to_if_alone" : [ {
+            "key_code" : "tab"
+          } ]
+        } ]
+      }, {
+        "description" : "testing",
+        "manipulators" : [ {
+          "to_if_alone" : [ {
+            "key_code" : "slash"
+          } ],
+          "from" : {
+            "key_code" : "slash",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "right_command"
+          } ],
+          "conditions" : [ {
+            "name" : "terminals",
+            "value" : 1,
+            "type" : "variable_unless"
+          }, {
+            "type" : "frontmost_application_unless",
+            "bundle_identifiers" : [ "^md\\.obsidian$" ]
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "modifier keys for certain devices",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "right_control",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "right_command"
+          } ],
+          "conditions" : [ {
+            "identifiers" : [ {
+              "vendor_id" : 1452,
+              "product_id" : 591
+            } ],
+            "type" : "device_if"
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "additional modifier keys on fn layer",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "left_control"
+          },
+          "to" : [ {
+            "key_code" : "f1",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "conditions" : [ {
+            "name" : "fn_layer",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "fn_layer",
+              "value" : 1
+            }
+          }, {
+            "key_code" : "f1",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "fn"
+            }, {
+              "key_code" : "left_control"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "fn_layer",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "left_option"
+          },
+          "to" : [ {
+            "key_code" : "f3",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "conditions" : [ {
+            "name" : "fn_layer",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "fn_layer",
+              "value" : 1
+            }
+          }, {
+            "key_code" : "f3",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "fn"
+            }, {
+              "key_code" : "left_option"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "fn_layer",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "left_command"
+          },
+          "to" : [ {
+            "key_code" : "f2",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "conditions" : [ {
+            "name" : "fn_layer",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "fn_layer",
+              "value" : 1
+            }
+          }, {
+            "key_code" : "f2",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "fn"
+            }, {
+              "key_code" : "left_command"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "fn_layer",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "spacebar"
+          },
+          "to" : [ {
+            "key_code" : "f4",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "conditions" : [ {
+            "name" : "fn_layer",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "fn_layer",
+              "value" : 1
+            }
+          }, {
+            "key_code" : "f4",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "fn"
+            }, {
+              "key_code" : "spacebar"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "fn_layer",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "right_command"
+          },
+          "to" : [ {
+            "key_code" : "f5",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "conditions" : [ {
+            "name" : "fn_layer",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "fn_layer",
+              "value" : 1
+            }
+          }, {
+            "key_code" : "f5",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "fn"
+            }, {
+              "key_code" : "right_command"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "fn_layer",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "right_shift"
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "fn-shift",
+              "value" : 1
+            }
+          } ],
+          "conditions" : [ {
+            "name" : "fn_layer",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "fn_layer",
+              "value" : 1
+            }
+          }, {
+            "set_variable" : {
+              "name" : "fn-shift",
+              "value" : 1
+            }
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "fn"
+            }, {
+              "key_code" : "right_shift"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "fn_layer",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        } ]
+      }, {
+        "description" : "Change caps_lock to 4 modifiers combination, f19 when used alone",
+        "manipulators" : [ {
+          "to_if_alone" : [ {
+            "key_code" : "f19"
+          }, {
+            "set_variable" : {
+              "name" : "caps-delay",
+              "value" : 1
+            }
+          } ],
+          "to_delayed_action" : {
+            "to_if_invoked" : [ {
+              "set_variable" : {
+                "name" : "caps-delay",
+                "value" : 0
+              }
+            } ],
+            "to_if_canceled" : [ {
+              "set_variable" : {
+                "name" : "caps-delay",
+                "value" : 0
+              }
+            } ]
+          },
+          "from" : {
+            "key_code" : "caps_lock",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "left_shift",
+            "modifiers" : [ "left_command", "left_control", "left_option" ]
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "Tap caps_lock then keys",
+        "manipulators" : [ {
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "1"
+            }, {
+              "key_code" : "z"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : false,
+              "key_down_order" : "insensitive",
+              "key_up_order" : "insensitive",
+              "key_up_when" : "any"
+            }
+          },
+          "to" : [ {
+            "key_code" : "a"
+          }, {
+            "shell_command" : "say 'know we are in double shift mode'"
+          } ],
+          "conditions" : [ {
+            "name" : "caps-delay",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "left command delay",
+        "manipulators" : [ {
+          "to_if_alone" : [ {
+            "key_code" : "f19"
+          }, {
+            "set_variable" : {
+              "name" : "caps-delay",
+              "value" : 1
+            }
+          } ],
+          "from" : {
+            "key_code" : "left_command",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "left_command"
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "right command layer",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "comma"
+          },
+          "to" : [ {
+            "key_code" : "f17"
+          } ],
+          "conditions" : [ {
+            "name" : "right_command_layer",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "right_command_layer",
+              "value" : 1
+            }
+          }, {
+            "key_code" : "f17"
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "right_command"
+            }, {
+              "key_code" : "comma"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "right_command_layer",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "period"
+          },
+          "to" : [ {
+            "key_code" : "f18"
+          } ],
+          "conditions" : [ {
+            "name" : "right_command_layer",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "right_command_layer",
+              "value" : 1
+            }
+          }, {
+            "key_code" : "f18"
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "right_command"
+            }, {
+              "key_code" : "period"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "right_command_layer",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "slash"
+          },
+          "to" : [ {
+            "key_code" : "f19"
+          } ],
+          "conditions" : [ {
+            "name" : "right_command_layer",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "right_command_layer",
+              "value" : 1
+            }
+          }, {
+            "key_code" : "f19"
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "right_command"
+            }, {
+              "key_code" : "slash"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "right_command_layer",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "right_shift"
+          },
+          "to" : [ {
+            "key_code" : "f20"
+          } ],
+          "conditions" : [ {
+            "name" : "right_command_layer",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "right_command_layer",
+              "value" : 1
+            }
+          }, {
+            "key_code" : "f20"
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "right_command"
+            }, {
+              "key_code" : "right_shift"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "right_command_layer",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "backslash"
+          },
+          "to" : [ {
+            "key_code" : "backslash",
+            "modifiers" : [ "left_command" ]
+          } ],
+          "conditions" : [ {
+            "name" : "right_command_layer",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "right_command_layer",
+              "value" : 1
+            }
+          }, {
+            "key_code" : "backslash",
+            "modifiers" : [ "left_command" ]
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "right_command"
+            }, {
+              "key_code" : "backslash"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "right_command_layer",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        } ]
+      }, {
+        "description" : "right command acts as command",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "right_command",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "left_command"
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "SD Mode <- S+D",
+        "manipulators" : [ {
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "s"
+            }, {
+              "key_code" : "d"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "insensitive",
+              "key_up_order" : "insensitive",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "superduper-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "superduper-mode",
+              "value" : 1
+            }
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "SD Mode B -> Ctrl+B (Tmux prefix)",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "b",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "b",
+            "modifiers" : [ "left_control" ]
+          } ],
+          "conditions" : [ {
+            "name" : "superduper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "SD Mode Z -> Undo",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "z",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "z",
+            "modifiers" : [ "left_command" ]
+          } ],
+          "conditions" : [ {
+            "name" : "superduper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "SD Mode",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "h",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "left_arrow"
+          } ],
+          "conditions" : [ {
+            "name" : "superduper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "j",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "down_arrow"
+          } ],
+          "conditions" : [ {
+            "name" : "superduper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "k",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "up_arrow"
+          } ],
+          "conditions" : [ {
+            "name" : "superduper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "l",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "right_arrow"
+          } ],
+          "conditions" : [ {
+            "name" : "superduper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "u",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "page_up"
+          } ],
+          "conditions" : [ {
+            "name" : "superduper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "i",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "page_down"
+          } ],
+          "conditions" : [ {
+            "name" : "superduper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "y",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "home"
+          } ],
+          "conditions" : [ {
+            "name" : "superduper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "o",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "end"
+          } ],
+          "conditions" : [ {
+            "name" : "superduper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "n",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "delete_forward"
+          } ],
+          "conditions" : [ {
+            "name" : "superduper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "m",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "delete_or_backspace"
+          } ],
+          "conditions" : [ {
+            "name" : "superduper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "spacebar",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "escape"
+          } ],
+          "conditions" : [ {
+            "name" : "superduper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "1"
+          },
+          "to" : [ {
+            "shell_command" : "osascript -e k'\n                  tell application \"BetterTouchTool\"\n                  execute_assigned_actions_for_trigger \"9E3279CF-9135-4F15-917A-60CD9A22AC20\"\n                end tell'"
+          } ],
+          "conditions" : [ {
+            "name" : "superduper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "caps_lock layer",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "h",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "left_arrow"
+          } ],
+          "conditions" : [ {
+            "name" : "caps2-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "caps2-mode",
+              "value" : 1
+            }
+          }, {
+            "key_code" : "left_arrow"
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "caps_lock"
+            }, {
+              "key_code" : "h"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "caps2-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "k",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "up_arrow"
+          } ],
+          "conditions" : [ {
+            "name" : "caps2-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "caps2-mode",
+              "value" : 1
+            }
+          }, {
+            "key_code" : "up_arrow"
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "caps_lock"
+            }, {
+              "key_code" : "k"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "caps2-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "j",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "down_arrow"
+          } ],
+          "conditions" : [ {
+            "name" : "caps2-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "caps2-mode",
+              "value" : 1
+            }
+          }, {
+            "key_code" : "down_arrow"
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "caps_lock"
+            }, {
+              "key_code" : "j"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "caps2-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "l",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "right_arrow"
+          } ],
+          "conditions" : [ {
+            "name" : "caps2-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "caps2-mode",
+              "value" : 1
+            }
+          }, {
+            "key_code" : "right_arrow"
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "caps_lock"
+            }, {
+              "key_code" : "l"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "caps2-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "3",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "home"
+          } ],
+          "conditions" : [ {
+            "name" : "caps2-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "caps2-mode",
+              "value" : 1
+            }
+          }, {
+            "key_code" : "home"
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "caps_lock"
+            }, {
+              "key_code" : "3"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "caps2-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "4",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "end"
+          } ],
+          "conditions" : [ {
+            "name" : "caps2-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "caps2-mode",
+              "value" : 1
+            }
+          }, {
+            "key_code" : "end"
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "caps_lock"
+            }, {
+              "key_code" : "4"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "caps2-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "s",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "return_or_enter"
+          } ],
+          "conditions" : [ {
+            "name" : "caps2-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "caps2-mode",
+              "value" : 1
+            }
+          }, {
+            "key_code" : "return_or_enter"
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "caps_lock"
+            }, {
+              "key_code" : "s"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "caps2-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "f",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "delete_or_backspace"
+          } ],
+          "conditions" : [ {
+            "name" : "caps2-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "caps2-mode",
+              "value" : 1
+            }
+          }, {
+            "key_code" : "delete_or_backspace"
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "caps_lock"
+            }, {
+              "key_code" : "f"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "caps2-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "g",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "escape"
+          } ],
+          "conditions" : [ {
+            "name" : "caps2-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "caps2-mode",
+              "value" : 1
+            }
+          }, {
+            "key_code" : "escape"
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "caps_lock"
+            }, {
+              "key_code" : "g"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "caps2-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "x",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "delete_forward"
+          } ],
+          "conditions" : [ {
+            "name" : "caps2-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "caps2-mode",
+              "value" : 1
+            }
+          }, {
+            "key_code" : "delete_forward"
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "caps_lock"
+            }, {
+              "key_code" : "x"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "caps2-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "up_arrow",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "up_arrow",
+            "modifiers" : [ "left_control" ]
+          } ],
+          "conditions" : [ {
+            "name" : "caps2-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "caps2-mode",
+              "value" : 1
+            }
+          }, {
+            "key_code" : "up_arrow",
+            "modifiers" : [ "left_control" ]
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "caps_lock"
+            }, {
+              "key_code" : "up_arrow"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "caps2-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        } ]
+      }, {
+        "description" : "Press right_shift twice to enter double shift mode, press right_shift once to leave it",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "right_shift"
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "double-right-shift-mode",
+              "value" : 1
+            }
+          } ],
+          "conditions" : [ {
+            "name" : "shift-pressed-once",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "to_delayed_action" : {
+            "to_if_invoked" : [ {
+              "set_variable" : {
+                "name" : "shift-pressed-once",
+                "value" : 0
+              }
+            } ],
+            "to_if_canceled" : [ {
+              "set_variable" : {
+                "name" : "shift-pressed-once",
+                "value" : 0
+              }
+            } ]
+          },
+          "from" : {
+            "key_code" : "right_shift"
+          },
+          "to" : [ {
+            "key_code" : "right_shift"
+          }, {
+            "set_variable" : {
+              "name" : "shift-pressed-once",
+              "value" : 1
+            }
+          } ],
+          "conditions" : [ {
+            "name" : "double-right-shift-mode",
+            "value" : 0,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "right_shift"
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "double-right-shift-mode",
+              "value" : 0
+            }
+          } ],
+          "conditions" : [ {
+            "name" : "double-right-shift-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "Extend Layer - CapsLock (quick release for ESC)",
+        "manipulators" : [ {
+          "to_if_alone" : [ {
+            "key_code" : "escape"
+          } ],
+          "to_after_key_up" : [ {
+            "set_variable" : {
+              "name" : "extend",
+              "value" : 0
+            }
+          } ],
+          "from" : {
+            "key_code" : "caps_lock",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "extend",
+              "value" : 1
+            }
+          } ],
+          "conditions" : [ {
+            "name" : "symbols",
+            "value" : 1,
+            "type" : "variable_unless"
+          }, {
+            "name" : "mouse",
+            "value" : 1,
+            "type" : "variable_unless"
+          }, {
+            "name" : "shifted",
+            "value" : 1,
+            "type" : "variable_unless"
+          }, {
+            "name" : "system",
+            "value" : 1,
+            "type" : "variable_unless"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "1",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f1"
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "2",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f2"
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "3",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f3"
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "4",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f4"
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "5",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f5"
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "6",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f6"
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "7",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f7"
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "8",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f8"
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "9",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f9"
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "0",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f10"
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "hyphen",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f11"
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "equal_sign",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f12"
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "a",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "left_control"
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "s",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "left_shift"
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "d",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "left_option"
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "f",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "left_command"
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "j",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "left_arrow"
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "k",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "down_arrow"
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "i",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "up_arrow"
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "l",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "right_arrow"
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "u",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "left_arrow",
+            "modifiers" : [ "left_command" ]
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          }, {
+            "name" : "terminals",
+            "value" : 1,
+            "type" : "variable_unless"
+          }, {
+            "type" : "frontmost_application_unless",
+            "bundle_identifiers" : [ "^md\\.obsidian$" ]
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "o",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "right_arrow",
+            "modifiers" : [ "left_command" ]
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          }, {
+            "name" : "terminals",
+            "value" : 1,
+            "type" : "variable_unless"
+          }, {
+            "type" : "frontmost_application_unless",
+            "bundle_identifiers" : [ "^md\\.obsidian$" ]
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "z",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "z",
+            "modifiers" : [ "left_command" ]
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          }, {
+            "type" : "frontmost_application_unless",
+            "bundle_identifiers" : [ "^md\\.obsidian$" ]
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "x",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "x",
+            "modifiers" : [ "left_command" ]
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          }, {
+            "type" : "frontmost_application_unless",
+            "bundle_identifiers" : [ "^md\\.obsidian$" ]
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "c",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "c",
+            "modifiers" : [ "left_command" ]
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          }, {
+            "type" : "frontmost_application_unless",
+            "bundle_identifiers" : [ "^md\\.obsidian$" ]
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "v",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "v",
+            "modifiers" : [ "left_command" ]
+          } ],
+          "conditions" : [ {
+            "name" : "extend",
+            "value" : 1,
+            "type" : "variable_if"
+          }, {
+            "type" : "frontmost_application_unless",
+            "bundle_identifiers" : [ "^md\\.obsidian$" ]
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "fn keys",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "1",
+            "modifiers" : {
+              "mandatory" : [ "left_command", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f1"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "2",
+            "modifiers" : {
+              "mandatory" : [ "left_command", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f2"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "3",
+            "modifiers" : {
+              "mandatory" : [ "left_command", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f3"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "4",
+            "modifiers" : {
+              "mandatory" : [ "left_command", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f4"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "5",
+            "modifiers" : {
+              "mandatory" : [ "left_command", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f5"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "6",
+            "modifiers" : {
+              "mandatory" : [ "left_command", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f6"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "7",
+            "modifiers" : {
+              "mandatory" : [ "left_command", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f7"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "8",
+            "modifiers" : {
+              "mandatory" : [ "left_command", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f8"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "9",
+            "modifiers" : {
+              "mandatory" : [ "left_command", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f9"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "0",
+            "modifiers" : {
+              "mandatory" : [ "left_command", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f10"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "hyphen",
+            "modifiers" : {
+              "mandatory" : [ "left_command", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f11"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "equal_sign",
+            "modifiers" : {
+              "mandatory" : [ "left_command", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f12"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "1",
+            "modifiers" : {
+              "mandatory" : [ "left_option", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f1",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "2",
+            "modifiers" : {
+              "mandatory" : [ "left_option", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f2",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "3",
+            "modifiers" : {
+              "mandatory" : [ "left_option", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f3",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "4",
+            "modifiers" : {
+              "mandatory" : [ "left_option", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f4",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "5",
+            "modifiers" : {
+              "mandatory" : [ "left_option", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f5",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "6",
+            "modifiers" : {
+              "mandatory" : [ "left_option", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f6",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "7",
+            "modifiers" : {
+              "mandatory" : [ "left_option", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f7",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "8",
+            "modifiers" : {
+              "mandatory" : [ "left_option", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f8",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "9",
+            "modifiers" : {
+              "mandatory" : [ "left_option", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f9",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "0",
+            "modifiers" : {
+              "mandatory" : [ "left_option", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f10",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "hyphen",
+            "modifiers" : {
+              "mandatory" : [ "left_option", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f11",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "equal_sign",
+            "modifiers" : {
+              "mandatory" : [ "left_option", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f12",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "y",
+            "modifiers" : {
+              "mandatory" : [ "left_option", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f13",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "u",
+            "modifiers" : {
+              "mandatory" : [ "left_option", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f14",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "i",
+            "modifiers" : {
+              "mandatory" : [ "left_option", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f15",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "o",
+            "modifiers" : {
+              "mandatory" : [ "left_option", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f16",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "Work layer - Esc",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "q"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Microsoft Teams.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "esc-layer",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "esc-layer",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Microsoft Teams.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "escape"
+            }, {
+              "key_code" : "q"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "esc-layer",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "w"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Microsoft Outlook.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "esc-layer",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "esc-layer",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Microsoft Outlook.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "escape"
+            }, {
+              "key_code" : "w"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "esc-layer",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "e"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Slack.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "esc-layer",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "esc-layer",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Slack.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "escape"
+            }, {
+              "key_code" : "e"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "esc-layer",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        } ]
+      }, {
+        "description" : "press j and l simultaneously to f16",
+        "manipulators" : [ {
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "j"
+            }, {
+              "key_code" : "l"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : false,
+              "key_down_order" : "insensitive",
+              "key_up_order" : "insensitive",
+              "key_up_when" : "any"
+            }
+          },
+          "to" : [ {
+            "key_code" : "f16"
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "shortcut to f12",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "equal_sign",
+            "modifiers" : {
+              "mandatory" : [ "left_control" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f12"
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "tab+d opens mission control",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "e",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "mission_control"
+          } ],
+          "conditions" : [ {
+            "name" : "tab_layer",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "d",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "spacebar",
+            "modifiers" : [ "left_command" ]
+          } ],
+          "conditions" : [ {
+            "name" : "tab_layer",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "ctrl+esc is grave accent",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "escape",
+            "modifiers" : {
+              "mandatory" : [ "left_control" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "grave_accent_and_tilde"
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "cmd+escape is cmd+grave",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "escape",
+            "modifiers" : {
+              "mandatory" : [ "left_command" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "grave_accent_and_tilde",
+            "modifiers" : [ "left_command" ]
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "hyper 1 to cleanup personal folder",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "1",
+            "modifiers" : {
+              "mandatory" : [ "left_command", "left_control", "left_option", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "shell_command" : "rm -r ~/personal && mkdir ~/personal"
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "vscode rules",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "right_option",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "f16"
+          } ],
+          "conditions" : [ {
+            "type" : "frontmost_application_if",
+            "bundle_identifiers" : [ "^com\\.microsoft\\.VSCode?$" ]
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "maestro-mode",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "d"
+          },
+          "to" : [ {
+            "shell_command" : "osascript -e 'tell application \"Keyboard Maestro Engine\" to do script \"1 2FA Market V2\"'"
+          } ],
+          "conditions" : [ {
+            "name" : "maestro-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "maestro-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "osascript -e 'tell application \"Keyboard Maestro Engine\" to do script \"1 2FA Market V2\"'"
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "q"
+            }, {
+              "key_code" : "d"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "maestro-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "e"
+          },
+          "to" : [ {
+            "shell_command" : "osascript -e 'tell application \"Keyboard Maestro Engine\" to do script \"0 Login V2\"'"
+          } ],
+          "conditions" : [ {
+            "name" : "maestro-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "maestro-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "osascript -e 'tell application \"Keyboard Maestro Engine\" to do script \"0 Login V2\"'"
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "q"
+            }, {
+              "key_code" : "e"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "maestro-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "f"
+          },
+          "to" : [ {
+            "shell_command" : "osascript -e 'tell application \"Keyboard Maestro Engine\" to do script \"Encrypt for\"'"
+          } ],
+          "conditions" : [ {
+            "name" : "maestro-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "maestro-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "osascript -e 'tell application \"Keyboard Maestro Engine\" to do script \"Encrypt for\"'"
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "q"
+            }, {
+              "key_code" : "f"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "maestro-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        } ]
+      }, {
+        "description" : "QW Mode <- Q+W",
+        "manipulators" : [ {
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "q"
+            }, {
+              "key_code" : "w"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "insensitive",
+              "key_up_order" : "insensitive",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "qw-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "qw-mode",
+              "value" : 1
+            }
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "QW Mode",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "k"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Microsoft Edge.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "qw-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "u"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/OmniFocus.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "qw-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "s"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Youtube Music.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "qw-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "semicolon"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Notion.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "qw-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "launch mode",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "h"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/WezTerm.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/WezTerm.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "h"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "g"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Alacritty.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Alacritty.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "g"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "d"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Kitty.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Kitty.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "d"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "j"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Visual Studio Code.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Visual Studio Code.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "j"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "l"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Obsidian.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Obsidian.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "l"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "k"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Google Chrome Canary.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Google Chrome Canary.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "k"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "i"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Arc.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Arc.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "i"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "semicolon"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Obsidian.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Obsidian.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "semicolon"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "u"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Things3.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Things3.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "u"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "y"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/TickTick.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/TickTick.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "y"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "6"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Setapp/Timing.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Setapp/Timing.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "6"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "7"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Structured.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Structured.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "7"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "8"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Setapp/NotePlan.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Setapp/NotePlan.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "8"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "b"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Users/aaron/Applications/Chrome Canary Apps.localized/Bard.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Users/aaron/Applications/Chrome Canary Apps.localized/Bard.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "b"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "n"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/KeePassXC.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/KeePassXC.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "n"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "m"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/1Password.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/1Password.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "m"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "t"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Taskade.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Taskade.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "t"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "f"
+          },
+          "to" : [ {
+            "shell_command" : "osascript -e k'\n                tell application \"Finder\"\n                    if frontmost then\n                        set visible to false\n                    else\n                        open -a \"Finder\"\n                        activate\n                        if (count windows) is 0 then\n                            open home\n                        end if\n                        set index of window 1 to 1\n                    end if\n                end tell'"
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "osascript -e k'\n                tell application \"Finder\"\n                    if frontmost then\n                        set visible to false\n                    else\n                        open -a \"Finder\"\n                        activate\n                        if (count windows) is 0 then\n                            open home\n                        end if\n                        set index of window 1 to 1\n                    end if\n                end tell'"
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "f"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "e"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Warp.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Warp.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "e"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "s"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Spotify.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Spotify.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "s"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "t"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/AI Chat Bot.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/AI Chat Bot.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "t"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "z"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/QSpace Pro.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/QSpace Pro.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "z"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "c"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/System/Applications/Calendar.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/System/Applications/Calendar.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "c"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "1"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Keyboard Maestro.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Keyboard Maestro.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "1"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "2"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Setapp/BetterTouchTool.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Setapp/BetterTouchTool.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "2"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "3"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Karabiner-EventViewer.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Karabiner-EventViewer.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "3"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "4"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/AI Chat Bot.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/AI Chat Bot.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "4"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "hyphen"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Tor Browser.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "launch-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 210
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "launch-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Tor Browser.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "hyphen"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "launch-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        } ]
+      } ]
+    },
+    "devices" : [ {
+      "disable_built_in_keyboard_if_exists" : false,
+      "fn_function_keys" : [ ],
+      "identifiers" : {
+        "is_keyboard" : true,
+        "is_pointing_device" : false,
+        "product_id" : 49987,
+        "vendor_id" : 1133
+      },
+      "ignore" : false,
+      "manipulate_caps_lock_led" : true,
+      "simple_modifications" : [ {
+        "from" : {
+          "key_code" : "left_option"
+        },
+        "to" : [ {
+          "key_code" : "left_command"
+        } ]
+      }, {
+        "from" : {
+          "key_code" : "right_option"
+        },
+        "to" : [ {
+          "key_code" : "right_command"
+        } ]
+      } ],
+      "treat_as_built_in_keyboard" : false
+    }, {
+      "disable_built_in_keyboard_if_exists" : false,
+      "fn_function_keys" : [ ],
+      "identifiers" : {
+        "is_keyboard" : true,
+        "is_pointing_device" : false,
+        "product_id" : 832,
+        "vendor_id" : 1452
+      },
+      "ignore" : false,
+      "manipulate_caps_lock_led" : true,
+      "simple_modifications" : [ ],
+      "treat_as_built_in_keyboard" : false
+    }, {
+      "disable_built_in_keyboard_if_exists" : false,
+      "fn_function_keys" : [ ],
+      "identifiers" : {
+        "is_keyboard" : false,
+        "is_pointing_device" : true,
+        "product_id" : 832,
+        "vendor_id" : 1452
+      },
+      "ignore" : true,
+      "manipulate_caps_lock_led" : false,
+      "simple_modifications" : [ ],
+      "treat_as_built_in_keyboard" : false
+    }, {
+      "disable_built_in_keyboard_if_exists" : false,
+      "fn_function_keys" : [ {
+        "from" : {
+          "key_code" : "f1"
+        },
+        "to" : [ {
+          "key_code" : "vk_consumer_brightness_down"
+        } ]
+      }, {
+        "from" : {
+          "key_code" : "f4"
+        },
+        "to" : [ {
+          "key_code" : "launchpad"
+        } ]
+      }, {
+        "from" : {
+          "key_code" : "f11"
+        },
+        "to" : [ {
+          "consumer_key_code" : "volume_decrement"
+        } ]
+      }, {
+        "from" : {
+          "key_code" : "f12"
+        },
+        "to" : [ {
+          "consumer_key_code" : "volume_increment"
+        } ]
+      } ],
+      "identifiers" : {
+        "is_keyboard" : true,
+        "is_pointing_device" : false,
+        "product_id" : 591,
+        "vendor_id" : 1452
+      },
+      "ignore" : false,
+      "manipulate_caps_lock_led" : true,
+      "simple_modifications" : [ {
+        "from" : {
+          "key_code" : "left_command"
+        },
+        "to" : [ {
+          "key_code" : "left_option"
+        } ]
+      }, {
+        "from" : {
+          "key_code" : "left_option"
+        },
+        "to" : [ {
+          "key_code" : "left_command"
+        } ]
+      }, {
+        "from" : {
+          "key_code" : "right_command"
+        },
+        "to" : [ {
+          "key_code" : "right_option"
+        } ]
+      }, {
+        "from" : {
+          "key_code" : "right_option"
+        },
+        "to" : [ {
+          "key_code" : "right_command"
+        } ]
+      } ],
+      "treat_as_built_in_keyboard" : false
+    }, {
+      "disable_built_in_keyboard_if_exists" : false,
+      "fn_function_keys" : [ ],
+      "identifiers" : {
+        "is_keyboard" : false,
+        "is_pointing_device" : true,
+        "product_id" : 613,
+        "vendor_id" : 76
+      },
+      "ignore" : true,
+      "manipulate_caps_lock_led" : false,
+      "simple_modifications" : [ ],
+      "treat_as_built_in_keyboard" : false
+    }, {
+      "disable_built_in_keyboard_if_exists" : false,
+      "fn_function_keys" : [ ],
+      "identifiers" : {
+        "is_keyboard" : true,
+        "is_pointing_device" : false,
+        "product_id" : 34304,
+        "vendor_id" : 1452
+      },
+      "ignore" : true,
+      "manipulate_caps_lock_led" : true,
+      "simple_modifications" : [ ],
+      "treat_as_built_in_keyboard" : false
+    }, {
+      "disable_built_in_keyboard_if_exists" : false,
+      "fn_function_keys" : [ ],
+      "identifiers" : {
+        "is_keyboard" : true,
+        "is_pointing_device" : false,
+        "product_id" : 611,
+        "vendor_id" : 13364
+      },
+      "ignore" : true,
+      "manipulate_caps_lock_led" : true,
+      "simple_modifications" : [ {
+        "from" : {
+          "key_code" : "h"
+        },
+        "to" : [ {
+          "key_code" : "h"
+        } ]
+      } ],
+      "treat_as_built_in_keyboard" : false
+    }, {
+      "disable_built_in_keyboard_if_exists" : false,
+      "fn_function_keys" : [ ],
+      "identifiers" : {
+        "is_keyboard" : true,
+        "is_pointing_device" : true,
+        "product_id" : 611,
+        "vendor_id" : 13364
+      },
+      "ignore" : false,
+      "manipulate_caps_lock_led" : true,
+      "simple_modifications" : [ {
+        "from" : {
+          "key_code" : "a"
+        },
+        "to" : [ {
+          "key_code" : "a"
+        } ]
+      } ],
+      "treat_as_built_in_keyboard" : false
+    }, {
+      "disable_built_in_keyboard_if_exists" : false,
+      "fn_function_keys" : [ ],
+      "identifiers" : {
+        "is_keyboard" : true,
+        "is_pointing_device" : false,
+        "product_id" : 668,
+        "vendor_id" : 76
+      },
+      "ignore" : false,
+      "manipulate_caps_lock_led" : true,
+      "simple_modifications" : [ ],
+      "treat_as_built_in_keyboard" : false
+    }, {
+      "disable_built_in_keyboard_if_exists" : false,
+      "fn_function_keys" : [ ],
+      "identifiers" : {
+        "is_keyboard" : true,
+        "is_pointing_device" : true,
+        "product_id" : 591,
+        "vendor_id" : 1452
+      },
+      "ignore" : false,
+      "manipulate_caps_lock_led" : true,
+      "simple_modifications" : [ ],
+      "treat_as_built_in_keyboard" : false
+    }, {
+      "disable_built_in_keyboard_if_exists" : false,
+      "fn_function_keys" : [ ],
+      "identifiers" : {
+        "is_keyboard" : true,
+        "is_pointing_device" : true,
+        "product_id" : 20565,
+        "vendor_id" : 12815
+      },
+      "ignore" : true,
+      "manipulate_caps_lock_led" : true,
+      "simple_modifications" : [ ],
+      "treat_as_built_in_keyboard" : false
+    }, {
+      "disable_built_in_keyboard_if_exists" : false,
+      "fn_function_keys" : [ ],
+      "identifiers" : {
+        "is_keyboard" : true,
+        "is_pointing_device" : false,
+        "product_id" : 20565,
+        "vendor_id" : 12815
+      },
+      "ignore" : false,
+      "manipulate_caps_lock_led" : false,
+      "simple_modifications" : [ ],
+      "treat_as_built_in_keyboard" : false
+    }, {
+      "disable_built_in_keyboard_if_exists" : false,
+      "fn_function_keys" : [ ],
+      "identifiers" : {
+        "is_keyboard" : false,
+        "is_pointing_device" : true,
+        "product_id" : 613,
+        "vendor_id" : 1452
+      },
+      "ignore" : true,
+      "manipulate_caps_lock_led" : false,
+      "simple_modifications" : [ ],
+      "treat_as_built_in_keyboard" : false
+    }, {
+      "disable_built_in_keyboard_if_exists" : false,
+      "fn_function_keys" : [ ],
+      "identifiers" : {
+        "is_keyboard" : true,
+        "is_pointing_device" : true,
+        "product_id" : 33398,
+        "vendor_id" : 9306
+      },
+      "ignore" : false,
+      "manipulate_caps_lock_led" : true,
+      "simple_modifications" : [ {
+        "from" : {
+          "apple_vendor_top_case_key_code" : "keyboard_fn"
+        },
+        "to" : [ {
+          "apple_vendor_top_case_key_code" : "keyboard_fn"
+        } ]
+      }, {
+        "from" : {
+          "key_code" : "fn"
+        },
+        "to" : [ {
+          "apple_vendor_top_case_key_code" : "keyboard_fn"
+        } ]
+      } ],
+      "treat_as_built_in_keyboard" : false
+    }, {
+      "disable_built_in_keyboard_if_exists" : false,
+      "fn_function_keys" : [ ],
+      "identifiers" : {
+        "is_keyboard" : true,
+        "is_pointing_device" : true,
+        "product_id" : 0,
+        "vendor_id" : 50562
+      },
+      "ignore" : false,
+      "manipulate_caps_lock_led" : true,
+      "simple_modifications" : [ ],
+      "treat_as_built_in_keyboard" : false
+    }, {
+      "disable_built_in_keyboard_if_exists" : false,
+      "fn_function_keys" : [ ],
+      "identifiers" : {
+        "is_keyboard" : true,
+        "is_pointing_device" : false,
+        "product_id" : 0,
+        "vendor_id" : 50562
+      },
+      "ignore" : false,
+      "manipulate_caps_lock_led" : true,
+      "simple_modifications" : [ ],
+      "treat_as_built_in_keyboard" : false
+    }, {
+      "disable_built_in_keyboard_if_exists" : false,
+      "fn_function_keys" : [ ],
+      "identifiers" : {
+        "is_keyboard" : true,
+        "is_pointing_device" : false,
+        "product_id" : 45890,
+        "vendor_id" : 1133
+      },
+      "ignore" : false,
+      "manipulate_caps_lock_led" : true,
+      "simple_modifications" : [ ],
+      "treat_as_built_in_keyboard" : false
+    }, {
+      "disable_built_in_keyboard_if_exists" : false,
+      "fn_function_keys" : [ ],
+      "identifiers" : {
+        "is_keyboard" : false,
+        "is_pointing_device" : true,
+        "product_id" : 617,
+        "vendor_id" : 76
+      },
+      "ignore" : true,
+      "manipulate_caps_lock_led" : false,
+      "simple_modifications" : [ ],
+      "treat_as_built_in_keyboard" : false
+    } ],
+    "fn_function_keys" : [ {
+      "from" : {
+        "key_code" : "f1"
+      },
+      "to" : [ {
+        "consumer_key_code" : "display_brightness_decrement"
+      } ]
+    }, {
+      "from" : {
+        "key_code" : "f2"
+      },
+      "to" : [ {
+        "consumer_key_code" : "display_brightness_increment"
+      } ]
+    }, {
+      "from" : {
+        "key_code" : "f3"
+      },
+      "to" : [ {
+        "apple_vendor_keyboard_key_code" : "mission_control"
+      } ]
+    }, {
+      "from" : {
+        "key_code" : "f4"
+      },
+      "to" : [ {
+        "apple_vendor_keyboard_key_code" : "spotlight"
+      } ]
+    }, {
+      "from" : {
+        "key_code" : "f5"
+      },
+      "to" : [ {
+        "consumer_key_code" : "dictation"
+      } ]
+    }, {
+      "from" : {
+        "key_code" : "f6"
+      },
+      "to" : [ {
+        "key_code" : "f6"
+      } ]
+    }, {
+      "from" : {
+        "key_code" : "f7"
+      },
+      "to" : [ {
+        "consumer_key_code" : "rewind"
+      } ]
+    }, {
+      "from" : {
+        "key_code" : "f8"
+      },
+      "to" : [ {
+        "consumer_key_code" : "play_or_pause"
+      } ]
+    }, {
+      "from" : {
+        "key_code" : "f9"
+      },
+      "to" : [ {
+        "consumer_key_code" : "fast_forward"
+      } ]
+    }, {
+      "from" : {
+        "key_code" : "f10"
+      },
+      "to" : [ {
+        "consumer_key_code" : "mute"
+      } ]
+    }, {
+      "from" : {
+        "key_code" : "f11"
+      },
+      "to" : [ {
+        "consumer_key_code" : "volume_decrement"
+      } ]
+    }, {
+      "from" : {
+        "key_code" : "f12"
+      },
+      "to" : [ {
+        "consumer_key_code" : "volume_increment"
+      } ]
+    } ],
+    "name" : "Default",
+    "parameters" : {
+      "delay_milliseconds_before_open_device" : 1000
+    },
+    "selected" : true,
+    "simple_modifications" : [ ],
+    "virtual_hid_keyboard" : {
+      "country_code" : 0,
+      "indicate_sticky_modifier_keys_state" : true,
+      "mouse_key_xy_scale" : 100
+    }
+  } ]
+}
