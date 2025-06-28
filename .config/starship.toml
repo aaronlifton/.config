@@ -1,19 +1,22 @@
 # Get editor completions based on the config schema
 "$schema" = 'https://starship.rs/config-schema.json'
 
-# Inserts a blank line between shell prompts
-add_newline = true
-
-# https://docs.warp.dev/terminal/appearance/prompt
-[line_break]
-disabled = true
+# Fixes for zsh
+# # Inserts a blank line between shell prompts
+# add_newline = true
 #
-# Get editor completions based on the config schema
-'' = 'https://starship.rs/config-schema.json'
+# # https://docs.warp.dev/terminal/appearance/prompt
+# [line_break]
+# disabled = true
+# #
+# # Get editor completions based on the config schema
+# '' = 'https://starship.rs/config-schema.json'
+#
+# # Disables the custom module
+# [custom]
+# disabled = false
+# /End
 
-# Disables the custom module
-[custom]
-disabled = false
 format = """
 $directory\
 $nodejs\
