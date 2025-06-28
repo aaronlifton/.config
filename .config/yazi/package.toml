@@ -1,5 +1,52 @@
-[plugin]
-deps = [{ use = "Rolv-Apneseth/starship", commit = "dc9989c" }, { use = "yazi-rs/plugins#full-border", commit = "07b36c3" }, { use = "yazi-rs/plugins#jump-to-char", commit = "07b36c3" }, { use = "yazi-rs/plugins:git", rev = "02d18be" }]
+[[plugin.deps]]
+use = "yazi-rs/plugins:full-border"
+rev = "63f9650"
+hash = "3996fc74044bc44144b323686f887e1"
+
+[[plugin.deps]]
+use = "imsi32/yatline"
+rev = "4872af0"
+hash = "d32742ded0e73146a8ca590fdc4fb404"
+
+[[plugin.deps]]
+use = "imsi32/yatline-githead"
+rev = "f8f969e"
+hash = "4d441b38138ce6492a4e10fa349fd65"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:git"
+rev = "63f9650"
+hash = "bf6f074cd41ee33c3360341d168f9733"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:jump-to-char"
+rev = "63f9650"
+hash = "30fc0b37f03a597b92d387268319450f"
+
+[[plugin.deps]]
+use = "lpnh/fr"
+rev = "6d5e469"
+hash = "d8455f929580ec602b4d0bbd8e96711"
+
+[[plugin.deps]]
+use = "blackdaemon/yatline-tab-path"
+rev = "101fe7c"
+hash = "b58a6786383df06dc16fc6dbd1876d31"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:toggle-pane"
+rev = "3d1efb7"
+hash = "d6f60c24d8c0cf57a855bf46115b2502"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:smart-enter"
+rev = "42f64c0"
+hash = "56fdabc96fc1f4d53c96eb884b02a5be"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:smart-paste"
+rev = "42f64c0"
+hash = "a8050052e59f3952abe0b3e27a5843de"
 
 [flavor]
 deps = []

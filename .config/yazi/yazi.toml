@@ -1,11 +1,10 @@
 "$schema" = "https://yazi-rs.github.io/schemas/yazi.json"
 
-[manager]
+[mgr]
 ratio = [1, 4, 3]
 sort_by = "natural"
-sort_reverse = false
 sort_dir_first = true
-show_hidden = false
+show_hidden = true
 show_symlink = true
 
 [preview]
@@ -14,31 +13,52 @@ max_width = 600
 max_height = 900
 cache_dir = ""
 
+[[opener.bulk-rename]]
+run = 'hx "$@"'
+block = true
+
+[[open.prepend_rules]]
+name = "bulk-rename.txt"
+use = "bulk-rename"
 [opener]
 folder = [
   # { run = 'hyprctl dispatch run "[float; size 60% 60%; center 1] open" "$@"', desc = "Open in GUI File Manager" },
   { run = "open --background --new-window $1", desc = "Open in GUI File Manager" },
-  { run = '$EDITOR "$@"' },
+  { run = '''fish -c "nvim "$1""''', block = true, desc = "neovim", for = "macos" },
+  { run = 'kitty --detach nvim "$@"', orphan = true, desc = "neovim (detached)", for = "macos" },
+  { run = '''fish -c "lazygit -p "$1""''', block = true, desc = "lazygit", for = "macos" },
+  { run = 'cursor  "$@"', orphan = true, desc = "cursor", for = "macos" },
+  { run = 'kitty "$@"', orphan = true, desc = "kitty", for = "macos" },
+  { run = 'open "$@"', orphan = true, desc = "open", for = "macos" },
 ]
-archive = [{ run = 'open "$1"', desc = "Extract here" }]
-pdf = [{ run = 'open "$1"', desc = "Open" }]
-docx = [{ run = 'open "$1"', desc = "Open" }]
 text = [
-  # { run = 'pypr hide yazi & kitty --detach $EDITOR "$@"', block = true, desc = "Open" },
-  { run = '$EDITOR "$@"' },
+  { run = '$EDITOR "$@"', block = true, desc = "$EDITOR", for = "macos" },
+  { run = 'nvim "$@"', block = true, desc = "neovim", for = "macos" },
+  { run = 'kitty --detach nvim "$@"', block = true, desc = "neovim (detached)", for = "macos" },
+  { run = 'cursor  "$@"', orphan = true, desc = "cursor", for = "macos" },
+  { run = 'open "$@"', orphan = true, desc = "open", for = "macos" },
 ]
-image = [
-  { run = 'open "$@"', desc = "Open" },
-  { run = '''exiftool "$1"; echo "Press enter to exit"; read''', block = true, desc = "Show EXIF" },
+edit = [
+  { run = 'helix "$@"', block = true, for = "unix" },
+  { run = 'helix %*', block = true, for = "windows" },
 ]
-video = [
-  { run = 'open "$@"' },
-  { run = '''mediainfo "$1"; echo "Press enter to exit"; read''', block = true, desc = "Show media info" },
+document = [
+  { run = 'open "$@"', orphan = true, desc = "open", for = "macos" },
+  # { run = 'zathura "$@"', orphan = true, desc = "zathura", for = "macos" },
+  # { run = 'libreoffice "$@"', orphan = true, desc = "libreoffice", for = "macos" },
 ]
-audio = [
-  { run = 'open "$@"' },
-  { run = '''mediainfo "$1"; echo "Press enter to exit"; read''', block = true, desc = "Show media info" },
-]
+# image = [
+#   { run = 'open "$@"', desc = "Open" },
+#   { run = '''exiftool "$1"; echo "Press enter to exit"; read''', block = true, desc = "Show EXIF" },
+# ]
+# video = [
+#   { run = 'open "$@"' },
+#   { run = '''mediainfo "$1"; echo "Press enter to exit"; read''', block = true, desc = "Show media info" },
+# ]
+# audio = [
+#   { run = 'open "$@"' },
+#   { run = '''mediainfo "$1"; echo "Press enter to exit"; read''', block = true, desc = "Show media info" },
+# ]
 fallback = [
   { run = 'open "$@"', desc = "Open" },
   { run = 'open -R "$@"', desc = "Reveal in Finder" },
@@ -70,20 +90,12 @@ rules = [
   { mime = "*", use = "text" },
 ]
 
-[tasks]
-micro_workers = 5
-macro_workers = 10
-bizarre_retry = 5
+[[plugin.prepend_fetchers]]
+id = "git"
+name = "*"
+run = "git"
 
-[log]
-enabled = false
-
-# [[plugin.prepend_fetchers]]
-# id = "git"
-# name = "*"
-# run = "git"
-#
-# [[plugin.prepend_fetchers]]
-# id = "git"
-# name = "*/"
-# run = "git"
+[[plugin.prepend_fetchers]]
+id = "git"
+name = "*/"
+run = "git"
