@@ -1,109 +1,94 @@
 ; check https://github.com/alex35mil/dotfiles/blob/98c4539994572df10c4b941b04d43a14c6024ccc/home/.config/karabiner.edn
 ; for integration between karabiner and hammerspoon
 ; TODO: migrate to karabiner.ts - https://github.com/nikitavoloboev/config-test/blob/e57b47f3a63de602ce2425a0468c5d77698fcb68/karabiner/karabiner.ts#L192
-{
- :devices {:mode65 [{:vendor_id 222 :product_id 22356}]}
- 
- :applications {:terminals ["^net\\.kovidgoyal\\.kitty$" 
-                            "^io\\.alacritty$" 
-                            "^com\\.mitchellh\\.ghostty$"
-                            "^com\\.neovide\\.neovide$"]
-                :chrome ["^com.google.Chrome$"]
-                :neovide ["^com\\.neovide\\.neovide$"]}
- 
- :main [
-   ;; Change caps_lock key to command+control+option+shift. (Use shift+caps_lock as caps_lock)
-        {:des "Change caps_lock key to command+control+option+shift. (Use shift+caps_lock as caps_lock)"
-         :rules [[:!Scaps_lock :caps_lock]
-                 [:##caps_lock :!CTOleft_shift :!terminals]]}
-   
-   ;; Change caps_lock to control if pressed with other keys, to escape if pressed alone.
+  {:devices {:mode65 [{:vendor_id 222 :product_id 22356}]}
+
+   :applications {:terminals ["^net\\.kovidgoyal\\.kitty$"
+                              "^io\\.alacritty$"
+                              "^com\\.mitchellh\\.ghostty$"
+                              "^com\\.neovide\\.neovide$"]
+                  :chrome ["^com.google.Chrome$"]
+                  :neovide ["^com\\.neovide\\.neovide$"]}
+
+   ;; ------------ Cheatsheet ------------
+   ;; ! stand for mandatory
+   ;; # stand for optional
+   ;; !! stand for mandatory command + control + option + shift (hyper)
+   ;; T O C S for left control option command shift
+   ;; Q W E R for right command control option shift
+   ;; F for fn
+   ;; need to prefix C T O S F Q W E R with ! or #
+   ;; !  | means mandatory -   modifier(s) alone when pressend change behavior
+    ;; #  | means optional  -   modifiers are optional (but atleast one necessary)
+
+     ;; :!Ca is keycode :a and prefix a with !C
+
+     ;; C  | left_command
+     ;; T  | left_control
+     ;; O  | left_option
+     ;; S  | left_shift
+     ;; F  | fn
+     ;; Q  | right_command
+     ;; W  | right_control
+     ;; E  | right_option
+     ;; R  | right_shift
+
+     ;; ## | optional any
+     ;; !! | command + control + optional + shift (hyper)
+   :cheatsheet
+   {:!Ca        "command a"
+    :!Ta        "control a"
+    :!Oa        "option a"
+    :!Sa        "shift a"
+    :#Sa        "shift a"
+    :!CTOa      "command control option a"
+    :!Cspacebar "command space"
+    :!Fa        "fn a"
+    :##a        "keycode a optional any"
+    :!!a        "mandatory hyper (control command option shift) a "}
+
+   :main [
+          ;; Device-specific modifications
+          {:des "Device-specific modifications for Mode65"
+            :rules [:mode65
+                     [:right_control :right_command]]}
+          ;; Change caps_lock key to command+control+option+shift. (Use shift+caps_lock as caps_lock)
+          {:des "Change caps_lock key to command+control+option+shift. (Use shift+caps_lock as caps_lock)"
+           :rules [
+                   ; [:!Scaps_lock :caps_lock] ; gets pressed too often
+                   [:##caps_lock :!CTOleft_shift :!terminals]]}
+
+
+          {:des "Change right_option to 4 modifiers combination, f17 when used alone"
+          :rules [[:right_option :!CTOleft_shift nil {:alone [:f17]}]]}
+
+          ;; Change caps_lock to control if pressed with other keys, to escape if pressed alone.
    ; {:des "Change caps_lock to control if pressed with other keys, to escape if pressed alone."
    ;  :rules [[]] ;; Disabled rule
    ;  :enabled false}
-   
-   ;; CapsLock to Esc when press & to Control when hold
+
+          ;; CapsLock to Esc when press & to Control when hold
    ; {:des "CapsLock to Esc when press & to Control when hold"
    ;  :rules [[:condi :terminals]
    ;          [:##caps_lock :right_control nil {:to_if_alone :escape}]]}
-        {:des "CapsLock to Esc when press & to Control when hold"
-         :rules [[:##caps_lock :right_control nil {:to_if_alone :escape :condi [:terminals]}]
-                 [:##caps_lock :right_gui nil {:to_if_alone :escape}]]}
-            
-     
-   ;; Device-specific modifications
-        {:des "Device-specific modifications for Mode65"
-         :rules [:mode65
-                 [:right_control :right_command]]}
+          {:des "CapsLock to Esc when press & to Control when hold"
+           :rules [[:##caps_lock :right_control nil {:to_if_alone :escape :condi [:terminals]}]
+                   [:##caps_lock :right_gui nil {:to_if_alone :escape}]]}
 
-   ;; Funntion key mappings
+
+          ;; Funntion key mappings
    ; {:des "Function key mappings"
    ;  :rules [[:f3 :mission_control]
    ;          [:f4 :launchpad]]}
-        {:des "simultaneous j l press to F18" :rules [[[:j :l] :f18]]}]}
+          {:des "simultaneous j l press to F18" :rules [[[:j :l] :f18]]}
 
-
-        ;; check ~.config/.hammerspoon/karabiner_template.edn
-        ;; Mac OSX: double-tap right shift key — caps lock toggle
-        {:des "double right shift" :rules [:right_shift {:set ["right-shift-layer" 1]} :right_shift
-          {:delayed {:invoked {:set ["right-shift-layer" 0]}
-                    :canceled {:set ["right-shift-layer" 0]}}}]}
-        ;
-        ; ; - Used the `:chrome` application identifier instead of raw bundle identifiers
-        ; ; - Simplified the syntax with Goku's modifier key shortcuts:
-        ; ;   - `!CTR` = left_control + left_shift + right_command (your Hyper key)
-        ; ;   - `!CO` = left_command + left_option
-        ; ;   - `!CS` = left_command + left_shift
-        ; ;   - `!OS` = left_option + left_shift
-        ; ;   - `!O` = left_option
-        ; ;   - `!C` = left_command
-        ;
-        ;; Google Chrome: Caps lock hyper key + 1 — Developer Tools
-        [:!!1 [:!COi ["com.google.Chrome"]]]
-        ;
-        ; ;; Google Chrome: Caps lock hyper key + 2 — Developer Console
-        ; [:!CTR2 [:!COj ["com.google.Chrome"]]]
-        ;
-        ; ;; Google Chrome: Caps lock hyper key + 3 — Developer Elements Panel
-        ; [:!CTR3 [:!CSc ["com.google.Chrome"]]]
-        ;
-        ; ;; Google Chrome: Caps lock hyper key + 4 — View Source Code
-        ; [:!CTR4 [:!COu ["com.google.Chrome"]]]
-        ;
-        ; ;; Google Chrome: Caps lock hyper key + q — Profile Selector
-        ; [:!CTRq [:!CSm ["com.google.Chrome"]]]
-        ;
-        ; ;; Google Chrome: Caps lock hyper key + w — Toggle between last used tabs (requires CLUT: Cycle Last Used Tabs extension)
-        ; [:!CTRw [:!Ow ["com.google.Chrome"]]]
-        ;
-        ; ;; Google Chrome: Caps lock hyper key + e — Duplicate tab (requires Duplicate Tab Shortcut extension)
-        ; [:!CTRe [:!OSd ["com.google.Chrome"]]]
-        ;
-        ; ;; Google Chrome: Caps lock hyper key + r — Reload page
-        ; [:!CTRr [:!CSr ["com.google.Chrome"]]]
-        ;
-        ; ;; Google Chrome: Caps lock hyper key + t — Move tab to new window (requires Pop out tabs to new window extension)
-        ; [:!CTRt [:!Op ["com.google.Chrome"]]]
-        ;
-        ; ;; Google Chrome: Caps lock hyper key + a — Search Tabs
-        ; [:!CTRa [:!CSa ["com.google.Chrome"]]]
-        ;
-        ; ;; Google Chrome: Caps lock hyper key + s — Select address
-        ; [:!CTRs [:!Cl ["com.google.Chrome"]]]
-        ;
-        ; ;; Google Chrome: Caps lock hyper key + d — Clear browsing data
-        ; [:!CTRd [:!CSdelete_or_backspace ["com.google.Chrome"]]]
-        ;
-        ; ;; Google Chrome: Caps lock hyper key + f — Search the web
-        ; [:!CTRf [:!COf ["com.google.Chrome"]]]
-        ;
-        ; ;; Google Chrome: Caps lock hyper key + g — View downloads
-        ; [:!CTRg [:!COl ["com.google.Chrome"]]]
-
- ;; ------------ Cheatsheet ------------
- ;; ! stand for mandatory
- ;; # stand for optional
- ;; !! stand for mandatory command + control + option + shift (hyper)
- ;; T O C S for left control option command shift
- ;; Q W E R for right command control option shift
- ;; F for fn
+          {:des   "Press right_shift twice to enter double shift mode, press right_shift once to leave it"
+           :rules [[:right_shift ["double-right-shift-mode" 1] ["shift-pressed-once" 1]]
+                   [:right_shift [:right_shift ["shift-pressed-once" 1]] ["double-right-shift-mode" 0] {:delayed {:invoked ["shift-pressed-once" 0] :canceled ["shift-pressed-once" 0]}}]
+                   :double-right-shift-mode
+                   [:right_shift ["double-right-shift-mode" 0]]
+                   ; [:a "say 'know we are in double shift mode'"]
+                    [[:a :d] :f17]
+                    [[:a :s] :f16]
+                    [[:a :z] :f19]
+                   ]}]}
