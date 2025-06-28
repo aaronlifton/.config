@@ -492,6 +492,10 @@ if not string match -q -- $PNPM_HOME $PATH
 end
 # pnpm end
 
+# Cargo
+source "$HOME/.cargo/env.fish"
+# source $"($nu.home-path)/.cargo/env.nu"  # For nushell
+
 # function convert-jpg-svg -s source -o output
 #     convert $source -threshold 50% -type bilevel $output.pbm
 #     potrace -s output.pbm -o $output.svg
@@ -610,10 +614,12 @@ function imgcat --description "Display image in terminal"
     # kitty +kitten icat $argv[1]
 end
 
-function lsfonts --description "View a list of fonts"
-    eza -g --header ~/Library/Fonts --sort name | fzf
-end
-alias viewfonts=lsfonts
+# Replaced by function `ls-fonts`
+# function lsfonts --description "View a list of fonts"
+#     # eza -g --header ~/Library/Fonts --sort name | fzf
+#     lsd -la ~/Library/Fonts | fzf
+# end
+# alias viewfonts=lsfonts
 
 function fkill --description "Kill process by name"
     ps aux | grep $argv[1] | awk '{print $2}' | xargs kill
@@ -764,9 +770,14 @@ bind \e\cz fzf-zoxide
 # Generated for envman. Do not edit.
 test -s ~/.config/envman/load.fish; and source ~/.config/envman/load.fish
 
-if status is-interactive
-    printf '\eP$f{"hook": "SourcedRcFileForWarp", "value": { "shell": "fish"}}\x9c'
-end
+# [5.102] [PARSE ERROR] Unknown DCS escape code: $f{"hook": "SourcedRcFileForWarp", "value": { "shell": "fish"}}�...
+# if status is-interactive
+#     printf '\eP$f{"hook": "SourcedRcFileForWarp", "value": { "shell": "fish"}}\x9c'
+# end
 
 string match -q "$TERM_PROGRAM" vscode
 and . (code --locate-shell-integration-path fish)
+
+# https://github.com/phatblat/dotfiles/tree/8939c9ce08f54c74f0958b0ec1359b4d8c871972/.config/fish/functions
+
+direnv hook fish | source

@@ -1,4 +1,4 @@
-function list-fonts --description "Prettifies system_profiler SPFontsDataType output by listing font name and path"
+function ls-fonts --description "Prettifies system_profiler SPFontsDataType output by listing font name and path"
     # Check if jq is installed
     if ! command -v jq >/dev/null
         echo "Error: jq is not installed. Please install it to use this function."

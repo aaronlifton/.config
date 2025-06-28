@@ -22,6 +22,7 @@ abbr --add lt lsd --tree --depth 2
 abbr --add llm lsd -ltr
 abbr --add lg lsd -GgF
 abbr --add llg lsd -lGgF
+abbr --add lll lsd --oneline --icon never
 abbr --add lsd-size lsd --human-readable --size=short --blocks=size,name -Sr
 abbr --add lsd-date lsd -t --date relative -l
 
@@ -47,6 +48,7 @@ abbr -a L --position anywhere --set-cursor "% | less"
 ### Functions
 abbr --add zn z-nvim
 abbr --add fr fzf-rg-bat
+abbr --add fpd font-patcher-docker
 
 abbr --add font-patcher fontforge -script font-patcher
 
@@ -96,3 +98,5 @@ abbr --add run-server-test go test -tags=unit ./modules/asset-service/v2/interna
 abbr --add run-service-test go test -tags=unit ./modules/asset-service/v2/internal/impl/standard/service/
 abbr --add mod-ginkgo-component --set-cursor "godotenv -f .env.test ginkgo --tags=component -v --focus=\"%\" ./modules/asset-service/v2/internal/test/component/"
 abbr --add mod-server godotenv -f .env.test go run cmd/server/main.go
+
+abbr --add hyper-help bat --plain --language lua /Users/alifton/.hammerspoon/hyper_apps.lua
