@@ -15,8 +15,8 @@ mouse-cursor-icon = "arrow"
 # wsl = false
 
 # idle = false
-# neovim_bin = "/Users/$USER/.local/share/bob/nvim-bin/nvim"
-neovim_bin = "/Users/$USER/.local/bin/km-nvim.sh"
+neovim_bin = "/Users/$USER/.local/share/bob/nvim-bin/nvim"
+# neovim_bin = "/Users/$USER/.local/bin/km-nvim.sh"
 # neovim_bin = "/Users/$USER/.local/bin/lvim.sh"
 # neovim_bin = "/Users/$USER/.local/bin/astronvim.sh"
 # no-multigrid = true
@@ -33,10 +33,60 @@ wsl = false
 [font]
 # normal = []             # Will use the bundled Fira Code Nerd Font by default
 # normal = "MonoLisa Nerd Font Mono"
-normal = "Maple Mono NF"
-bold = "MapleMono-NF-Bold"
-bold_italic = "MapleMono-NF-BoldItalic"
-hinting = true
+# italic = "MonoLisaNerdFontCompleteM-Italic"
+# bold = "MonoLisaNerdFontCompleteM-Bold"
+# bold_italic = "MonoLisaNerdFontCompleteM-Bold-Italic"
+
+# bold = "Maple Mono NF Bold"
+# italic = "MapleMono-NF-Italic"
+# bold_italic = "MapleMono-NF-BoldItalic"
+
+# normal = "BerkeleyMono Nerd Font"
+# normal = "GeistMono Nerd Font Mono"
+# normal = "Hack Nerd Font Mono"
+# normal = "Cascadia Code Light"
+# normal = "Iosevka SS08 Light"
+# normal = "JetBrainsMono Nerd Font"
+# normal = "BlexMono Nerd Font Mono"
+# normal = "RecursiveMnCslSt Nerd Font"
+# normal = "Recursive Mono Linear Static"
+# normal = "CaskaydiaCove Nerd Font Mono"
+# normal = "FantasqueSansMono Nerd Font Mono"
+# normal = "CommitMono Nerd Font Mono"
+# normal = "CommitMonoCustom21 Nerd Font"
+normal = "CommitMonoThesimpledev Nerd Font"
+# normal = "Input Mono Condensed"
+# normal = "Input Mono Compressed"
+# normal = "Input Mono Narrow"
+# normal = "Lilex Nerd Font Mono"
+# normal = "LilexExtraThick Nerd Font Mono"
+# normal = "M+CodeLat50 Nerd Font Mono"
+# normal = "Martian Mono"
+# normal = "CommitMonoThesimpledev Nerd Font"
+# normal = "DaddyTimeMono Nerd Font Mono"
+# normal = "D2Coding"
+# normal = "Cousine Nerd Font Mono"
+# noraml = "DejaVuSansMono Nerd Font Mono"
+
+# nortmal = "0xProto Nerd Font Mono"
+# italic = "0xProtoNFM-Italic"
+# bold = "0xProtoNFM-Bold"
+
+
+# normal = "VictorMono Nerd Font Mono"
+# bold = "VictorMono Nerd Font Mono"
+# italic = "VictorMono Nerd Font Mono"
+# bold_italic = "VictorMono Nerd Font Mono"
+
+# normal = "Monaspace Neon"
+# bold = "Monaspace Neon"
+# italic = "Monaspace Xenon"
+
+# normal = "MonaspiceNe Nerd Font Mono"
+# bold = "MonaspiceNe Nerd Font Mono"
+# italic = "MonaspiceXe Nerd Font Mono"
+# bold_italic = "MonaspiceXe Nerd Font Mono"
+# hinting = true
 size = 16.0
 # allow_float_size = true
 [font.features]
@@ -64,72 +114,87 @@ size = 16.0
   "+ss17",
   "+ss18"
 ]
-MonoLisa = [
-  "+calt",
-  "+liga",
-  "+zero",
-  "+ss02",
-  "-ss01",
-  "+ss02",
-  "-ss03",
-  "+ss04",
-  "+ss05",
-  "-ss06",
-  "-ss07",
-  "-ss08",
-  "-ss09",
-  "+ss10",
-  "+ss11",
-  "+ss12",
-  "-ss13",
-  "+ss14",
-  "+ss15",
-  "+ss16",
-  "+ss17",
-  "+ss18"
-]
-"MonaspaceNeon Nerd Font" = [
-  "+ss01",
-  "+ss02",
-  "+ss03",
-  "+ss04",
-  "+ss05",
-  "+ss06",
-  "+ss07",
-  "+ss08",
-  "+calt",
-  "+liga",
-  "+dlig",
-]
-"Maple Mono NF" = [
-  # -calt; +cv01; +cv07; +cv34; +cv61; +cv62; +cv64; +ss03; +ss08; +ss09; +ss10; +ss11; +zer
-  # "-calt", # default ligatures
-  # "+cv01",# remove gaps
-  # "+cv02",# alt a
-  # "+cv04", # alt l
-  # "+cv06", # alt i (unsure about this one)
-  # "+cv07", # alt J
-  # "+cv08", # alt r
-  # "+cv61", # alt comma
-  # "+cv62", # alt ?
-  # "+cv64", # alt left and right arrow
-  # "+cv34", # italic loop k
-  # "+cv34", # italic loop k
-  # "+cv35", # alt l
-  # "+ss03", # arbitrary tag
-  # "+ss10", # approx. equal
-  # "+ss11", # |==
-  "-calt",
-  "+cv01;",
-  "+cv07;",
-  "+cv34;",
-  "+cv61;",
-  "+cv62;",
-  "+cv64;",
-  "+ss03;",
-  "+ss08;",
-  "+ss09;",
-  "+ss10;",
-  "+ss11;",
-  "+zero"
-]
+  MonoLisa = [
+    "+calt",
+    "+liga",
+    "+zero",
+    "+ss02",
+    "-ss01",
+    "+ss02",
+    "-ss03",
+    "+ss04",
+    "+ss05",
+    "-ss06",
+    "-ss07",
+    "-ss08",
+    "-ss09",
+    "+ss10",
+    "+ss11",
+    "+ss12",
+    "-ss13",
+    "+ss14",
+    "+ss15",
+    "+ss16",
+    "+ss17",
+    "+ss18"
+  ]
+  "MonaspiceNe Nerd Font Mono" = [
+    "+calt",
+    "+liga",
+    "+zero",
+    "+dlig",
+    "+ss01",
+    "+ss02",
+    "+ss03",
+    "+ss04",
+    "+ss05",
+    "+ss06",
+    "+ss07",
+    "+ss08"
+  ]
+  "MonaspiceXe Nerd Font Mono" = [
+    "+ss01",
+    "+ss02",
+    "+ss03",
+    "+ss04",
+    "+ss05",
+    "+ss06",
+    "+ss07",
+    "+ss08",
+    "+calt",
+    "+liga",
+    "+dlig",
+  ]
+  "Maple Mono NF" = [
+    # -calt; +cv01; +cv07; +cv34; +cv61; +cv62; +cv64; +ss03; +ss08; +ss09; +ss10; +ss11; +zer
+    # "-calt", # default ligatures
+    # "+cv01",# remove gaps
+    # "+cv02",# alt a
+    # "+cv04", # alt l
+    # "+cv06", # alt i (unsure about this one)
+    # "+cv07", # alt J
+    # "+cv08", # alt r
+    # "+cv61", # alt comma
+    # "+cv62", # alt ?
+    # "+cv64", # alt left and right arrow
+    # "+cv34", # italic loop k
+    # "+cv34", # italic loop k
+    # "+cv35", # alt l
+    # "+ss03", # arbitrary tag
+    # "+ss10", # approx. equal
+    # "+ss11", # |==
+    "-calt",
+    "+cv01;",
+    "+cv07;",
+    "+cv08;",
+    "+cv34;",
+    "+cv61;",
+    "+cv62;",
+    "+cv64;",
+    "+ss03;",
+    "+ss08;",
+    "+ss09;",
+    "+ss10;",
+    "+ss11;",
+    "+zero"
+  ]
