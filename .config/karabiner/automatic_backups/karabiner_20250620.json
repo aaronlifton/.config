@@ -1,0 +1,130 @@
+{
+  "global" : {
+    "check_for_updates_on_startup" : false
+  },
+  "profiles" : [ {
+    "complex_modifications" : {
+      "parameters" : {
+        "basic.simultaneous_threshold_milliseconds" : 50,
+        "basic.to_delayed_action_delay_milliseconds" : 500,
+        "basic.to_if_alone_timeout_milliseconds" : 1000,
+        "basic.to_if_held_down_threshold_milliseconds" : 500
+      },
+      "rules" : [ {
+        "description" : "Change caps_lock key to command+control+option+shift. (Use shift+caps_lock as caps_lock)",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "caps_lock",
+            "modifiers" : {
+              "mandatory" : [ "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "caps_lock"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "caps_lock",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "left_shift",
+            "modifiers" : [ "left_command", "left_control", "left_option" ]
+          } ],
+          "conditions" : [ {
+            "type" : "frontmost_application_unless",
+            "bundle_identifiers" : [ "^net\\.kovidgoyal\\.kitty$", "^io\\.alacritty$", "^com\\.mitchellh\\.ghostty$" ]
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "CapsLock to Esc when press & to Control when hold",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "caps_lock",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "right_control"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "caps_lock",
+            "modifiers" : {
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "right_gui"
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "Device-specific modifications for Mode65",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "right_control"
+          },
+          "to" : [ {
+            "key_code" : "right_command"
+          } ],
+          "conditions" : [ {
+            "identifiers" : [ {
+              "vendor_id" : 222,
+              "product_id" : 22356
+            } ],
+            "type" : "device_if"
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "simultaneous j l press to F18",
+        "manipulators" : [ {
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "j"
+            }, {
+              "key_code" : "l"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : false,
+              "key_down_order" : "insensitive",
+              "key_up_order" : "insensitive",
+              "key_up_when" : "any"
+            }
+          },
+          "to" : [ {
+            "key_code" : "f18"
+          } ],
+          "type" : "basic"
+        } ]
+      } ]
+    },
+    "fn_function_keys" : [ {
+      "from" : {
+        "key_code" : "f3"
+      },
+      "to" : [ {
+        "key_code" : "mission_control"
+      } ]
+    }, {
+      "from" : {
+        "key_code" : "f4"
+      },
+      "to" : [ {
+        "key_code" : "launchpad"
+      } ]
+    } ],
+    "name" : "Default",
+    "selected" : true,
+    "virtual_hid_keyboard" : {
+      "keyboard_type_v2" : "ansi"
+    }
+  } ]
+}
