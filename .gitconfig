@@ -1,3 +1,6 @@
+
+
+
 [color]
 	ui = true
 [user]
@@ -64,7 +67,7 @@
   ; Show the preceding line that contains the function name of the match, unless
   ; the matching line is a function name itself. The name is determined in the
   ; same way as git diff works out patch hunk headers.
-  g = grep -p 
+  g = grep -p
 
   ; use -n 10 to limit the number of lines
   l = log --oneline --graph --decorate
@@ -96,7 +99,7 @@
 	filelog = log -u
 	fl = log -u
   last = log -1 HEAD
-	dl = "!git ll -1"
+	; dl = "!git ll -1"
 	dlc = diff --cached HEAD^
 	grep = grep -Ii
 	la = "!git config -l | grep alias | cut -c 7-"
@@ -123,6 +126,18 @@
 	uptags = push --follow-tags
 	downtags = fetch --tags
 	xdsf = !"git -c interactive.diffFilter='less --tabs=4 -RFX' \"$@\" # Don't use DSF"
+
+  # Difftastic aliases, so `git dlog` is `git log` with difftastic and so on.
+  dlog = -c diff.external=difft log --ext-diff
+  dshow = -c diff.external=difft show --ext-diff
+  ddiff = -c diff.external=difft diff
+  # `git log` with patches shown with difftastic.
+  dl = -c diff.external=difft log -p --ext-diff
+  # Show the most recent commit with difftastic.
+  ds = -c diff.external=difft show --ext-diff
+  # `git diff` with difftastic.
+  dft = -c diff.external=difft diff
+
 [color "diff-highlight"]
 	oldNormal = red bold
 	oldHighlight = red bold 52
@@ -154,8 +169,12 @@
 [merge]
   tool = nvimdiff
   conflictstyle = diff3
+[difftool "difftastic"]
+    cmd = difft "$LOCAL" "$REMOTE"
+    trustExitCode = true
 [diff]
   colorMoved = default
+  external = difftastic
 [pull]
   rebase = false
 [push]
