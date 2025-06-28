@@ -30,6 +30,7 @@ return {
             gopls = {
               gofumpt = false,
               buildFlags = { "-tags", "integration,unit,build" },
+              directoryFilters = { "-.git", "-.vscode", "-.idea", "-.vscode-test", "-node_modules" },
             },
           },
         },

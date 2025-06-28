@@ -38,7 +38,8 @@ return {
       -- find
       { "<leader>fb",                                         function() Snacks.picker.buffers() end,                                 desc = "Buffers" },
       { "<leader>fB",                                         function() Snacks.picker.buffers({ hidden = true, nofile = true }) end, desc = "Buffers (all)" },
-      { "<leader>fc, Snacks.picker., desc = Find Config File" },
+      { "<leader>fc",                                         function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, desc = "Find Config File" },
+      { "<leader>fl",                                         function() Snacks.picker.files({ cwd = vim.fn.expand("~/.local/share/nvim/lazy/LazyVim/") }) end, desc = "Find LazyVim File" },
       { "<leader>ff",                                         function() Snacks.picker.files() end,                                   desc = "Find Files (Root Dir)" },
       { "<leader>fF",                                         function() Snacks.picker.files({ root = false }) end,                   desc = "Find Files (cwd)" },
       { "<leader>fg",                                         function() Snacks.picker.git_files() end,                               desc = "Find Files (git-files)" },
@@ -80,20 +81,49 @@ return {
       { "<leader>uC",                                         function() Snacks.picker.colorschemes() end,                            desc = "Colorschemes" },
     },
   },
-  -- {
-  --   "neovim/nvim-lspconfig",
-  --   -- opts = function()
-  --   --   local Keys = require("util.lazy.plugins.lsp.keymaps").get()
-  --   --   -- stylua: ignore
-  --   --   vim.list_extend(Keys, {
-  --   --     { "gd",         function() Snacks.picder.lsp_definitions() end,                                              desc = "Goto Definition",       has = "definition" },
-  --   --     { "gr",         function() Snacks.picker.lsp_references() end,                                               nowait = true,                  desc = "References" },
-  --   --     { "gI",         function() Snacks.picder.lsp_implementations() end,                                          desc = "Goto Implementation" },
-  --   --     { "gy",         function() Snacks.picker.lsp_type_definitions() end,                                         desc = "Goto T[y]pe Definition" },
-  --   --     { "<leader>ss", function() Snacks.picker.lsp_symbols({ filter = LazyVim.config.kind_filter }) end,           desc = "LSP Symbols",           has = "documentSymbol" },
-  --   --     { "<leader>sS", function() Snacks.picker.lsp_workspace_symbols({ filter = LazyVim.config.kind_filter }) end, desc = "LSP Workspace Symbols", has = "workspace/symbols" },
-  --   --   })
-  --   -- end,
+  {
+    "neovim/nvim-lspconfig",
+    opts = function()
+      -- local Keys = require("util.lazy.plugins.lsp.keymaps").get()
+      -- stylua: ignore start
+      --
+      local Keys = {
+        { "<leader>cl", function() Snacks.picker.lsp_config() end, desc = "Lsp Info" },
+        { "gd", vim.lsp.buf.definition, desc = "Goto Definition", has = "definition" },
+        { "gr", vim.lsp.buf.references, desc = "References", nowait = true },
+        { "gI", vim.lsp.buf.implementation, desc = "Goto Implementation" },
+        { "gy", vim.lsp.buf.type_definition, desc = "Goto T[y]pe Definition" },
+        { "gD", vim.lsp.buf.declaration, desc = "Goto Declaration" },
+        { "K", function() return vim.lsp.buf.hover() end, desc = "Hover" },
+        { "gK", function() return vim.lsp.buf.signature_help() end, desc = "Signature Help", has = "signatureHelp" },
+        { "<c-k>", function() return vim.lsp.buf.signature_help() end, mode = "i", desc = "Signature Help", has = "signatureHelp" },
+        { "<leader>ca", vim.lsp.buf.code_action, desc = "Code Action", mode = { "n", "v" }, has = "codeAction" },
+        { "<leader>cc", vim.lsp.codelens.run, desc = "Run Codelens", mode = { "n", "v" }, has = "codeLens" },
+        { "<leader>cC", vim.lsp.codelens.refresh, desc = "Refresh & Display Codelens", mode = { "n" }, has = "codeLens" },
+        { "<leader>cR", function() Snacks.rename.rename_file() end, desc = "Rename File", mode ={"n"}, has = { "workspace/didRenameFiles", "workspace/willRenameFiles" } },
+        { "<leader>cr", vim.lsp.buf.rename, desc = "Rename", has = "rename" },
+        { "<leader>cA", LazyVim.lsp.action.source, desc = "Source Action", has = "codeAction" },
+        { "]]", function() Snacks.words.jump(vim.v.count1) end, has = "documentHighlight",
+          desc = "Next Reference", cond = function() return Snacks.words.is_enabled() end },
+        { "[[", function() Snacks.words.jump(-vim.v.count1) end, has = "documentHighlight",
+          desc = "Prev Reference", cond = function() return Snacks.words.is_enabled() end },
+        { "<a-n>", function() Snacks.words.jump(vim.v.count1, true) end, has = "documentHighlight",
+          desc = "Next Reference", cond = function() return Snacks.words.is_enabled() end },
+        { "<a-p>", function() Snacks.words.jump(-vim.v.count1, true) end, has = "documentHighlight",
+          desc = "Prev Reference", cond = function() return Snacks.words.is_enabled() end },
+      }
+      -- stylua: ignore end
+      -- stylua: ignore
+      vim.list_extend(Keys, {
+        -- { "gd",         function() Snacks.picker.lsp_definitions() end,                                              desc = "Goto Definition",       has = "definition" },
+        -- { "gr",         function() Snacks.picker.lsp_references() end,                                               nowait = true,                  desc = "References" },
+        -- { "gI",         function() Snacks.picker.lsp_implementations() end,                                          desc = "Goto Implementation" },
+        -- { "gy",         function() Snacks.picker.lsp_type_definitions() end,                                         desc = "Goto T[y]pe Definition" },
+        { "<leader>ss", function() Snacks.picker.lsp_symbols({ filter = LazyVim.config.kind_filter }) end,           desc = "LSP Symbols",           has = "documentSymbol" },
+        { "<leader>sS", function() Snacks.picker.lsp_workspace_symbols({ filter = LazyVim.config.kind_filter }) end, desc = "LSP Workspace Symbols", has = "workspace/symbols" },
+      })
+    end,
+  },
   --   config = function()
   --     vim.api.nvim_create_autocmd("LspAttach", {
   --       group = vim.api.nvim_create_augroup("kickstart-lsp-attach", { clear = true }),

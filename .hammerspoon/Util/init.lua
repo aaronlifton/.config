@@ -12,3 +12,5 @@ setmetatable(M, {
 })
 
 _G.Util = M
+
+return M

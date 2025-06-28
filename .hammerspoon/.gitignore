@@ -4,3 +4,4 @@ Spoons/**/
 !Spoons/EnhancedSpaces.spoon/
 .bak
 */*.bak
+*.bak

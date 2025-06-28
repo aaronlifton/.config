@@ -1,6 +1,8 @@
 ---@class ConfigWatcher
 ---@field watcher hs.pathwatcher
-local ConfigWatcher = {}
+local ConfigWatcher = {
+  watcher = nil,
+}
 
 ---@param files string[]
 local function reload_config(files)
@@ -14,12 +16,12 @@ end
 ConfigWatcher.watcher = hs.pathwatcher.new(os.getenv("HOME") .. "/.hammerspoon/", reload_config)
 
 function ConfigWatcher.watch_config_and_reload(self)
-  self.watcher:start()
+  ConfigWatcher.watcher:start()
   hs.alert.show("Config loaded")
 end
 
 function ConfigWatcher.stop(self)
-  self.watcher:stop()
+  ConfigWatcher.watcher:stop()
   hs.alert.show("Config watcher stopped")
 end
 

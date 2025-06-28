@@ -1,0 +1,55 @@
+:des "Google Chrome Productivity Power Pack"
+ :rules [
+   ;; Hyper Key: Caps Lock — left control + left shift + right command (⌃⇧⌘)
+         [:caps_lock {:set ["hyper_caps_lock" 1]}
+          [:left_control :left_shift :right_command] nil {:afterup {:set ["hyper_caps_lock" 0]}}]
+
+   ;; Mac OSX: double-tap right shift key — caps lock toggle
+         [:right_shift :caps_lock ["right_shift pressed" 1]]
+         [:right_shift {:set ["right_shift pressed" 1]} :right_shift
+          {:delayed {:invoked {:set ["right_shift pressed" 0]}
+                     :canceled {:set ["right_shift pressed" 0]}}}]
+
+   ;; Google Chrome: Caps lock hyper key + 1 — Developer Tools
+         [:!CTR1 [:!COi ["com.google.Chrome"]]]
+
+   ;; Google Chrome: Caps lock hyper key + 2 — Developer Console
+         [:!CTR2 [:!COj ["com.google.Chrome"]]]
+
+   ;; Google Chrome: Caps lock hyper key + 3 — Developer Elements Panel
+         [:!CTR3 [:!CSc ["com.google.Chrome"]]]
+
+   ;; Google Chrome: Caps lock hyper key + 4 — View Source Code
+         [:!CTR4 [:!COu ["com.google.Chrome"]]]
+
+   ;; Google Chrome: Caps lock hyper key + q — Profile Selector
+         [:!CTRq [:!CSm ["com.google.Chrome"]]]
+
+   ;; Google Chrome: Caps lock hyper key + w — Toggle between last used tabs (requires CLUT: Cycle Last Used Tabs extension)
+         [:!CTRw [:!Ow ["com.google.Chrome"]]]
+
+   ;; Google Chrome: Caps lock hyper key + e — Duplicate tab (requires Duplicate Tab Shortcut extension)
+         [:!CTRe [:!OSd ["com.google.Chrome"]]]
+
+   ;; Google Chrome: Caps lock hyper key + r — Reload page
+         [:!CTRr [:!CSr ["com.google.Chrome"]]]
+
+   ;; Google Chrome: Caps lock hyper key + t — Move tab to new window (requires Pop out tabs to new window extension)
+         [:!CTRt [:!Op ["com.google.Chrome"]]]
+
+   ;; Google Chrome: Caps lock hyper key + a — Search Tabs
+         [:!CTRa [:!CSa ["com.google.Chrome"]]]
+
+   ;; Google Chrome: Caps lock hyper key + s — Select address
+         [:!CTRs [:!Cl ["com.google.Chrome"]]]
+
+   ;; Google Chrome: Caps lock hyper key + d — Clear browsing data
+         [:!CTRd [:!CSdelete_or_backspace ["com.google.Chrome"]]]
+
+   ;; Google Chrome: Caps lock hyper key + f — Search the web
+         [:!CTRf [:!COf ["com.google.Chrome"]]]
+
+   ;; Google Chrome: Caps lock hyper key + g — View downloads
+         [:!CTRg [:!COl ["com.google.Chrome"]]]]
+ 
+

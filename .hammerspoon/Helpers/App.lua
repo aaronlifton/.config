@@ -11,6 +11,12 @@ App.bundles = {
   tableplus = "com.tinyapp.TablePlus",
   vscode = "com.microsoft.VSCode",
   ghostty = "com.mitchellh.ghostty",
+  raycast = "com.raycast.macos",
+  dash = "com.kapeli.dashdoc",
+}
+App.bundles.terminals = {
+  App.bundles.kitty,
+  App.bundles.ghostty,
 }
 
 function App.is(bundle)

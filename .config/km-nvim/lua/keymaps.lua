@@ -182,6 +182,44 @@ map("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]ui
 -- or just use <C-\><C-n> to exit terminal mode
 map("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 
+map({ "n", "x" }, "gw", "*N", { desc = "Search word under cursor" })
+
+-- Cmd key
+map({ "n", "v", "s", "i" }, "<D-s>", "<cmd>w<cr>", { noremap = true })
+
+-- map({ "n", "v", "s", "i" }, "<D-v>", "<cmd>norm gpa<cr>", { noremap = true })
+-- map({ "s", "i" }, "<D-v>", "<cmd>norm gpa<cr>", { noremap = true })
+map("i", "<D-v>", '<C-r>"', { desc = "Paste on insert mode" })
+map({ "v", "t" }, "<D-v>", '"+P', { noremap = true })
+map("n", "<D-v>", "<cmd>norm gpa<cr>", { noremap = true })
+map("c", "<D-v>", "<C-R>+", { noremap = true }) -- Paste command mode, add a hack to force render it
+map("v", "<D-c>", '"+y', { noremap = true }) -- Copy
+
+-- Paste options
+map("v", "p", '"_dP', { desc = "Paste without overwriting" }, { silent = true })
+
+-- Copy whole text to clipboard
+map("n", "<leader><C-c>", ":%y+<CR>", { desc = "Copy whole text to clipboard", silent = true })
+
+-- Motion
+map("c", "<C-a>", "<C-b>", { desc = "Start Of Line" })
+map("i", "<C-a>", "<Home>", { desc = "Start Of Line" })
+map("i", "<C-e>", "<End>", { desc = "End Of Line" })
+
+-- Check this
+map("n", "<M-v>", "cw<C-r>0<ESC>", { desc = "Change word under cursor with register 0" })
+
+-- Move to beginning/end of line
+map({ "n", "x", "o" }, "<M-l>", "$", { desc = "Last Character of Line", noremap = true })
+map({ "n", "x", "o" }, "<M-h>", "_", { desc = "First character of Line" })
+map({ "n", "x", "o" }, "<M-b>", "b", { desc = "Previous Word", noremap = true })
+map({ "n", "x", "o" }, "<M-w>", "w", { desc = "Next Word", noremap = true })
+
+-- Delete and change without yanking (from Helix)
+map({ "n", "x" }, "<M-d>", '"_d', { desc = "Delete without yanking" })
+map({ "n", "x" }, "<M-c>", '"_c', { desc = "Change without yanking" })
+map({ "n", "x" }, "<C-c>", '"_ciw', { desc = "Change word without yanking" })
+
 -- TIP: Disable arrow keys in normal mode
 -- map('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
 -- map('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
@@ -223,6 +261,14 @@ ac("User", {
   desc = "Initialize Util module",
   callback = function(args)
     require("util")
+  end,
+})
+-- Load Snacks statuscolumn after nvim-treesitter loads. Crashes when set in options.lua
+-- HACK: This requires a restart but at least prevents Neovim from crashing due to missing nvim-treesitter
+ac("User", {
+  pattern = "nvim-treesitter",
+  callback = function()
+    vim.opt.statuscolumn = [[%!v:lua.require'snacks.statuscolumn'.get()]]
   end,
 })
 
@@ -274,14 +320,7 @@ end, { desc = "Tabs" })
 
 map({ "n", "v", "s", "i" }, "<D-s>", "<cmd>w<cr>", { noremap = true })
 map("n", "<leader><tab>\\", "<C-w>g<Tab>", { desc = "Alt Tab", remap = true })
-map({ "n", "x", "o" }, "<M-l>", "$", { desc = "Last Character of Line", noremap = true })
-map({ "n", "x", "o" }, "<M-h>", "_", { desc = "First character of Line" })
-map({ "n", "x", "o" }, "<M-b>", "b", { desc = "Previous Word", noremap = true })
-map({ "n", "x", "o" }, "<M-w>", "w", { desc = "Next Word", noremap = true })
 -- vim: ts=2 sts=2 sw=2 et
-map({ "n", "x" }, "<M-d>", '"_d', { desc = "Delete without yanking" })
-map({ "n", "x" }, "<M-c>", '"_c', { desc = "Change without yanking" })
-map({ "n", "x" }, "<C-c>", '"_ciw', { desc = "Change word without yanking" })
 
 map("n", "dd", function()
   local is_empty_line = vim.api.nvim_get_current_line():match("^%s*$")
@@ -306,6 +345,9 @@ map("x", "#", [[y?\V<C-R>=escape(@", '?\')<CR><CR>]], { desc = "Search Selected 
 -- commenting (override Util.lazy keymap to save to unnamed register)
 map("n", "gco", 'o<esc>V"_cx<esc><cmd>normal gcc<cr>fxa<bs>', { desc = "Add Comment Below" })
 map("n", "gcO", 'O<esc>V"_cx<esc><cmd>normal gcc<cr>fxa<bs>', { desc = "Add Comment Above" })
+
+-- Open in finder
+map("n", "<leader>fo", ":!open " .. vim.fn.expand("%:p:h") .. "<cr>", { noremap = true, silent = true })
 
 map("n", "<leader>ll", "<cmd>Lazy<cr>") -- Lazy
 map("n", "<leader>li", "<cmd>Lazy install<cr>") -- Lazy
@@ -339,3 +381,138 @@ local linters = function()
 end
 map("n", "<leader>ciL", linters, { desc = "Lint" })
 map("n", "<leader>cir", "<cmd>LazyRoot<cr>", { desc = "Root" })
+
+map("n", "<leader>wD", function()
+  require("util.diff").toggle_compare_windows()
+end, { desc = "Toggle Diff Windows" })
+
+-- LSP vsplit
+-- Goto in vsplit
+map(
+  "n",
+  "<C-w><C-f>",
+  "<cmd>vsplit | lua vim.lsp.buf.definition()<cr>",
+  { desc = "Goto Definition (vsplit)", silent = true }
+)
+map(
+  "n",
+  "<C-w><C-y>",
+  "<cmd>vsplit | lua vim.lsp.buf.type_definition()<cr>",
+  { desc = "Goto Type Definition (vsplit)", silent = true }
+)
+map(
+  "n",
+  "<C-w><C-i>",
+  "<cmd>tab split | lua vim.lsp.buf.implementation()<cr>",
+  { desc = "Goto Implementation (vsplit)", silent = true }
+)
+
+-- Goto in new tab
+map(
+  "n",
+  "<C-w>gt",
+  "<cmd>tab split | lua vim.lsp.buf.definition()<cr>",
+  { desc = "Goto Definition (tab)", silent = true }
+)
+map(
+  "n",
+  "<C-w>gy",
+  "<cmd>tab split | lua vim.lsp.buf.type_definition()<cr>",
+  { desc = "Goto Type Definition (tab)", silent = true }
+)
+
+map("n", "<C-w><C-i>", function()
+  local params = vim.lsp.util.make_position_params(0, "utf-8")
+  vim.lsp.buf_request(0, "textDocument/implementation", params, function(err, result, ctx, config)
+    if err or not result or vim.tbl_isempty(result) then
+      vim.notify("No implementations found", vim.log.levels.ERROR)
+      return
+    end
+
+    if #result == 1 then
+      -- Single implementation - open in vsplit
+      vim.cmd("vsplit")
+      vim.lsp.util.show_document(result[1], "utf-8", { focus = true })
+    else
+      local items = vim.lsp.util.locations_to_items(result, "utf-8")
+      vim.fn.setqflist(items)
+      -- Make a picker if more than 2?
+      -- local all_filepaths = vim
+      --   .iter(items)
+      --   :map(function(item)
+      --     return item.filename
+      --   end)
+      --   :join("\n")
+
+      vim.cmd("vsplit | cfirst | normal! zz")
+    end
+  end)
+end, { desc = "Goto implementation (vsplit)", silent = true })
+
+-- Goto file in vsplit
+-- map("n", "<C-w><C-v>", "vs | gf", { desc = "Goto File (vsplit)", silent = true })
+map("n", "<C-w><C-v>", function()
+  vim.cmd([[ vsplit ]])
+  if vim.bo.filetype == "ruby" then
+    local cfile = vim.fn["rails#ruby_cfile"]()
+    vim.cmd(":find " .. cfile)
+  else
+    vim.cmd([[normal! gf]])
+  end
+end, { desc = "Goto File (vsplit)", silent = true })
+
+local path_util = require("util.path")
+-- map("n", "<leader>ccp", ":let @+=expand('%:p')<cr>", { desc = "Copy path to clipboard" })
+map("n", "<leader>cpp", function()
+  -- -- ":let @+=expand('%:p')<cr>"
+  -- local current_path = vim.fn.expand("%:p")
+  -- vim.api.nvim_echo({ { current_path, "Normal" } }, false, {})
+  -- vim.cmd("let @+=expand('%:p')")
+  -- -- vim.api.nvim_call_function('setreg', {'+', "test"})
+  path_util.copy_abs_path()
+end, { desc = "Copy path to clipboard", silent = true })
+map("n", "<leader>cpr", function()
+  path_util.copy_rel_path()
+end, { desc = "Copy relative path to clipboard", silent = true })
+map("n", "<leader>cpl", function()
+  path_util.copy_rel_file_line()
+end, { desc = "Copy relative path:line to clipboard", silent = true })
+map("n", "<leader>cpP", function()
+  path_util.copy_rel_pwd_rg_glob()
+end, { desc = "Copy pwd rg glob to clipboard", silent = true })
+map("n", "<leader>cpL", function()
+  path_util.copy_abs_file_line()
+end, { desc = "Copy absolute path:line to clipboard", silent = true })
+map("v", "<leader>cpm", function()
+  local clipboard = require("util.clipboard")
+  clipboard.set_clipboard(require("util.selection").markdown_code_fence())
+end, { desc = "Copy markdown code fence" })
+
+map("n", "dm", function()
+  local cur_line = vim.fn.line(".")
+  -- Delete buffer local mark
+  for _, mark in ipairs(vim.fn.getmarklist("%")) do
+    if mark.pos[2] == cur_line and mark.mark:match("[a-zA-Z]") then
+      vim.api.nvim_buf_del_mark(0, string.sub(mark.mark, 2, #mark.mark))
+      return
+    end
+  end
+  -- Delete global marks
+  local cur_buf = vim.api.nvim_win_get_buf(vim.api.nvim_get_current_win())
+  for _, mark in ipairs(vim.fn.getmarklist()) do
+    if mark.pos[1] == cur_buf and mark.pos[2] == cur_line and mark.mark:match("[a-zA-Z]") then
+      vim.api.nvim_buf_del_mark(0, string.sub(mark.mark, 2, #mark.mark))
+      return
+    end
+  end
+end, { noremap = true, desc = "Mark on Current Line" })
+
+-- Empty Line
+map("n", "gO", "<Cmd>call append(line('.') - 1, repeat([''], v:count1))<CR>", { desc = "Empty Line Above" })
+map("n", "go", "<Cmd>call append(line('.'), repeat([''], v:count1))<CR>", { desc = "Empty Line Below" })
+
+-- Insert Mode
+map({ "c", "i", "t" }, "<M-BS>", "<C-w>", { desc = "Delete Word" })
+
+-- map("n", "zF", ":norm z=1<cr>", { desc = "Choose first spelling suggestion" })
+map("n", "zF", "z=1<cr>", { noremap = true, desc = "Choose first spelling suggestion" })

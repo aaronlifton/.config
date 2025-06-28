@@ -1,8 +1,14 @@
+hs.allowAppleScript(true)
 local logger = require("functions.logger")
+local colors = require("colors")
 
 Util = require("Util")
 ProcessManager = require("functions.process_manager")
 Window = require("functions.window")
+Screens = {
+  main = "Studio Display",
+  secondary = "Built-in Retina Display",
+}
 
 ---@diagnostic disable: inject-field
 -- install hammerspoon cli
@@ -58,7 +64,9 @@ Install.use_syncinstall = true
 Install:andUse("ReloadConfiguration")
 logger.d("ReloadConfiguration spoon loaded")
 spoon.ReloadConfiguration:start()
+
 Install:andUse("ModalMgr")
+logger.d("ModalMgr spoon loaded")
 ---
 ---Inspo: https://github.com/orionpax1997/hugo-blog/blob/a070d7464b810e4ad1b4670e43a45d0e038e5667/content/posts/hammerspoon.md?plain=1#L55
 ---https://github.com/rickysaurav/dotfiles/blob/326b3027fcb3a758c3ebea4f56526d2ce4633062/modules/home-manager/dots/hammerspoon/init.lua#L104
@@ -67,7 +75,7 @@ Install:andUse("ModalMgr")
 ---https://github.com/wwmoraes/dotfiles/blob/ab0f83ff97ce975e4193900092d7983f75b95599/.shadow.d/.hammerspoon/init.lua
 ---
 ---@param mouse_follows_focus spoon.MouseFollowsFocus
-spoon.SpoonInstall:andUse("MouseFollowsFocus", {
+Install:andUse("MouseFollowsFocus", {
   start = true,
   fn = function(mouse_follows_focus)
     ---@type spoon.ModalMgr
@@ -75,9 +83,10 @@ spoon.SpoonInstall:andUse("MouseFollowsFocus", {
     modal_mgr:new("MouseFollowsFocus")
     ---@type hs.hotkey.modal
     local cmodal = modal_mgr.modal_list["MouseFollowsFocus"]
-    ---@type hs.hotkey.modal
+    ---@type hs.hotkey.modAl
     local supervisor = modal_mgr.supervisor
     cmodal:bind("", "escape", "Exit", function()
+      logger.d("Deactivating cmodal")
       modal_mgr:deactivate({ "MouseFollowsFocus" })
       supervisor:exit()
     end)
@@ -96,12 +105,21 @@ spoon.SpoonInstall:andUse("MouseFollowsFocus", {
     end)
     supervisor:bind("", "m", "Enter Mouse Focus Management", function()
       modal_mgr:deactivateAll()
+      logger.d("Activating cmodal")
       modal_mgr:activate({ "MouseFollowsFocus" }, nil, true)
     end)
   end,
 })
+logger.d("MouseFollowsFocus spoon loaded")
+Install:andUse("AppWindowSwitcher")
 
 hs.loadSpoon("EmmyLua")
+-- hs.loadSpoon("HSearch")
+-- Install:andUse("HSearch")
+-- logger.d("HSearch spoon loaded")
+
+-- Configure HSearch hotkeys
+-- require("Modes.HSearch")
 
 -- hs.loadSpoon("ClipboardTool")
 -- if spoon.ClipboardTool then
@@ -133,6 +151,7 @@ hs.loadSpoon("EmmyLua")
 local appWatcher = require("functions.application_watcher")
 local browser = require("functions.browser")
 local keys = require("keys")
+HyperBinding = keys.mod.hyper
 
 hs.grid.MARGINX = 0
 hs.grid.MARGINY = 0
@@ -172,7 +191,7 @@ ChromeModal:bind({ "alt" }, "t", "Opening tab to the right", browser.newTabToRig
 function EnterHyperMode()
   Hyper.triggered = false
   Hyper:enter()
-  hs.alert.show("Hyper on")
+  hs.alert.show(" on")
 end
 
 -- Leave Hyper Mode when F19 (Hyper/Capslock) is pressed,
@@ -200,7 +219,6 @@ end)
 -- Bind the Hyper key
 F19 = hs.hotkey.bind({}, "F19", EnterHyperMode, ExitHyperMode)
 F18 = hs.hotkey.bind({}, "F18", EnterHyperMode, ExitHyperMode)
--- f19cmd = hs.hotkey.({ "cmd" }, "F19", enterHyperMode, exitHyperMode)
 
 --/hyper f18
 
@@ -245,25 +263,149 @@ hs.grid.setGrid("2x2")
 
 local appMap = require("hyper_apps")
 
-for key, app in pairs(appMap) do
-  hs.hotkey.bind(HyperBinding, key, function()
-    if type(app) == "string" then
-      hs.application.launchOrFocus(app)
-    elseif type(app) == "function" then
-      app()
+-- Create a modal manager for nested key sequences
+---@type table
+local modal_mgr = spoon.ModalMgr
+
+local singleLetterApps = {}
+local hyperLogger = hs.logger.new("hyper")
+
+-- Function to handle app binding execution
+local function check_binding(app, key)
+  if type(app) == "string" then
+    -- Check if the string starts with com., org., etc. (likely a bundle ID)
+    singleLetterApps[app] = { K.hyper, app }
+    if string.match(app, "^[%w%.]+%.[%w%.]+") and not string.match(app, "%.app$") then
+      -- Treat as bundle identifier
+      local appInstance = hs.application.get(app)
+      if appInstance then
+        appInstance:activate()
+        -- if appInstance:isFrontmost() then
+        --   app:hide()
+        -- else
+        --   appInstance:activate()
+        -- end
+      else
+        hs.application.launchOrFocusByBundleID(app)
+      end
     else
-      hs.logger.new("hyper"):e("Invalid mapping for Hyper +", key)
+      -- Treat as application name
+      hs.application.launchOrFocus(app)
     end
+  elseif type(app) == "function" then
+    app()
+  else
+    hyperLogger:e("Invalid mapping for key")
+  end
+end
+
+hyperLogger.d("Creating single letter app bindings")
+-- spoon.SpoonInstall:andUse("AppWindowSwitcher", {
+--   hotkeys = singleLetterApps,
+-- })
+hs.loadSpoon("AppWindowSwitcher"):setLogLevel("debug"):bindHotkeys(singleLetterApps)
+
+-- Recursive function to create modal bindings for nested key maps
+-- path is the sequence of keys pressed so far (for display purposes)
+-- prefix is the modal name prefix
+local function create_modal_bindings(keymap, path, prefix)
+  local modal_name = prefix
+  ---@diagnostic disable-next-line: undefined-field
+  local cmodal = modal_mgr.modal_list[modal_name]
+
+  -- For each key in this level
+  for key, action in pairs(keymap) do
+    local current_path = path .. key
+
+    if type(action) == "table" then
+      -- This is a nested keymap, create a new modal for it
+      local nested_modal_name = prefix .. "_" .. key
+      modal_mgr:new(nested_modal_name)
+
+      -- Bind the key to activate the nested modal
+      cmodal:bind("", key, function()
+        modal_mgr:deactivate({ modal_name })
+        modal_mgr:activate({ nested_modal_name }, "#FFBD2E", true)
+
+        -- Show a hint about which modal is active
+        hs.alert.show(current_path .. " mode active", 1)
+      end)
+
+      -- Recursively create bindings for the nested keymap
+      create_modal_bindings(action, current_path .. "+", nested_modal_name)
+    else
+      -- This is a leaf action, bind it directly
+      cmodal:bind("", key, function()
+        check_binding(action)
+        modal_mgr:deactivate({ modal_name })
+      end)
+    end
+  end
+
+  -- Add escape key to exit the modal
+  cmodal:bind("", "escape", function()
+    modal_mgr:deactivate({ modal_name })
+  end)
+
+  -- Add a help key to show available options
+  cmodal:bind("shift", "/", "Show available keys", function()
+    local help_text = "Available keys for " .. path:sub(1, -2) .. ":\n"
+    for nested_key, nested_action in pairs(keymap) do
+      if type(nested_action) == "table" then
+        help_text = help_text .. "  " .. nested_key .. " → [submenu]\n"
+      else
+        help_text = help_text .. "  " .. nested_key .. "\n"
+      end
+    end
+    hs.alert.show(help_text, 3)
   end)
 end
 
-hs.hotkey.bind(HyperBinding, "tab", function()
-  local windows = hs.window.orderedWindows()
-  if #windows > 1 then
-    local window = windows[2]
-    window:focus():raise()
+-- Process the app mappings
+local appWindowSwitcherApps = {}
+for key, app in pairs(appMap) do
+  if type(app) == "table" then
+    -- Create a new modal for this key
+    local modal_name = "hyper_" .. key
+    modal_mgr:new(modal_name)
+
+    -- Bind the initial key to activate the modal
+    hs.hotkey.bind(HyperBinding, key, function()
+      if App.is_current(App.bundles.terminals) then return end
+      -- Activate the modal for this key
+      modal_mgr:activate({ modal_name }, colors.catppuccin_macchiato.green, true)
+
+      -- Show a hint about which modal is active
+      hs.alert.show("Hyper+" .. key .. " mode active", 1)
+    end)
+
+    -- Create recursive bindings for this keymap
+    create_modal_bindings(app, "Hyper+" .. key .. "+", modal_name)
+  else
+    -- For non-nested keys, bind directly
+    hs.hotkey.bind(HyperBinding, key, function()
+      check_binding(app, key)
+    end)
   end
+end
+
+local superModal = modal_mgr:new("super")
+
+-- for key, app in pairs(stringApps) do
+-- end
+-- hs.loadSpoon("AppWindowSwitcher"):setLogLevel("debug"):bindHotkeys(appWindowSwitcherApps)
+
+hs.hotkey.bind(HyperBinding, "escape", function()
+  ExitHyperMode()
 end)
+
+-- hs.hotkey.bind(HyperBinding, "tab", function()
+--   local windows = hs.window.orderedWindows()
+--   if #windows > 1 then
+--     local window = windows[2]
+--     window:focus():raise()
+--   end
+-- end)
 
 hs.hotkey.bind(HyperBinding, "tab", function()
   local focusedWindow = hs.window.focusedWindow()
@@ -273,7 +415,7 @@ hs.hotkey.bind(HyperBinding, "tab", function()
   hs.grid.set(focusedWindow, grid.leftHalf)
 
   -- Get other windows on same screen
-  local otherWindows = hs.window.otherWindowsSameScreen(focusedWindow)
+  local otherWindows = focusedWindow:otherWindowsSameScreen()
   if #otherWindows == 0 then return end
 
   -- Calculate height for each window in the right half
@@ -286,10 +428,6 @@ hs.hotkey.bind(HyperBinding, "tab", function()
     hs.grid.set(window, gridString)
     window:raise()
   end
-end)
-
-hs.hotkey.bind(HyperBinding, "9", function()
-  hs.application.launchOrFocus("System Preferences")
 end)
 
 Clipboard = require("Helpers.Clipboard")

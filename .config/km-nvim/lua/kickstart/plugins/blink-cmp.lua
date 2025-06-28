@@ -1,3 +1,5 @@
+local blink_main = false
+
 return {
   { -- Autocompletion
     "saghen/blink.cmp",
@@ -29,6 +31,12 @@ return {
         opts = {},
       },
       "folke/lazydev.nvim",
+      {
+        "saghen/blink.compat",
+        optional = true, -- make optional so it's only enabled if any extras need it
+        opts = {},
+        version = not blink_main and "*",
+      },
     },
     --- @module 'blink.cmp'
     --- @type blink.cmp.Config
@@ -70,17 +78,39 @@ return {
       completion = {
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
-        documentation = { auto_show = true, auto_show_delay_ms = 500 },
+        accept = {
+          -- experimental auto-brackets support
+          auto_brackets = {
+            enabled = true,
+          },
+        },
+        menu = {
+          draw = {
+            treesitter = { "lsp" },
+          },
+        },
+        documentation = {
+          auto_show = true,
+          auto_show_dlay_ms = 200, -- 500
+        },
+        ghost_txt = {
+          enabled = vim.g.ai_cmp,
+        },
       },
 
       sources = {
-        default = { "lsp", "path", "snippets", "lazydev" },
+        default = { "lsp", "path", "snippets", "buffer", "lazydev" },
         providers = {
           lazydev = { module = "lazydev.integrations.blink", score_offset = 100 },
         },
       },
 
-      snippets = { preset = "luasnip" },
+      snippets = {
+        preset = "luasnip",
+        -- expand = function(snippet, _)
+        --   return LazyVim.cmp.expand(snippet)
+        -- end,
+      },
 
       -- Blink.cmp includes an optional, recommended rust fuzzy matcher,
       -- which automatically downloads a prebuilt binary when enabled.
@@ -96,6 +126,89 @@ return {
 
       -- Shows a signature help window while you type arguments for a function
       signature = { enabled = true },
+      cmdline = {
+        enabled = false,
+      },
+    },
+
+    ---@param opts blink.cmp.Config | { sources: { compat: string[] } }
+    config = function(_, opts)
+      -- setup compat sources
+      local enabled = opts.sources.default
+      for _, source in ipairs(opts.sources.compat or {}) do
+        opts.sources.providers[source] = vim.tbl_deep_extend(
+          "force",
+          { name = source, module = "blink.compat.source" },
+          opts.sources.providers[source] or {}
+        )
+        if type(enabled) == "table" and not vim.tbl_contains(enabled, source) then table.insert(enabled, source) end
+      end
+
+      -- add ai_accept to <Tab> key
+      if not opts.keymap["<Tab>"] then
+        if opts.keymap.preset == "super-tab" then -- super-tab
+          opts.keymap["<Tab>"] = {
+            require("blink.cmp.keymap.presets")["super-tab"]["<Tab>"][1],
+            LazyVim.cmp.map({ "snippet_forward", "ai_accept" }),
+            "fallback",
+          }
+        else -- other presets
+          opts.keymap["<Tab>"] = {
+            LazyVim.cmp.map({ "snippet_forward", "ai_accept" }),
+            "fallback",
+          }
+        end
+      end
+
+      -- Unset custom prop to pass blink.cmp validation
+      opts.sources.compat = nil
+
+      -- check if we need to override symbol kinds
+      for _, provider in pairs(opts.sources.providers or {}) do
+        ---@cast provider blink.cmp.SourceProviderConfig|{kind?:string}
+        if provider.kind then
+          local CompletionItemKind = require("blink.cmp.types").CompletionItemKind
+          local kind_idx = #CompletionItemKind + 1
+
+          CompletionItemKind[kind_idx] = provider.kind
+          ---@diagnostic disable-next-line: no-unknown
+          CompletionItemKind[provider.kind] = kind_idx
+
+          ---@type fun(ctx: blink.cmp.Context, items: blink.cmp.CompletionItem[]): blink.cmp.CompletionItem[]
+          local transform_items = provider.transform_items
+          ---@param ctx blink.cmp.Context
+          ---@param items blink.cmp.CompletionItem[]
+          provider.transform_items = function(ctx, items)
+            items = transform_items and transform_items(ctx, items) or items
+            for _, item in ipairs(items) do
+              item.kind = kind_idx or item.kind
+              item.kind_icon = Util.icons.kinds[item.kind_name] or item.kind_icon or nil
+            end
+            return items
+          end
+
+          -- Unset custom prop to pass blink.cmp validation
+          provider.kind = nil
+        end
+      end
+
+      require("blink.cmp").setup(opts)
+    end,
+  },
+  -- add icons
+  {
+    "saghen/blink.cmp",
+    opts = function(_, opts)
+      opts.appearance = opts.appearance or {}
+      opts.appearance.kind_icons = vim.tbl_extend("force", opts.appearance.kind_icons or {}, Util.icons.kinds)
+    end,
+  },
+  -- catppuccin support
+  {
+    "catppuccin",
+    optional = true,
+    opts = {
+      integrations = { blink_cmp = true },
     },
   },
 }

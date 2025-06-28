@@ -1,0 +1,96 @@
+{:profiles
+ {:Default
+  {:default true
+   :sim     250  ;; simultaneous key press threshold
+   :delay   50   ;; delay time
+   :alone   500  ;; hold threshold
+   :held    500  ;; key hold threshold
+   }
+  }
+
+ ;; Define different kinds of keyboards
+ :devices {
+   ;; :internal-keyboard {:vendor_id 1452 :product_id 835}
+   ;; :external-keyboard {:vendor_id 1234 :product_id 5678}
+ }
+
+ ;; Define application identifiers
+ :applications {
+   :chrome ["^com.google.Chrome$"]
+ }
+
+ ;; Define templates
+ :templates {
+   :open "open \"%s\""
+   :alfred "osascript -e 'tell application \"Alfred 4\" to run trigger \"%s\" in workflow \"%s\" with argument \"%s\"'"
+ }
+
+ ;; Define variables
+ :simlayers {
+   :s-mode {:key :s}
+ }
+
+ :main [
+   ;; Include Chrome productivity rules
+   {:des "Google Chrome Productivity Power Pack"
+    :rules [
+      ;; Hyper Key: Caps Lock — left control + left shift + right command (⌃⇧⌘)
+      [:caps_lock {:set ["hyper_caps_lock" 1]}
+       [:left_control :left_shift :right_command] nil {:afterup {:set ["hyper_caps_lock" 0]}}]
+
+      ;; Mac OSX: double-tap right shift key — caps lock toggle
+      [:right_shift :caps_lock ["right_shift pressed" 1]]
+      [:right_shift {:set ["right_shift pressed" 1]} :right_shift
+       {:delayed {:invoked {:set ["right_shift pressed" 0]}
+                  :canceled {:set ["right_shift pressed" 0]}}}]
+
+      ;; Google Chrome: Caps lock hyper key + 1 — Developer Tools
+      [:!CTR1 [:!COi :chrome]]
+
+      ;; Google Chrome: Caps lock hyper key + 2 — Developer Console
+      [:!CTR2 [:!COj :chrome]]
+
+      ;; Google Chrome: Caps lock hyper key + 3 — Developer Elements Panel
+      [:!CTR3 [:!CSc :chrome]]
+
+      ;; Google Chrome: Caps lock hyper key + 4 — View Source Code
+      [:!CTR4 [:!COu :chrome]]
+
+      ;; Google Chrome: Caps lock hyper key + q — Profile Selector
+      [:!CTRq [:!CSm :chrome]]
+
+      ;; Google Chrome: Caps lock hyper key + w — Toggle between last used tabs (requires CLUT: Cycle Last Used Tabs extension)
+      [:!CTRw [:!Ow :chrome]]
+
+      ;; Google Chrome: Caps lock hyper key + e — Duplicate tab (requires Duplicate Tab Shortcut extension)
+      [:!CTRe [:!OSd :chrome]]
+
+      ;; Google Chrome: Caps lock hyper key + r — Reload page
+      [:!CTRr [:!CSr :chrome]]
+
+      ;; Google Chrome: Caps lock hyper key + t — Move tab to new window (requires Pop out tabs to new window extension)
+      [:!CTRt [:!Op :chrome]]
+
+      ;; Google Chrome: Caps lock hyper key + a — Search Tabs
+      [:!CTRa [:!CSa :chrome]]
+
+      ;; Google Chrome: Caps lock hyper key + s — Select address
+      [:!CTRs [:!Cl :chrome]]
+
+      ;; Google Chrome: Caps lock hyper key + d — Clear browsing data
+      [:!CTRd [:!CSdelete_or_backspace :chrome]]
+
+      ;; Google Chrome: Caps lock hyper key + f — Search the web
+      [:!CTRf [:!COf :chrome]]
+
+      ;; Google Chrome: Caps lock hyper key + g — View downloads
+      [:!CTRg [:!COl :chrome]]
+    ]}
+
+   ;; Add your other rules here
+   {:des "Example rule"
+    :rules [
+      ;; Add your custom rules here
+    ]}
+ ]}
+

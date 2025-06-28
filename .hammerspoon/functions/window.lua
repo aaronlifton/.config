@@ -36,7 +36,7 @@ function M.push(params)
 end
 
 function M.thunk_push(params)
-  function thunk()
+  local function thunk()
     M.push(params)
   end
   return thunk
@@ -48,7 +48,7 @@ function M.grid(cell)
 end
 
 function M.thunk_grid(cell)
-  function thunk()
+  local function thunk()
     M.grid(cell)
   end
   return thunk
@@ -58,6 +58,55 @@ M.maximize_window = grid.maximizeWindow
 
 function M.maximize_with_delay(delay)
   hs.timer.doAfter(delay or 0.5, M.maximize_window)
+end
+
+M.move_and_resize = function(layout)
+  return function()
+    if type(layout) == "function" then
+      layout = layout() -- Call the function if it's a thunk
+    end
+    M.push(layout)
+  end
+end
+
+M.move_one_screen_south = function()
+  local win = hs.window.focusedWindow()
+  if win then
+    local currentScreen = win:screen()
+    local currentScreenName = currentScreen:name()
+
+    -- Check if already on the Built-in Display (southernmost screen)
+    if currentScreenName == "Built-in Display" then
+      -- Do nothing if already on the Built-in Display
+      return
+    end
+
+    win:moveOneScreenSouth(false, true, 0) -- false for wrapping, true for resize, 0 duration
+  end
+end
+
+M.bring_app_to_front = function(bundleID)
+  local app = hs.application.get(bundleID)
+  if app then
+    app:activate() -- Brings the app to the front
+  else
+    hs.application.launchOrFocusByBundleID(bundleID) -- Launch or focus on the app
+  end
+end
+
+-- Function to check the frontmost window's application
+M.check_frontmost_window = function(target_bundle_id)
+  local focused_window = hs.window.frontmostWindow()
+  if focused_window then
+    local app = focused_window:application()
+    local bundleID = app:bundleID()
+
+    -- Check if the frontmost app is Raycast or ChatGPT, and if it is an overlay
+    if bundleID == target_bundle_id and not focused_window:isStandard() then
+      -- hs.alert.show("Raycast Overlay Window Detected")
+      M.bring_app_to_front(target_bundle_id)
+    end
+  end
 end
 
 return M

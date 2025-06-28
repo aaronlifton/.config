@@ -167,6 +167,7 @@ end)
 g.neovide_theme = "dark" -- "auto"
 g.neovide_hide_mouse_when_typing = true
 g.neovide_fullscreen = false
+g.neovide_confirm_quit = true
 
 -- Keys
 g.neovide_input_use_logo = true
@@ -193,6 +194,7 @@ g.neovide_floating_z_height = 10
 -- g.neovide_cursor_antialiasing = false
 g.neovide_cursor_animation_length = 0.04 -- Default 0.06
 g.neovide_scroll_animation_length = 0.2
+-- g.neovide_scroll_animation_length = 0.3
 g.neovide_cursor_trail_length = 0.01
 g.neovide_cursor_antialiasing = true
 g.neovide_cursor_animate_in_insert_mode = true
@@ -302,8 +304,10 @@ end, { noremap = true, silent = true })
 -- map("n", "∫", "<A-b>", symbol_key_opts)
 -- -- map("n", "˜", "<A-n>") -- don't want to remap this one
 
+g.neovide_transparency = 1
+g.transparency = 0.8
 -- g.neovide_transparency = 0.0
 -- g.transparency = 0.95
 -- g.neovide_background_color = '#0f1117' .. vim.fn.printf('%x', vim.fn.float2nr(255 * g.transparency))
-
+--
 return {}
