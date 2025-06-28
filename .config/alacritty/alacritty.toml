@@ -6,17 +6,17 @@ TERM = "xterm-256color"
 draw_bold_text_with_bright_colors = true
 
 [cursor]
-style = { shape = "Block", blinking = "On" }
-# style = { shape = "Beam", blinking = "On" }
+# style = { shape = "Block", blinking = "On" }
+style = { shape = "Beam", blinking = "On" }
 unfocused_hollow = true
 # vi_mode_cursor = { text = "#222436", cursor = "#c8d3f5" }
 # vi_mode_cursor = { text = "CellForeground", cursor = "CellBackground" }
 thickness = 0.15                                                        # Default 0.15
 
 [window]
-opacity = 0.85
+opacity = 0.95
 blur = true
-padding = { x = 5, y = 1 }
+padding = { x = 5, y = 2 }
 dynamic_padding = true
 # decorations = "Full"
 decorations = "Transparent"             # "Buttonless"
@@ -37,24 +37,13 @@ hide_when_typing = true
 action = "PasteSelection"
 mouse = "Right"
 
-[font]
-size = 16.0                                                                 # Default 11.25
-italic = { family = "MonoLisa Nerd Font Mono", style = "Regular Italic" }   # "Italic"
-normal = { family = "MonoLisa Nerd Font Mono", style = "Regular" }
-bold = { family = "MonoLisa Nerd Font Mono", style = "Bold" }
-bold_italic = { family = "MonoLisa Nerd Font Mono", style = "Bold Italic" }
-
-# normal = { family = "DaddyTimeMono Nerd Font Mono" }
-# normal = { family = "ProFontIIx Nerd Font Mono", style = "Regular" }
-offset = { x = 1, y = 4 }
-glyph_offset = { x = 0, y = 0 }
-
 
 [selection]
 semantic_escape_chars = ''',│`|:"' ()[]{}<>'''
 
 [terminal.shell]
-program = "/usr/local/bin/fish"
+# program = "/usr/local/bin/fish"
+program = "/bin/zsh"
 
 
 [general]
@@ -62,4 +51,12 @@ live_config_reload = true
 import = [
   "~/.config/alacritty/themes/tokyonight_moon.toml",
   "~/.config/alacritty/keyboard.toml",
+  # "~/.config/alacritty/fonts/iosevka.toml",
+  "~/.config/alacritty/fonts/menlo-lgs.toml",
 ]
+
+
+[[hints.enabled]]
+action = "Copy"
+post_processing = false
+regex = '([0-9a-f]{12,128})|([[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3}\.[[:digit:]]{1,3})'

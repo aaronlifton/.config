@@ -1,0 +1,10 @@
+[font]
+size = 16.0                                                                 # Default 11.25
+normal = { family = "MonoLisa Nerd Font Mono", style = "Regular" }
+italic = { family = "MonoLisa Nerd Font Mono", style = "Regular Italic" }   # "Italic"
+bold = { family = "MonoLisa Nerd Font Mono", style = "Bold" }
+bold_italic = { family = "MonoLisa Nerd Font Mono", style = "Bold Italic" }
+
+offset = { x = 1, y = 4 }
+glyph_offset = { x = 0, y = 0 }
+

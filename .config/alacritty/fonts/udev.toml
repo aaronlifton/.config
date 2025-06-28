@@ -1,0 +1,9 @@
+[font]
+bold = { family = "UDEV Gothic NF", style = "Bold" }
+bold_italic = { family = "UDEV Gothic NF", style = "Bold Italic" }
+italic = { family = "UDEV Gothic NF", style = "Italic" }
+normal = { family = "UDEV Gothic NF", style = "Regular" }
+
+offset = { x = 1, y = 4 }
+glyph_offset = { x = 0, y = 0 }
+

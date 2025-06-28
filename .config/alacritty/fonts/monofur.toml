@@ -1,0 +1,9 @@
+[font]
+normal = { family = "Monofur Nerd Font", style = "Regular" }
+bold = { family = "Monofur Nerd Font", style = "Bold" }
+italic = { family = "Monofur Nerd Font", style = "Regular" }
+bold_italic = { family = "Monofur Nerd Font", style = "Bold" }
+
+offset = { x = 1, y = 4 }
+glyph_offset = { x = 0, y = 0 }
+

@@ -1,0 +1,7 @@
+[font]
+bold = { family = "HackGen35 Console NF", style = "Bold" }
+normal = { family = "HackGen35 Console NF", style = "Regular" }
+
+offset = { x = 1, y = 4 }
+glyph_offset = { x = 0, y = 0 }
+
