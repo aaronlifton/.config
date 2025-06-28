@@ -8,10 +8,11 @@ return {
   },
   keys = {
     {
+      -- "<leader>sy",
       "<leader>p",
       function()
-        if LazyVim.pick.picker.name == "telescope" then
-          require("telescope").extensions.yank_history.yank_history({})
+        if LazyVim.pick.picker.name == "snacks" then
+          Snacks.picker.yanky()
         else
           vim.cmd([[YankyRingHistory]])
         end

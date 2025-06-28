@@ -138,4 +138,59 @@ function M.scroll(win, delta)
   end, 0)
 end
 
+function M.wins()
+  local win_ids = vim.api.nvim_list_wins()
+  if #win_ids == 0 then
+    vim.notify("No windows found", vim.log.levels.WARN, { title = NOTIFY_TITLE })
+    return
+  end
+  local win_info = {}
+  for _, w in ipairs(win_ids) do
+    local buf = vim.api.nvim_win_is_valid(w) and vim.api.nvim_win_get_buf(w) or nil
+    table.insert(
+      win_info,
+      string.format(
+        "Win %d: %s (ft:%s)",
+        w,
+        buf
+            and (vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ":t") ~= "" and vim.fn.fnamemodify(
+              vim.api.nvim_buf_get_name(buf),
+              ":t"
+            ) or "[No Name]")
+          or "Invalid",
+        buf and vim.api.nvim_get_option_value("filetype", { buf = buf }) or "none"
+      )
+    )
+  end
+  vim.notify(table.concat(win_info, "\n"), vim.log.levels.INFO, { title = "Windows" })
+end
+
+function M.win_infos(win_ids)
+  vim.tbl_map(function(w)
+    local b = vim.api.nvim_win_is_valid(w) and vim.api.nvim_win_get_buf(w) or nil
+    vim.notify(
+      string.format(
+        "Win %d: %s (ft:%s)",
+        w,
+        b
+            and (vim.fn.fnamemodify(vim.api.nvim_buf_get_name(b), ":t") ~= "" and vim.fn.fnamemodify(
+              vim.api.nvim_buf_get_name(b),
+              ":t"
+            ) or "[No Name]")
+          or "Invalid",
+        b and vim.api.nvim_get_option_value("filetype", { buf = b }) or "none"
+      ),
+      vim.log.levels.INFO,
+      { title = "Windows" }
+    )
+  end, win_ids)
+end
+
+function M.filetype()
+  local current_win_id = vim.api.nvim_get_current_win()
+  local current_buf_id = vim.api.nvim_win_get_buf(current_win_id)
+  local filetype = vim.api.nvim_get_option_value("filetype", { buf = current_buf_id })
+  vim.api.nvim_echo({ { "Filetype:\n", "Title" }, { vim.inspect(filetype), "Normal" } }, true, {})
+end
+
 return M

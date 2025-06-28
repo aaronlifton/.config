@@ -181,6 +181,36 @@ return {
   {
     "ibhagwan/fzf-lua",
     optional = true,
+    dependencies = {
+      {
+        "drop-stones/fzf-lua-normal-mode",
+        enabled = false,
+        opts = {
+          keys = {
+            -- repeatable keys
+            { key = "j", action = "<Down>" },
+            { key = "k", action = "<Up>" },
+            { key = "gg", action = "<A-g>" },
+            { key = "G", action = "<A-G>" },
+            { key = "<C-u>", action = "<C-u>" },
+            { key = "<C-d>", action = "<C-d>" },
+            -- additional user input keys
+            { key = "s", action = "<your-jumps-keybind>", wait_user_input = true },
+            -- exit keys
+            { key = "q", action = "<Esc>", repeatable = false },
+            { key = "<Enter>", action = "<CR>", repeatable = false },
+            -- custom function keys
+            {
+              key = "z",
+              action = function()
+                vim.cmd("echo 'custom action'")
+              end,
+            },
+          },
+        },
+      },
+      -- { "drop-stones/fzf-lua-grep-context" },
+    },
     opts = function(_, opts)
       -- if testing telescope
       if not opts then return end
@@ -211,6 +241,21 @@ return {
           -- async_or_timeout = true,
           async_or_timeout = 35000,
         },
+        -- grep = {
+        --   rg_glob = false, -- 1. Disable automatic --iglob injection by fzf-lua
+        --   fn_transform_cmd = function(query, cmd, _)
+        --     -- 2. Load grep-context module in runtime
+        --     -- This ensures the plugin is available when used from inside fzf-lua sessions
+        --     vim.opt.rtp:append(vim.env.FZF_LUA_GREP_CONTEXT)
+        --     return require("fzf-lua-grep-context.transform").rg(query, cmd)
+        --   end,
+        --   actions = {
+        --     -- 3. Open grep context picker with <C-t>
+        --     ["ctrl-t"] = function()
+        --       require("fzf-lua-grep-context").picker()
+        --     end,
+        --   },
+        -- },
       })
     end,
     keys = {

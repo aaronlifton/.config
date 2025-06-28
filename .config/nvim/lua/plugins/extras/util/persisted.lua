@@ -27,7 +27,7 @@ return {
         if vim.bo.filetype == "dashboard" then return false end
         return true
       end, -- function to determine if a session should be autosaved
-      save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
+      -- save_dir = vim.fn.expand(vim.fn.stdpath("data") .. "/sessions/"), -- directory where session files are saved
       -- silent = false, -- silent nvim message when sourcing session file
       -- autosave = true, -- automatically save session files when exiting Neovim
       -- -- Set `lazy = false` in `plugins/editor.lua` to enable this
@@ -41,19 +41,6 @@ return {
       -- },
     },
     config = function(_, opts)
-      LazyVim.on_load("telescope.nvim", function()
-        require("telescope").setup({
-          extensions = {
-            persisted = {
-              layout_config = {
-                height = 0.6,
-                width = 0.6,
-              },
-            },
-          },
-        })
-        require("telescope").load_extension("persisted")
-      end)
       require("persisted").setup(opts)
     end,
     keys = {
@@ -79,14 +66,14 @@ return {
         desc = "Don't Save Current Session",
       },
       {
-        "<leader>qd",
+        "<leader>qD",
         function()
           vim.cmd("SessionDelete")
         end,
         desc = "Delete Session",
       },
       {
-        "<leader>qS",
+        "<leader>qk",
         function()
           require("persisted").save()
           vim.notify("Session saved", vim.log.levels.INFO, { title = "Persisted" })
@@ -94,7 +81,7 @@ return {
         desc = "Save Session",
       },
       {
-        "<leader>qT",
+        "<leader>qt",
         function()
           if isActive then
             require("persisted").stop()
@@ -109,45 +96,56 @@ return {
         desc = "Toggle Current Session Recording",
       },
       {
-        "<leader>qt",
+        "<leader>qS",
         "<cmd>Telescope persisted<cr>",
         desc = "Search Sessions (Telescope)",
       },
     },
   },
   {
-    "echasnovski/mini.starter",
+    "snacks.nvim",
     optional = true,
-    opts = function(_, opts)
-      local util = require("util.dashboard")
-      opts.items = vim.list_extend(opts.items, {
-        util.new_section(" Restore Session", 'lua require("persisted").load()', "Telescope"),
-      })
-    end,
+    opts = {
+      dashboard = {
+        keys = {
+          { icon = " ", key = "s", desc = "Restore Session", action = 'lua require("persisted").load()' },
+        },
+      },
+    },
   },
-  {
-    "nvimdev/dashboard-nvim",
-    optional = true,
-    opts = function(_, opts)
-      -- Remove the older session plugin entry
-      for i, section in ipairs(opts.config.center) do
-        if section.key == "s" then
-          table.remove(opts.config.center, i)
-          break
-        end
-      end
-
-      local session = {
-        action = 'lua require("persisted").load()',
-        desc = " Restore Session",
-        icon = " ",
-        key = "s",
-      }
-
-      session.desc = session.desc .. string.rep(" ", 43 - #session.desc)
-      session.key_format = "  %s"
-
-      table.insert(opts.config.center, 9, session)
-    end,
-  },
+  -- {
+  --   "echasnovski/mini.starter",
+  --   optional = true,
+  --   opts = function(_, opts)
+  --     local util = require("util.dashboard")
+  --     opts.items = vim.list_extend(opts.items, {
+  --       util.new_section(" Restore Session", 'lua require("persisted").load()', "Telescope"),
+  --     })
+  --   end,
+  -- },
+  -- {
+  --   "nvimdev/dashboard-nvim",
+  --   optional = true,
+  --   opts = function(_, opts)
+  --     -- Remove the older session plugin entry
+  --     for i, section in ipairs(opts.config.center) do
+  --       if section.key == "s" then
+  --         table.remove(opts.config.center, i)
+  --         break
+  --       end
+  --     end
+  --
+  --     local session = {
+  --       action = 'lua require("persisted").load()',
+  --       desc = " Restore Session",
+  --       icon = " ",
+  --       key = "s",
+  --     }
+  --
+  --     session.desc = session.desc .. string.rep(" ", 43 - #session.desc)
+  --     session.key_format = "  %s"
+  --
+  --     table.insert(opts.config.center, 9, session)
+  --   end,
+  -- },
 }

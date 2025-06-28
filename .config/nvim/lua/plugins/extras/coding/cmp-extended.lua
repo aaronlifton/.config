@@ -28,6 +28,8 @@ return {
       -- "hrsh7th/cmp-path",
       -- { "hrsh7th/cmp-cmdline", lazy = true },
       { "hrsh7th/cmp-nvim-lua", lazy = true },
+      { "chrisgrieser/cmp_yanky" },
+      { "Snikimonkd/cmp-go-pkgs" },
     },
     keys = {
       { "<leader>ciC", "<cmd>CmpStatus<CR>", desc = "Cmp Status" },
@@ -85,7 +87,27 @@ return {
       -- set_priority(opts.sources, "supermaven", 90)
 
       -- Index 4 is nvim_lsp
+      -- opts.sources = opts.sources or {}
+      -- opts.sources = vim.tbl_extend(
+      --   "force",
+      --   opts.sources,
+      --   cmp.config.sources({
+      --     { name = "nvim_lua", group_index = 1 },
+      --     { name = "go_pkgs", group_index = 1 },
+      --     {
+      --       name = "cmp_yanky",
+      --       option = {
+      --         onlyCurrentFiletype = true,
+      --         minLength = 3,
+      --       },
+      --     },
+      --   })
+      -- )
       table.insert(opts.sources, 3, { name = "nvim_lua", group_index = 1 })
+      table.insert(opts.sources, 4, { name = "go_pkgs", group_index = 1 })
+      table.insert(opts.sources, 5, { name = "cmp_yanky", group_index = 1 })
+
+      -- opts.matching.disallow_symbol_nonprefix_matching = false -- to use . and / in urls for go_pkgs
 
       -- Window
       opts.window = {
@@ -148,7 +170,14 @@ return {
             { name = "noice_popupmenu" },
           }),
           completion = { autocomplete = false },
-          matching = { disallow_symbol_nonprefix_matching = false, disallow_fuzzy_matching = true },
+          matching = {
+            disallow_symbol_nonprefix_matching = false,
+            disallow_fuzzy_matching = true, -- fmodify -> fnamemodify
+            disallow_partial_fuzzy_matching = false,
+            disallow_fullfuzzy_matching = false,
+            disallow_partial_matching = false, -- fb -> foo_bar
+            disallow_prefix_unmatching = true, -- bar -> foo_bar
+          },
         })
       end
 
@@ -190,6 +219,8 @@ return {
         opts.mapping["<S-CR>"] =
           cmp.mapping(cmp.mapping.confirm({ select = false, behavior = cmp.ConfirmBehavior.Replace }))
       end
+
+      require("util.cmp.debounce").setup()
 
       -- local emmet_comparator = function(entry1, entry2)
       --   if entry1.source.name == "nvim_lsp" and entry2.source.name == "nvim_lsp" then

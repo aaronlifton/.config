@@ -8,6 +8,7 @@ end
 
 local ac = vim.api.nvim_create_autocmd
 local ag = vim.api.nvim_create_augroup
+local Util = require("util")
 
 local enabled_autocommands = {
   numbertoggle = false,
@@ -64,6 +65,22 @@ local enabled_autocommands = {
 --   end,
 -- })
 
+ac({ "VimEnter" }, {
+  desc = "Nvim user event that trigger a few ms after nvim starts",
+  callback = function()
+    -- If nvim is opened passing a filename, trigger the event inmediatelly.
+    if #vim.fn.argv() >= 1 then
+      -- In order to avoid visual glitches.
+      Util.trigger_event("User BaseDefered", true)
+      Util.trigger_event("BufEnter", true) -- also, initialize tabline_buffers.
+    else -- Wait some ms before triggering the event.
+      vim.defer_fn(function()
+        Util.trigger_event("User BaseDefered")
+      end, 70)
+    end
+  end,
+})
+
 -- After
 local close_buf = function(event)
   vim.bo[event.buf].buflisted = false
@@ -89,13 +106,36 @@ ac("FileType", {
   callback = close_buf,
 })
 
--- Disable diagnostics in a .env file
-ac("BufRead", {
-  pattern = ".env",
+local group_id = ag("LuaReloadModule", { clear = true })
+ac("BufWritePost", {
+  group = group_id,
+  pattern = "*.lua",
   callback = function()
-    vim.diagnostic.enable(false)
+    local first_line = vim.api.nvim_buf_get_lines(0, 0, 1, false)[1]
+    -- Only reload if the first line is local M = {}
+    if first_line and first_line:match("^local%s+M%s*=%s*{}") then
+      local file_path = vim.fn.expand("%:p")
+      local module_name = vim.fn.fnamemodify(file_path, ":.:r")
+
+      package.loaded[module_name] = nil
+
+      vim.notify("Module Reloaded:" .. module_name, nil, {
+        title = "Notification",
+        timeout = 500,
+        render = "compact",
+      })
+    end
   end,
+  desc = "Reload the current module on save",
 })
+
+-- Disable diagnostics in a .env file
+-- ac("BufRead", {
+--   pattern = ".env",
+--   callback = function()
+--     vim.diagnostic.enable(false)
+--   end,
+-- })
 
 -- https://nvchad.com/docs/recipes
 ac("VimEnter", {
@@ -106,6 +146,14 @@ ac("VimLeavePre", {
   command = ":silent !kitty @ set-spacing padding=20 margin=10",
 })
 
+-- local format_sync_grp = vim.api.nvim_create_augroup("GoImports", {})
+-- vim.api.nvim_create_autocmd("BufWritePre", {
+--   pattern = "*.go",
+--   callback = function()
+--     require("go.format").goimports()
+--   end,
+--   group = format_sync_grp,
+-- })
 -- local auto_close_filetype = {
 --   "lazy",
 --   "mason",
@@ -161,13 +209,13 @@ ac("VimLeavePre", {
 -- })
 
 -- Disable eslint on node_modules
-ac({ "BufNewFile", "BufRead" }, {
-  group = ag("DisableEslintOnNodeModules", { clear = true }),
-  pattern = { "**/node_modules/**", "node_modules", "/node_modules/*" },
-  callback = function()
-    vim.diagnostic.enable(false)
-  end,
-})
+-- ac({ "BufNewFile", "BufRead" }, {
+--   group = ag("DisableEslintOnNodeModules", { clear = true }),
+--   pattern = { "**/node_modules/**", "node_modules", "/node_modules/*" },
+--   callback = function()
+--     vim.diagnostic.enable(false)
+--   end,
+-- })
 
 -- Toggle between relative/absolute line numbers
 if enabled_autocommands.numbertoggle then
@@ -386,3 +434,21 @@ vim.api.nvim_create_autocmd("User", {
 --     io.stdout:write("\x1b]1337;SetUserVar=in_editor\007")
 --   end,
 -- })
+
+require("config.abstract.autocmds").auto_resize_splited_window()
+
+ac("User", {
+  pattern = "LazyLoad",
+  desc = "Initialize Util module",
+  callback = function(args)
+    require("util")
+  end,
+})
+
+ac("BufWritePost", {
+  pattern = "*.go",
+  callback = function()
+    vim.cmd("silent! !gokuw")
+  end,
+  desc = "Run gokuw after saving Go files",
+})

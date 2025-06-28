@@ -23,6 +23,20 @@ end
 
 local astrovim_style = false
 
+local function get_icon(name)
+  local icons = require("util.icons")
+  if icons.nerd_font[name] then
+    return icons.nerd_font[name]
+  elseif icons.kinds[name] then
+    return icons.kinds[name]
+  else
+    if not package.loaded["mini.icons"] then return nil end
+
+    local fileicon = MiniIcons.get("file", name)
+    return fileicon or ""
+  end
+end
+
 return {
   {
     "nvim-neo-tree/neo-tree.nvim",
@@ -31,6 +45,34 @@ return {
       -- auto_clean_after_session_restore = true,
       close_if_last_window = true,
       popup_border_style = "rounded",
+      default_component_configs = {
+        indent = {
+          padding = 0,
+          expander_collapsed = get_icon("FoldClosed"),
+          expander_expanded = get_icon("FoldOpened"),
+        },
+        icon = {
+          folder_closed = get_icon("FolderClosed"),
+          folder_open = get_icon("FolderOpen"),
+          folder_empty = get_icon("FolderEmpty"),
+          folder_empty_open = get_icon("FolderEmpty"),
+          default = get_icon("DefaultFile"),
+        },
+        modified = { symbol = get_icon("FileModified") },
+        git_status = {
+          symbols = {
+            added = get_icon("GitAdd"),
+            deleted = get_icon("GitDelete"),
+            modified = get_icon("GitChange"),
+            renamed = get_icon("GitRenamed"),
+            untracked = get_icon("GitUntracked"),
+            ignored = get_icon("GitIgnored"),
+            unstaged = get_icon("GitUnstaged"),
+            staged = get_icon("GitStaged"),
+            conflict = get_icon("GitConflict"),
+          },
+        },
+      },
       commands = {
         -- parent_or_close = function(state)
         --   local node = state.tree:get_node()
@@ -158,7 +200,6 @@ return {
           -- end,
           ["s"] = {
             function()
-              -- if not package.loaded["leap"] then return end
               if not package.loaded["leap"] then vim.cmd([[Lazy load leap.nvim]]) end
 
               local leap_util = require("util.leap")
@@ -239,6 +280,10 @@ return {
       -- },
     },
     keys = {
+      {
+        "<leader>e",
+        false,
+      },
       {
         "<leader>gE",
         function()

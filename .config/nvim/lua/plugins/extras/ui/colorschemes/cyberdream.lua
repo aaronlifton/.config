@@ -12,7 +12,7 @@ return {
         hide_fillchars = true,
         borderless_pickers = true,
         terminal_colors = true,
-        transparent = false,
+        transparent = true,
         extensions = {
           cmp = true,
           fzflua = true,

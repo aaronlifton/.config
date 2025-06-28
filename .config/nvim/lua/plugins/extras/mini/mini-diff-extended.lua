@@ -99,7 +99,7 @@ return {
         desc = "MiniDiff (HEAD~1)",
       },
       {
-        "<leader>gdm",
+        "<leader>gdM",
         function()
           local buf_id = vim.api.nvim_get_current_buf()
           set_mini_diff_ref_text(buf_id, "master")
@@ -107,7 +107,7 @@ return {
         desc = "MiniDiff (master)",
       },
       {
-        "<leader>gdM",
+        "<leader>gdm",
         function()
           local buf_id = vim.api.nvim_get_current_buf()
           set_mini_diff_ref_text(buf_id, "main")

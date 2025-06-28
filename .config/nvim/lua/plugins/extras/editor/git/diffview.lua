@@ -32,10 +32,10 @@ return {
       },
       -- stylua: ignore start
       { file_history_prefix .. "f", function() toggle_diffview("DiffviewFileHistory %") end, desc = "Diff Current File" },
-      -- { file_history_prefix .. "m", "<cmd>DiffviewFileHistory master<CR>", desc = "Diff File History (master)" },
-      { file_history_prefix .. "m", function() toggle_diffview("DiffviewFileHistory master") end, desc = "Diff File History (master)" },
+      -- { file_history_prefix .. "M", "<cmd>DiffviewFileHistory master<CR>", desc = "Diff File History (master)" },
+      { file_history_prefix .. "M", function() toggle_diffview("DiffviewFileHistory master") end, desc = "Diff File History (master)" },
       -- { file_history_prefix .. "M", "<cmd>DiffviewFileHistory main<CR>", desc = "Diff File History (main)" },
-      { file_history_prefix .. "M", function() toggle_diffview("DiffviewFileHistory main") end, desc = "Diff File History (main)" },
+      { file_history_prefix .. "m", function() toggle_diffview("DiffviewFileHistory main") end, desc = "Diff File History (main)" },
       -- TODO: can this be wrapped?
       { file_history_prefix .. "h", ":'<,'>DiffviewFileHistory", desc = "Diff View (Selection)", mode = "v" },
       -- { diffview_prefix .. "h", "<cmd>DiffviewOpen<CR>", desc = "Diff View" },
@@ -43,9 +43,9 @@ return {
       -- { diffview_prefix .. "H", "<cmd>DiffviewOpen HEAD~1<CR>", desc = "Diff View (HEAD~1)" },
       { diffview_prefix .. "H", function() toggle_diffview("DiffviewOpen HEAD~1") end, desc = "Diff View (HEAD~1)" },
       -- { diffview_prefix .. "m", "<cmd>DiffviewOpen master<CR>", desc = "Diff View (master)" },
-      { diffview_prefix .. "m", function() toggle_diffview("DiffviewOpen master") end, desc = "Diff View (master)" },
+      { diffview_prefix .. "M", function() toggle_diffview("DiffviewOpen master") end, desc = "Diff View (master)" },
       -- { diffview_prefix .. "M", "<cmd>DiffviewOpen main<CR>", desc = "Diff View (main)" },
-      { diffview_prefix .. "M", function() toggle_diffview("DiffviewOpen main") end, desc = "Diff View (main)" },
+      { diffview_prefix .. "m", function() toggle_diffview("DiffviewOpen main") end, desc = "Diff View (main)" },
       -- { diffview_prefix .. "d", "<cmd>DiffviewOpen development<CR>", desc = "Diff View (development)" },
       { diffview_prefix .. "d", function() toggle_diffview("DiffviewOpen development") end, desc = "Diff View (development)" },
       {
@@ -53,7 +53,7 @@ return {
         function()
           return toggle_diffview_func(
             function()
-              local input = vim.fn.input("compare: ")
+              local input = Snacks.input({ prompt = "Compare: ", icon = "" })
               vim.api.nvim_command("DiffviewOpen " .. input)
             end
           )
@@ -61,13 +61,31 @@ return {
         desc = "Diff View (pick)",
       },
       {
+        diffview_prefix .. "X",
+        function()
+          return toggle_diffview_func(
+            function()
+              Snacks.input({ prompt = "From: ", icon = "" }, function(from)
+                if from == "" then return end
+                Snacks.input({ prompt = "To: ", icon = "" }, function(to)
+                  if to == "" then return end
+                  vim.api.nvim_command("DiffviewOpen " .. from .. ".." .. to)
+                end)
+              end)
+            end
+          )
+        end,
+        desc = "Diff View (pick to..from)",
+      },
+      {
         diffview_prefix .. "f",
         function()
           return toggle_diffview_func(
             function()
-              local input = vim.fn.input("compare: ")
-              local path = vim.fn.expand("%p")
-              vim.api.nvim_command("DiffviewOpen " .. input .. " -- " .. path)
+              Snacks.input({ prompt = "Compare: ", icon = "" }, function(input)
+                local path = vim.fn.expand("%p")
+                vim.api.nvim_command("DiffviewOpen " .. input .. " -- " .. path)
+              end)
             end
           )
         end,

@@ -29,6 +29,9 @@ return {
         },
       },
     },
+    config = function()
+      vim.g.rustaceanvim.server.cmd = nil
+    end,
   },
   {
     "Saecki/crates.nvim",

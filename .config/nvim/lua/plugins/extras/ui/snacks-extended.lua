@@ -116,6 +116,16 @@ return {
       },
     },
     keys = {
+      {
+        "<leader><C-Space>",
+        function()
+          Snacks.picker.explorer({
+            layout = { preset = "vertical", preview = true },
+          })
+        end,
+        "n",
+        desc = "Floating Explorer",
+      },
       -- stylua: ignore start
       { "<leader>\\", function() Snacks.scratch() end, desc = "Toggle Scratch Buffer" },
       -- In addition to LazyVim's <leader>wm and <leader>uZ mappings:
@@ -128,8 +138,10 @@ return {
       -- { "<leader>S",  function() Snacks.scratch.select() end, desc = "Select Scratch Buffer" },
       -- { "<leader>n", function() Snacks.notifier.show_history() end, desc = "Notification History" },
       -- { "<leader>un", function() Snacks.notifier.hide() end, desc = "Dismiss All Notifications" },
+      { "<leader>u<C-c>", function() Snacks.picker.colorschemes() end, desc = "Colorschemes" },
       -- Picker
       { "<leader>s<C-b>", function() Snacks.picker.lines() end, desc = "Lines" },
+      { "<leader><M-b>", function() Snacks.picker.buffers() end, desc = "Buffers" },
       { "<leader>sB", function() Snacks.picker.grep_buffers() end, desc = "Grep Buffers" },
       { "<leader>s<C-g>", function() Snacks.picker.grep({
           exclude = { "**/dist/**.js*", "*{-,.}min.js" },
@@ -160,6 +172,10 @@ return {
         end,
         desc = "Explorer Snacks (cwd)",
       },
+      {"<leader><C-p>", function()
+        Util.snacks.pickers.pull_requests()
+      end, desc = "Pull Requests"}
+,
     },
   },
   {

@@ -141,6 +141,27 @@ map("v", "<D-c>", '"+y', { noremap = true }) -- Copy
 
 -- Paste options
 map("v", "p", '"_dP', { desc = "Paste without overwriting" }, { silent = true })
+-- require("config.abstract.mappings").smart_visual_paste()
+-- map("x", "p", [[<Cmd>silent! normal! "_dP<CR>]], { noremap = true, silent = true })
+
+-- Working paste in neovide terminal
+map("t", "<D-v>", [[<C-\><C-o>p]], { noremap = true, silent = true })
+
+-- Doesn't work - https://neovide.dev/faq.html
+-- if vim.g.neovide then
+--   vim.keymap.set("n", "<D-s>", ":w<CR>") -- Save
+--   vim.keymap.set("v", "<D-c>", '"+y') -- Copy
+--   vim.keymap.set("n", "<D-v>", '"+P') -- Paste normal mode
+--   vim.keymap.set("v", "<D-v>", '"+P') -- Paste visual mode
+--   vim.keymap.set("c", "<D-v>", "<C-R>+") -- Paste command mode
+--   vim.keymap.set("i", "<D-v>", '<ESC>l"+Pli') -- Paste insert mode
+-- end
+--
+-- -- Allow clipboard copy paste in neovim
+-- vim.api.nvim_set_keymap("", "<D-v>", "+p<CR>", { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap("!", "<D-v>", "<C-R>+", { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap("t", "<D-v>", "<C-R>+", { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap("v", "<D-v>", "<C-R>+", { noremap = true, silent = true })
 
 -- Copy whole text to clipboard
 map("n", "<leader><C-c>", ":%y+<CR>", { desc = "Copy whole text to clipboard", silent = true })
@@ -236,7 +257,7 @@ end, { desc = "Re-set default Leap key mappings" })
 map("n", "]/", "/\\S\\zs\\s*╭<CR>zt", { desc = "Next Block Comment" })
 map("n", "[/", "?\\S\\zs\\s*╭<CR>zt", { desc = "Prev Block Comment" })
 
--- Lazy options
+--- Lazy options
 map("n", "<leader>l", "<Nop>") -- Lazy
 map("n", "<leader>L", "<Nop>") -- Changeloog
 map("n", "<leader>ll", "<cmd>Lazy<cr>", { desc = "Lazy" })
@@ -258,6 +279,9 @@ map("n", "<leader>lu", function() require("lazy").update() end, { desc = "Lazy U
 map("n", "<leader>lC", function() require("lazy").check() end, { desc = "Lazy Check" })
 map("n", "<leader>ls", function() require("lazy").sync() end, { desc = "Lazy Sync" })
 -- stylua: ignore end
+map("n", "<leader>lm", function()
+  vim.cmd(string.format("vsplit | :e %s", vim.fn.expand("~/Code/Matt-FTW-dotfiles/.config/nvim/lazy-lock.json")))
+end, { desc = "Open MattFTW lazy-lock" })
 
 -- Linter and formatter info
 map("n", "<leader>cif", "<cmd>LazyFormatInfo<cr>", { desc = "Formatting" })
@@ -345,7 +369,9 @@ map("v", "<leader>cpm", function()
   clipboard.set_clipboard(require("util.selection").markdown_code_fence())
 end, { desc = "Copy markdown code fence" })
 
+require("config.abstract.mappings").ctrl_backspace_delete({})
 -- map("n", "gzaM", function()
+--
 --   local start_pos = vim.fn.getpos("'[")
 --   local end_pos = vim.fn.getpos("']")
 --
@@ -368,11 +394,11 @@ local gitbrowse_mappings = {
       vim.fn.setreg("+", url:gsub("#L%d+%-?L?%d*", ""))
     end,
   },
-  M = {
+  m = {
     desc = "file:line (main)",
     branch = "main",
   },
-  m = {
+  M = {
     desc = "file:line (master)",
     branch = "master",
   },
@@ -871,3 +897,105 @@ map("n", "gCs", function()
 
   return "ciw" .. snakeCase .. "<esc>b"
 end, { expr = true, desc = "Convert to snake case" })
+
+map("n", "<leader>cug", function()
+  Util.lang.go.prepare_ginkgo_command_from_clipboard()
+end, { noremap = true, silent = true })
+
+map("n", "<leader>aPc", function()
+  local prompt_generator = require("util.prompt_generator")
+
+  local function input_helper_files(callback)
+    Snacks.input({
+      prompt = "Enter helper files (comma-separated):",
+      default = "",
+    }, function(helper_input)
+      local helper_files = {}
+      if helper_input and helper_input ~= "" then
+        for file in string.gmatch(helper_input, "([^,]+)") do
+          table.insert(helper_files, vim.trim(file))
+        end
+      end
+      callback(helper_files)
+    end)
+  end
+
+  local function input_new_file(old_file, start_line, end_line)
+    Snacks.input({
+      prompt = "Enter new file path:",
+      default = "",
+    }, function(new_file)
+      if not new_file or new_file == "" then return end
+
+      input_helper_files(function(helper_files)
+        local prompt = prompt_generator.generate_copy_endpoint_prompt({
+          old_file = old_file,
+          start_line = tonumber(start_line),
+          end_line = tonumber(end_line),
+          new_file = new_file,
+          helper_files = helper_files,
+        })
+
+        vim.fn.setreg("+", prompt)
+        vim.notify("Copied generated prompt to clipboard", vim.log.levels.INFO, { title = "Copy Endpoint" })
+      end)
+    end)
+  end
+
+  local function input_end_line(old_file, start_line)
+    Snacks.input({
+      prompt = "Enter end line number:",
+      default = "",
+    }, function(end_line)
+      if not end_line or end_line == "" then return end
+      input_new_file(old_file, start_line, end_line)
+    end)
+  end
+
+  local function input_start_line(old_file)
+    Snacks.input({
+      prompt = "Enter start line number:",
+      default = "",
+    }, function(start_line)
+      if not start_line or start_line == "" then return end
+      input_end_line(old_file, start_line)
+    end)
+  end
+
+  Snacks.input({
+    prompt = "Enter old file path:",
+    default = "",
+  }, function(old_file)
+    if not old_file or old_file == "" then return end
+    input_start_line(old_file)
+  end)
+end, { desc = 'Generate "Copy endpoint" prompt' })
+
+map("n", "<leader>14", function()
+  Util.win.filetype()
+end, { desc = "Copy file line to clipboard" })
+
+map("n", "<leader>15", function()
+  local current_file = vim.fn.expand("%:p")
+  if current_file == "" then
+    vim.notify("No file in current buffer", vim.log.levels.WARN)
+    return
+  end
+
+  local file_dir = vim.fn.fnamemodify(current_file, ":h")
+
+  -- Use tcd (tab-local cd) if in a tab, otherwise use cd
+  local cmd = vim.fn.tabpagenr("$") > 1 and "tcd" or "cd"
+
+  vim.cmd(cmd .. " " .. vim.fn.fnameescape(file_dir))
+  vim.notify("Changed directory to: " .. file_dir, vim.log.levels.INFO)
+end, { desc = "CD to current file directory" })
+
+vim.keymap.set("n", "<leader>ca", function()
+  require("tiny-code-action").code_action({})
+end, { noremap = true, silent = true })
+
+vim.keymap.set("n", "<leader>16", function()
+  local hyper_keys_path = "/Users/alifton/.hammerspoon/hyper_apps.lua"
+  vim.cmd("e " .. hyper_keys_path)
+end, { desc = "edit .hammerspoon/hyper_apps.lua", noremap = true, silent = true })

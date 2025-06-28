@@ -23,6 +23,7 @@ for _, arg in ipairs(vim.v.argv) do
 end
 local spec = {}
 if vim.g.fastmode then
+  vim.notify("Fast mode enabled", vim.log.levels.INFO, { title = "LazyVim" })
   spec = {
     { "LazyVim/LazyVim", import = "lazyvim.plugins" },
     { import = "plugins.extras.util.fast" },
@@ -30,7 +31,13 @@ if vim.g.fastmode then
 else
   spec = {
     -- { "LazyVim/LazyVim", import = "lazyvim.plugins", branch = "fix/mason-v2" },
-    { "LazyVim/LazyVim", import = "lazyvim.plugins" },
+    {
+      "LazyVim/LazyVim",
+      import = "lazyvim.plugins",
+      opts = {
+        colorscheme = "tokyonight-moon",
+      },
+    },
     { import = "lazyvim.plugins.extras.vscode" },
     { import = "plugins" },
   }
@@ -115,3 +122,13 @@ require("lazy").setup({
   },
   icons = vim.g.icon_size == "small" and { kinds = require("util.icons").kinds } or {},
 })
+
+-- dofile(vim.g.base46_cache .. "defaults")
+-- dofile(vim.g.base46_cache .. "statusline")
+--
+-- if package.loaded["nvconfig"] then
+--   local integrations = require("nvconfig").base46.integrations
+--   for _, name in ipairs(integrations) do
+--     dofile(vim.g.base46_cache .. name)
+--   end
+-- end

@@ -17,6 +17,13 @@ return {
             basedpyright = {
               analysis = {
                 diagnosticSeverityOverrides = {
+                  reportMissingTypeStubs = "information", -- import has no type stub file
+                  reportIgnoreCommentWithoutRule = "warning",
+                  reportUnreachable = "error",
+                  reportPrivateLocalImportUsage = "error",
+                  reportImplicitRelativeImport = "error",
+                  reportInvalidCast = "error",
+                  reportMissingSuperCall = false,
                   reportUnusedCallResult = "information",
                   reportUnusedExpression = "information",
                   reportUnknownMemberType = "none",
@@ -53,21 +60,21 @@ return {
             },
           },
         },
-        [ruff] = {
-          handlers = {
-            ["textDocument/publishDiagnostics"] = function() end,
-          },
-        },
+        -- [ruff] = {
+        --   handlers = {
+        --     ["textDocument/publishDiagnostics"] = function() end,
+        --   },
+        -- },
       },
-      setup = {
-        [ruff] = function()
-          LazyVim.lsp.on_attach(function(client, _)
-            client.server_capabilities.hoverProvider = false
-            -- Added this line so basedpyright is the only diagnoistics provider
-            client.server_capabilities.diagnosticProvider = false
-          end, ruff)
-        end,
-      },
+      -- setup = {
+      --   [ruff] = function()
+      --     LazyVim.lsp.on_attach(function(client, _)
+      --       client.server_capabilities.hoverProvider = false
+      --       -- Added this line so basedpyright is the only diagnoistics provider
+      --       client.server_capabilities.diagnosticProvider = false
+      --     end, ruff)
+      --   end,
+      -- },
     },
   },
   {

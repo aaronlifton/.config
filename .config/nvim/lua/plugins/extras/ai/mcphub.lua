@@ -6,12 +6,44 @@ return {
     dependencies = {
       "nvim-lua/plenary.nvim",
     },
-    build = "npm install -g mcp-hub@latest",
+    cmd = "MCPHub",
+    -- build = "npm install -g mcp-hub@latest",
+    build = "bundled_build.lua",
+    keys = {
+      {
+        "<leader>am",
+        "<cmd>MCPHub<CR>",
+        mode = { "n" },
+        desc = "Open MCPHub",
+      },
+    },
     config = function()
       require("mcphub").setup({
+        use_bundled_binary = true,
         port = 37373,
         -- config = vim.fn.stdpath("config") .. "/mcpservers.json",
         config = vim.fn.expand("~/.config/mcphub/servers.json"),
+        -- Optional options
+        on_ready = function(_)
+          -- Called when hub is ready
+        end,
+        on_error = function(err)
+          -- Called on errors
+          -- vim.notify(err, vim.log.levels.ERROR)
+        end,
+        shutdown_delay = 0, -- Wait 0ms before shutting down server after last client exits
+        log = {
+          level = vim.log.levels.WARN,
+          to_file = false,
+          file_path = nil,
+          prefix = "MCPHub",
+        },
+        auto_approve = true, -- Auto approve mcp tool calls
+        auto_toggle_mcp_servers = true, -- Let LLMs start and stop MCP servers automatically
+        native_servers = {
+          "nvim_helper",
+          "git_helper",
+        }, -- add your custom lua native servers here
         extensions = {
           avante = {
             make_slash_commands = true, -- make /slash commands from MCP server prompts
@@ -21,7 +53,7 @@ return {
 
       -- Load custom MCP servers
       pcall(require, "custom.mcp_servers.nvim_helper")
-      -- pcall(require, "custom.mcp_servers.git_helper")
+      pcall(require, "custom.mcp_servers.git_helper")
     end,
   },
   {
@@ -38,26 +70,26 @@ return {
         return hub:get_active_servers_prompt()
       end,
       -- The custom_tools type supports both a list and a function that returns a list. Using a function here prevents requiring mcphub before it's loaded
-      -- custom_tools = function()
-      --   return {
-      --     require("mcphub.extensions.avante").mcp_tool(),
-      --   }
-      -- end,
-      disabled_tools = {
-        "list_files",
-        "search_files",
-        "read_file",
-        "create_file",
-        "rename_file",
-        "delete_file",
-        "create_dir",
-        "rename_dir",
-        "delete_dir",
-        "bash",
-        -- Already disabled
-        "run_python",
-        "git_commit",
-      },
+      custom_tools = function()
+        return {
+          require("mcphub.extensions.avante").mcp_tool(),
+        }
+      end,
+      -- disabled_tools = {
+      --   "list_files",
+      --   "search_files",
+      --   "read_file",
+      --   "create_file",
+      --   "rename_file",
+      --   "delete_file",
+      --   "create_dir",
+      --   "rename_dir",
+      --   "delete_dir",
+      --   "bash",
+      --   -- Already disabled
+      --   "run_python",
+      --   "git_commit",
+      -- },
     },
   },
   {

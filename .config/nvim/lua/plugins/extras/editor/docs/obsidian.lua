@@ -5,7 +5,8 @@ return {
   {
     -- "epwalsh/obsidian.nvim",
     "obsidian-nvim/obsidian.nvim", -- NOTE: Using a fork from the community
-    ft = "markdown",
+    -- ft = "markdown",
+    event = "BufReadPre " .. vim.fn.expand("~") .. "/Documents/obsidian/**.md",
     keys = {
       { prefix .. "o", "<cmd>ObsidianOpen<CR>", desc = "Open on App" },
       { prefix .. "g", "<cmd>ObsidianSearch<CR>", desc = "Grep" },

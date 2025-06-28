@@ -182,12 +182,22 @@ Here is the content from the file `%s`:
     provider = require("util.model.providers.gemini").model(Util.ai.models.GeminiFlash),
     system = "You are an expert programmer that gives constructive feedback. Review the changes in the user's git diff and the full context of modified files. Don't describe what the user has done. This is a diff of a pull request ready for review, and the user is trying to proof read it and check for any issues before marking it as ready for review.",
     create = function()
-      -- Get the diff against the main branch.
-      -- You might want to adjust this if your main branch has a different name (e.g., "master").
-      -- Using --staged will only show staged changes. If you want all uncommitted changes against main:
-      -- local git_diff = vim.fn.system({ "git", "--no-pager", "diff", "main" })
-      -- If you want staged changes against main (like a pre-commit PR review):
-      local git_diff = vim.fn.system({ "git", "--no-pager", "diff", "--staged", "main" })
+      -- Get the diff between two branches specified by the user
+      local branch1 = vim.fn.input("Enter first branch (base): ", "main")
+      local branch2 = vim.fn.input("Enter second branch (compare): ", "HEAD")
+
+      -- Get the diff between the specified branches
+      local git_diff = vim.fn.system({ "git", "--no-pager", "diff", branch1 .. ".." .. branch2 })
+      -- local git_diff = vim.fn.system({ "git", "--no-pager", "diff", "--staged", "main" })
+
+      -- Basic error check for git diff command
+      if not git_diff or git_diff == "" then
+        -- If there's no diff, you might want to inform the user or handle it gracefully.
+        -- For now, let's assume an empty diff means no changes to review.
+        -- You could also error out: error("No changes to review between branches.")
+        -- Or return a message indicating no diff:
+        return "No changes found when diffing " .. branch1 .. " against " .. branch2 .. ". Nothing to review."
+      end
 
       -- Basic error check for git diff command
       if not git_diff or git_diff == "" then

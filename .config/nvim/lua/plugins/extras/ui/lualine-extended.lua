@@ -72,7 +72,7 @@ return {
     end)
 
     table.insert(opts.sections.lualine_x, 2, { "lsp_status" })
-    table.insert(opts.sections.lualine_x, 2, require("util.lualine.avante"))
+    -- table.insert(opts.sections.lualine_x, 2, require("util.lualine.avante"))
     -- if vim.g.lualine_info_extras == false then
     --   -- table.insert(opts.sections.lualine_x, 2, lsp_status)
     --   table.insert(opts.sections.lualine_x, 2, { "lsp_status" })

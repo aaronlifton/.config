@@ -95,9 +95,11 @@ o.spellfile = config_path .. "/spell/en.utf-8.add"
 o.spelllang = "en_us" -- "en_us", "en"
 o.sps = "file:" .. config_path .. "/spell/sugg,best"
 -- o.startofline = true
-o.swapfile = false
+-- o.swapfile = false
+o.swapfile = true -- Needed for `recover` and `undo`
 o.textwidth = 80
 o.shell = "fish"
+-- o.winborder = "rounded"
 
 -- Disable annoying cmd line stuff
 -- o.showcmd = false

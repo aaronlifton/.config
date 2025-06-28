@@ -96,6 +96,14 @@ return {
       --   end,
       --   desc = "Leap Remote gx",
       -- },
+      {
+        "<leader>ol",
+        function()
+          require("leap.user").set_default_mappings()
+          vim.notify("Leap mappings set to new defaults", vim.log.levels.INFO)
+        end,
+        desc = "Set leap mappings",
+      },
     }),
     opts = {
       equivalence_classes = { " \t\r\n", "([{", ")]}", "'\"`" },

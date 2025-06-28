@@ -80,7 +80,7 @@ return {
     },
     --- @type avante.Config
     opts = {
-      -- Defaults: ~/.local/share/nvim/lazy/avante.nvim/lua/avante/config.lua:189
+      -- Defaults: ~/.local/share/nvim/lazy/avante.nvim/lua/avante/config.lua:268
       provider = "claude",
       -- mode = "agentic", -- The default mode for interaction. "agentic" uses tools to automatically generate code, "legacy" uses the old planning method to generate code.
       -- auto_suggestions_provider = "claude",
@@ -88,8 +88,10 @@ return {
       --   endpoint = "https://api.anthropic.com",
       --   model = "claude-3-7-sonnet-20250219",
       --   timeout = 30000, -- Timeout in milliseconds
-      --   temperature = 0,
-      --   max_tokens = 20480,
+      --   extra_request_body = {
+      --     temperature = 0.75,
+      --     max_tokens = 20480,
+      --   },
       -- },
       behaviour = {
         -- auto_focus_sidebar = true,
@@ -102,8 +104,10 @@ return {
         -- support_paste_from_clipboard = false,
         -- minimize_diff = true,
         -- enable_token_counting = true,
-        use_cwd_as_project_root = false,
+        use_cwd_as_project_root = true,
         -- auto_focus_on_diff_view = false,
+        ---@type boolean | string[] -- true: auto-approve all tools, false: normal prompts, string[]: auto-approve specific tools by name
+        auto_approve_tool_permissions = true, -- Defaultl: false - show permission prompts for all tools
       },
       -- Default keybindings: ~/.local/share/nvim/lazy/avante.nvim/lua/avante/config.lua:329
       mappings = {
@@ -364,18 +368,70 @@ return {
       return vim.list_extend(mappings, keys)
     end,
   },
+  -- {
+  --   "saghen/blink.cmp",
+  --   optional = true,
+  --   dependencies = {
+  --     "saghen/blink.compat",
+  --   },
+  --   opts = {
+  --     sources = {
+  --       compat = {
+  --         "avante_commands",
+  --         "avante_mentions",
+  --         "avante_files",
+  --       },
+  --     },
+  --     providers = {
+  --       avante = {
+  --         module = "blink-cmp-avante",
+  --         name = "Avante",
+  --       },
+  --     },
+  --   },
+  -- },
   {
-    "saghen/blink.cmp",
+    "Kaiser-Yang/blink-cmp-avante",
     optional = true,
-    dependencies = {
-      "saghen/blink.compat",
+    lazy = true,
+    specs = {
+      {
+        "Saghen/blink.cmp",
+        optional = true,
+        opts = {
+          sources = {
+            default = { "avante" },
+            providers = {
+              avante = { module = "blink-cmp-avante", name = "Avante" },
+            },
+          },
+        },
+      },
     },
-    opts = {
-      sources = {
-        compat = {
-          "avante_commands",
-          "avante_mentions",
-          "avante_files",
+  },
+  -- { -- if copilot.lua is available, default to copilot provider
+  --   "zbirenbaum/copilot.lua",
+  --   optional = true,
+  --   specs = {
+  --     {
+  --       "yetone/avante.nvim",
+  --       opts = {
+  --         provider = "copilot",
+  --         auto_suggestions_provider = "copilot",
+  --       },
+  --     },
+  --   },
+  -- },
+  {
+    "folke/snacks.nvim",
+    optional = true,
+    specs = {
+      {
+        "yetone/avante.nvim",
+        opts = {
+          selector = {
+            provider = "snacks",
+          },
         },
       },
     },

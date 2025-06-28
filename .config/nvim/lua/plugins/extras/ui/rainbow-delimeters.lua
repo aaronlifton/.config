@@ -16,7 +16,6 @@ local function init_strategy(threshold)
   end
 end
 
--- Not compatible with nvim 11?
 return {
   "HiPhish/rainbow-delimiters.nvim",
   event = "LazyFile",
@@ -30,12 +29,15 @@ return {
         lua = init_strategy(500),
         vimdoc = init_strategy(300),
         vim = init_strategy(300),
+        go = init_strategy(300),
       },
       blacklist = {
         "markdown",
         "markdown.mdx",
         "mchat",
         "log",
+        "AvanteChat",
+        "AvanteInput",
       },
       query = {
         [""] = "rainbow-delimiters",

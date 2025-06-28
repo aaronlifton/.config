@@ -2,8 +2,23 @@ return {
   {
     "windwp/nvim-autopairs",
     opts = {
-      fast_wrap = {},
       disable_filetype = { "vim" },
+      -- experimental
+      check_ts = true,
+      enable_check_bracket_line = true,
+      ignored_next_char = "[%w%.]", -- will ignore alphanumeric and `.` symbol
+      -- fast_wrap = {},
+      fast_wrap = {
+        map = "<M-e>",
+        chars = { "{", "[", "(", '"', "'" },
+        pattern = string.gsub([[ [%'%"%)%>%]%)%}%,] ]], "%s+", ""),
+        offset = 0, -- Offset from pattern match
+        end_key = "$",
+        keys = "qwertyuiopzxcvbnmasdfghjkl",
+        check_comma = true,
+        highlight = "Search",
+        highlight_grey = "Comment",
+      },
     },
     config = function(_, opts)
       require("nvim-autopairs").setup(opts)

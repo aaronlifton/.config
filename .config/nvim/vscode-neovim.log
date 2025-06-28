@@ -1,61 +1,18 @@
-2025-06-07T19:17:48.819Z MainController: Starting nvim: /opt/homebrew/bin/nvim -N --embed --cmd source /Users/alifton/.cursor/extensions/asvetliakov.vscode-neovim-1.18.22/runtime/vscode-neovim.vim -u $HOME/.config/nvim/init.lua
-2025-06-07T19:17:49.523Z MainController: Nvim info: {
+2025-06-13T18:29:27.043Z MainController: Starting nvim: /opt/homebrew/bin/nvim -N --embed --cmd source /Users/alifton/.cursor/extensions/asvetliakov.vscode-neovim-1.18.22/runtime/vscode-neovim.vim -u $HOME/.config/nvim/init.lua
+2025-06-13T18:29:28.293Z MainController: Nvim info: {
   nvimVersion: {
-    api_compatible: 0,
-    major: 0,
     minor: 11,
-    patch: 1,
-    prerelease: false,
-    build: null,
+    major: 0,
     api_level: 13,
-    api_prerelease: false
+    api_prerelease: false,
+    build: null,
+    patch: 1,
+    api_compatible: 0,
+    prerelease: false
   },
   logFile: '/Users/alifton/.local/state/nvim/log',
   configDir: '/Users/alifton/.config/nvim'
 }
-2025-06-07T19:17:49.527Z CursorManager: No editor for gridId: 1
-2025-06-07T19:17:50.542Z CursorManager: No editor for gridId: 2
-2025-06-07T19:17:50.550Z MessagesManager: 'E282: Cannot read from "$HOME/.config/nvim/init.lua"\n'
-2025-06-07T20:05:30.117Z CursorManager: No editor for gridId: 2
-2025-06-07T20:05:31.086Z CursorManager: No editor for gridId: 2
-2025-06-07T20:05:33.928Z CursorManager: No editor for gridId: 2
-2025-06-07T20:05:34.689Z CursorManager: No editor for gridId: 2
-2025-06-07T20:05:36.857Z CursorManager: No editor for gridId: 2
-2025-06-07T20:05:37.828Z CursorManager: No editor for gridId: 2
-2025-06-07T20:05:39.185Z CursorManager: No editor for gridId: 2
-2025-06-07T20:05:39.682Z CursorManager: No editor for gridId: 2
-2025-06-07T20:05:40.751Z CursorManager: No editor for gridId: 2
-2025-06-07T20:05:55.377Z CursorManager: No editor for gridId: 2
-2025-06-07T20:05:56.178Z CursorManager: No editor for gridId: 2
-2025-06-07T20:05:57.743Z CursorManager: No editor for gridId: 2
-2025-06-07T20:05:58.379Z CursorManager: No editor for gridId: 2
-2025-06-07T20:06:10.995Z CursorManager: No editor for gridId: 2
-2025-06-07T20:06:11.732Z CursorManager: No editor for gridId: 2
-2025-06-07T20:06:12.271Z CursorManager: No editor for gridId: 2
-2025-06-07T20:06:13.872Z CursorManager: No editor for gridId: 2
-2025-06-07T20:06:16.592Z CursorManager: No editor for gridId: 2
-2025-06-07T20:06:20.203Z CursorManager: No editor for gridId: 2
-2025-06-07T20:06:22.634Z CursorManager: No editor for gridId: 2
-2025-06-07T20:06:24.492Z CursorManager: No editor for gridId: 2
-2025-06-07T20:06:27.920Z CursorManager: No editor for gridId: 2
-2025-06-07T20:06:28.844Z CursorManager: No editor for gridId: 2
-2025-06-07T20:06:30.270Z CursorManager: No editor for gridId: 2
-2025-06-07T20:06:31.403Z CursorManager: No editor for gridId: 2
-2025-06-07T20:06:35.138Z CursorManager: No editor for gridId: 2
-2025-06-07T20:06:37.881Z CursorManager: No editor for gridId: 2
-2025-06-07T20:06:38.531Z CursorManager: No editor for gridId: 2
-2025-06-07T20:06:40.409Z CursorManager: No editor for gridId: 2
-2025-06-07T20:06:44.713Z CursorManager: No editor for gridId: 2
-2025-06-07T20:06:46.837Z CursorManager: No editor for gridId: 2
-2025-06-07T20:06:47.651Z CursorManager: No editor for gridId: 2
-2025-06-07T20:06:58.018Z CursorManager: No editor for gridId: 2
-2025-06-07T20:07:28.554Z CursorManager: No editor for gridId: 2
-2025-06-07T20:07:32.401Z CursorManager: No editor for gridId: 2
-2025-06-07T20:07:34.779Z CursorManager: No editor for gridId: 2
-2025-06-07T20:07:37.192Z CursorManager: No editor for gridId: 2
-2025-06-07T20:07:39.095Z CursorManager: No editor for gridId: 2
-2025-06-07T20:07:39.792Z CursorManager: No editor for gridId: 2
-2025-06-07T20:07:40.826Z CursorManager: No editor for gridId: 2
-2025-06-07T20:07:41.516Z CursorManager: No editor for gridId: 2
-2025-06-07T20:07:44.774Z CursorManager: No editor for gridId: 2
-2025-06-07T20:07:45.908Z CursorManager: No editor for gridId: 2
+2025-06-13T18:29:28.460Z CursorManager: No editor for gridId: 2
+2025-06-13T18:29:30.881Z MessagesManager: ''
+2025-06-13T18:29:31.156Z CursorManager: No editor for gridId: 7

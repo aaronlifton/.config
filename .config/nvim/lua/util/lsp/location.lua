@@ -48,6 +48,7 @@ function M.get_definition_source(loc)
   local start_line = loc.pos[1]
   local end_line = loc.end_pos[1]
   local filename = loc.file
+  local file_lines = {}
   if vim.fn.filereadable(filename) == 1 then file_lines = vim.fn.readfile(filename) end
 
   -- Ensure we have valid lines to work with
@@ -63,6 +64,46 @@ function M.get_definition_source(loc)
   lines = require("util.selection").normalize_indentation(lines)
   local content = table.concat(lines, "\n")
   return start_line, end_line, content
+end
+
+--- Get source text from a definition result
+---@param result table The result object containing definition information
+---@return string|nil source_text The source text from the definition
+---@return string|nil error_message Error message if something went wrong
+function M.get_source_text_from_result(result)
+  -- Check if we have valid input
+  if not result or not result.definition or not result.definition.filename then
+    return nil, "Invalid result object or missing filename"
+  end
+  
+  local filename = result.definition.filename
+  
+  -- Get line information
+  local start_line = 1
+  local end_line = nil
+  
+  if result.definition.declaration then
+    start_line = result.definition.declaration.start_line or start_line
+    end_line = result.definition.declaration.end_line
+  end
+  
+  -- Try to read the file
+  if vim.fn.filereadable(filename) ~= 1 then
+    return nil, "Could not read file: " .. filename
+  end
+  
+  local file_lines = vim.fn.readfile(filename)
+  
+  -- Extract the relevant lines
+  local content = {}
+  for i = start_line, (end_line or #file_lines) do
+    if file_lines[i] then
+      table.insert(content, file_lines[i])
+    end
+  end
+  
+  -- Join the lines into a single string
+  return table.concat(content, "\n")
 end
 
 ---@param loc util.lsp.location.loc[]

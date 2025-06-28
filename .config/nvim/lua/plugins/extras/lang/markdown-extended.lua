@@ -1,6 +1,8 @@
--- LazyVim.on_very_lazy(function()
---   vim.treesitter.language.register("markdown", "mdx")
--- end)
+LazyVim.on_very_lazy(function()
+  vim.filetype.add({
+    extension = { mdc = "markdown.mdc" },
+  })
+end)
 
 local fts = {
   "markdown",

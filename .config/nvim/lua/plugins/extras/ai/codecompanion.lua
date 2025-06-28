@@ -336,5 +336,15 @@ return {
         size = { width = 70 },
       })
     end,
+    {
+      "saghen/blink.cmp",
+      opts = {
+        sources = {
+          per_filetype = {
+            codecompanion = { "codecompanion" },
+          },
+        },
+      },
+    },
   },
 }

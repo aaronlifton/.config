@@ -11,8 +11,14 @@ return {
         -- input = { "%[().*()%]%(.*%)" }, -- Matches [text](url)
         output = { left = "[", right = "]()" },
       },
+      ["\\r"] = {
+        output = function()
+          local opts = { left = "\r", right = "\r" }
+          return opts
+        end,
+      },
       -- L = {
-      --   input = { "%[().-()%]%(.-%)" },
+      --   input = { "%[().-()%]%(.-%)"},
       --   output = function()
       --     local link = require("mini.surround").user_input("Link: ")
       --     return { left = "[", right = "](" .. link .. ")" }

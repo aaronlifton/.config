@@ -1,12 +1,16 @@
 if not vim.g.neovide then return {} end
 
+local M = {}
+
+vim.api.nvim_echo({ { vim.inspect("Welcome to Neovide version %s", vim.g.neovide_version), "Normal" } }, true, {})
+
 local map = vim.keymap.set
 local g = vim.g
 
 local state = {
   current_font = nil,
 }
-local default_linespace = 8 -- default 0
+-- local default_linespace = 8 -- default 0
 
 -- Font
 -- See https://github.com/neovide/neovide/blob/main/website/docs/configuration.md#display
@@ -73,7 +77,7 @@ local fonts = {
   },
 }
 
-local function set_font(name)
+function M.set_font(name)
   local font = fonts[name:lower()]
   if not font then vim.notify("Font " .. name .. " not found", vim.log.levels.ERROR) end
 
@@ -105,13 +109,13 @@ local function set_font2(name, size, options)
 end
 
 -- Set default font
--- set_font("jetbrains")
--- set_font("monolisa")
--- set_font("inputmono")
--- set_font("berkeley")
--- set_font("lilex")
-set_font("recursive")
--- set_font2("BerkeleyMono Nerd Font", 18, "#e-subpixelantialias")
+-- M.set_font("jetbrains")
+M.set_font("monolisa")
+-- M.set_font("inputmono")
+-- M.set_font("berkeley")
+-- M.set_font("lilex")
+-- M.set_font("recursive")
+-- M.set_font2("BerkeleyMono Nerd Font", 18, "#e-subpixelantialias")
 
 vim.notify("Font set to " .. vim.o.guifont, vim.log.levels.INFO)
 vim.opt.winblend = 20
@@ -132,6 +136,68 @@ ResetGuiFont = function()
   vim.g.gui_font_size = fonts[state.current_font].size
   RefreshGuiFont()
 end
+
+---@param scale_factor number
+---@return number
+local function clamp_scale_factor(scale_factor)
+  return math.max(math.min(scale_factor, vim.g.neovide_max_scale_factor), vim.g.neovide_min_scale_factor)
+end
+
+---@param scale_factor number
+---@param clamp? boolean
+local function set_scale_factor(scale_factor, clamp)
+  vim.g.neovide_scale_factor = clamp and clamp_scale_factor(scale_factor) or scale_factor
+end
+
+local function reset_scale_factor()
+  vim.g.neovide_scale_factor = vim.g.neovide_initial_scale_factor
+end
+
+---@param increment number
+---@param clamp? boolean
+local function change_scale_factor(increment, clamp)
+  set_scale_factor(vim.g.neovide_scale_factor + increment, clamp)
+end
+
+-- Command definitions
+local commands = {
+  NeovideSetScaleFactor = {
+    function(event)
+      local scale_factor, option = tonumber(event.fargs[1]), event.fargs[2]
+
+      if not scale_factor then
+        vim.notify(
+          "Error: scale factor argument is nil or not a valid number.",
+          vim.log.levels.ERROR,
+          { title = "Recipe: neovide" }
+        )
+        return
+      end
+
+      set_scale_factor(scale_factor, option ~= "force")
+    end,
+    nargs = "+",
+    desc = "Set Neovide scale factor",
+  },
+  NeovideResetScaleFactor = {
+    reset_scale_factor,
+    desc = "Reset Neovide scale factor",
+  },
+}
+
+-- Register commands
+for name, def in pairs(commands) do
+  vim.api.nvim_create_user_command(name, def[1], {
+    nargs = def.nargs or 0,
+    desc = def.desc,
+  })
+end
+
+vim.g.neovide_increment_scale_factor = g.neovide_increment_scale_factor or 0.1
+vim.g.neovide_min_scale_factor = g.neovide_min_scale_factor or 0.7
+vim.g.neovide_max_scale_factor = g.neovide_max_scale_factor or 2.0
+vim.g.neovide_initial_scale_factor = g.neovide_scale_factor or 1
+vim.g.neovide_scale_factor = g.neovide_scale_factor or 1
 
 local opts = { noremap = true, silent = true }
 map({ "n", "i" }, "<C-=>", function()
@@ -178,13 +244,18 @@ g.neovide_padding_right = 5
 g.neovide_padding_left = 5
 g.neovide_padding_bottom = 0
 
+-- Osx
 g.neovide_window_blurred = true
+g.neovide_opacity = 0.95
+g.neovide_normal_opacity = 0.95
 g.neovide_floating_blur_amount_x = 5.0
 g.neovide_floating_blur_amount_y = 5.0
 -- g.neovide_floating_blur_amount_x = 2.0
 -- g.neovide_floating_blur_amount_y = 2.0
 g.neovide_floating_shadow = true
 g.neovide_floating_z_height = 10
+
+g.experimental_layer_grouping = true
 
 -- g.neovide_light_angle_degrees = 45
 -- g.neovide_light_angle_degrees = 45
@@ -304,6 +375,6 @@ end, { noremap = true, silent = true })
 
 -- g.neovide_transparency = 0.0
 -- g.transparency = 0.95
--- g.neovide_background_color = '#0f1117' .. vim.fn.printf('%x', vim.fn.float2nr(255 * g.transparency))
+-- g.neovide_background_color = "#0f1117" .. vim.fn.printf("%x", vim.fn.float2nr(255 * g.neovide_opacity))
 
-return {}
+return M

@@ -17,7 +17,7 @@ return {
   { "gbprod/yanky.nvim", opts = {} },
   { "smoka7/multicursor.nvim", opts = {} },
   { "ggandor/leap.nvim", dependencies = { "tpope/vim-repeat" } },
-  { "smjonas/inc-rename.nvim" },
+  { "sm/inc-rename.nvim" },
 
   -- Git
   { "sindrets/diffview.nvim", dependencies = { "nvim-lua/plenary.nvim" } },

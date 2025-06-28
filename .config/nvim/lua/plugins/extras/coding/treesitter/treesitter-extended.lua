@@ -58,17 +58,54 @@ return {
           goto_next_start = {
             -- ["]]"] = "@structure.outer",
             ["]<C-f>"] = "@function.inner",
+            ["]f"] = { query = "@call.outer", desc = "Next function call start" },
+            ["]o"] = { query = "@conditional.outer", desc = "Next conditional start" },
+            ["]l"] = { query = "@loop.outer", desc = "Next loop start" },
+
+            -- You can pass a query group to use query from `queries/<lang>/<query_group>.scm file in your runtime path.
+            -- Below example nvim-treesitter's `locals.scm` and `folds.scm`. They also provide highlights.scm and indent.scm.
+            ["]s"] = { query = "@scope", query_group = "locals", desc = "Next scope" },
+            ["]z"] = { query = "@fold", query_group = "folds", desc = "Next fold" },
           },
           goto_next_end = {
             -- ["]["] = "@structure.outer",
+            ["]O"] = { query = "@conditional.outer", desc = "Next conditional end" },
+            ["]L"] = { query = "@loop.outer", desc = "Next loop end" },
           },
           goto_previous_start = {
             -- ["[["] = "@structure.outer",
+            ["[o"] = { query = "@conditional.outer", desc = "Prev conditional start" },
+            ["[l"] = { query = "@loop.outer", desc = "Prev loop start" },
           },
           goto_previous_end = {
             -- ["[]"] = "@structure.outer",
+            ["[O"] = { query = "@conditional.outer", desc = "Prev conditional end" },
+            ["[L"] = { query = "@loop.outer", desc = "Prev loop end" },
           },
         },
+        -- Experimental replacement of mini.ai
+        -- select = {
+        --   enable = true,
+        --
+        --   -- Automatically jump forward to textobj, similar to targets.vim
+        --   lookahead = true,
+        --   keymaps = {
+        --     ["aa"] = { query = "@parameter.outer", desc = "Select outer part of a parameter/argument" },
+        --     ["ia"] = { query = "@parameter.inner", desc = "Select inner part of a parameter/argument" },
+        --
+        --     ["al"] = { query = "@loop.outer", desc = "Select outer part of a loop" },
+        --     ["il"] = { query = "@loop.inner", desc = "Select inner part of a loop" },
+        --
+        --     ["af"] = { query = "@call.outer", desc = "Select outer part of a function call" },
+        --     ["if"] = { query = "@call.inner", desc = "Select inner part of a function call" },
+        --
+        --     ["am"] = { query = "@function.outer", desc = "Select outer part of a method/function definition" },
+        --     ["im"] = { query = "@function.inner", desc = "Select inner part of a method/function definition" },
+        --
+        --     ["ac"] = { query = "@class.outer", desc = "Select outer part of a class" },
+        --     ["ic"] = { query = "@class.inner", desc = "Select inner part of a class" },
+        --   },
+        -- },
       },
       matchup = { enable = true },
       -- TODO: Investigate what this does

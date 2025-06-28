@@ -17,25 +17,38 @@ if LazyVim.has("mini.ai") then
       C = ai.gen_spec.treesitter({
         a = { "@rspec.context" },
         i = { "@rspec.context" },
+        desc = "RSpec context",
       }),
       I = ai.gen_spec.treesitter({
         a = { "@rspec.it" },
         i = { "@rspec.it" },
+        desc = "RSpec it block",
       }),
       E = ai.gen_spec.treesitter({
         a = { "@rspec.expect" },
         i = { "@rspec.expect" },
+        desc = "RSpec expect",
       }),
       M = ai.gen_spec.treesitter({
         a = { "@rspec.matcher" },
         i = { "@rspec.matcher" },
+        desc = "RSpec matcher",
       }),
       D = ai.gen_spec.treesitter({
         a = { "@rspec.describe" },
         i = { "@rspec.describe" },
+        desc = "RSpec describe block",
       }),
     },
   }
+  
+  -- Programmatically generate keymaps from the ai_config
+  local ai_keymaps = require("util.ai_keymaps")
+  ai_keymaps.generate_buffer_keymaps({
+    mode = {"o", "x"}, -- Generate for both operator-pending and visual modes
+    prefix = "",       -- No prefix needed
+    buffer = true      -- Make these buffer-local
+  })
 end
 
 if LazyVim.is_loaded("nvim-treesitter") and LazyVim.is_loaded("nvim-treesitter-textobjects") then

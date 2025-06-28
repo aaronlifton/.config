@@ -34,6 +34,7 @@ end, desc = "Rename Tab"})
 
 return {
   "akinsho/bufferline.nvim",
+  optional = true,
   keys = keys,
   opts = function(_, opts)
     opts.options = opts.options or {}
