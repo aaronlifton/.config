@@ -7,6 +7,7 @@ grid.MARGINY = 0
 grid.GRIDWIDTH = 2
 grid.GRIDHEIGHT = 2
 
+---@class Window
 local M = {}
 
 M.restorable_frames = {}
@@ -21,7 +22,7 @@ function M.push(params)
   local screenFrame = screen:frame()
 
   local moved = false
-  function cas(old, new)
+  local function cas(old, new)
     if old ~= new then moved = true end
     return new
   end
@@ -103,10 +104,29 @@ M.check_frontmost_window = function(target_bundle_id)
 
     -- Check if the frontmost app is Raycast or ChatGPT, and if it is an overlay
     if bundleID == target_bundle_id and not focused_window:isStandard() then
-      -- hs.alert.show("Raycast Overlay Window Detected")
+      hs.alert.show("Raycast Overlay Window Detected")
       M.bring_app_to_front(target_bundle_id)
     end
   end
+end
+
+--- Activate an application and move its window to a specific layout
+--- e.g. `activate_and_move_to_layout("Calendar", Layout.first_two_thirds)`
+---@param appName string
+---@param layout WindowLayout
+---@param beforeFn fun(win: Window)|nil
+---@param afterFn fun(win: Window)|nil
+function M.activate_and_move_to_layout(appName, layout, beforeFn, afterFn)
+  local appInstance = hs.application.get(appName)
+  if appInstance then
+    appInstance:activate()
+  else
+    hs.application.launchOrFocusByBundleID(appName)
+  end
+  if beforeFn then beforeFn(M) end
+  local move = M.move_and_resize(layout)
+  move()
+  if afterFn then afterFn(M) end
 end
 
 return M

@@ -23,9 +23,10 @@ local Layout = require("keys").layouts
 local bindings = {
   -- [A]I
   -- BetterDisplay
-  b = function()
-    betterDisplayCli.toggleVirtualScreen()
-  end,
+  -- b = function()
+  --   betterDisplayCli.toggleVirtualScreen()
+  -- end,
+  b = "BetterDisplay",
   -- c = "Google Chrome",
   c = function()
     -- Function to switch to Chrome window on Built-in Display
@@ -158,20 +159,36 @@ local bindings = {
   n = "Neovide",
   o = "Obsidian",
   p = "TablePlus",
-  s = "Slack",
+  s = function()
+    hs.urlevent.openURL("raycast://extensions/raycast/system-preferences/system-preferences")
+
+    Window.activate_and_move_to_layout("Slack", Layout.slack, function(win)
+      win.move_one_screen_south()
+    end)
+  end,
   -- l = "calendar",
+  -- l = {
+  --   c = function()
+  --     Window.activate_and_move_to_layout("Calendar", Layout.first_two_thirds, function(win)
+  --       win.move_one_screen_south()
+  --     end)
+  --   end,
+  --   s = function()
+  --     hs.urlevent.openURL("raycast://extensions/raycast/calendar/my-schedule")
+  --   end,
+  -- },
   l = function()
-    local win = require("functions.window")
-    win.move_one_screen_south()
-    win.move_and_resize(Layout.first_two_thirds)
+    Window.activate_and_move_to_layout("Calendar", Layout.first_two_thirds, function(win)
+      win.move_one_screen_south()
+    end)
   end,
   u = "Cursor",
   w = "Warp",
   -- Terminal
   t = {
-    ["padenter"] = function()
-      hs.execute("kitten quick-access-terminal", true)
-    end,
+    -- ["padenter"] = function()
+    --   hs.execute("kitten quick-access-terminal", true)
+    -- end,
     a = "Alacritty",
     g = "Ghostty",
     w = "Warp",
@@ -187,7 +204,7 @@ local bindings = {
   -- Hammerspoon
   h = {
     o = "Hammerspoon",
-    C = function()
+    c = function()
       hs.urlevent.openURL("raycast://extensions/bjrmatos/hammerspoon/open-console")
     end,
     r = function()
@@ -207,10 +224,8 @@ local bindings = {
     end,
   },
   ["1"] = "1Password",
-  ["2"] = function()
-    hs.urlevent.openURL("raycast://extensions/raycast/calendar/my-schedule")
-  end,
   -- ["9"] = "System Preferences"
+  ["7"] = "Spotify",
   ["8"] = function()
     hs.urlevent.openURL("raycast://extensions/raycast/system-preferences/system-preferences")
   end,

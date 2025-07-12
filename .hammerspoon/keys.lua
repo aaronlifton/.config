@@ -84,47 +84,72 @@ end
 -- Define common window layouts using parameters for window.move_and_resize
 -- These return the { top, left, width, height } tables relative to the screen.
 -- These are just data definitions, not functions that perform actions yet.
+
+---@alias WindowLayoutDef { top: number?, left: number?, width: number?, height: number? }
+---@alias WindowLayout WindowLayoutDef|fun(...):WindowLayoutDef
+
+--- WindowLayout[]
 M.layouts = {}
 
 -- Full screen layout (relative 0-1)
+---@type WindowLayout
 M.layouts.full = { top = 0, left = 0, width = 1, height = 1 }
 
 -- Halves (relative 0-1)
+---@type WindowLayout
+---@type WindowLayout
 M.layouts.left_half = { top = 0, left = 0, width = 0.5, height = 1 }
+---@type WindowLayout
 M.layouts.right_half = { top = 0, left = 0.5, width = 0.5, height = 1 }
+---@type WindowLayout
 M.layouts.top_half = { top = 0, left = 0, width = 1, height = 0.5 }
+---@type WindowLayout
 M.layouts.bottom_half = { top = 0.5, left = 0, width = 1, height = 0.5 }
 -- Note: maximize_height was `{ top = 0, height = 1 }` - window.move_and_resize
 -- needs all four. We can assume left=0, width=1 if they aren't provided,
 -- but being explicit is clearer. Let's define it fully or handle partials
 -- in move_and_resize. Assuming move_and_resize handles partials based on original.
 -- Let's keep the original definition and trust window.move_and_resize.
+---@type WindowLayout
 M.layouts.maximize_height = { top = 0, height = 1 } -- Only sets top and height
 
 -- Quarters (relative 0-1)
+---@type WindowLayout
 M.layouts.top_left_quarter = { top = 0, left = 0, width = 0.5, height = 0.5 }
+---@type WindowLayout
 M.layouts.top_right_quarter = { top = 0, left = 0.5, width = 0.5, height = 0.5 }
+---@type WindowLayout
 M.layouts.bottom_left_quarter = { top = 0.5, left = 0, width = 0.5, height = 0.5 }
+---@type WindowLayout
 M.layouts.bottom_right_quarter = { top = 0.5, left = 0.5, width = 0.5, height = 0.5 }
 
 -- Thirds (Horizontal) (relative 0-1)
+---@type WindowLayout
 M.layouts.first_third = { top = 0, left = 0, width = 1 / 3, height = 1 }
+---@type WindowLayout
 M.layouts.middle_third = { top = 0, left = 1 / 3, width = 1 / 3, height = 1 }
+---@type WindowLayout
 M.layouts.last_third = { top = 0, left = 2 / 3, width = 1 / 3, height = 1 }
 
 -- Two Thirds (Horizontal) (relative 0-1)
+---@type WindowLayout
 M.layouts.first_two_thirds = { top = 0, left = 0, width = 2 / 3, height = 1 }
+---@type WindowLayout
 M.layouts.last_two_thirds = { top = 0, left = 1 / 3, width = 2 / 3, height = 1 }
 -- Slack layout - Note: left = (1 / 8) + 0.04 seems to be a fixed offset calculation.
 -- Let's keep the calculation as is for now.
+---@type WindowLayout
 M.layouts.slack = { left = (1 / 8) + 0.04, width = (7 / 8) - 0.04 } -- Height and top are assumed 1, 0 by move_and_resize?
 
 -- Last Thirds (Vertical - seems like a typo in original comment, these are partials)
 -- These combine horizontal thirds with vertical partials.
+---@type WindowLayout
 M.layouts.last_third_bot23 = { top = 1 / 3, left = 2 / 3, width = 1 / 3, height = 2 / 3 }
+---@type WindowLayout
 M.layouts.last_third_top13 = { top = 0, left = 2 / 3, width = 1 / 3, height = 1 / 3 }
 
 -- Generic Centering Function (returns layout parameters)
+--- @type WindowLayout
 function M.layouts.centered(width_ratio, height_ratio)
   local width = width_ratio or 1 -- Default to full width if not specified
   local height = height_ratio or 1 -- Default to full height if not specified
@@ -200,6 +225,9 @@ end
 --   - A layout table (e.g., M.layouts.full) -> will be wrapped in apply_layout_thunk
 --   - A function (e.g., make_larger) -> will be called directly
 -- use_restore: if true, use bind_with_restore; otherwise, use hs.hotkey.bind
+---@alias KeyBinding { mod: string[], key: string, action: WindowLayout|fun(), use_restore: boolean? }
+
+--- @type { [string]: KeyBinding[] }
 M.bindings = {
   -- Window Layouts (using move_and_resize)
   -- Screenshot: ⌘⇧ Z
@@ -214,13 +242,13 @@ M.bindings = {
   -- Screenshot: ⌘⌥ K
   { mod = M.mod.cmdAlt, key = "k", action = M.layouts.bottom_right_quarter },
 
-  -- Screenshot: ⌘⌥ L - Center (Assuming 4/5 centered)
-  { mod = M.mod.cmdAlt, key = ";", action = M.layouts.centered(4 / 5, 4 / 5), use_restore = true }, -- Toggle Centered 4/5
+  -- Screenshot: ⌘⌥ L - Center (3/4 centered)
+  { mod = M.mod.cmdAlt, key = ";", action = M.layouts.centered(3 / 4, 3 / 4) }, -- Toggle Centered 3/4
 
-  -- Screenshot: ⌘⌥ L - Center (Assuming 2/3 centered)
-  { mod = M.mod.cmdAlt, key = "l", action = M.layouts.centered(2 / 3, 2 / 3), use_restore = true }, -- Toggle Centered 2/3
+  -- Screenshot: ⌘⌥ L - Center (2/3 centered)
+  { mod = M.mod.cmdAlt, key = "l", action = M.layouts.centered(2 / 3, 2 / 3) }, -- Toggle Centered 2/3
 
-  -- Screenshot: ⌘⌥ F - Center Third (Assuming 1/3 centered)
+  -- Screenshot: ⌘⌥ F - Center Third (1/3 centered)
   { mod = M.mod.cmdAlt, key = "f", action = M.layouts.centered(1 / 3, 1 / 3), use_restore = true }, -- Toggle Centered 1/3
 
   -- Screenshot: ⌘⌥ D - First Third (Left third)
@@ -380,7 +408,10 @@ M.bindings = {
   -- stylua: ignore end
 }
 
+---@alias FKeyMap {number_key: string, f_key: string}
+
 -- Add Function Key bindings using a loop
+--- @type FKeyMap[]
 local fkey_mappings = {
   { number_key = "1", f_key = "f1" },
   { number_key = "2", f_key = "f2" },
