@@ -69,9 +69,32 @@ return vim.tbl_extend("force", require("model.prompts.chats"), {
     system = "You are an expert programmer that gives constructive feedback. Review the changes in the user's git diff and the full context of modified files. Don't describe what the user has done. This is a diff of a pull request ready for review, and the user is trying to proof read it and check for any issues before marking it as ready for review.",
     create = function()
       local cwd = LazyVim.root.get()
+      local generate_diff_cmd = function(branch, diftool)
+        local branchstr = ("%s...HEAD"):format(branch)
+
+        if difftool == nil then
+          return { "git", "-C", cwd, "diff", branchstr, "-U3", "--function-context", "-M", "-w" }
+        else
+          return {
+            "git",
+            "-c",
+            "diff.tool",
+            difftool,
+            "-C",
+            cwd,
+            "diff",
+            branchstr,
+            "-U3",
+            "--function-context",
+            "-M",
+            "-w",
+          }
+        end
+      end
       -- Using -U3 for 3 lines of context, --function-context to show full function changes
       -- and -M to detect moved lines
-      local diff_cmd = { "git", "-C", cwd, "diff", "main...HEAD", "-U3", "--function-context", "-M", "-w" }
+      -- local diff_cmd = { "git", "-C", cwd, "diff", "main...HEAD", "-U3", "--function-context", "-M", "-w" }
+      local diff_cmd = generate_diff_cmd("main", "delta")
       local git_diff = vim.fn.system(diff_cmd)
 
       if vim.v.shell_error ~= 0 then
@@ -79,7 +102,8 @@ return vim.tbl_extend("force", require("model.prompts.chats"), {
         git_diff = vim.fn.system(diff_cmd)
       end
 
-      if not git_diff:match("^diff") then error("Git error:\n" .. git_diff) end
+      -- Uncomment if difftool is not difftastic
+      -- if not git_diff:match("^diff") then error("Git error:\n" .. git_diff) end
 
       -- Get list of changed files
       local files_cmd = { "git", "-C", cwd, "diff", "--name-only", "main...HEAD" }

@@ -29,7 +29,10 @@ return {
       -- { "hrsh7th/cmp-cmdline", lazy = true },
       { "hrsh7th/cmp-nvim-lua", lazy = true },
       { "chrisgrieser/cmp_yanky" },
-      { "Snikimonkd/cmp-go-pkgs" },
+      {
+        "Snikimonkd/cmp-go-pkgs",
+        branch = "minor-tweaks",
+      },
     },
     keys = {
       { "<leader>ciC", "<cmd>CmpStatus<CR>", desc = "Cmp Status" },

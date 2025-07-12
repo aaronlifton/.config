@@ -140,7 +140,7 @@ return {
         position = "right", -- the position of the sidebar
         wrap = true, -- similar to vim.o.wrap
         input = {
-          height = 12, -- Height of the input window in vertical layout
+          height = 36, -- Height of the input window in vertical layout
         },
       },
       repo_map = {
@@ -163,6 +163,7 @@ return {
         local ok, mcphub_ext = pcall(require, "mcphub.extensions.avante")
         if ok then mcphub_tool = mcphub_ext.mcp_tool() end
 
+        --- @type AvanteLLMTool[]
         return {
           {
             name = "run_go_tests", -- Unique name for the tool
@@ -202,6 +203,72 @@ return {
               local cmd = "go test -v"
               if params.tag_name then cmd = cmd .. " -tags=" .. params.tag_name end
               return vim.fn.system(string.format("%s %s", cmd, target))
+            end,
+          },
+          {
+            name = "run_ginkgo_tests", -- Unique name for the tool
+            description = "Run Ginkgo tests with optional focus pattern and environment file", -- Description shown to AI
+            param = { -- Input parameters (optional)
+              type = "table",
+              fields = {
+                {
+                  name = "target",
+                  description = "Package or directory to test (e.g. './modules/asset-service/v2/internal/test/component')",
+                  type = "string",
+                  optional = true,
+                },
+                {
+                  name = "focus",
+                  description = "Focus pattern to run specific tests (e.g. 'SERVER - PutUserRoleCredentialUser')",
+                  type = "string",
+                  optional = true,
+                },
+                {
+                  name = "env_file",
+                  description = "Environment file to use (default: '.env.test')",
+                  type = "string",
+                  optional = true,
+                },
+                {
+                  name = "tags",
+                  description = "Build tags to use (default: 'component')",
+                  type = "string",
+                  optional = true,
+                },
+              },
+            },
+            returns = { -- Expected return values
+              {
+                name = "result",
+                description = "Result of the ginkgo test run",
+                type = "string",
+              },
+              {
+                name = "error",
+                description = "Error message if the test run was not successful",
+                type = "string",
+                optional = true,
+              },
+            },
+            func = function(params, on_log, on_complete) -- Custom function to execute
+              local target = params.target or "./..."
+              local env_file = params.env_file or ".env.test"
+              local tags = params.tags or "component"
+
+              -- ginkgo --json-report=report.json
+              local cmd = string.format("godotenv -f %s ginkgo --tags=%s", env_file, tags)
+
+              if params.focus and params.focus ~= "" then
+                -- Escape quotes in the focus pattern for shell safety
+                local escaped_focus = params.focus:gsub('"', '\\"')
+                cmd = cmd .. string.format(' --focus="%s"', escaped_focus)
+              end
+
+              cmd = cmd .. " -v " .. target
+
+              on_log("Running command: " .. cmd)
+              local ginkgo_output = vim.fn.system(cmd)
+              return ginkgo_output
             end,
           },
           {

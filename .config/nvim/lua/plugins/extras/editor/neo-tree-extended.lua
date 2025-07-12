@@ -129,10 +129,12 @@ return {
         end,
         -- https://github.com/UnicornDot/Astrovim/blob/b3cdce0c3cb3982a56203b8ba3cddcea584a6937/lua/plugins/neo-tree.lua#L45
         copy_absolute_path = function(state)
+          if not state or not state.tree then return end
           local absolute_path = state.tree:get_node():get_id()
           vim.fn.setreg("+", absolute_path)
         end,
         copy_relative_path = function(state)
+          if not state or not state.tree then return end
           local absolute_path = state.tree:get_node():get_id()
           local relative_path = M.remove_cwd(absolute_path)
           vim.fn.setreg("+", relative_path)

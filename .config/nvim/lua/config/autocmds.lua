@@ -446,9 +446,10 @@ ac("User", {
 })
 
 ac("BufWritePost", {
-  pattern = "*.go",
+  pattern = vim.fn.expand("~/.config/karabiner.edn"),
   callback = function()
+    vim.notify("Running gokuw...", vim.log.levels.INFO, { title = "Karabiner" })
     vim.cmd("silent! !gokuw")
   end,
-  desc = "Run gokuw after saving Go files",
+  desc = "Run gokuw after saving karabiner.edn",
 })

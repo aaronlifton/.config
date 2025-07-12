@@ -1,86 +1,59 @@
+local skip = {
+  notify = {
+    "No information available",
+    "textDocument/codeLens",
+    "Query error",
+    -- https://github.com/yioneko/vtsls/issues/159
+    "Request textDocument/inlayHint failed",
+    "Unable to init vim.regex",
+    "getting file for InlayHint",
+    "not supported by",
+    "LSP error",
+    -- "typed: false",
+    -- "TypeScript Server Error",
+  },
+  lsp = {
+    progress = {
+      "Searching",
+      "Processing",
+      "semantic token",
+    },
+  },
+}
+
 return {
   "folke/noice.nvim",
   optional = true,
   opts = function(_, opts)
-    vim.list_extend(opts.routes, {
-      {
+    local routes = {}
+
+    for _, pattern in ipairs(skip.notify) do
+      table.insert(routes, {
         filter = {
           event = "notify",
-          find = "No information available",
+          find = pattern,
         },
         opts = {
           skip = true,
         },
-      },
-      {
+      })
+    end
+
+    for _, pattern in ipairs(skip.lsp.progress) do
+      table.insert(routes, {
         filter = {
           event = "lsp",
           kind = "progress",
-          find = "Searching",
+          find = pattern,
         },
         opts = {
           skip = true,
         },
-      },
-      {
-        filter = {
-          event = "lsp",
-          kind = "progress",
-          find = "Processing",
-        },
-        opts = {
-          skip = true,
-        },
-      },
-      {
-        filter = {
-          event = "lsp",
-          kind = "progress",
-          find = "semantic token",
-        },
-        opts = {
-          skip = true,
-        },
-      },
-      {
-        filter = {
-          event = "notify",
-          find = "textDocument/codeLens",
-        },
-        opts = {
-          skip = true,
-        },
-      },
-      {
-        filter = {
-          event = "notify",
-          find = "Query error",
-        },
-        opts = {
-          skip = true,
-        },
-      },
-      -- https://github.com/yioneko/vtsls/issues/159
-      {
-        filter = {
-          event = "notify",
-          find = "Request textDocument/inlayHint failed",
-        },
-        opts = {
-          skip = true,
-        },
-      },
-      {
-        filter = {
-          event = "notify",
-          -- [Fzf-lua] Unable to init vim.regex...
-          find = "Unable to init vim.regex",
-        },
-        opts = {
-          skip = true,
-        },
-      },
-    })
+      })
+    end
+
+    vim.list_extend(opts.routes, routes)
+
     opts.presets.lsp_doc_border = true
     -- opts.presets.bottom_search = false
     if LazyVim.has_extra("coding.nvim-cmp") then opts.popupmenu = { backend = "cmp" } end

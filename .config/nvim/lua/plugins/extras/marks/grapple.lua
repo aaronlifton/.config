@@ -83,7 +83,28 @@ return {
     keys = keys,
     opts = {
       scope = "git_branch",
+      -- Defaults
+      -- win_opts = { -- Can be fractional
+      --   width = 80,
+      --   height = 12,
+      --   row = 0.5,
+      --   col = 0.5,
+      --
+      --   relative = "editor",
+      --   border = "single",
+      --   focusable = false,
+      --   style = "minimal",
+      --
+      --   title = "Grapple", -- fallback title for Grapple windows
+      --   title_pos = "center",
+      --   title_padding = " ", -- custom: adds padding around window title
+      --
+      --   -- footer = "", -- disable footer
+      --   footer_pos = "center",
+      -- },
       win_opts = {
+        width = 100, -- 120
+        -- row = 0.10, -- display at top
         border = "rounded",
         footer = "", -- disable footer
       },

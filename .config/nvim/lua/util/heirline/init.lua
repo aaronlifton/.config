@@ -235,16 +235,103 @@ M.SeparatedPath = {
   },
 }
 
-local Root = {
-  provider = root_dir[1],
-  -- color = root_dir["color"],
-  condition = root_dir["cond"],
+-- LazyVim-style root directory component
+M.RootDir = {
+  provider = function()
+    local cwd = LazyVim.root.cwd()
+    local root = LazyVim.root.get({ normalize = true })
+    local name = vim.fs.basename(root)
+
+    if root == cwd then
+      -- root is cwd
+      return name
+    elseif root:find(cwd, 1, true) == 1 then
+      -- root is subdirectory of cwd
+      return name
+    elseif cwd:find(root, 1, true) == 1 then
+      -- root is parent directory of cwd
+      return name
+    else
+      -- root and cwd are not related
+      return name
+    end
+  end,
+  condition = function()
+    local cwd = LazyVim.root.cwd()
+    local root = LazyVim.root.get({ normalize = true })
+    local name = vim.fs.basename(root)
+
+    if root == cwd then
+      return true -- Show when root is cwd
+    elseif root:find(cwd, 1, true) == 1 then
+      return true -- Show when root is subdirectory of cwd
+    elseif cwd:find(root, 1, true) == 1 then
+      return true -- Show when root is parent directory of cwd
+    else
+      return true -- Show when root and cwd are not related
+    end
+  end,
+  hl = function()
+    return { fg = utils.get_highlight("Special").fg }
+  end,
+  update = { "DirChanged" },
 }
-local Path = {
-  provider = pretty_path,
-  hl = {
-    fg = "cyan",
-  },
+
+-- LazyVim-style pretty path component
+M.PrettyPath = {
+  provider = function()
+    local path = vim.fn.expand("%:p")
+
+    if path == "" then return "" end
+
+    path = LazyVim.norm(path)
+    local root = LazyVim.root.get({ normalize = true })
+    local cwd = LazyVim.root.cwd()
+
+    -- Make path relative to cwd first, then root
+    if path:find(cwd, 1, true) == 1 then
+      path = path:sub(#cwd + 2)
+    elseif path:find(root, 1, true) == 1 then
+      path = path:sub(#root + 2)
+    end
+
+    local sep = package.config:sub(1, 1)
+    local parts = vim.split(path, "[\\/]")
+
+    -- Truncate path if too long (max 3 parts)
+    if #parts > 3 then parts = { parts[1], "…", unpack(parts, #parts - 1, #parts) } end
+
+    local result = ""
+
+    -- Add directory part with comment color
+    if #parts > 1 then
+      local dir = table.concat({ unpack(parts, 1, #parts - 1) }, sep) .. sep
+      result = result .. dir
+    end
+
+    -- Add filename
+    local filename = parts[#parts] or ""
+    if vim.bo.modified then filename = filename .. "" end
+    result = result .. filename
+
+    -- Add readonly indicator
+    if vim.bo.readonly then result = result .. " 󰌾 " end
+
+    return result
+  end,
+  hl = function()
+    if vim.bo.modified then
+      return {
+        fg = utils.get_highlight("MatchParen").fg,
+        bold = true,
+      }
+    else
+      return {
+        fg = utils.get_highlight("Directory").fg,
+      }
+    end
+  end,
+  update = { "BufEnter", "BufWritePost" },
 }
 M.FileNameBlock = {
   -- let's first set up some attributes needed by this component and its children
@@ -1141,21 +1228,17 @@ M.GitBranch3 = {
     main											main
   ]]
   provider = function(branch)
-    if branch == '' or branch == nil then
-      return 'No Repo'
-    end
+    if branch == "" or branch == nil then return "No Repo" end
 
     -- Function to truncate a segment to a specified length
     local function truncate_segment(segment, max_length)
-      if #segment > max_length then
-        return segment:sub(1, max_length)
-      end
+      if #segment > max_length then return segment:sub(1, max_length) end
       return segment
     end
 
     -- Split the branch name by '/'
     local segments = {}
-    for segment in branch:gmatch('[^/]+') do
+    for segment in branch:gmatch("[^/]+") do
       table.insert(segments, segment)
     end
 
@@ -1165,9 +1248,7 @@ M.GitBranch3 = {
     end
 
     -- If there's only one segment (no '/'), return it as-is
-    if #segments == 1 then
-      return segments[1]
-    end
+    if #segments == 1 then return segments[1] end
 
     -- Capitalize the first segment and lowercase the rest (except the last one)
     segments[1] = segments[1]:upper() -- First segment uppercase
@@ -1176,12 +1257,12 @@ M.GitBranch3 = {
     end
 
     -- Combine the first segments with no separator and add '›' before the last segment
-    local truncated_branch = table.concat(segments, '', 1, #segments - 1) .. '›' .. segments[#segments]
+    local truncated_branch = table.concat(segments, "", 1, #segments - 1) .. "›" .. segments[#segments]
 
     -- Ensure the final result doesn't exceed a maximum length
     local max_total_length = 15
     if #truncated_branch > max_total_length then
-      truncated_branch = truncated_branch:sub(1, max_total_length) .. '…'
+      truncated_branch = truncated_branch:sub(1, max_total_length) .. "…"
     end
 
     return truncated_branch
@@ -1199,21 +1280,17 @@ M.GitBranch3 = {
 		main											main
 	]]
   fmt = function(branch)
-    if branch == '' or branch == nil then
-      return 'No Repo'
-    end
+    if branch == "" or branch == nil then return "No Repo" end
 
     -- Function to truncate a segment to a specified length
     local function truncate_segment(segment, max_length)
-      if #segment > max_length then
-        return segment:sub(1, max_length)
-      end
+      if #segment > max_length then return segment:sub(1, max_length) end
       return segment
     end
 
     -- Split the branch name by '/'
     local segments = {}
-    for segment in branch:gmatch('[^/]+') do
+    for segment in branch:gmatch("[^/]+") do
       table.insert(segments, segment)
     end
 
@@ -1223,9 +1300,7 @@ M.GitBranch3 = {
     end
 
     -- If there's only one segment (no '/'), return it as-is
-    if #segments == 1 then
-      return segments[1]
-    end
+    if #segments == 1 then return segments[1] end
 
     -- Capitalize the first segment and lowercase the rest (except the last one)
     segments[1] = segments[1]:upper() -- First segment uppercase
@@ -1234,17 +1309,16 @@ M.GitBranch3 = {
     end
 
     -- Combine the first segments with no separator and add '›' before the last segment
-    local truncated_branch = table.concat(segments, '', 1, #segments - 1) .. '›' .. segments[#segments]
+    local truncated_branch = table.concat(segments, "", 1, #segments - 1) .. "›" .. segments[#segments]
 
     -- Ensure the final result doesn't exceed a maximum length
     local max_total_length = 15
     if #truncated_branch > max_total_length then
-      truncated_branch = truncated_branch:sub(1, max_total_length) .. '…'
+      truncated_branch = truncated_branch:sub(1, max_total_length) .. "…"
     end
 
     return truncated_branch
   end,
-,
 }
 
 return M

@@ -53,8 +53,9 @@ return {
         function()
           return toggle_diffview_func(
             function()
-              local input = Snacks.input({ prompt = "Compare: ", icon = "" })
-              vim.api.nvim_command("DiffviewOpen " .. input)
+              Snacks.input({ prompt = "Compare: ", icon = "" }, function (branch)
+                vim.api.nvim_command("DiffviewOpen " .. branch)
+              end)
             end
           )
         end,

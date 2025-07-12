@@ -26,7 +26,7 @@ return {
       { "o", "o<cmd>AutolistNewBullet<cr>", mode = { "n" }, ft = fts },
       { "O", "O<cmd>AutolistNewBulletBefore<cr>", mode = { "n" }, ft = fts },
       { "<CR>", "<cmd>AutolistToggleCheckbox<cr><CR>", mode = { "n" }, ft = fts },
-      -- { "<S-CR>", "<cmd>AutolistToggleCheckbox<cr><CR>", mode = { "n" }, ft = fts },
+      { "<S-CR>", "<cmd>AutolistToggleCheckbox<cr><CR>", mode = { "n" }, ft = fts },
       { "<C-r>", "<cmd>AutolistRecalculate<cr>", mode = { "n" }, ft = fts },
 
       { "],", "<cmd>AutolistCycleNext<cr>", mode = { "n" }, ft = fts, desc = "Next List Type" },
@@ -40,7 +40,7 @@ return {
   },
   {
     "antonk52/markdowny.nvim",
-    ft = { "markdown", "txt" },
+    ft = { "markdown", "txt", "AvanteInput" },
     opts = {
       filetypes = { "markdown", "txt" },
     },

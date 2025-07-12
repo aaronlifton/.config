@@ -37,9 +37,9 @@
     "plugins.extras.editor.git.git-conflict",
     "plugins.extras.editor.git.neogit",
     "plugins.extras.editor.leap-extended",
+    "plugins.extras.editor.neo-tree-extended",
     "plugins.extras.editor.nvim-colorizer",
     "plugins.extras.editor.search-replace",
-    "plugins.extras.editor.neo-tree-extended",
     "plugins.extras.editor.triptych",
     "plugins.extras.editor.trouble-extended",
     "plugins.extras.formatting.prettier-extended",
@@ -107,4 +107,3 @@
   },
   "version": 8
 }
-

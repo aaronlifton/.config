@@ -26,7 +26,8 @@ return {
     event = "LspAttach",
     opts = {
       --- The backend to use, currently only "vim", "delta", "difftastic", "diffsofancy" are supported
-      backend = "vim",
+      -- backend = "vim",
+      backend = "difftastic",
 
       -- The picker to use, "telescope", "snacks", "select", "buffer" are supported
       -- And it's opts that will be passed at the picker's creation, optional
@@ -43,7 +44,8 @@ return {
       --    -- text_based = "Fix all" => "f", "Fix others" => "o" (first non assigned letter of the action)
       --    -- text_diff_based = "Fix all" => "fa", "Fix others" => "fo" smarter than text_based
       -- }
-      picker = "telescope",
+      -- VALID_PICKERS = { telescope = true, snacks = true, select = true, buffer = true, }
+      picker = "snacks",
       backend_opts = {
         delta = {
           -- Header from delta can be quite large.

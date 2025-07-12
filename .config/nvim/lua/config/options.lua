@@ -12,6 +12,12 @@ function _G.get_lazyvim_base_dir()
   return "~/.local/share/nvim/lazy/LazyVim"
 end
 
+---Get the parent directory of the LazyVim base dir
+---@return string
+function _G.get_lazyvim_plugins_dir()
+  return vim.fn.fnamemodify(get_lazyvim_base_dir(), ":h")
+end
+
 -- Fix for https://github.com/neovim/neovim/issues/31675
 vim.hl = vim.highlight
 
@@ -95,8 +101,8 @@ o.spellfile = config_path .. "/spell/en.utf-8.add"
 o.spelllang = "en_us" -- "en_us", "en"
 o.sps = "file:" .. config_path .. "/spell/sugg,best"
 -- o.startofline = true
--- o.swapfile = false
-o.swapfile = true -- Needed for `recover` and `undo`
+o.swapfile = false
+-- o.swapfile = true -- Needed for `recover` and `undo`
 o.textwidth = 80
 o.shell = "fish"
 -- o.winborder = "rounded"

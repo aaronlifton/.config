@@ -144,6 +144,9 @@ if vim.g.vscode then
   keymap.set("n", "<leader>cf", function()
     vscode.action("editor.action.formatDocument")
   end, { desc = "Format document" })
+  keymap.set("n", "<leader>gl", function()
+    vscode.action("git-graph.view")
+  end, { desc = "Format selection" })
 else
   -- Standalone Neovim keymaps
   -- Navigate vim panes better

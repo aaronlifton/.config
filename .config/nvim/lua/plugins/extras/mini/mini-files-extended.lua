@@ -83,6 +83,7 @@ return {
           set_mark("~", "~", "Home directory")
           set_mark("H", "~", "Home directory")
           set_mark("C", "~/Code", "Code")
+          set_mark("P", get_lazyvim_plugins_dir, "LazyVim plugins")
           set_mark("?", function()
             vim.ui.input({ prompt = "Enter path:" }, function(path)
               if path ~= nil and path ~= "" then set_mark("?", path, path) end

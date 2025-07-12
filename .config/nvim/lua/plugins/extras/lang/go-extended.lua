@@ -40,7 +40,7 @@ return {
                 useany = true,
                 fieldalignment = true,
               },
-              gofumpt = false,
+              gofumpt = true,
               buildFlags = { "-tags", "integration,unit,build" },
               staticcheck = true,
               directoryFilters = {
@@ -101,7 +101,7 @@ return {
       -- vim.cmd.GoInstallDeps()
       if not require("lazy.core.config").spec.plugins["mason.nvim"] then
         vim.print("Installing go dependencies...")
-        vim.cmd.GoInstallDeps()
+        vim.cmd.GoInstallDepsu()
         vim.fn.system("go install github.com/koron/iferr@latest")
       end
     end,
@@ -110,7 +110,7 @@ return {
     config = function()
       -- This ensures the plugin is only configured for Go files
       local gopher = require("gopher")
-      gopher.setup({})
+      gopher.setup(opts)
 
       -- Create keymaps only for Go files
       vim.api.nvim_create_autocmd("FileType", {
