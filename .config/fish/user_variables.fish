@@ -33,6 +33,7 @@ if test -d "/Applications/Emacs.app/Contents/MacOS/bin"
 end
 fish_add_path /Users/$USER/.config/emacs/bin
 # fish_add_path /opt/homebrew/sbin
+fish_add_path /Users/$USER/.pixi/bin
 
 # XDG
 set -gx XDG_CONFIG_HOME "$HOME/.config"

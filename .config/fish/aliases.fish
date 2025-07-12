@@ -5,6 +5,8 @@ alias zz=zoxide
 alias lazy="cd $lazy_path"
 alias lazyvim="cd $lazy_path/LazyVim"
 alias astronvim="NVIM_APPNAME=astronvim nvim"
+alias nvchad="NVIM_APPNAME=nvim-nvchad nvim"
+alias knvim="NVIM_APPNAME=km-nvim"
 alias nvd="/usr/local/bin/neovide"
 alias vp="vimpager"
 alias pdfmerge='/System/Library/Automator/Combine\ PDF\ Pages.action/Contents/MacOS/join'
