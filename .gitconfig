@@ -153,7 +153,7 @@
 [url "git@github.com:"]
   insteadOf = https://github.com/
 [delta]
-  ; navigate = true
+  navigate = true
   ; features = catppuccin-macchiato
   features = tokyonight_moon
   side-by-side = false
@@ -168,13 +168,14 @@
   diffFilter = delta --color-only
 [merge]
   tool = nvimdiff
-  conflictstyle = diff3
+  ; conflictstyle = diff3
+  conflictstyle = zdiff3
 [difftool "difftastic"]
     cmd = difft "$LOCAL" "$REMOTE"
     trustExitCode = true
 [diff]
   colorMoved = default
-  external = difftastic
+  ; external = difft
 [pull]
   rebase = false
 [push]
