@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>Label</key>
+    <string>com.aaron.scrypted.autostart</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Applications/Scrypted.app/Contents/MacOS/scrypted-electron</string>
+    </array>
+    <!-- Non-desktop version: -->
+    <!-- <key>ProgramArguments</key> -->
+    <!--     <array> -->
+    <!--          <string>/opt/homebrew/bin/npx</string> -->
+    <!--          <string>-y</string> -->
+    <!--          <string>scrypted</string> -->
+    <!--          <string>serve</string> -->
+    <!--     </array> -->
+    <key>WorkingDirectory</key>
+         <string>/Users/aaron/.scrypted</string>
+    <key>StandardOutPath</key>
+        <string>/dev/null</string>
+    <key>StandardErrorPath</key>
+        <string>/dev/null</string>
+    <key>UserName</key>
+        <string>aaron</string>
+    <key>EnvironmentVariables</key>
+        <dict>
+            <key>NODE_OPTIONS</key>
+                <string>--dns-result-order=ipv4first</string>
+            <key>PATH</key>
+                <string>/opt/homebrew/bin/:/usr/local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+            <key>HOME</key>
+                <string>/Users/aaron</string>
+            <key>SCRYPTED_PYTHON_PATH</key>
+                <string>python3.10</string>
+        </dict>
+   <!-- asdfasdf  -->
+</dict>
+</plist>
