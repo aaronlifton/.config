@@ -129,4 +129,85 @@ function M.activate_and_move_to_layout(appName, layout, beforeFn, afterFn)
   if afterFn then afterFn(M) end
 end
 
+function M.iterateMonitorWindows(appName)
+  return function()
+    local app = hs.application.get(appName)
+    if not app then
+      -- If app is not running, launch it
+      hs.application.launchOrFocus(appName)
+      return
+    end
+
+    -- Get all app windows
+    local appWindows = app:allWindows()
+    if not appWindows or #appWindows == 0 then
+      -- No app windows, launch app (should ideally not happen if app exists)
+      hs.application.launchOrFocus(appName)
+      return
+    end
+
+    -- Find windows on main and secondary screens
+    local mainWindow = nil
+    local secondaryWindow = nil
+
+    for _, window in ipairs(appWindows) do
+      local screenName = window:screen():name()
+      if screenName == Screens.main and not mainWindow then
+        mainWindow = window
+      elseif screenName == Screens.secondary and not secondaryWindow then
+        secondaryWindow = window
+      end
+    end
+
+    -- Get current focused window to determine next window to focus
+    local currentWindow = hs.window.focusedWindow()
+    local currentApp = currentWindow and currentWindow:application()
+    logger.d("currentApp: " .. (currentApp and currentApp:name() or "nil"))
+    local isCurrentWindowOfTargetApp = currentApp and currentApp:name():lower() == appName:lower()
+    local currentWindowScreenName = currentWindow and currentWindow:screen():name() or nil
+
+    -- Logic to focus based on current state
+    if isCurrentWindowOfTargetApp then
+      logger.d(string.format("Target app (%s) window is currently focused.", appName))
+      -- A window of the target app is currently focused
+      if currentWindowScreenName == Screens.main and secondaryWindow then
+        -- Currently on main screen, switch to secondary if window exists
+        logger.d("Target app window focused on main, switching to secondary.")
+        secondaryWindow:raise()
+        secondaryWindow:focus()
+      elseif currentWindowScreenName == Screens.secondary and mainWindow then
+        -- Currently on secondary screen, switch to main if window exists
+        logger.d("Target app window focused on secondary, switching to main.")
+        mainWindow:raise()
+        mainWindow:focus()
+      else
+        -- Target app window is focused, but no window on the other screen, or current screen is not main/secondary.
+        -- Do nothing, as there's no other specific instance to switch to.
+        logger.d("Target app window focused, but no switch target found or necessary.")
+      end
+    else
+      -- No window of the target app is currently focused
+      if mainWindow then
+        logger.d("Target app not focused, focusing main window.")
+        mainWindow:raise()
+        mainWindow:focus()
+      elseif secondaryWindow then
+        secondaryWindow:raise()
+        secondaryWindow:focus()
+        logger.d("Target app not focused, focusing secondary window.")
+      else
+        -- Fallback: if no specific main/secondary window found, focus any available window of the app.
+        -- This case should ideally be rare if appWindows is not empty.
+        if appWindows[1] then
+          logger.d("Target app not focused, focusing first available window.")
+          appWindows[1]:raise()
+          appWindows[1]:focus()
+        else
+          logger.d("No windows found for app, nothing to focus.")
+        end
+      end
+    end
+  end
+end
+
 return M

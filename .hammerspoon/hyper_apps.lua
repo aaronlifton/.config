@@ -1,24 +1,7 @@
--- 1
--- 2
--- a
--- c
--- d
--- f
--- g
--- j
--- k
--- m
--- n
--- o
--- p
--- r
--- s
--- t
--- u
--- w
-
 local betterDisplayCli = require("functions.better_display")
 local Layout = require("keys").layouts
+local logger = require("functions.logger")
+local win = require("functions.window")
 
 local bindings = {
   -- [A]I
@@ -28,6 +11,7 @@ local bindings = {
   -- end,
   b = "BetterDisplay",
   -- c = "Google Chrome",
+  -- ["999"] = iterateWindows("Google Chrome"),
   c = function()
     -- Function to switch to Chrome window on Built-in Display
     local chromeApp = hs.application.get("Google Chrome")
@@ -153,14 +137,15 @@ local bindings = {
       end,
     },
   },
+  k = win.iterateMonitorWindows("Kitty"),
   f = "Finder",
   g = "GoLand",
-  k = "Kitty",
+  -- k = "Kitty",
   n = "Neovide",
   o = "Obsidian",
   p = "TablePlus",
   s = function()
-    hs.urlevent.openURL("raycast://extensions/raycast/system-preferences/system-preferences")
+    -- hs.urlevent.openURL("raycast://extensions/raycast/system-preferences/system-preferences")
 
     Window.activate_and_move_to_layout("Slack", Layout.slack, function(win)
       win.move_one_screen_south()
@@ -223,7 +208,7 @@ local bindings = {
       hs.urlevent.openURL("raycast://extensions/raycast/keyboard/keyboard")
     end,
   },
-  ["1"] = "1Password",
+  ["0"] = "1Password",
   -- ["9"] = "System Preferences"
   ["7"] = "Spotify",
   ["8"] = function()
