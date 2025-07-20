@@ -1,6 +1,7 @@
 hs.allowAppleScript(true)
 local logger = require("functions.logger")
 local colors = require("colors")
+local configurator = require("configurator")
 
 Util = require("Util")
 ProcessManager = require("functions.process_manager")
@@ -26,6 +27,10 @@ K.cmd_alt = { "cmd", "alt" }
 K.ctrl_alt = { "ctrl", "alt" }
 K.cmd_ctrl = { "cmd", "ctrl" }
 K.cmd_ctrl_shift = { "cmd", "ctrl", "shift" }
+
+Config = {
+  screenCount = nil,
+}
 
 -- 913794
 -- Make all our animations really fast
@@ -204,14 +209,14 @@ function ExitHyperMode()
   hs.alert.show("Hyper off")
 end
 
-Hyper:bind({}, "o", nil, function()
-  local app = hs.application.frontmostApplication()
-  if app:name() == "Finder" then
-    hs.eventtap.keyStroke({ "cmd" }, "o", 0)
-  else
-    hs.eventtap.keyStroke({}, "Return", 0)
-  end
-end)
+-- Hyper:bind({}, "o", nil, function()
+--   local app = hs.application.frontmostApplication()
+--   if app:name() == "Finder" then
+--     hs.eventtap.keyStroke({ "cmd" }, "o", 0)
+--   else
+--     hs.eventtap.keyStroke({}, "Return", 0)
+--   end
+-- end)
 Hyper:bind({}, "k", nil, function()
   hs.application.launchOrFocus("net.kovidgoyal.kitty")
 end)
@@ -275,23 +280,7 @@ local function check_binding(app, key)
   if type(app) == "string" then
     -- Check if the string starts with com., org., etc. (likely a bundle ID)
     singleLetterApps[app] = { K.hyper, app }
-    if string.match(app, "^[%w%.]+%.[%w%.]+") and not string.match(app, "%.app$") then
-      -- Treat as bundle identifier
-      local appInstance = hs.application.get(app)
-      if appInstance then
-        appInstance:activate()
-        -- if appInstance:isFrontmost() then
-        --   app:hide()
-        -- else
-        --   appInstance:activate()
-        -- end
-      else
-        hs.application.launchOrFocusByBundleID(app)
-      end
-    else
-      -- Treat as application name
-      hs.application.launchOrFocus(app)
-    end
+    Window.activateApp(app)
   elseif type(app) == "function" then
     app()
   else
@@ -469,6 +458,8 @@ windowMT.maximize = withAxHotfix(windowMT.maximize)
 windowMT.moveToUnit = withAxHotfix(windowMT.moveToUnit)
 ---@diagnostic enable: need-check-nil
 -- /end hotfix
+--
+configurator.initConfig(Config)
 
 appWatcher:start()
 -- configWatcher:watch_config_and_reload()

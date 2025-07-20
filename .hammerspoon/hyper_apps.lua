@@ -137,12 +137,28 @@ local bindings = {
       end,
     },
   },
-  k = win.iterateMonitorWindows("Kitty"),
+  k = function()
+    if Config.screenCount > 1 then
+      win.iterateMonitorWindows("Kitty")
+    else
+      win.activateApp("Kitty")
+      -- win.iterateWindows("Kitty")
+    end
+  end,
   f = "Finder",
   g = "GoLand",
   -- k = "Kitty",
   n = "Neovide",
-  o = "Obsidian",
+  o = function()
+    local app = hs.application.frontmostApplication()
+    if app:name() == "Finder" then
+      -- https://www.hammerspoon.org/docs/hs.eventtap.html#keyStroke
+      hs.eventtap.keyStroke({ "cmd" }, "o", 0, app)
+    else
+      -- hs.eventtap.keyStroke({}, "Return", 0)
+      Window.activateApp("Obsidian")
+    end
+  end,
   p = "TablePlus",
   s = function()
     -- hs.urlevent.openURL("raycast://extensions/raycast/system-preferences/system-preferences")

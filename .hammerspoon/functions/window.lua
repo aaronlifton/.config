@@ -1,5 +1,8 @@
+-- https://www.hammerspoon.org/docs/hs.window.html
 local window = require("hs.window")
+-- https://www.hammerspoon.org/docs/hs.grid.html
 local grid = require("hs.grid")
+local logger = require("functions.logger")
 
 window.animationDuration = 0
 grid.MARGINX = 0
@@ -11,6 +14,7 @@ grid.GRIDHEIGHT = 2
 local M = {}
 
 M.restorable_frames = {}
+M.window_iteration_state = {} -- Track current window index per app
 
 -- Move a window to the given coordinates
 -- top/left/width/height as a percent of the screen
@@ -207,6 +211,88 @@ function M.iterateMonitorWindows(appName)
         end
       end
     end
+  end
+end
+
+-- Iterate through all windows of an app in order, regardless of screen
+function M.iterateWindows(appName)
+  return function()
+    local app = hs.application.get(appName)
+    if not app then
+      -- If app is not running, launch it
+      hs.application.launchOrFocus(appName)
+      M.window_iteration_state[appName] = nil -- Reset state when launching
+      return
+    end
+
+    -- Get all app windows
+    local appWindows = app:allWindows()
+    if not appWindows or #appWindows == 0 then
+      -- No app windows, launch app
+      hs.application.launchOrFocus(appName)
+      M.window_iteration_state[appName] = nil -- Reset state
+      return
+    end
+
+    -- Initialize or get current window index for this app
+    local currentIndex = M.window_iteration_state[appName] or 1
+
+    -- Check if the currently focused window is from this app and update index accordingly
+    local currentWindow = hs.window.focusedWindow()
+    local currentApp = currentWindow and currentWindow:application()
+    local isCurrentWindowOfTargetApp = currentApp and currentApp:name():lower() == appName:lower()
+
+    if isCurrentWindowOfTargetApp then
+      -- Find the index of the currently focused window
+      for i, window in ipairs(appWindows) do
+        if window:id() == currentWindow:id() then
+          currentIndex = i
+          break
+        end
+      end
+      -- Move to next window
+      currentIndex = currentIndex + 1
+      if currentIndex > #appWindows then
+        currentIndex = 1 -- Wrap around to first window
+      end
+    else
+      -- If no window of target app is focused, start with first window
+      currentIndex = 1
+    end
+
+    -- Store the new index
+    M.window_iteration_state[appName] = currentIndex
+
+    -- Focus the window at the current index
+    local targetWindow = appWindows[currentIndex]
+    if targetWindow then
+      targetWindow:raise()
+      targetWindow:focus()
+      logger.d(string.format("Focused window %d of %d for app %s", currentIndex, #appWindows, appName))
+    end
+  end
+end
+
+function M.activateApp(appName, shouldToggle)
+  if string.match(appName, "^[%w%.]+%.[%w%.]+") and not string.match(appName, "%.app$") then
+    -- Treat as bundle identifier
+    local appInstance = hs.application.get(appName)
+    if appInstance then
+      if shouldToggle then
+        if appInstance:isFrontmost() then
+          appInstance:hide()
+        else
+          appInstance:activate()
+        end
+      else
+        appInstance:activate()
+      end
+    else
+      hs.application.launchOrFocusByBundleID(appName)
+    end
+  else
+    -- Treat as application name
+    hs.application.launchOrFocus(appName)
   end
 end
 
