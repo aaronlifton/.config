@@ -244,8 +244,8 @@ function M.iterateWindows(appName)
 
     if isCurrentWindowOfTargetApp then
       -- Find the index of the currently focused window
-      for i, window in ipairs(appWindows) do
-        if window:id() == currentWindow:id() then
+      for i, win in ipairs(appWindows) do
+        if win:id() == currentWindow:id() then
           currentIndex = i
           break
         end
@@ -274,7 +274,7 @@ function M.iterateWindows(appName)
 end
 
 function M.activateApp(appName, shouldToggle)
-  if string.match(appName, "^[%w%.]+%.[%w%.]+") and not string.match(appName, "%.app$") then
+  if string.match(appName, "^[%w%.]+%.[%w%.]+") or not string.match(appName, "%.app$") then
     -- Treat as bundle identifier
     local appInstance = hs.application.get(appName)
     if appInstance then
@@ -293,6 +293,44 @@ function M.activateApp(appName, shouldToggle)
   else
     -- Treat as application name
     hs.application.launchOrFocus(appName)
+  end
+end
+
+function M.alternateMonitorApps(appName)
+  return function()
+    -- hs.execute('open -na "Google Chrome" --args --profile-directory="Profile 2"', true)
+    local app = hs.application.get(appName)
+    if not app then
+      -- If app is not running, launch it
+      return
+    end
+
+    -- Get all app windows
+    local appWindows = app:allWindows()
+    if not appWindows or #appWindows == 0 then
+      -- No app windows, launch app
+      hs.application.launchOrFocus(appName)
+      return
+    end
+
+    -- Find app window on Built-in Display
+    local builtInWindow = nil
+    for _, win in ipairs(appWindows) do
+      if win:screen():name() == Screens.secondary then
+        builtInWindow = win
+        break
+      end
+    end
+
+    if builtInWindow then
+      -- Focus the app window on Built-in Display
+      builtInWindow:focus()
+      builtInWindow:raise()
+    else
+      -- No app window on Built-in Display, focus any app window
+      appWindows[1]:focus()
+      appWindows[1]:raise()
+    end
   end
 end
 

@@ -1,3 +1,14 @@
+-- Omarchy-inspired keybindings (optional)
+-- Uncomment the following lines to enable Omarchy-style tiling window manager keybindings
+-- These use Super/Cmd as the main modifier key, similar to Hyprland/i3 window managers
+
+-- local omarchy = require("omarchy")
+-- omarchy.init()
+
+-- Docs
+-- Keycodes:
+-- https://github.com/Hammerspoon/hammerspoon/blob/master/extensions/keycodes/keycodes.lua#L72-L81
+
 hs.allowAppleScript(true)
 local logger = require("functions.logger")
 local colors = require("colors")
@@ -27,6 +38,18 @@ K.cmd_alt = { "cmd", "alt" }
 K.ctrl_alt = { "ctrl", "alt" }
 K.cmd_ctrl = { "cmd", "ctrl" }
 K.cmd_ctrl_shift = { "cmd", "ctrl", "shift" }
+
+local mod = {
+  hyper = { "cmd", "alt", "ctrl", "shift" },
+  super = { "cmd" },
+  superShift = { "cmd", "shift" },
+  superAlt = { "cmd", "alt" },
+  superCtrl = { "cmd", "ctrl" },
+  superShiftAlt = { "cmd", "shift", "alt" },
+  alt = { "alt" },
+  ctrl = { "ctrl" },
+  shift = { "shift" },
+}
 
 Config = {
   screenCount = nil,
@@ -255,12 +278,14 @@ F18 = hs.hotkey.bind({}, "F18", EnterHyperMode, ExitHyperMode)
 hs.window.animationDuration = 0.0
 
 -- Grid
-local grid = {
+Grid = {
   bottomHalf = "0,1 2x1",
   leftHalf = "0,0 1x2",
   rightHalf = "1,0 1x2",
   topHalf = "0,0 2x1",
   fullScreen = "0,0 2x2",
+  rightTopHalf = "1,0 1x1", -- Right top quarter
+  rightBottomHalf = "1,1 1x1", -- Right bottom quarter
 }
 hs.grid.setMargins(hs.geometry.size(0, 0))
 -- hs.grid.setMargins({ x = 0, y = 0 })
@@ -294,8 +319,11 @@ hyperLogger.d("Creating single letter app bindings")
 -- })
 hs.loadSpoon("AppWindowSwitcher"):setLogLevel("debug"):bindHotkeys(singleLetterApps)
 
+-- TODO: implement focus on last focused window after recurvise modal activation
+-- local lastFocusedWindow = nil
+
 -- Recursive function to create modal bindings for nested key maps
--- path is the sequence of keys pressed so far (for display purposes)
+-- path is the sequenje of keys pressed so far (for display purposes)
 -- prefix is the modal name prefix
 local function create_modal_bindings(keymap, path, prefix)
   local modal_name = prefix
@@ -355,12 +383,14 @@ local appWindowSwitcherApps = {}
 for key, app in pairs(appMap) do
   if type(app) == "table" then
     -- Create a new modal for this key
-    local modal_name = "hyper_" .. key
+    local modal_name = "Hyper_" .. key
     modal_mgr:new(modal_name)
 
     -- Bind the initial key to activate the modal
     hs.hotkey.bind(HyperBinding, key, function()
-      if App.is_current(App.bundles.terminals) then return end
+      -- NOTE: Not sure if this needs to be commented
+      -- if App.is_current(App.bundles.terminals) then return end
+
       -- Activate the modal for this key
       modal_mgr:activate({ modal_name }, colors.catppuccin_macchiato.green, true)
 
@@ -401,7 +431,7 @@ hs.hotkey.bind(HyperBinding, "tab", function()
   if not focusedWindow then return end
 
   -- Put focused window on left half
-  hs.grid.set(focusedWindow, grid.leftHalf)
+  hs.grid.set(focusedWindow, Grid.leftHalf)
 
   -- Get other windows on same screen
   local otherWindows = focusedWindow:otherWindowsSameScreen()
@@ -417,6 +447,106 @@ hs.hotkey.bind(HyperBinding, "tab", function()
     hs.grid.set(window, gridString)
     window:raise()
   end
+end)
+
+-- Tiling layout: focused window left half, next windows right top/bottom, continue on next screen if available
+hs.hotkey.bind(HyperBinding, "0", function()
+  local focusedWindow = hs.window.focusedWindow()
+  if not focusedWindow then return end
+
+  -- Get all visible windows across all screens
+  local allWindows = hs.window.visibleWindows()
+  if #allWindows <= 1 then return end
+
+  -- Filter out minimized windows and get screens
+  local validWindows = {}
+  for _, window in ipairs(allWindows) do
+    if not window:isMinimized() and window:isStandard() then table.insert(validWindows, window) end
+  end
+
+  if #validWindows <= 1 then return end
+
+  -- Get available screens
+  local screens = hs.screen.allScreens()
+  local hasMultipleScreens = Config.screenCount and Config.screenCount > 1
+
+  -- Sort windows so focused window is first
+  local sortedWindows = {}
+  table.insert(sortedWindows, focusedWindow)
+  for _, window in ipairs(validWindows) do
+    if window:id() ~= focusedWindow:id() then table.insert(sortedWindows, window) end
+  end
+
+  local windowIndex = 1
+  local screenIndex = 1
+  local currentScreen = screens[screenIndex]
+
+  -- Process windows in groups of 3 (1 left, 2 right)
+  while windowIndex <= #sortedWindows do
+    local window = sortedWindows[windowIndex]
+
+    if windowIndex == 1 or (windowIndex - 1) % 3 == 0 then
+      -- First window of group goes to left half
+      if hasMultipleScreens and screenIndex <= #screens then
+        currentScreen = screens[screenIndex]
+        window:moveToScreen(currentScreen)
+      end
+      hs.grid.set(window, Grid.leftHalf)
+      window:raise()
+      windowIndex = windowIndex + 1
+    elseif (windowIndex - 1) % 3 == 1 then
+      -- Second window of group goes to right top half
+      if hasMultipleScreens and screenIndex <= #screens then window:moveToScreen(currentScreen) end
+      hs.grid.set(window, Grid.rightTopHalf)
+      window:raise()
+      windowIndex = windowIndex + 1
+    elseif (windowIndex - 1) % 3 == 2 then
+      -- Third window of group goes to right bottom half
+      if hasMultipleScreens and screenIndex <= #screens then window:moveToScreen(currentScreen) end
+      hs.grid.set(window, Grid.rightBottomHalf)
+      window:raise()
+      windowIndex = windowIndex + 1
+
+      -- Move to next screen if available and we have more windows
+      if hasMultipleScreens and windowIndex <= #sortedWindows then
+        screenIndex = screenIndex + 1
+        if screenIndex > #screens then
+          -- No more screens available, handle remaining windows
+          break
+        end
+      elseif not hasMultipleScreens then
+        -- Single screen: hide remaining windows
+        break
+      end
+    end
+  end
+
+  -- Handle remaining windows
+  if windowIndex <= #sortedWindows then
+    if hasMultipleScreens then
+      -- If we have multiple screens but no more screens available,
+      -- continue tiling on the last screen
+      for i = windowIndex, #sortedWindows do
+        local window = sortedWindows[i]
+        window:moveToScreen(screens[#screens])
+        -- Stack remaining windows on right side
+        local stackPosition = 1 + ((i - windowIndex) * 0.5)
+        if stackPosition > 2 then stackPosition = 2 end
+        local gridString = "1," .. (stackPosition - 1) .. " 1x0.5"
+        hs.grid.set(window, gridString)
+        window:raise()
+      end
+    else
+      -- Single screen: hide/minimize remaining windows
+      for i = windowIndex, #sortedWindows do
+        local window = sortedWindows[i]
+        window:minimize()
+      end
+    end
+  end
+end)
+hs.hotkey.bind(HyperBinding, "1", function()
+  require("functions.layouts_example").customLayouts["1"]()
 end)
 
 Clipboard = require("Helpers.Clipboard")
@@ -464,6 +594,18 @@ configurator.initConfig(Config)
 appWatcher:start()
 -- configWatcher:watch_config_and_reload()
 keys.bind()
+
+local omarchy = require("omarchy")
+-- omarchy.init({
+--   super = { "cmd" },
+--   superShift = { "cmd", "shift" },
+--   superAlt = { "cmd", "alt" },
+--   superCtrl = { "cmd", "ctrl" },
+--   superShiftAlt = { "cmd", "shift", "alt" },
+--   alt = { "alt" },
+--   ctrl = { "ctrl" },
+--   shift = { "shift" },
+-- })
 
 -- require("layout")
 -- init_layout()
