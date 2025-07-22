@@ -32,23 +32,21 @@ if brewPrefixOutput then
   hs.ipc.cliInstall(brewPrefix)
 end
 
-local K = {}
-K.hyper = { "cmd", "alt", "ctrl", "shift" }
-K.cmd_alt = { "cmd", "alt" }
-K.ctrl_alt = { "ctrl", "alt" }
-K.cmd_ctrl = { "cmd", "ctrl" }
-K.cmd_ctrl_shift = { "cmd", "ctrl", "shift" }
-
-local mod = {
-  hyper = { "cmd", "alt", "ctrl", "shift" },
-  super = { "cmd" },
-  superShift = { "cmd", "shift" },
-  superAlt = { "cmd", "alt" },
-  superCtrl = { "cmd", "ctrl" },
-  superShiftAlt = { "cmd", "shift", "alt" },
-  alt = { "alt" },
-  ctrl = { "ctrl" },
-  shift = { "shift" },
+K = {
+  mod = {
+    hyper = { "cmd", "alt", "ctrl", "shift" },
+    cmd = { "cmd" },
+    cmdShift = { "cmd", "shift" },
+    cmdAlt = { "cmd", "alt" },
+    cmdCtrl = { "cmd", "ctrl" },
+    cmdShiftAlt = { "cmd", "shift", "alt" },
+    alt = { "alt" },
+    ctrl = { "ctrl" },
+    shift = { "shift" },
+    extra = {
+      cmdCtrlAlt = { "cmd", "alt", "ctrl", "shift" },
+    },
+  },
 }
 
 Config = {
@@ -179,7 +177,7 @@ hs.loadSpoon("EmmyLua")
 local appWatcher = require("functions.application_watcher")
 local browser = require("functions.browser")
 local keys = require("keys")
-HyperBinding = keys.mod.hyper
+HyperBinding = K.mod.hyper
 
 hs.grid.MARGINX = 0
 hs.grid.MARGINY = 0
@@ -304,7 +302,7 @@ local hyperLogger = hs.logger.new("hyper")
 local function check_binding(app, key)
   if type(app) == "string" then
     -- Check if the string starts with com., org., etc. (likely a bundle ID)
-    singleLetterApps[app] = { K.hyper, app }
+    singleLetterApps[app] = { K.mod.hyper, app }
     Window.activateApp(app)
   elseif type(app) == "function" then
     app()

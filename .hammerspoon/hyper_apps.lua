@@ -1,5 +1,5 @@
 local betterDisplayCli = require("functions.better_display")
-local Layout = require("keys").layouts
+local Layout = require("keys.window").layouts
 local logger = require("functions.logger")
 local win = require("functions.window")
 

@@ -18,4 +18,4 @@ hyper.released = function()
 end
 
 hs.hotkey.bind({}, "f19", hyper.pressed, hyper.released)
-local hyperKey = KEYS.hyper
+local hyperKey = K.mod.hyper
