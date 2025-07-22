@@ -1,5 +1,5 @@
 ## !/usr/local/bin/fish
-## Move into ~/.config/yadm/hooks/post_pull later
+## Save as ~/.config/yadm/hooks/post_pull and make executable
 
 # Pull the private config repo
 set private_repo "git@github.com:aaronlifton/.config-private.git"
