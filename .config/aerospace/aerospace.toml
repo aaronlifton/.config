@@ -112,6 +112,8 @@ automatically-unhide-macos-hidden-apps = false
     
     # Alternative vim-style navigation (keeping for flexibility)
     cmd-h = 'focus left'
+    cmd-alt-k = 'focus up'
+    # cmd-k is used for raycast
     cmd-k = 'focus up'
     cmd-l = 'focus right'
     # Note: cmd-j is used for layout toggle (Omarchy's Super+J), not focus down
@@ -142,31 +144,31 @@ automatically-unhide-macos-hidden-apps = false
     cmd-6 = 'workspace 6'
     cmd-7 = 'workspace 7'
     cmd-8 = 'workspace 8'
-    cmd-9 = 'workspace 9'
+    cmd-9 = 'workspace 10'
     cmd-0 = 'workspace 10'  # Using 10 for the 0 key to match Omarchy's 1-10 pattern
     
     # Extended workspaces (keeping some letter workspaces for flexibility)
-    cmd-a = 'workspace A'
-    cmd-b = 'workspace B'
-    cmd-c = 'workspace C'
-    cmd-d = 'workspace D'
-    cmd-e = 'workspace E'
-    cmd-f = 'workspace F'
-    cmd-g = 'workspace G'
-    cmd-i = 'workspace I'
-    cmd-m = 'workspace M'
-    cmd-n = 'workspace N'
-    cmd-o = 'workspace O'
-    cmd-p = 'workspace P'
-    cmd-q = 'workspace Q'
-    cmd-r = 'workspace R'
-    cmd-s = 'workspace S'
-    cmd-u = 'workspace U'
-    cmd-v = 'workspace V'
-    cmd-w = 'workspace W'
-    cmd-x = 'workspace X'
-    cmd-y = 'workspace Y'
-    cmd-z = 'workspace Z'
+    # cmd-a = 'workspace A'
+    # cmd-b = 'workspace B'
+    # cmd-c = 'workspace C'
+    # cmd-d = 'workspace D'
+    # cmd-e = 'workspace E'
+    # cmd-f = 'workspace F'
+    # cmd-g = 'workspace G'
+    # cmd-i = 'workspace I'
+    # cmd-m = 'workspace M'
+    # cmd-n = 'workspace N'
+    # cmd-o = 'workspace O'
+    # cmd-p = 'workspace P'
+    # cmd-q = 'workspace Q'
+    # cmd-r = 'workspace R'
+    # cmd-s = 'workspace S'
+    # cmd-u = 'workspace U'
+    # cmd-v = 'workspace V'
+    # cmd-w = 'workspace W'
+    # cmd-x = 'workspace X'
+    # cmd-y = 'workspace Y'
+    # cmd-z = 'workspace Z'
 
     # MOVE WINDOWS TO WORKSPACES (Omarchy uses Shift + Super + 1-4)
     # Primary workspace movement (matching Omarchy pattern)
@@ -182,27 +184,27 @@ automatically-unhide-macos-hidden-apps = false
     cmd-shift-0 = 'move-node-to-workspace 10'
     
     # Extended workspace movement
-    cmd-shift-a = 'move-node-to-workspace A'
-    cmd-shift-b = 'move-node-to-workspace B'
-    cmd-shift-c = 'move-node-to-workspace C'
-    cmd-shift-d = 'move-node-to-workspace D'
-    cmd-shift-e = 'move-node-to-workspace E'
-    cmd-shift-f = 'move-node-to-workspace F'
-    cmd-shift-g = 'move-node-to-workspace G'
-    cmd-shift-i = 'move-node-to-workspace I'
-    cmd-shift-m = 'move-node-to-workspace M'
-    cmd-shift-n = 'move-node-to-workspace N'
-    cmd-shift-o = 'move-node-to-workspace O'
-    cmd-shift-p = 'move-node-to-workspace P'
-    cmd-shift-q = 'move-node-to-workspace Q'
-    cmd-shift-r = 'move-node-to-workspace R'
-    cmd-shift-s = 'move-node-to-workspace S'
-    cmd-shift-u = 'move-node-to-workspace U'
-    cmd-shift-v = 'move-node-to-workspace V'
-    cmd-shift-w = 'move-node-to-workspace W'
-    cmd-shift-x = 'move-node-to-workspace X'
-    cmd-shift-y = 'move-node-to-workspace Y'
-    cmd-shift-z = 'move-node-to-workspace Z'
+    # cmd-shift-a = 'move-node-to-workspace A'
+    # cmd-shift-b = 'move-node-to-workspace B'
+    # cmd-shift-c = 'move-node-to-workspace C'
+    # cmd-shift-d = 'move-node-to-workspace D'
+    # cmd-shift-e = 'move-node-to-workspace E'
+    # cmd-shift-f = 'move-node-to-workspace F'
+    # cmd-shift-g = 'move-node-to-workspace G'
+    # cmd-shift-i = 'move-node-to-workspace I'
+    # cmd-shift-m = 'move-node-to-workspace M'
+    # cmd-shift-n = 'move-node-to-workspace N'
+    # cmd-shift-o = 'move-node-to-workspace O'
+    # cmd-shift-p = 'move-node-to-workspace P'
+    # cmd-shift-q = 'move-node-to-workspace Q'
+    # cmd-shift-r = 'move-node-to-workspace R'
+    # cmd-shift-s = 'move-node-to-workspace S'
+    # cmd-shift-u = 'move-node-to-workspace U'
+    # cmd-shift-v = 'move-node-to-workspace V'
+    # cmd-shift-w = 'move-node-to-workspace W'
+    # cmd-shift-x = 'move-node-to-workspace X'
+    # cmd-shift-y = 'move-node-to-workspace Y'
+    # cmd-shift-z = 'move-node-to-workspace Z'
 
     # WORKSPACE AND MONITOR MANAGEMENT
     cmd-tab = 'workspace-back-and-forth'
@@ -235,3 +237,40 @@ automatically-unhide-macos-hidden-apps = false
     down = 'volume down'
     up = 'volume up'
     shift-down = ['volume set 0', 'mode main']
+
+[[on-window-detected]]
+    if.app-id = 'com.apple.systempreferences'
+    # if.app-name-regex-substring = 'settings'
+    # if.window-title-regex-substring = 'substring'
+    # if.workspace = 'workspace-name'
+    # if.during-aerospace-startup = true
+    check-further-callbacks = true
+    # run = ['layout floating', 'move-node-to-workspace S'] 
+    run = ['layout floating'] 
+
+[[on-window-detected]]
+    if.app-id = 'com.apple.Preview'
+    check-further-callbacks = true
+    run = ['layout floating'] 
+
+[[on-window-detected]]
+    if.app-id = 'com.electron.scrypted'
+    check-further-callbacks = true
+    run = ['layout floating'] 
+
+# Raycast
+[[on-window-detected]]
+    if.app-id                       = 'com.raycast.macos'
+    if.window-title-regex-substring = 'AI Chat'
+    run                             = 'layout tiling'
+
+[[on-window-detected]]
+    if.app-id = 'com.raycast.macos'
+    run = 'layout floating' 
+
+[[on-window-detected]]
+    # if.app-id = 'com.raycast.macos'
+    # if.window-title-regex-substring = 'Raycast'
+    if.app-name-regex-substring = 'hammerspoon'
+    check-further-callbacks = true
+    run = ['layout floating'] 
