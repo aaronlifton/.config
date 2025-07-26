@@ -1,0 +1,79 @@
+# Theme settings
+# theme = dark:vesper,light:catppuccin-latte
+theme = dark:catppuccin-macchiato,light:catppuccin-latte
+# background = #1c2021
+# background = #0B1215
+# background-opacity = 0.75
+# background-blur-radius = 40
+bold-is-bright = true
+
+# window settings
+macos-titlebar-style = hidden
+window-decoration = true
+window-theme = auto
+window-padding-color = background
+window-padding-x = 0
+window-padding-y = 0
+window-padding-balance = false
+window-colorspace = "display-p3"
+adjust-cell-height = 10%
+cursor-invert-fg-bg = true
+
+shell-integration-features = no-cursor,sudo
+confirm-close-surface = false
+
+macos-icon = "custom-style"
+macos-icon-frame = "plastic"
+macos-icon-ghost-color = "#8839ef"
+macos-icon-screen-color = "#1E1E2D"
+
+# Mouse settings
+mouse-hide-while-typing = true
+
+# Font settings
+font-family = "Monaspace Neon Regular"
+font-family-italic = "Monaspace Radon Var Regular Italic"
+font-family-bold-italic = "Monaspace Radon Var Bold Italic"
+font-size = 16
+font-feature = +liga
+cursor-style = block
+adjust-underline-position = 4
+
+clipboard-read = allow
+clipboard-write = allow
+clipboard-trim-trailing-spaces = true
+
+# Split keybindings
+# These are similar to tmux, but with the prefix being cmd+s
+keybind = cmd+s>\=new_split:right
+keybind = cmd+s>-=new_split:down
+
+keybind = cmd+s>c=new_tab
+keybind = cmd+s>shift+l=next_tab
+keybind = cmd+s>shift+h=previous_tab
+keybind = cmd+s>comma=move_tab:-1
+keybind = cmd+s>period=move_tab:1
+
+keybind = cmd+s>1=goto_tab:1
+keybind = cmd+s>2=goto_tab:2
+keybind = cmd+s>3=goto_tab:3
+keybind = cmd+s>4=goto_tab:4
+keybind = cmd+s>5=goto_tab:5
+keybind = cmd+s>6=goto_tab:6
+keybind = cmd+s>7=goto_tab:7
+keybind = cmd+s>8=goto_tab:8
+keybind = cmd+s>9=goto_tab:9
+
+keybind = cmd+s>j=goto_split:bottom
+keybind = cmd+s>k=goto_split:top
+keybind = cmd+s>h=goto_split:left
+keybind = cmd+s>l=goto_split:right
+
+keybind = cmd+s>z=toggle_split_zoom
+keybind = cmd+s>e=equalize_splits
+
+copy-on-select = clipboard
+shell-integration-features = cursor,sudo,no-title
+
+config-file = ?./overrides
+keybind = shift+enter=text:\n
