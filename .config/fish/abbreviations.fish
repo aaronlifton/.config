@@ -99,4 +99,4 @@ abbr --add run-service-test go test -tags=unit ./modules/asset-service/v2/intern
 abbr --add mod-ginkgo-component --set-cursor "godotenv -f .env.test ginkgo --tags=component -v --focus=\"%\" ./modules/asset-service/v2/internal/test/component/"
 abbr --add mod-server godotenv -f .env.test go run cmd/server/main.go
 
-abbr --add hyper-help bat --plain --language lua /Users/alifton/.hammerspoon/hyper_apps.lua
+abbr --add hyper-help bat --plain --language lua ~/.hammerspoon/hyper_apps.lua

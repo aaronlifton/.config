@@ -1,6 +1,7 @@
 ---@class hs.util.table
 ---@field string hs.util.string
 ---@field table hs.util.table
+---@field osx hs.util.osx
 local M = {}
 
 setmetatable(M, {
