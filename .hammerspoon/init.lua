@@ -8,6 +8,7 @@
 -- Docs
 -- Keycodes:
 -- https://github.com/Hammerspoon/hammerspoon/blob/master/extensions/keycodes/keycodes.lua#L72-L81
+-- hs.application - https://www.hammerspoon.org/docs/hs.application.html
 
 hs.allowAppleScript(true)
 local logger = require("functions.logger")
@@ -50,6 +51,7 @@ K = {
 }
 
 Config = {
+  aerospaceEnabled = false,
   screenCount = nil,
 }
 
@@ -593,7 +595,7 @@ appWatcher:start()
 -- configWatcher:watch_config_and_reload()
 keys.bind()
 
-local omarchy = require("omarchy")
+-- local omarchy = require("omarchy")
 -- omarchy.init({
 --   super = { "cmd" },
 --   superShift = { "cmd", "shift" },

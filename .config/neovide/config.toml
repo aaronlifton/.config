@@ -32,10 +32,10 @@ wsl = false
 # This defaults to true because out-of-sync rendering on macOS can cause kernel panics (macOS 14.4+) and performance issues for external displays over some hardware such as DisplayLink. If you want to minimize input latency, set this to false with the known aforementioned risks.
 [font]
 # normal = []             # Will use the bundled Fira Code Nerd Font by default
-# normal = "MonoLisa Nerd Font Mono"
-# italic = "MonoLisaNerdFontCompleteM-Italic"
-# bold = "MonoLisaNerdFontCompleteM-Bold"
-# bold_italic = "MonoLisaNerdFontCompleteM-Bold-Italic"
+normal = "MonoLisa Nerd Font Mono"
+italic = "MonoLisaNerdFontCompleteM-Italic"
+bold = "MonoLisaNerdFontCompleteM-Bold"
+bold_italic = "MonoLisaNerdFontCompleteM-Bold-Italic"
 
 # bold = "Maple Mono NF Bold"
 # italic = "MapleMono-NF-Italic"
@@ -49,12 +49,15 @@ wsl = false
 # normal = "JetBrainsMono Nerd Font"
 # normal = "BlexMono Nerd Font Mono"
 # normal = "RecursiveMnCslSt Nerd Font"
+# normal = "RecMonoLinearNFM"
+# normal = "RecMonoLinear Nerd Font Mono"
 # normal = "Recursive Mono Linear Static"
 # normal = "CaskaydiaCove Nerd Font Mono"
 # normal = "FantasqueSansMono Nerd Font Mono"
 # normal = "CommitMono Nerd Font Mono"
 # normal = "CommitMonoCustom21 Nerd Font"
-normal = "CommitMonoThesimpledev Nerd Font"
+# normal = "CommitMonoThesimpledev Nerd Font"
+# normal = "VictorMono Nerd Font"
 # normal = "Input Mono Condensed"
 # normal = "Input Mono Compressed"
 # normal = "Input Mono Narrow"

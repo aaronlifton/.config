@@ -57,6 +57,16 @@ return {
       -- if dbui_idx then opts.right[#opts.right + 1] = table.remove(opts.right, dbui_idx) end
 
       opts.keys["e"] = toggle_auto_expand_width
+      opts.right = {
+        {
+          title = "Outline",
+          ft = "grapple",
+          open = "AerialToggle",
+          size = {
+            width = 0.13,
+          },
+        },
+      }
 
       return opts
     end,

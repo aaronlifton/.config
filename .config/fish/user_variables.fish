@@ -105,7 +105,7 @@ set -gx RUBY_CONFIGURE_OPTS --enable-yjit
 # set -gx DOCKER_DEFAULT_PLATFORM linux/amd64
 
 # Themes
-source "fzf.fish"
+source "$fish_config_path/fzf.fish"
 
 ## Pager
 set -gx PAGER nvimpager

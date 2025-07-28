@@ -1,4 +1,5 @@
 # https://github.com/search?q=path%3A**%2Fghostty%2Fconfig&type=code
+#
 # Default values ghostty +show-config --default --docs > ~/github/dotfiles-latest/ghostty/config-default
 # Specified as either hex (#RRGGBB or RRGGBB) or a named X11 color.
 # adjust-underline-position=8
@@ -48,11 +49,6 @@ adjust-cursor-thickness=2
 # font-family="MonoLisa Nerd Font Mono"
 # font-family="Monolisa Nerd Font Mono"
 
-font-family="Maple Mono NF"
-# font-style = "Thin"
-font-style = "ExtraLight"
-font-family-italic="Maple Mono NF"
-font-family-bold="Maple Mono NF"
 
 # font-family = "CaskaydiaCove Nerd Font Mono"
 # font-style = "light"

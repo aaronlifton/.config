@@ -48,7 +48,7 @@
           } ],
           "conditions" : [ {
             "type" : "frontmost_application_unless",
-            "bundle_identifiers" : [ "^net\\.kovidgoyal\\.kitty$", "^io\\.alacritty$", "^com\\.mitchellh\\.ghostty$", "^com\\.neovide\\.neovide$" ]
+            "bundle_identifiers" : [ "^net\\.kovidgoyal\\.kitty$", "^io\\.alacritty$", "^com\\.mitchellh\\.ghostty$", "^com\\.neovide\\.neovide$", ".*neovide.*" ]
           } ],
           "type" : "basic"
         } ]

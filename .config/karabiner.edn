@@ -6,7 +6,8 @@
    :applications {:terminals ["^net\\.kovidgoyal\\.kitty$"
                               "^io\\.alacritty$"
                               "^com\\.mitchellh\\.ghostty$"
-                              "^com\\.neovide\\.neovide$"]
+                              "^com\\.neovide\\.neovide$"
+                              ".*neovide.*"]
                   :chrome ["^com.google.Chrome$"]
                   :neovide ["^com\\.neovide\\.neovide$"]}
 
