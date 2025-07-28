@@ -39,6 +39,20 @@ local raycast_shortcuts = {
   -- [{ {}, ';' }] = "raycast://extensions/raycast/window-management/next-display",
 }
 
+function M.bind()
+  for _, value in ipairs(t) do
+    local opts = value[1] or {}
+    local deeplink = value[2]
+    local mod = opts[1]
+    local key = opts[2]
+    if not mod or not key then
+      hs.alert.show("Raycast: Invalid binding for " .. deeplink)
+      Logger.d("Raycast: Invalid binding for " .. deeplink)
+      return
+    end
+  end
+end
+
 for k, v in pairs(raycast_shortcuts) do
   M.bind(k[1], k[2], function()
     hs.execute("open -g " .. v)

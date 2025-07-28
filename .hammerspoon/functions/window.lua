@@ -11,6 +11,23 @@ grid.GRIDWIDTH = 2
 grid.GRIDHEIGHT = 2
 
 ---@class Window
+---@field restorable_frames table<string, hs.geometry> -- Store frames of windows that can be restored
+---@field window_iteration_state table<string, number> -- Track current window index per com.apple.FontBook
+---@field push fun(params: table<string, number|hs.window>) : boolean
+---@field thunk_push fun(params: table<string, number|hs.window>) : function
+---@field grid fun(cell: hs.geometry) : boolean
+---@field thunk_grid fun(cell: hs.geometry) : function
+---@field maximize_window fun() : boolean
+---@field maximize_with_delay fun(delay: number) : nil
+---@field move_and_resize fun(layout: table<string, number>) : function
+---@field move_one_screen_south fun() : nil
+---@field bring_app_to_front fun(bundleID: string) : nil
+---@field check_frontmost_window fun(target_bundle_id: string) : nil
+---@field activate_and_move_to_layout fun(appName: string, layout: table<string, number>, beforeFn: function|nil, afterFn: function|nil) : nil
+---@field iterateMonitorWindows fun(appName: string) : function
+---@field iterateWindows fun(appName: string) : function
+---@field activateApp fun(appName: string, shouldToggle: boolean) : nil
+---@field alternateMonitorApps fun(appName: string) : function
 local M = {}
 
 M.restorable_frames = {}
@@ -134,6 +151,8 @@ function M.activate_and_move_to_layout(appName, layout, beforeFn, afterFn)
 end
 
 function M.iterateMonitorWindows(appName)
+  if Config.screenCount < 2 then return M.iterateWindows(appName) end
+
   return function()
     local app = hs.application.get(appName)
     if not app then
@@ -243,17 +262,21 @@ function M.iterateWindows(appName)
     local isCurrentWindowOfTargetApp = currentApp and currentApp:name():lower() == appName:lower()
 
     if isCurrentWindowOfTargetApp then
-      -- Find the index of the currently focused window
-      for i, win in ipairs(appWindows) do
-        if win:id() == currentWindow:id() then
-          currentIndex = i
-          break
+      if #appWindows == 1 then
+        currentIndex = 1
+      else
+        -- Find the index of the currently focused window
+        for i, win in ipairs(appWindows) do
+          if win:id() == currentWindow:id() then
+            currentIndex = i
+            break
+          end
         end
-      end
-      -- Move to next window
-      currentIndex = currentIndex + 1
-      if currentIndex > #appWindows then
-        currentIndex = 1 -- Wrap around to first window
+        -- Move to next window
+        currentIndex = currentIndex + 1
+        if currentIndex > #appWindows then
+          currentIndex = 1 -- Wrap around to first window
+        end
       end
     else
       -- If no window of target app is focused, start with first window

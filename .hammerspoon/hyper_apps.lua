@@ -1,6 +1,5 @@
 local betterDisplayCli = require("functions.better_display")
 local Layout = require("keys.window").layouts
-local logger = require("functions.logger")
 local win = require("functions.window")
 
 -- ## Alphabetical list of table keys:
@@ -157,17 +156,18 @@ local bindings = {
       win.move_one_screen_south()
     end)
   end,
-  -- [m]ac - thought this would be [s]settings or [s]ystem
+  -- [m]ac (mac) - thought this would be [s]settings or [s]ystem
   m = {
     c = function()
       hs.urlevent.openURL("raycast://extensions/raycast/clipboard-history/clipboard-history")
     end,
-    f = "Font Book",
+    f = "com.apple.FontBook",
     k = function()
       hs.urlevent.openURL("raycast://extensions/raycast/keyboard/keyboard")
     end,
+    i = "com.apple.ScreenContinuity",
   },
-  n = "Neovide",
+  n = win.iterateWindows("Neovide"),
   -- Obsidian
   o = function()
     local app = hs.application.frontmostApplication()
@@ -217,7 +217,28 @@ local bindings = {
         execute lua code "hs.openConsole()"
       end tell
     ]])
-    logger.d("Success:", success, "Output:", output, "Code:", code)
+    Logger.d("Success:", success, "Output:", output, "Code:", code)
+  end,
+  y = function()
+    local appName = "Floorp"
+    -- local bundleID = "org.mozilla.floorp"
+    local app = hs.application.get(appName)
+    if not app then
+      -- If Chrome is not running, launch it
+      win.iterateWindows(appName)()
+      --
+      --
+      app = hs.application.get(appName)
+    end
+
+    -- Get all Chrome windows
+    local chromeWindows = app:allWindows()
+    if not chromeWindows or #chromeWindows == 0 then
+      -- No Chrome windows, launch Chrome
+      hs.application.launchOrFocus("Google Chrome")
+      return
+    end
+    win.iterateWindows("Floorp")
   end,
   -- Alternate Work/Personal Chrome between monitors
   z = win.alternateMonitorApps("Google Chrome"),

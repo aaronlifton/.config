@@ -52,7 +52,6 @@ K = {
 
 -- Import required modules
 local window = require("functions.window")
-local logger = require("functions.logger")
 
 -- Define modifier keys (using Super/Cmd as the main modifier like Hyprland)
 local default_mod = {
@@ -166,7 +165,7 @@ local function moveWindowToWorkspace(workspace)
   local screenSpaces = spaces[screen:getUUID()]
 
   if screenSpaces and screenSpaces[workspace] then
-    logger.d(
+    Logger.d(
       string.format("Moving window (%s) to workspace %s (%s)", focused:title(), workspace, screenSpaces[workspace])
     )
     hs.spaces.moveWindowToSpace(focused, screenSpaces[workspace])
@@ -185,7 +184,7 @@ local function gotoWorkspace(workspace)
   else
     -- If workspace doesn't exist, create it by going to the space
     -- This is a limitation of macOS spaces - they need to be created manually
-    logger.d("Workspace " .. workspace .. " doesn't exist")
+    Logger.d("Workspace " .. workspace .. " doesn't exist")
   end
 end
 
@@ -455,24 +454,24 @@ end
 -- Initialize Omarchy-style keybindings
 function M.init(mod)
   mod = mod or default_mod
-  logger.d("Initializing Omarchy-inspired keybindings")
+  Logger.d("Initializing Omarchy-inspired keybindings")
 
   local spaces = hs.spaces.allSpaces()
   local mainScreenUUID = hs.screen.mainScreen():getUUID()
   local mainScreeenSpaces = spaces[mainScreenUUID]
   local spaceCount = #mainScreeenSpaces or 1
-  logger.d("Space count: " .. spaceCount)
+  Logger.d("Space count: " .. spaceCount)
   -- Single monitor support
   if spaceCount < 9 then
-    logger.d("Iterating from " .. spaceCount + 0 .. " to " .. 9 - spaceCount .. " to create spaces")
+    Logger.d("Iterating from " .. spaceCount + 0 .. " to " .. 9 - spaceCount .. " to create spaces")
     for _ = spaceCount + 1, 9 do
       hs.spaces.addSpaceToScreen() -- Create additional spaces if needed
     end
   end
   if spaceCount > 9 then
-    logger.d("More than 9 spaces detected, removing excess spaces")
+    Logger.d("More than 9 spaces detected, removing excess spaces")
     for i = 10, spaceCount do
-      logger.d(string.format("Removing space %s (%s)", i, mainScreeenSpaces[i]))
+      Logger.d(string.format("Removing space %s (%s)", i, mainScreeenSpaces[i]))
       hs.spaces.removeSpace(mainScreeenSpaces[i])
     end
   end
@@ -628,7 +627,7 @@ function M.init(mod)
     end)
 
     -- Move window to workspace (Super + Shift + 1-9)
-    logger.d("Binding Super + Shift + " .. tostring(i) .. " to move window to workspace " .. i)
+    Logger.d("Binding Super + Shift + " .. tostring(i) .. " to move window to workspace " .. i)
     hs.hotkey.bind(mod.superShift, tostring(i), function()
       moveWindowToWorkspace(i)
     end)
@@ -716,12 +715,12 @@ function M.init(mod)
     hs.caffeinate.lockScreen()
   end)
 
-  logger.d("Omarchy-inspired keybindings initialized")
+  Logger.d("Omarchy-inspired keybindings initialized")
 end
 
 -- Function to disable Omarchy bindings
 function M.disable()
-  logger.d("Disabling Omarchy-inspired keybindings")
+  Logger.d("Disabling Omarchy-inspired keybindings")
   -- Note: In a real implementation, you'd want to store hotkey references
   -- and disable them here. For now, this is a placeholder.
 end

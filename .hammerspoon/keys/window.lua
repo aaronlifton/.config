@@ -1,7 +1,6 @@
 local M = {}
 
 local Key = require("functions.key")
-local logger = require("functions.logger")
 
 -- Define common modifier sets
 
@@ -179,7 +178,8 @@ M.bindings = {
 
   -- Screenshot: ⌘⌥⇧ R - Center 3/4 (Reasonable Size)
   -- This calls the `reasonable_size` function which internally applies a layout.
-  { mod = K.mod.cmdShiftAlt, key = "r", action = M.layouts.centered(0.75, 0.75), use_restore = true }, -- Toggle 3/4 (Reasonable Size)
+
+  { mod = K.mod.cmdAlt, key = "r", action = M.layouts.centered(0.75, 0.75), use_restore = true }, -- Toggle 3/4 (Reasonable Size)
 
   -- Screenshot: ⌘⌥ D - First Third (Left third)
   { mod = K.mod.cmdAlt, key = "d", action = M.layouts.first_third },
@@ -275,7 +275,7 @@ function M.bind()
 
     if modifiers == nil or key == nil then
       hs.alert.show("Error: Missing modifiers and key for binding")
-      logger.d("Error: Missing modifiers or key for binding: " .. tostring(binding) .. "(key :" .. binding.key .. ")")
+      Logger.d("Error: Missing modifiers or key for binding: " .. tostring(binding) .. "(key :" .. binding.key .. ")")
       goto continue -- Skip this binding if modifiers or key are missing
     end
 

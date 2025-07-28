@@ -11,7 +11,7 @@
 -- hs.application - https://www.hammerspoon.org/docs/hs.application.html
 
 hs.allowAppleScript(true)
-local logger = require("functions.logger")
+Logger = require("functions.logger")
 local colors = require("colors")
 local configurator = require("configurator")
 
@@ -90,11 +90,11 @@ Install = spoon.SpoonInstall
 Install.use_syncinstall = true
 
 Install:andUse("ReloadConfiguration")
-logger.d("ReloadConfiguration spoon loaded")
+Logger.d("ReloadConfiguration spoon loaded")
 spoon.ReloadConfiguration:start()
 
 Install:andUse("ModalMgr")
-logger.d("ModalMgr spoon loaded")
+Logger.d("ModalMgr spoon loaded")
 ---
 ---Inspo: https://github.com/orionpax1997/hugo-blog/blob/a070d7464b810e4ad1b4670e43a45d0e038e5667/content/posts/hammerspoon.md?plain=1#L55
 ---https://github.com/rickysaurav/dotfiles/blob/326b3027fcb3a758c3ebea4f56526d2ce4633062/modules/home-manager/dots/hammerspoon/init.lua#L104
@@ -114,7 +114,7 @@ Install:andUse("MouseFollowsFocus", {
     ---@type hs.hotkey.modAl
     local supervisor = modal_mgr.supervisor
     cmodal:bind("", "escape", "Exit", function()
-      logger.d("Deactivating cmodal")
+      Logger.d("Deactivating cmodal")
       modal_mgr:deactivate({ "MouseFollowsFocus" })
       supervisor:exit()
     end)
@@ -133,12 +133,12 @@ Install:andUse("MouseFollowsFocus", {
     end)
     supervisor:bind("", "m", "Enter Mouse Focus Management", function()
       modal_mgr:deactivateAll()
-      logger.d("Activating cmodal")
+      Logger.d("Activating cmodal")
       modal_mgr:activate({ "MouseFollowsFocus" }, nil, true)
     end)
   end,
 })
-logger.d("MouseFollowsFocus spoon loaded")
+Logger.d("MouseFollowsFocus spoon loaded")
 Install:andUse("AppWindowSwitcher")
 
 hs.loadSpoon("EmmyLua")
@@ -206,6 +206,7 @@ local shutdownCallback = function()
   FoundationRemapper:unregister()
   appWatcher:stop()
   -- configWatcher:stop()
+  configurator.cleanup()
 end
 hs.shutdownCallback = shutdownCallback
 
