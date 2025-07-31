@@ -41,7 +41,7 @@ on-focused-monitor-changed = ['move-mouse monitor-lazy-center']
 # You can effectively turn off macOS "Hide application" (cmd-h) feature by toggling this flag
 # Useful if you don't use this macOS feature, but accidentally hit cmd-h or cmd-alt-h key
 # Also see: https://nikitabobko.github.io/AeroSpace/goodies#disable-hide-app
-automatically-unhide-macos-hidden-apps = false
+automatically-unhide-macos-hidden-apps = true
 
 # Possible values: (qwerty|dvorak|colemak)
 # See https://nikitabobko.github.io/AeroSpace/guide#key-mapping
@@ -63,6 +63,10 @@ automatically-unhide-macos-hidden-apps = false
     outer.bottom =     0
     outer.top =        0
     outer.right =      0
+[exec]
+    inherit-env-vars = true
+[exec.env-vars]
+    PATH = '/opt/homebrew/bin:/opt/homebrew/sbin:${PATH}'
 
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -91,61 +95,61 @@ automatically-unhide-macos-hidden-apps = false
     # Using cmd (Super) key as main modifier to match Omarchy's Super key behavior
     
     # Terminal launcher (Omarchy equivalent)
-    cmd-enter = '''exec-and-forget osascript -e '
-    tell application "Terminal"
-        do script
-        activate
-    end tell'
-    '''
+    # cmd-enter = '''exec-and-forget osascript -e '
+    # tell application "Terminal"
+    #     do script
+    #     activate
+    # end tell'
+    # '''
 
     # LAYOUT CONTROLS (Omarchy-inspired)
     # cmd-j toggles horizontal layout (matches Omarchy's Super+J for horizontal toggle)
-    cmd-j = 'layout tiles horizontal vertical'
-    cmd-t = 'layout accordion horizontal vertical'  # Using cmd-t for navigation/layout (Omarchy uses Super+T)
+    cmd-ctrl-shift-j = 'layout tiles horizontal vertical'
+    cmd-ctrl-shift-t = 'layout accordion horizontal vertical'  # Using cmd-t for navigation/layout (Omarchy uses Super+T)
 
     # FOCUS MOVEMENT (Omarchy uses Super + Arrow keys)
     # Primary navigation with arrow keys (Omarchy style)
-    cmd-left = 'focus left'
-    cmd-down = 'focus down'
-    cmd-up = 'focus up'
-    cmd-right = 'focus right'
+    cmd-alt-left = 'focus left'
+    cmd-alt-down = 'focus down'
+    cmd-alt-up = 'focus up'
+    cmd-alt-right = 'focus right'
     
     # Alternative vim-style navigation (keeping for flexibility)
-    cmd-h = 'focus left'
-    cmd-alt-k = 'focus up'
+    # cmd-h = 'focus left'
+    # cmd-alt-k = 'focus up'
     # cmd-k is used for raycast
-    cmd-k = 'focus up'
-    cmd-l = 'focus right'
+    # cmd-k = 'focus up'
+    # cmd-l = 'focus right'
     # Note: cmd-j is used for layout toggle (Omarchy's Super+J), not focus down
 
     # WINDOW MOVEMENT (Omarchy uses Super + Shift + Arrow for swapping/moving)
-    cmd-shift-left = 'move left'
-    cmd-shift-down = 'move down'
-    cmd-shift-up = 'move up'
-    cmd-shift-right = 'move right'
+    ctrl-cmd-shift-left = 'move left'
+    ctrl-cmd-shift-down = 'move down'
+    ctrl-cmd-shift-up = 'move up'
+    ctrl-cmd-shift-right = 'move right'
     
     # Alternative vim-style movement
-    cmd-shift-h = 'move left'
-    cmd-shift-j = 'move down'
-    cmd-shift-k = 'move up'
-    cmd-shift-l = 'move right'
+    # cmd-shift-h = 'move left'
+    # cmd-shift-j = 'move down'
+    # cmd-shift-k = 'move up'
+    # cmd-shift-l = 'move right'
 
     # RESIZING
-    cmd-minus = 'resize smart -50'
-    cmd-equal = 'resize smart +50'
+    ctrl-cmd-minus = 'resize smart -50'
+    ctrl-cmd-equal = 'resize smart +50'
 
     # WORKSPACE SWITCHING (Omarchy uses Super + 1-0 for workspaces 1-10)
     # Primary workspaces 1-9 and 0 (matching Omarchy's 1-10 pattern)
-    cmd-1 = 'workspace 1'
-    cmd-2 = 'workspace 2'
-    cmd-3 = 'workspace 3'
-    cmd-4 = 'workspace 4'
-    cmd-5 = 'workspace 5'
-    cmd-6 = 'workspace 6'
-    cmd-7 = 'workspace 7'
-    cmd-8 = 'workspace 8'
-    cmd-9 = 'workspace 10'
-    cmd-0 = 'workspace 10'  # Using 10 for the 0 key to match Omarchy's 1-10 pattern
+    ctrl-cmd-alt-shift-1 = 'workspace 1'
+    ctrl-cmd-alt-shift-2 = 'workspace 2'
+    ctrl-cmd-alt-shift-3 = 'workspace 3'
+    ctrl-cmd-alt-shift-4 = 'workspace 4'
+    ctrl-cmd-alt-shift-5 = 'workspace 5'
+    ctrl-cmd-alt-shift-6 = 'workspace 6'
+    ctrl-cmd-alt-shift-7 = 'workspace 7'
+    ctrl-cmd-alt-shift-8 = 'workspace 8'
+    ctrl-cmd-alt-shift-9 = 'workspace 10'
+    ctrl-cmd-alt-shift-0 = 'workspace 10'  # Using 10 for the 0 key to match Omarchy's 1-10 pattern
     
     # Extended workspaces (keeping some letter workspaces for flexibility)
     # cmd-a = 'workspace A'
@@ -172,16 +176,29 @@ automatically-unhide-macos-hidden-apps = false
 
     # MOVE WINDOWS TO WORKSPACES (Omarchy uses Shift + Super + 1-4)
     # Primary workspace movement (matching Omarchy pattern)
-    cmd-shift-1 = 'move-node-to-workspace 1'
-    cmd-shift-2 = 'move-node-to-workspace 2'
-    cmd-shift-3 = 'move-node-to-workspace 3'
-    cmd-shift-4 = 'move-node-to-workspace 4'
-    cmd-shift-5 = 'move-node-to-workspace 5'
-    cmd-shift-6 = 'move-node-to-workspace 6'
-    cmd-shift-7 = 'move-node-to-workspace 7'
-    cmd-shift-8 = 'move-node-to-workspace 8'
-    cmd-shift-9 = 'move-node-to-workspace 9'
-    cmd-shift-0 = 'move-node-to-workspace 10'
+    cmd-ctrl-shift-1 = [ 'move-node-to-workspace 1', 'workspace 1' ]
+    cmd-ctrl-shift-2 = [ 'move-node-to-workspace 2', 'workspace 2' ]
+    cmd-ctrl-shift-3 = [ 'move-node-to-workspace 3', 'workspace 3' ]
+    cmd-ctrl-shift-4 = 'move-node-to-workspace 4'
+    cmd-ctrl-shift-5 = 'move-node-to-workspace 5'
+    cmd-ctrl-shift-6 = 'move-node-to-workspace 6'
+    cmd-ctrl-shift-7 = 'move-node-to-workspace 7'
+    cmd-ctrl-shift-8 = 'move-node-to-workspace 8'
+    cmd-ctrl-shift-9 = 'move-node-to-workspace 9'
+    cmd-ctrl-shift-0 = 'move-node-to-workspace 10'
+    # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
+    # ctrl-alt-shift-cmd-1 = [ 'move-node-to-workspace 1', 'workspace 1' ]
+    # ctrl-alt-shift-cmd-2 = [ 'move-node-to-workspace 2', 'workspace 2' ]
+    # ctrl-alt-shift-cmd-3 = [ 'move-node-to-workspace 3', 'workspace 3' ]
+    # ctrl-alt-shift-cmd-4 = [ 'move-node-to-workspace 4', 'workspace 4' ]
+    # ctrl-alt-shift-cmd-5 = [ 'move-node-to-workspace 5', 'workspace 5' ]
+    # ctrl-alt-shift-cmd-6 = [ 'move-node-to-workspace 6', 'workspace 6' ]
+    # ctrl-alt-shift-cmd-7 = [ 'move-node-to-workspace 7', 'workspace 7' ]
+    # ctrl-alt-shift-cmd-8 = [ 'move-node-to-workspace 8', 'workspace 8' ]
+    # ctrl-alt-shift-cmd-9 = [ 'move-node-to-workspace 9', 'workspace 9' ]
+    # ctrl-alt-shift-cmd-a = [ 'move-node-to-workspace prev', 'workspace prev' ]
+    # ctrl-alt-shift-cmd-d = [ 'move-node-to-workspace next', 'workspace next' ]
+
     
     # Extended workspace movement
     # cmd-shift-a = 'move-node-to-workspace A'
@@ -215,8 +232,9 @@ automatically-unhide-macos-hidden-apps = false
     
     # ADDITIONAL OMARCHY-INSPIRED BINDINGS
     # Add some alternative bindings that might be useful
-    cmd-period = 'layout tiles horizontal vertical'  # Alternative layout toggle
-    cmd-comma = 'layout accordion horizontal vertical'  # Alternative accordion toggle
+    ctrl-alt-shift-t = 'layout tiles horizontal vertical'  # Alternative layout toggle
+    ctrl-alt-shift-a = 'layout accordion horizontal vertical'  # Alternative accordion toggle
+    ctrl-alt-shift-f = 'layout floating'
 
 # 'service' binding mode declaration.
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
@@ -259,11 +277,11 @@ automatically-unhide-macos-hidden-apps = false
     run = ['layout floating'] 
 
 # Raycast
-[[on-window-detected]]
-    if.app-id                       = 'com.raycast.macos'
-    if.window-title-regex-substring = 'AI Chat'
-    run                             = 'layout tiling'
-
+# [[on-window-detected]]
+#     if.app-id                       = 'com.raycast.macos'
+#     if.window-title-regex-substring = 'AI Chat'
+#     run                             = 'layout tiling'
+#
 [[on-window-detected]]
     if.app-id = 'com.raycast.macos'
     run = 'layout floating' 

@@ -162,16 +162,16 @@ M.bindings = {
   { mod = K.mod.cmdShift, key = "down", action = M.layouts.bottom_half },
 
   -- Screenshot: ⌘⌥ J
-  { mod = K.mod.cmdAlt, key = "j", action = M.layouts.bottom_left_quarter },
+  -- { mod = K.mod.cmdAlt, key = "j", action = M.layouts.bottom_left_quarter },
 
   -- Screenshot: ⌘⌥ K
-  { mod = K.mod.cmdAlt, key = "k", action = M.layouts.bottom_right_quarter },
+  -- { mod = K.mod.cmdAlt, key = "k", action = M.layouts.bottom_right_quarter },
 
   -- Screenshot: ⌘⌥ c - Center)
   -- { mod = K.mod.cmdAlt, key = "c", action = M.layouts.centered(1) }, -- Toggle Centered
 
   -- Screenshot: ⌘⌥ L - Center 2/3 centered)
-  { mod = K.mod.cmdAlt, key = "l", action = M.layouts.centered(2 / 3, 2 / 3) }, -- Toggle Centered 2/3
+  -- { mod = K.mod.cmdAlt, key = "l", action = M.layouts.centered(2 / 3, 2 / 3) }, -- Toggle Centered 2/3
 
   -- Screenshot: ⌘⌥ F - Center Third (1/3 centered)
   { mod = K.mod.cmdAlt, key = "f", action = M.layouts.centered(1 / 3, 1 / 3), use_restore = true }, -- Toggle Centered 1/3

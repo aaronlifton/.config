@@ -1,4 +1,4 @@
-local betterDisplayCli = require("functions.better_display")
+local betterdisplaycli = require("functions.better_display")
 local Layout = require("keys.window").layouts
 local win = require("functions.window")
 
@@ -69,20 +69,19 @@ local bindings = {
         hs.urlevent.openURL("raycast://ai-commands/ask-about-webpage?arguments=")
       end,
     },
-    g = {
-      g = function()
-        hs.urlevent.openURL(
-          "raycast://extensions/EvanZhouDev/raycast-gemini/askAboutScreen?arguments=%9B%22query%22%3A%22%22%7D"
-        )
-      end,
-    },
-    l = "Claude",
+    g = function()
+      hs.urlevent.openURL(
+        "raycast://extensions/EvanZhouDev/raycast-gemini/askAboutScreen?arguments=%9B%22query%22%3A%22%22%7D"
+      )
+    end,
+    l = "com.anthropic.claudefordesktop",
     -- Model [C]ontext Protocol (MCP)
     m = {
       -- Context[7]
       ["7"] = function()
-        hs.dialog.textPrompt("Ask Context 7", "Question:", "", "Enter", "Cancel")
-        hs.urlevent.openURL("raycast://ai-commands/ask-context-7-query?arguments=")
+        local val = hs.dialog.textPrompt("Ask Context 7", "Question:", "", "Enter", "Cancel")
+        hs.urlevent.openURL(("raycast://ai-commands/ask-context-7-query?arguments=%s"):format(val))
+        -- hs.urlevent.openURL(("raycast://extensions/raycast/context-7/ask-context-7?arguments="):format(val))
       end,
     },
     o = "Ollama",
@@ -143,16 +142,17 @@ local bindings = {
   },
   -- k = "Kitty",
   k = function()
+    Logger.d(string.format("Hyper+k pressed;; Screen count: %d", Config.screenCount))
     if Config.screenCount > 1 then
-      win.iterateMonitorWindows("Kitty")
+      win.iterateMonitorWindows("Kitty")()
     else
-      -- win.activateApp("Kitty")
       win.iterateWindows("Kitty")()
+      -- win.activateApp("Kitty", true)
     end
   end,
   -- l = "calendar",
   l = function()
-    Window.activate_and_move_to_layout("Calendar", Layout.first_two_thirds, function(win)
+    Window.activateAndMoveToLayout("Calendar", Layout.first_two_thirds, function(win)
       win.move_one_screen_south()
     end)
   end,
@@ -176,10 +176,14 @@ local bindings = {
       hs.eventtap.keyStroke({ "cmd" }, "o", 0, app)
     else
       -- hs.eventtap.keyStroke({}, "Return", 0)
-      Window.activateApp("Obsidian")
+      Window.activateApp("md.obsidian")
     end
   end,
-  p = "TablePlus",
+  -- Table[P]lus 1[P]assword
+  p = {
+    t = "TablePlus",
+    ["1"] = "1Password",
+  },
   -- Raycast
   r = {
     d = function()
@@ -204,11 +208,19 @@ local bindings = {
   -- Slack
   s = function()
     -- hs.urlevent.openURL("raycast://extensions/raycast/system-preferences/system-preferences")
-    Window.activate_and_move_to_layout("Slack", Layout.slack, function(win)
+    local app = hs.application.get("Slack")
+    if app then
+      local windows = app:allWindows()
+      for _, window in ipairs(windows) do
+        if window:isMinimized() then window:unminimize() end
+      end
+    end
+    Window.activateAndMoveToLayout("Slack", Layout.slack, function(win)
       win.move_one_screen_south()
     end)
   end,
   u = "Cursor",
+  v = "com.microsoft.VSCode",
   w = "Warp",
   -- Hammerspoon console
   x = function()
@@ -217,18 +229,16 @@ local bindings = {
         execute lua code "hs.openConsole()"
       end tell
     ]])
-    Logger.d("Success:", success, "Output:", output, "Code:", code)
+    Logger.d("Success: " .. tostring(success) .. ", Output: " .. tostring(output) .. ", Code: " .. tostring(code))
   end,
   y = function()
-    local appName = "Floorp"
-    -- local bundleID = "org.mozilla.floorp"
-    local app = hs.application.get(appName)
+    -- local appName = "Floorp"
+    local bundleID = "org.mozilla.floorp"
+    local app = hs.application.get(bundleID)
     if not app then
+      Logger.d("Floorp not found")
       -- If Chrome is not running, launch it
-      win.iterateWindows(appName)()
-      --
-      --
-      app = hs.application.get(appName)
+      win.iterateWindows(appNameOrBundleID)()
     end
 
     -- Get all Chrome windows
@@ -277,7 +287,9 @@ local bindings = {
   --     chromeWindows[1]:raise()
   --   end
   -- end,
-  ["0"] = "1Password",
+  ["1"] = function()
+    hs.urlevent.openURL("raycast://extensions/raycast/calendar/my-schedule")
+  end,
   ["6"] = "com.electron.scrypted",
   ["7"] = "Spotify",
   ["8"] = "com.apple.systempreferences",
