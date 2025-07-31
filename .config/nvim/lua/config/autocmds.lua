@@ -449,7 +449,17 @@ ac("BufWritePost", {
   pattern = vim.fn.expand("~/.config/karabiner.edn"),
   callback = function()
     vim.notify("Running gokuw...", vim.log.levels.INFO, { title = "Karabiner" })
-    vim.cmd("silent! !gokuw")
+    vim.system({ "gokuw" }, { detach = true }, function(obj)
+      if obj.code == 0 then
+        vim.schedule(function()
+          vim.notify("gokuw completed successfully", vim.log.levels.INFO, { title = "Karabiner" })
+        end)
+      else
+        vim.schedule(function()
+          vim.notify("gokuw failed with code " .. obj.code, vim.log.levels.ERROR, { title = "Karabiner" })
+        end)
+      end
+    end)
   end,
   desc = "Run gokuw after saving karabiner.edn",
 })
