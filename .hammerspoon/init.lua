@@ -52,7 +52,7 @@ K = {
 
 Config = {
   aerospaceEnabled = false,
-  screenCount = nil,
+  screenCount = #hs.screen.allScreens(),
 }
 
 -- 913794

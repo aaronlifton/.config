@@ -23,10 +23,10 @@ grid.GRIDHEIGHT = 2
 ---@field move_one_screen_south fun() : nil
 ---@field bring_app_to_front fun(bundleID: string) : nil
 ---@field check_frontmost_window fun(target_bundle_id: string) : nil
----@field activate_and_move_to_layout fun(appName: string, layout: table<string, number>, beforeFn: function|nil, afterFn: function|nil) : nil
----@field iterateMonitorWindows fun(appName: string) : function
----@field iterateWindows fun(appName: string) : function
----@field activateApp fun(appName: string, shouldToggle: boolean) : nil
+---@field activateAndMoveToLayout fun(appName: string, layout: table<string, number>, beforeFn: function|nil, afterFn: function|nil) : nil
+---@field iterateMonitorWindows fun(appNameOrBundleID: string) : function
+---@field iterateWindows fun(appNameOrBundleID: string) : function
+---@field activateApp fun(appNameOrBundleID: string, shouldToggle?: boolean) : nil
 ---@field alternateMonitorApps fun(appName: string) : function
 local M = {}
 
@@ -38,6 +38,11 @@ M.window_iteration_state = {} -- Track current window index per app
 -- window (optional) the window to move, defaults to the focused window
 function M.push(params)
   local window = params["window"] or hs.window.focusedWindow()
+  if not window then
+    logger.d("No focused window to move")
+    return false
+  end
+
   local windowFrame = window:frame()
   local screen = window:screen()
   local screenFrame = screen:frame()
@@ -82,6 +87,7 @@ function M.maximize_with_delay(delay)
   hs.timer.doAfter(delay or 0.5, M.maximize_window)
 end
 
+---@param layout fun(x: table): table<string, number>
 M.move_and_resize = function(layout)
   return function()
     if type(layout) == "function" then
@@ -131,14 +137,34 @@ M.check_frontmost_window = function(target_bundle_id)
   end
 end
 
+M.unmimizeApp = function(app)
+  if app then
+    local windows = app:allWindows()
+    for _, window in ipairs(windows) do
+      if window:isMinimized() then window:unminimize() end
+    end
+  end
+end
+
+M.unmimizeAppByName = function(appName)
+  local app = hs.application.get(appName)
+  if app then
+    local windows = app:allWindows()
+    for _, window in ipairs(windows) do
+      if window:isMinimized() then window:unminimize() end
+    end
+  end
+end
+
 --- Activate an application and move its window to a specific layout
 --- e.g. `activate_and_move_to_layout("Calendar", Layout.first_two_thirds)`
 ---@param appName string
 ---@param layout WindowLayout
 ---@param beforeFn fun(win: Window)|nil
 ---@param afterFn fun(win: Window)|nil
-function M.activate_and_move_to_layout(appName, layout, beforeFn, afterFn)
+function M.activateAndMoveToLayout(appName, layout, beforeFn, afterFn)
   local appInstance = hs.application.get(appName)
+  M.unmimizeApp(appInstance)
   if appInstance then
     appInstance:activate()
   else
@@ -150,14 +176,34 @@ function M.activate_and_move_to_layout(appName, layout, beforeFn, afterFn)
   if afterFn then afterFn(M) end
 end
 
-function M.iterateMonitorWindows(appName)
-  if Config.screenCount < 2 then return M.iterateWindows(appName) end
+function M.appExistsOnBuiltInDisplay(appName)
+  local app = hs.application.get(appName)
+  if not app then
+    return false -- App is not running
+  end
+  -- Get all app windows
+  local appWindows = app:allWindows()
+  if not appWindows or #appWindows == 0 then
+    return false -- No windows for the app
+  end
+  -- Check if any window is on the Built-in Display
+  for _, window in ipairs(appWindows) do
+    if window:screen():name() == Screens.main then
+      return true -- Found a window on the Built-in Display
+    end
+  end
+  return false -- No windows found on the Built-in Display
+end
+
+function M.iterateMonitorWindows(appNameOrBundleID)
+  if Config.screenCount < 2 then return M.iterateWindows(appNameOrBundleID) end
 
   return function()
-    local app = hs.application.get(appName)
+    local app = hs.application.get(appNameOrBundleID)
     if not app then
       -- If app is not running, launch it
-      hs.application.launchOrFocus(appName)
+      logger.d("App not running, launching: " .. appNameOrBundleID)
+      hs.application.launchOrFocus(appNameOrBundleID)
       return
     end
 
@@ -165,7 +211,8 @@ function M.iterateMonitorWindows(appName)
     local appWindows = app:allWindows()
     if not appWindows or #appWindows == 0 then
       -- No app windows, launch app (should ideally not happen if app exists)
-      hs.application.launchOrFocus(appName)
+      logger.e("No windows found for app: " .. appNameOrBundleID)
+      hs.application.launchOrFocus(appNameOrBundleID)
       return
     end
 
@@ -173,6 +220,7 @@ function M.iterateMonitorWindows(appName)
     local mainWindow = nil
     local secondaryWindow = nil
 
+    logger.d(hs.inspect(appWindows))
     for _, window in ipairs(appWindows) do
       local screenName = window:screen():name()
       if screenName == Screens.main and not mainWindow then
@@ -181,17 +229,24 @@ function M.iterateMonitorWindows(appName)
         secondaryWindow = window
       end
     end
+    logger.d(
+      string.format(
+        "mainWindow: %s, secondaryWindow: %s",
+        mainWindow and mainWindow:title() or "nil",
+        secondaryWindow and secondaryWindow:title() or "nil"
+      )
+    )
 
     -- Get current focused window to determine next window to focus
     local currentWindow = hs.window.focusedWindow()
     local currentApp = currentWindow and currentWindow:application()
     logger.d("currentApp: " .. (currentApp and currentApp:name() or "nil"))
-    local isCurrentWindowOfTargetApp = currentApp and currentApp:name():lower() == appName:lower()
+    local isCurrentWindowOfTargetApp = currentApp and currentApp:name():lower() == appNameOrBundleID:lower()
     local currentWindowScreenName = currentWindow and currentWindow:screen():name() or nil
 
     -- Logic to focus based on current state
     if isCurrentWindowOfTargetApp then
-      logger.d(string.format("Target app (%s) window is currently focused.", appName))
+      logger.d(string.format("Target app (%s) window is currently focused.", appNameOrBundleID))
       -- A window of the target app is currently focused
       if currentWindowScreenName == Screens.main and secondaryWindow then
         -- Currently on main screen, switch to secondary if window exists
@@ -234,13 +289,13 @@ function M.iterateMonitorWindows(appName)
 end
 
 -- Iterate through all windows of an app in order, regardless of screen
-function M.iterateWindows(appName)
+function M.iterateWindows(appNameOrBundleID)
   return function()
-    local app = hs.application.get(appName)
+    local app = hs.application.get(appNameOrBundleID)
     if not app then
       -- If app is not running, launch it
-      hs.application.launchOrFocus(appName)
-      M.window_iteration_state[appName] = nil -- Reset state when launching
+      hs.application.launchOrFocus(appNameOrBundleID)
+      M.window_iteration_state[appNameOrBundleID] = nil -- Reset state when launching
       return
     end
 
@@ -248,18 +303,21 @@ function M.iterateWindows(appName)
     local appWindows = app:allWindows()
     if not appWindows or #appWindows == 0 then
       -- No app windows, launch app
-      hs.application.launchOrFocus(appName)
-      M.window_iteration_state[appName] = nil -- Reset state
+      hs.application.launchOrFocus(appNameOrBundleID)
+      M.window_iteration_state[appNameOrBundleID] = nil -- Reset state
       return
     end
 
     -- Initialize or get current window index for this app
-    local currentIndex = M.window_iteration_state[appName] or 1
+    local currentIndex = M.window_iteration_state[appNameOrBundleID] or 1
 
     -- Check if the currently focused window is from this app and update index accordingly
     local currentWindow = hs.window.focusedWindow()
     local currentApp = currentWindow and currentWindow:application()
-    local isCurrentWindowOfTargetApp = currentApp and currentApp:name():lower() == appName:lower()
+    logger.d("currentWindow: " .. (currentWindow and currentWindow:title() or "nil"))
+    logger.d("currentApp: " .. (currentApp and currentApp:name() or "nil"))
+    local isCurrentWindowOfTargetApp = currentApp and currentApp:name():lower() == appNameOrBundleID:lower()
+    logger.d("isCurrentWindowOfTargetApp: " .. tostring(isCurrentWindowOfTargetApp))
 
     if isCurrentWindowOfTargetApp then
       if #appWindows == 1 then
@@ -284,34 +342,44 @@ function M.iterateWindows(appName)
     end
 
     -- Store the new index
-    M.window_iteration_state[appName] = currentIndex
+    M.window_iteration_state[appNameOrBundleID] = currentIndex
 
     -- Focus the window at the current index
     local targetWindow = appWindows[currentIndex]
     if targetWindow then
       targetWindow:raise()
       targetWindow:focus()
-      logger.d(string.format("Focused window %d of %d for app %s", currentIndex, #appWindows, appName))
+      logger.d(string.format("Focused window %d of %d for app %s", currentIndex, #appWindows, appNameOrBundleID))
+    else
+      logger.e(string.format("No window found at index %d for app %s", currentIndex, appNameOrBundleID))
     end
   end
 end
 
-function M.activateApp(appName, shouldToggle)
-  if string.match(appName, "^[%w%.]+%.[%w%.]+") or not string.match(appName, "%.app$") then
+function M.activateApp(appNameOrBundleID, shouldToggle)
+  if string.match(appNameOrBundleID, "^[%w%.]+%.[%w%.]+") or not string.match(appNameOrBundleID, "%.app$") then
     -- Treat as bundle identifier
-    local appInstance = hs.application.get(appName)
+    local appInstance = hs.application.get(appNameOrBundleID)
+    local appName = appInstance:name()
+    local bundleID = appInstance:bundleID()
     if appInstance then
       if shouldToggle then
         if appInstance:isFrontmost() then
           appInstance:hide()
         else
+          M.unmimizeApp(appInstance)
+
+          -- local windows = app:allWindows()
+          -- for _, window in ipairs(windows) do
+          --   if window:isMinimized() then window:unminimize() end
+          -- end
           appInstance:activate()
         end
       else
         appInstance:activate()
       end
     else
-      hs.application.launchOrFocusByBundleID(appName)
+      hs.application.launchOrFocusByBundleID(bundleID)
     end
   else
     -- Treat as application name
@@ -353,6 +421,21 @@ function M.alternateMonitorApps(appName)
       -- No app window on Built-in Display, focus any app window
       appWindows[1]:focus()
       appWindows[1]:raise()
+    end
+  end
+end
+
+function M.hasMultipleExternalDisplays()
+  Config.hasBuiltInScreen = false
+  local allScreens = hs.screen.allScreens()
+  if not allScreens or #allScreens < 2 then
+    return false -- Not enough screens to have multiple external displays
+  end
+
+  for _, screen in ipairs(allScreens) do
+    if string.find(screen:name(), "^Built%-in") then
+      Config.hasBuiltInScreen = true
+      break
     end
   end
 end

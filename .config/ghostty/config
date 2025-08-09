@@ -139,6 +139,7 @@ window-title-font-family="Victor Mono"
 # window-title-font-family="InputSansNarrowIta Nerd Font"
 # window-title-font-family="ComicShannsMono Nerd Font Mono"
 window-width=1706
+maximize = true
 
 # https://github.com/hackrmomo/ghostty-shaders
 # custom-shader = shaders/animated-gradient-shader.glsl

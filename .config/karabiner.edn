@@ -21,22 +21,26 @@
    ;; F for fn
    ;; need to prefix C T O S F Q W E R with ! or #
    ;; !  | means mandatory -   (s) alone when pressend change behavior
-    ;; #  | means optional  -   modifiers are optional (but atleast one necessary)
+   ;; #  | means optional  -   modifiers are optional (but atleast one necessary)
+   ;; !  | means mandatory -   modifier(s) alone when pressend change behavior
+   ;; #  | means optional  -   modifiers are optional (but atleast one necessary)
+   ;; !  | means mandatory -   modifier(s) alone when pressend change behavior
+   ;; #  | means optional  -   modifiers are optional (but atleast one necessary)
 
-     ;; :!Ca is keycode :a and prefix a with !C
+   ;; :!Ca is keycode :a and prefix a with !C
 
-     ;; C  | left_command
-     ;; T  | left_control
-     ;; O  | left_option
-     ;; S  | left_shift
-     ;; F  | fn
-     ;; Q  | right_command
-     ;; W  | right_control
-     ;; E  | right_option
-     ;; R  | right_shift
+   ;; C  | left_command
+   ;; T  | left_control
+   ;; O  | left_option
+   ;; S  | left_shift
+   ;; F  | fn
+   ;; Q  | right_command
+   ;; W  | right_control
+   ;; E  | right_option
+   ;; R  | right_shift
 
-     ;; ## | optional any
-     ;; !! | command + control + optional + shift (hyper)
+   ;; ## | optional any
+   ;; !! | command + control + optional + shift (hyper)
    :cheatsheet
    {:!Ca        "command a"
     :!Ta        "control a"
@@ -49,39 +53,34 @@
     :##a        "keycode a optional any"
     :!!a        "mandatory hyper (control command option shift) a "}
 
-   :main [
-          ;; Device-specific modifications
+   :main [;; Device-specific modifications
           {:des "Device-specific modifications for Mode65"
-            :rules [:mode65
-                     [:right_control :right_command]]}
+           :rules [:mode65
+                   [:right_control :right_command]]}
           ;; Change caps_lock key to command+control+option+shift. (Use shift+caps_lock as caps_lock)
           {:des "Change caps_lock key to command+control+option+shift. (Use shift+caps_lock as caps_lock)"
-           :rules [
-                   ; [:!Scaps_lock :caps_lock] ; gets pressed too often
+           :rules [; [:!Scaps_lock :caps_lock] ; gets pressed too often
                    [:##caps_lock :!CTOleft_shift :!terminals]]}
 
-
           {:des "Change right_option to 4 modifiers combination, f17 when used alone"
-          :rules [[:right_option :!CTOleft_shift nil {:alone [:f17]}]]}
+           :rules [[:right_option :!CTOleft_shift nil {:alone [:f17]}]]}
 
           ;; Change caps_lock to control if pressed with other keys, to escape if pressed alone.
-   ; {:des "Change caps_lock to control if pressed with other keys, to escape if pressed alone."
-   ;  :rules [[]] ;; Disabled rule
-   ;  :enabled false}
-
+          ; {:des "Change caps_lock to control if pressed with other keys, to escape if pressed alone."
+          ;  :rules [[]] ;; Disabled rule
+          ;  :enabled false}
           ;; CapsLock to Esc when press & to Control when hold
-   ; {:des "CapsLock to Esc when press & to Control when hold"
-   ;  :rules [[:condi :terminals]
-   ;          [:##caps_lock :right_control nil {:to_if_alone :escape}]]}
+          {:des "CapsLock to Esc when press & to Control when hold"
+           :rules [[:condi :terminals]
+                   [:##caps_lock :right_control nil {:to_if_alone :escape}]]}
           {:des "CapsLock to Esc when press & to Control when hold"
            :rules [[:##caps_lock :right_control nil {:to_if_alone :escape :condi [:terminals]}]
                    [:##caps_lock :right_gui nil {:to_if_alone :escape}]]}
 
-
           ;; Funntion key mappings
-   ; {:des "Function key mappings"
-   ;  :rules [[:f3 :mission_control]
-   ;          [:f4 :launchpad]]}
+          ;;    {:des "Function key mappings"
+          ;;     :rules [[:f3 :mission_control]
+          ;;             [:f4 :launchpad]]}
           {:des "simultaneous j l press to F18" :rules [[[:j :l] :f18]]}
 
           {:des   "Press right_shift twice to enter double shift mode, press right_shift once to leave it"
@@ -89,8 +88,7 @@
                    [:right_shift [:right_shift ["shift-pressed-once" 1]] ["double-right-shift-mode" 0] {:delayed {:invoked ["shift-pressed-once" 0] :canceled ["shift-pressed-once" 0]}}]
                    :double-right-shift-mode
                    [:right_shift ["double-right-shift-mode" 0]]
-                   ; [:a "say 'know we are in double shift mode'"]
-                    [[:a :d] :f17]
-                    [[:a :s] :f16]
-                    [[:a :z] :f19]
+                   [[:a :d] :f17]
+                   [[:a :s] :f16]
+                   [[:a :z] :f19]
                    ]}]}

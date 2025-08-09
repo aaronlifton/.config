@@ -4,7 +4,7 @@ M.bindings = {}
 
 local key_files = {
   "chars",
-  -- "function",
+  "function",
   "browser",
   "window",
   "util",
