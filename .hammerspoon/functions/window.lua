@@ -360,7 +360,13 @@ function M.activateApp(appNameOrBundleID, shouldToggle)
   if string.match(appNameOrBundleID, "^[%w%.]+%.[%w%.]+") or not string.match(appNameOrBundleID, "%.app$") then
     -- Treat as bundle identifier
     local appInstance = hs.application.get(appNameOrBundleID)
-    local appName = appInstance:name()
+    if not appInstance then
+      -- If app is not running, launch it
+      logger.d("App not running, launching: " .. appNameOrBundleID)
+      hs.application.launchOrFocusByBundleID(appNameOrBundleID)
+      return
+    end
+
     local bundleID = appInstance:bundleID()
     if appInstance then
       if shouldToggle then
