@@ -28,7 +28,7 @@ if test -e "/Users/$USER/.config/fish/secrets.fish"
     source ~/.config/fish/secrets.fish
 end
 if test -e "/Users/$USER/.config/fish/local-env.fish"
-    source ~/.config/fish/local-env.fish
+    source "/Users/$USER/.config/fish/local-env.fish"
 end
 
 # Google cloud

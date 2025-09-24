@@ -5,8 +5,8 @@ bindings = [
   # Clipboard
   { key = "V", mods = "Command", action = "Paste" },
   { key = "C", mods = "Command", action = "Copy" },
-  { key = "C", mods = "Control", action = "Copy" }, # commented out
-  { key = "V", mods = "Control", action = "Paste" },
+  # { key = "C", mods = "Control", action = "Copy" }, # commented out
+  # { key = "V", mods = "Control", action = "Paste" },
 
   # Scrolling
   { key = "Up", mods = "Control|Shift", action = "ScrollLineUp" },

@@ -1,0 +1,15 @@
+##[pylyzer] failed /users/aaron/.config/kitty/meow/github.py 1751140860 2329
+.os = pyimport "os"
+
+.json = pyimport "json"
+
+.___v_desugar_1 = pyimport "sys"
+.stdout: io.TextIOWrapper!
+.___v_desugar_2 = pyimport "urllib.request"
+.Request: {urllib.request.Request}
+.urlopen: (url: Str or urllib.request.Request, data: Bytes or NoneType := NoneType, timeout: Nat or NoneType := NoneType) -> http.client.HTTPResponse
+.token: Str or NoneType
+.org_query: {"\nquery($login: String!, $cursor: String) {\n    organization(login: $login) {\n        repositories(first: 100, after: $cursor) {\n            nodes {\n                name\n                sshUrl\n                }\n            pageInfo {\n                endCursor\n                startCursor\n                hasNextPage\n            }\n        }\n    }\n}\n"}
+.user_query: {"\nquery($login: String!, $cursor: String) {\n    user(login: $login) {\n        repositories(first: 100, after: $cursor) {\n            nodes {\n               name\n                sshUrl\n                }\n            pageInfo {\n                endCursor\n                startCursor\n                hasNextPage\n            }\n        }\n    }\n}\n"}
+.run_query: (query: Obj, login: Obj, cursor: Obj := Obj) -> Never
+.get_repos: (login: Obj, Type: Obj) -> List!(Never, 1)

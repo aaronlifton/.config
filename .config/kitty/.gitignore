@@ -3,3 +3,4 @@
 /venv/
 /venv2/
 *.bk
+./.secrets.conf

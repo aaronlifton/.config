@@ -6,8 +6,8 @@ set -x fish_config_path /Users/$USER/.config/fish
 # fish_add_path /Users/$USER/.local/share/nvm/v19.7.0/bin
 fish_add_path /usr/local/bin/
 fish_add_path -m /Users/$USER/.asdf/shims
+fish_add_path -m Users/aaron/.local/share/bob/nvim-bin
 fish_add_path -m /opt/homebrew/bin
-# fish_add_path -m /Users/$USER/.local/share/bob/nvim-bin
 fish_add_path -m /Users/$USER/Code/venv/bin
 # fish_add_path /opt/homebrew/opt/asdf/lib/exec/bin
 # fish_add_path /opt/homebrew/opt/ccache/libexec
@@ -137,3 +137,6 @@ if type -q hx
     set -xg HANDLER copilot
     set -xg MODULITH_RULES /Users/alifton/synack/client-modulith/.cursor/
 end
+
+# Cargo
+set -gx CARGO_NET_GIT_FETCH_WITH_CLI false

@@ -1,0 +1,6 @@
+[font]
+size = 16.0                                                           # Default 11.25
+normal = { family = "Maple Mono NF", style = "Light" }                # Regular
+italic = { family = "Maple Mono NF", style = "Light Italic" }         # "Italic"
+bold = { family = "Maple Mono NF", style = "SemiBold" }               # Bold
+bold_italic = { family = "Maple Mono NF", style = "SemiBold Italic" }

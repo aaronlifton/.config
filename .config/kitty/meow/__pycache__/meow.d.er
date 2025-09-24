@@ -1,0 +1,2 @@
+##[pylyzer] failed /users/aaron/.config/kitty/meow/meow.py 1751140860 481
+.binds_and_header: (mapping: Dict(_: GenericDict), emoji: Obj := Obj) -> Tuple([Str, Str])

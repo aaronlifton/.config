@@ -48,5 +48,15 @@ use = "yazi-rs/plugins:smart-paste"
 rev = "42f64c0"
 hash = "a8050052e59f3952abe0b3e27a5843de"
 
+[[plugin.deps]]
+use = "yazi-rs/plugins:types"
+rev = "d7588f6"
+hash = "1e047e1b13b5e3fc6ab1f5d0d04a14e2"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:chmod"
+rev = "d7588f6"
+hash = "1adc12c2b2b025411ab61eb8f0879574"
+
 [flavor]
 deps = []

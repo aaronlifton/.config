@@ -1,16 +1,40 @@
-; check https://github.com/alex35mil/dotfiles/blob/98c4539994572df10c4b941b04d43a14c6024ccc/home/.config/karabiner.edn
-; for integration between karabiner and hammerspoon
+; Integration between karabiner and hammerspoon
+; https://github.com/alex35mil/dotfiles/blob/98c4539994572df10c4b941b04d43a14c6024ccc/home/.config/karabiner.edn
+; Layers (for <65% keyboards)
+; https://gist.github.com/gsinclair/f4ab34da53034374eb6164698a0a8ace
+; Examples
+; https://github.com/yqrashawn/GokuRakuJoudo/blob/master/examples.org
+;
 ; TODO: migrate to karabiner.ts - https://github.com/nikitavoloboev/config-test/blob/e57b47f3a63de602ce2425a0468c5d77698fcb68/karabiner/karabiner.ts#L192
-  {:devices {:mode65 [{:vendor_id 222 :product_id 22356}]
-             :aula75 [{:vendor_id  "00x2817" :product_id "0x2817" }]}
+
+ {:profiles {:Default {:default true
+                      :sim     50     ;; simultaneous_threshold_milliseconds (def: 50)
+                        ;; if keydown event for two different keys are pressed within :sim ms, the keypresses are considered simultaneous
+                      :delay   500    ;; to_delayed_action_delay_milliseconds (def: 500)
+                        ;; after :delay ms, the key press is considered to be delayed (used for double-press macros)
+                      :alone   500    ;; to_if_alone_timeout_milliseconds (def: 1000)
+                        ;; if keyup event comes within :alone ms from keydown, the key is not just pressed but held
+                      :held    500}}   ;; to_if_held_down_threshold_milliseconds (def: 500)
+                        ;; key is fired twice when :held ms is elapsed (otherwise seen as a hold command)
+
+ ;the default value is 250
+ :simlayer-threshold 500 
+ :devices {:mode65 [{:vendor_id 222 :product_id 22356}]
+             :aula75 [{:vendor_id  "00x2817" :product_id "0x2817" }]
+             :evos   [{:vendor_id 14000 :product_id 12302 } ; evo80
+                      {:vendor_id 14000 :product_id 12292 } ; evo80_bt1
+                     ]}
+
 
    :applications {:terminals ["^net\\.kovidgoyal\\.kitty$"
-                              "^io\\.alacritty$"
+                              "^org\\.alacritty$"
                               "^com\\.mitchellh\\.ghostty$"
                               "^com\\.neovide\\.neovide$"
                               ".*neovide.*"]
                   :chrome ["^com.google.Chrome$"]
-                  :neovide ["^com\\.neovide\\.neovide$"]}
+                  :neovide ["^com\\.neovide\\.neovide$"]
+                  :raycast ["^com\\.raycast\\.macos"]}
+
 
    ;; ------------ Cheatsheet ------------
    ;; ! stand for mandatory
@@ -22,11 +46,7 @@
    ;; need to prefix C T O S F Q W E R with ! or #
    ;; !  | means mandatory -   (s) alone when pressend change behavior
    ;; #  | means optional  -   modifiers are optional (but atleast one necessary)
-   ;; !  | means mandatory -   modifier(s) alone when pressend change behavior
-   ;; #  | means optional  -   modifiers are optional (but atleast one necessary)
-   ;; !  | means mandatory -   modifier(s) alone when pressend change behavior
-   ;; #  | means optional  -   modifiers are optional (but atleast one necessary)
-
+   ;; examples:
    ;; :!Ca is keycode :a and prefix a with !C
 
    ;; C  | left_command
@@ -41,7 +61,7 @@
 
    ;; ## | optional any
    ;; !! | command + control + optional + shift (hyper)
-   :cheatsheet
+   :cheatsheet ;; ignored by code
    {:!Ca        "command a"
     :!Ta        "control a"
     :!Oa        "option a"
@@ -51,19 +71,39 @@
     :!Cspacebar "command space"
     :!Fa        "fn a"
     :##a        "keycode a optional any"
-    :!!a        "mandatory hyper (control command option shift) a "}
+    :!!a        "hyper (control command option shift) a "}
 
    :main [;; Device-specific modifications
           {:des "Device-specific modifications for Mode65"
            :rules [:mode65
-                   [:right_control :right_command]]}
+                   [:right_control :right_command]
+                   [:!Sescape :!Sgrave_accent_and_tilde]
+                   [:!Tescape :grave_accent_and_tilde]
+                   [:!Oescape :grave_accent_and_tilde]]}
+
+         ; {:des "s-mode for punctuation"   ;;    ' " `    , . &    ; : ~
+          ;  :rules [:s-mode
+          ;        [:##u :quote]
+          ;        [:##i :!Squote]
+          ;        [:##o :grave_accent_and_tilde]
+          ;        [:##j :comma]
+          ;        [:##k :period]
+          ;        [:##l :!S7]
+          ;        [:##m :semicolon]
+          ;        [:##comma :!Ssemicolon]
+          ;        [:##period :!Sgrave_accent_and_tilde]]}
+          ;
+
           ;; Change caps_lock key to command+control+option+shift. (Use shift+caps_lock as caps_lock)
           {:des "Change caps_lock key to command+control+option+shift. (Use shift+caps_lock as caps_lock)"
            :rules [; [:!Scaps_lock :caps_lock] ; gets pressed too often
-                   [:##caps_lock :!CTOleft_shift :!terminals]]}
+                   [:##caps_lock :!CTOleft_shift :!terminals {:alone [:escape] }]]}
 
           {:des "Change right_option to 4 modifiers combination, f17 when used alone"
-           :rules [[:right_option :!CTOleft_shift nil {:alone [:f17]}]]}
+          :rules [:mode65
+                   ; [:right_option :!CTOleft_shift nil {:alone [:f17]}]
+                  [:right_option :!CTOleft_shift nil {:alone [:escape] :to_if_held_down :f17}]
+                   ]}
 
           ;; Change caps_lock to control if pressed with other keys, to escape if pressed alone.
           ; {:des "Change caps_lock to control if pressed with other keys, to escape if pressed alone."
@@ -88,7 +128,30 @@
                    [:right_shift [:right_shift ["shift-pressed-once" 1]] ["double-right-shift-mode" 0] {:delayed {:invoked ["shift-pressed-once" 0] :canceled ["shift-pressed-once" 0]}}]
                    :double-right-shift-mode
                    [:right_shift ["double-right-shift-mode" 0]]
+                   [:x "say 'know we are in double shift mode'"]
                    [[:a :d] :f17]
                    [[:a :s] :f16]
                    [[:a :z] :f19]
                    ]}]}
+          
+          ; {:des "Function keys"
+          ; :rules [[[:f :1] :f1]
+          ;         [[:f :2] :f2]
+          ;         [[:f :3] :f3]
+          ;         [[:f :4] :f4]
+          ;         [[:f :5] :f5]
+          ;         [[:f :6] :f6]
+          ;         [[:f :7] :f7]
+          ;         [[:f :8] :f8]
+          ;         [[:f :9] :f9]
+          ;         [[:f :0] :f10]
+          ;         [[:f :hyphen] :f11]
+          ;         [[:f :equal_sign] :f12]
+          ;         ]}]}
+
+          ; {:des   "Press right_shift twice to enter double shift mode, press right_shift once to leave it"
+          ;                        :rules  ["double-right-shift-mode" 1] ["shift-pressed-once" 1]]
+          ;                                [:right_shift [:right_shift ["shift-pressed-once" 1]] ["double-right-shift-mode" 0] {:delayed {:invoked ["shift-pressed-once" 0] :canceled ["shift-pressed-once" 0]}}]
+          ;                                :double-right-shift-mode
+          ;                                [:right_shift ["double-right-shift-mode" 0]]
+          ;                                [:a "say 'know we are in double shift mode'"]]}]}

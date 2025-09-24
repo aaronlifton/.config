@@ -1,0 +1,6 @@
+[font]
+size = 16.0                                                                     # Default 11.25
+normal = { family = "CommitMonoCustom4 Nerd Font", style = "Regular" }
+italic = { family = "CommitMonoCustom4 Nerd Font", style = "Regular Italic" }   # "Italic"
+bold = { family = "CommitMonoCustom4 Nerd Font", style = "Bold" }
+bold_italic = { family = "CommitMonoCustom4 Nerd Font", style = "Bold Italic" }

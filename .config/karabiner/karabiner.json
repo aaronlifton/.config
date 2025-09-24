@@ -1,13 +1,15 @@
 {
-  "global" : {
-    "check_for_updates_on_startup" : false
+  "machine_specific" : {
+    "krbn-bd7514c7-8c3d-4b7c-a623-5b39de5dc2f2" : {
+      "enable_multitouch_extension" : true
+    }
   },
   "profiles" : [ {
     "complex_modifications" : {
       "parameters" : {
         "basic.simultaneous_threshold_milliseconds" : 50,
         "basic.to_delayed_action_delay_milliseconds" : 500,
-        "basic.to_if_alone_timeout_milliseconds" : 1000,
+        "basic.to_if_alone_timeout_milliseconds" : 500,
         "basic.to_if_held_down_threshold_milliseconds" : 500
       },
       "rules" : [ {
@@ -27,10 +29,68 @@
             "type" : "device_if"
           } ],
           "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "escape",
+            "modifiers" : {
+              "mandatory" : [ "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "grave_accent_and_tilde",
+            "modifiers" : [ "left_shift" ]
+          } ],
+          "conditions" : [ {
+            "identifiers" : [ {
+              "vendor_id" : 222,
+              "product_id" : 22356
+            } ],
+            "type" : "device_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "escape",
+            "modifiers" : {
+              "mandatory" : [ "left_control" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "grave_accent_and_tilde"
+          } ],
+          "conditions" : [ {
+            "identifiers" : [ {
+              "vendor_id" : 222,
+              "product_id" : 22356
+            } ],
+            "type" : "device_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "escape",
+            "modifiers" : {
+              "mandatory" : [ "left_option" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "grave_accent_and_tilde"
+          } ],
+          "conditions" : [ {
+            "identifiers" : [ {
+              "vendor_id" : 222,
+              "product_id" : 22356
+            } ],
+            "type" : "device_if"
+          } ],
+          "type" : "basic"
         } ]
       }, {
         "description" : "Change caps_lock key to command+control+option+shift. (Use shift+caps_lock as caps_lock)",
         "manipulators" : [ {
+          "to_if_alone" : [ {
+            "key_code" : "escape"
+          } ],
           "from" : {
             "key_code" : "caps_lock",
             "modifiers" : {
@@ -43,7 +103,7 @@
           } ],
           "conditions" : [ {
             "type" : "frontmost_application_unless",
-            "bundle_identifiers" : [ "^net\\.kovidgoyal\\.kitty$", "^io\\.alacritty$", "^com\\.mitchellh\\.ghostty$", "^com\\.neovide\\.neovide$", ".*neovide.*" ]
+            "bundle_identifiers" : [ "^net\\.kovidgoyal\\.kitty$", "^org\\.alacritty$", "^com\\.mitchellh\\.ghostty$", "^com\\.neovide\\.neovide$", ".*neovide.*" ]
           } ],
           "type" : "basic"
         } ]
@@ -51,7 +111,7 @@
         "description" : "Change right_option to 4 modifiers combination, f17 when used alone",
         "manipulators" : [ {
           "to_if_alone" : [ {
-            "key_code" : "f17"
+            "key_code" : "escape"
           } ],
           "from" : {
             "key_code" : "right_option"
@@ -59,6 +119,13 @@
           "to" : [ {
             "key_code" : "left_shift",
             "modifiers" : [ "left_command", "left_control", "left_option" ]
+          } ],
+          "conditions" : [ {
+            "identifiers" : [ {
+              "vendor_id" : 222,
+              "product_id" : 22356
+            } ],
+            "type" : "device_if"
           } ],
           "type" : "basic"
         } ]
@@ -76,7 +143,7 @@
           } ],
           "conditions" : [ {
             "type" : "frontmost_application_if",
-            "bundle_identifiers" : [ "^net\\.kovidgoyal\\.kitty$", "^io\\.alacritty$", "^com\\.mitchellh\\.ghostty$", "^com\\.neovide\\.neovide$", ".*neovide.*" ]
+            "bundle_identifiers" : [ "^net\\.kovidgoyal\\.kitty$", "^org\\.alacritty$", "^com\\.mitchellh\\.ghostty$", "^com\\.neovide\\.neovide$", ".*neovide.*" ]
           } ],
           "type" : "basic"
         }, {
@@ -182,6 +249,19 @@
               "name" : "double-right-shift-mode",
               "value" : 0
             }
+          } ],
+          "conditions" : [ {
+            "name" : "double-right-shift-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "x"
+          },
+          "to" : [ {
+            "shell_command" : "say 'know we are in double shift mode'"
           } ],
           "conditions" : [ {
             "name" : "double-right-shift-mode",
@@ -303,6 +383,14 @@
           "key_code" : "left_command"
         } ]
       } ]
+    }, {
+      "identifiers" : {
+        "is_keyboard" : true,
+        "is_pointing_device" : true,
+        "product_id" : 12292,
+        "vendor_id" : 14000
+      },
+      "ignore" : false
     } ],
     "fn_function_keys" : [ {
       "from" : {

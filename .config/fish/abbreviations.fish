@@ -18,8 +18,10 @@ abbr --add tar 'tar -zxvf'
 ### Lsd
 abbr --add ls lsd
 abbr --add ll lsd -la
-abbr --add lt lsd --tree --depth 2
-abbr --add llm lsd -ltr
+
+abbr --add lt lsd --tree --depth 1
+abbr --add lT lsd --tree --depth 2
+abbr --add lmr lsd -ltr
 abbr --add lg lsd -GgF
 abbr --add llg lsd -lGgF
 abbr --add lll lsd --oneline --icon never
@@ -34,6 +36,8 @@ abbr -a --position anywhere -- --fwm --files-with-matches
 
 ### Fd
 abbr --add --position anywhere -- --fdtree "| tree --fromfile"
+abbr --add --position anywhere -- --md1 "--max-depth 1"
+abbr --add fd-dirs fd -t d --max-depth 1
 
 ### Git
 abbr --add glp git log --pretty="format:%h %G? %aN %s"
@@ -60,8 +64,10 @@ abbr --add nvimcd nvim -c "cd %:p:h"
 #### Nvim AI
 abbr --add chat-gemini nvim -o1 -c \"Mchat gemini\"
 abbr --add chat-pplx nvim -o1 -c \"Mchat pplx\"
-abbr --add llm-gemini --set-cursor "llm -m gemini-2.5-pro-exp-03-25 --system \"You are a helpful assistant. You will receive questions from a user who is asking you questions via his Kitty terminal on OSX, and he is a software engineer.\" \"%\""
-abbr --add llm-gemini-flash --set-cursor "llm -m gemini-2.5-flash-preview-04-17 --system \"You are a helpful assistant. You will receive questions from a user who is asking you questions via his Kitty terminal on OSX, and he is a software engineer.\" \"%\""
+abbr --add llm-gemini --set-cursor "llm -m gemini-2.5-pro --system \"You are a helpful assistant. You will receive questions from a user who is asking you questions via his Kitty terminal on OSX, and he is a software engineer.\" \"%\""
+abbr --add llm-gemini-flash --set-cursor "llm -m gemini-2.5 --system \"You are a helpful assistant. You will receive questions from a user who is asking you questions via his Kitty terminal on OSX, and he is a software engineer.\" \"%\""
+abbr --add aiask --set-cursor "llm -m gpt-4o-mini \"%\""
+
 
 #### Development
 abbr --add be bundle exec

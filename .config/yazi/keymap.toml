@@ -1,10 +1,7 @@
 "$schema" = "https://yazi-rs.github.io/schemas/keymap.json"
 
 [[mgr.prepend_keymap]]
-on = [
-    "f",
-    "r",
-]
+on = ["f", "r"]
 run = "plugin fr rg"
 desc = "Search file by content (rg)"
 
@@ -34,25 +31,37 @@ run = "shell -- qlmanage -p \"$@\""
 desc = "Quick Look"
 
 [[mgr.prepend_keymap]]
-on = [
-    "c",
-    "a",
-]
+on = ["c", "a"]
 run = "plugin compress"
 desc = "Archive selected files"
 
+# [[mgr.prepend_keymap]]
+# on = "<C-u>"
+# run = "seek -5"
+# desc = "Seek up 5 units in the preview"
+#
+# [[mgr.prepend_keymap]]
+# on = "<C-d>"
+# run = "seek 5"
+# desc = "Seek down 5 units in the preview"
+
 [[mgr.prepend_keymap]]
 on = "<C-u>"
-run = "seek -5"
-desc = "Seek up 5 units in the preview"
+run = "arrow -10"
+desc = "Move cursor up 10 lines"
 
 [[mgr.prepend_keymap]]
 on = "<C-d>"
-run = "seek 5"
-desc = "Seek down 5 units in the preview"
+run = "arrow 10"
+desc = "Move cursor down 10 lines"
 
 [[mgr.prepend_keymap]]
-on = "K"
+on = "<C-f>"
+run = "arrow 50%"
+desc = "Move cursor down half page"
+
+[[mgr.prepend_keymap]]
+on = "<C-b>"
 run = "arrow -50%"
 desc = "Move cursor up half page"
 
@@ -72,18 +81,12 @@ run = "arrow 5"
 desc = "Move cursor down half page"
 
 [[mgr.prepend_keymap]]
-on = [
-    "f",
-    "g",
-]
-run = "plugin fg"
+on = ["f", "r"]
+run = "plugin fr"
 desc = "find file by content (fuzzy match)"
 
 [[mgr.prepend_keymap]]
-on = [
-    "f",
-    "f",
-]
+on = ["f", "f"]
 run = "filter --smart"
 desc = "Filter files"
 
@@ -108,17 +111,14 @@ run = "create --dir"
 desc = "Create a dir"
 
 [[mgr.prepend_keymap]]
-on = [
-    "g",
-    "r",
-]
+on = ["g", "r"]
 run = "shell -- ya emit cd \"$(git rev-parse --show-toplevel)\""
 desc = "Root of Git Repo"
 
 [[mgr.prepend_keymap]]
 on = "H"
-run = "tab_switch -1 --relative"
 desc = "Switch to the previous tab"
+run = "tab_switch -1 --relative"
 
 [[mgr.prepend_keymap]]
 on = "L"
@@ -172,95 +172,66 @@ run = "open --interactive"
 desc = "Open the selected files interactively"
 
 [[mgr.append_keymap]]
-on = [
-    "g",
-    "c",
-]
+on = ["g", "c"]
 run = "cd ~/.config"
 desc = "Go to ~/.config"
 
 [[mgr.append_keymap]]
-on = [
-    "g",
-    "n",
-    " n",
-]
+on = ["g", "n", "n"]
 run = "cd ~/.config/nvim"
 desc = "Go to the nvim directory"
 
 [[mgr.append_keymap]]
-on = [
-    "g",
-    "n",
-    "k",
-]
+on = ["g", "n", "p"]
+run = "cd ~/.local/share/nvim/lazy"
+desc = "Go to the nvim plugins directory"
+
+[[mgr.append_keymap]]
+on = ["g", "n", "k"]
 run = "cd ~/.config/km-nvim"
 desc = "Go to the km-nvim directory"
 
 [[mgr.append_keymap]]
-on = [
-    "g",
-    "n",
-    "a",
-]
+on = ["g", "n", "a"]
 run = "cd ~/.config/astronvim"
 desc = "Go to the astronvim directory"
 
 [[mgr.append_keymap]]
-on = [
-    "g",
-    "h",
-]
+on = ["g", "h"]
 run = "cd ~/.config/helix"
 desc = "Go to the helix directory"
 
 [[mgr.append_keymap]]
-on = [
-    "g",
-    "f",
-]
+on = ["g", "f"]
 run = "cd ~/.config/fish"
 desc = "Go to the fish directory"
 
 [[mgr.append_keymap]]
-on = [
-    "g",
-    "k",
-]
+on = ["g", "k"]
 run = "cd ~/.config/kitty"
 desc = "Go to the kitty directory"
 
+
 [[mgr.append_keymap]]
-on = [
-    "g",
-    "y",
-]
+on = ["g", "a"]
+run = "cd ~/.config/alacritty"
+desc = "Go tto the alacritty directory"
+
+[[mgr.append_keymap]]
+on = ["g", "y"]
 run = "cd ~/.config/yazi"
 desc = "Go to the yazi directory"
 
 [[mgr.append_keymap]]
-on = [
-    "g",
-    "m",
-]
+on = ["g", "m"]
 run = "cd ~/Code/Matt-FTW-dotfiles/.config/"
 desc = "Go to the Matt-FTW directory"
 
 [[mgr.append_keymap]]
-on = [
-    "g",
-    "C",
-]
+on = ["g", "C"]
 run = "cd ~/Code"
 desc = "Go to the code directory"
 
-[[mgr.append_keymap]]
-on = [
-    "g",
-    "S",
-]
-run = "cd ~/synack"
-desc = "Go to the work directory"
 
 [[input.prepend_keymap]]
 on = ["<Esc>"]

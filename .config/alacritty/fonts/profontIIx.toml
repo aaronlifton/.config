@@ -1,0 +1,6 @@
+[font]
+size = 14.0                                                                    # Default 11.25
+normal = { family = "ProFont IIx Nerd Font Mono", style = "Regular" }
+italic = { family = "ProFont IIx Nerd Font Mono", style = "Regular Italic" }   # "Italic"
+bold = { family = "ProFont IIx Nerd Font Mono", style = "Bold" }
+bold_italic = { family = "ProFont IIx Nerd Font Mono", style = "Bold Italic" }
