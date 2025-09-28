@@ -24,7 +24,7 @@ end
 
 if LazyVim.is_loaded("nvim-treesitter") and LazyVim.is_loaded("nvim-treesitter-textobjects") then
   ---@diagnostic disable-next-line: missing-fields
-  require("nvim-treesitter.configs").setup({
+  require("nvim-treesitter").setup({
     textobjects = {
       move = {
         goto_next_start = {
@@ -46,7 +46,7 @@ if LazyVim.is_loaded("nvim-treesitter") and LazyVim.is_loaded("nvim-treesitter-t
       },
     },
   })
-  require("nvim-treesitter.textobjects.move").attach(0, "javascript")
+  -- require("nvim-treesitter.textobjects.move").attach(0, "javascript")
 else
   vim.api.nvim_echo({ { "nvim-treesitter not loaded", "Error" } }, true, {})
 end

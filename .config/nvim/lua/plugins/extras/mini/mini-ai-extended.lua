@@ -46,18 +46,18 @@ local custom_mappings = {
 
 return {
   {
-    "echasnovski/mini.ai",
+    "nvim-mini/mini.ai",
     optional = true,
     dependencies = {
       -- {
-      --   "echasnovski/mini.nvim",
+      --   "nvim-mini/mini.nvim",
       --   lazy = true,
       --   vscode = true,
       --   config = function()
       --     require("mini.extra").setup()
       --   end,
       -- },
-      { "echasnovski/mini.extra", version = "*" },
+      { "nvim-mini/mini.extra", version = "*" },
     },
     opts = function(_, opts)
       local ai = require("mini.ai")

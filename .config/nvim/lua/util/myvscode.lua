@@ -258,7 +258,7 @@ return {
     end,
   },
   {
-    "echasnovski/mini.nvim",
+    "nvim-mini/mini.nvim",
     optional = true,
     config = function()
       require("mini.extra").setup()

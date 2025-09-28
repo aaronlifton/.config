@@ -1,7 +1,7 @@
 vim.keymap.set({ "n", "x" }, "]#", [[/^#\+ .*<CR>]], { desc = "Next Heading", buffer = true })
 vim.keymap.set({ "n", "x" }, "[#", [[?^#\+ .*<CR>]], { desc = "Prev Heading", buffer = true })
 
-vim.diagnostic.disable()
+vim.diagnostic.enable(false)
 vim.opt_local.spell = false
 -- vim.schedule_wrap(function()
 --   vim.cmd("lua vim.opt_local.spell = false")

@@ -80,16 +80,11 @@ o.virtualedit = "block" -- Allow cursor to move where there is no text in visual
 o.wildmode = "longest:full,full" -- Command-line completion mode
 o.winminwidth = 5 -- Minimum window width
 o.wrap = false -- Disable line wrap
-
-if vim.fn.has("nvim-0.10") == 1 then
-  o.smoothscroll = true
-  o.foldexpr = "v:lua.require'lazyvim.util'.ui.foldexpr()"
-  o.foldmethod = "expr"
-  o.foldtext = ""
-else
-  o.foldmethod = "indent"
-  o.foldtext = "v:lua.require'lazyvim.util'.ui.foldtext()"
-end
+o.smoothscroll = true
+-- LazyVim internally sets this, which uses Sets to vim.treesitter.foldexpr()
+-- o.foldexpr = "v:LazyVim.treesitter.foldexpr()" -- 
+o.foldmethod = "indent"
+o.foldtext = ""
 
 -- Fix markdown indentation settings
 vim.g.markdown_recommended_style = 0
@@ -113,13 +108,6 @@ o.shell = "fish"
 
 -- o.formatoptions = "jcrqlnt" -- "jcroqlnt" -- tcqj
 -- o.colorcolumn = "80"
-
--- g.gui_font_face = "Hack Nerd Font Mono"
--- g.gui_font_face = "FiraCode Nerd Font"
--- g.gui_font_face = "MesloLGLDZ Nerd Font Mono"
--- g.gui_font_face = "MonaLisa Nerd Font Mono"
--- g.gui_font_face = "Sauce Code Pro Nerd Font Mono"
--- g.gui_font_size = 18
 
 -- g.lazyvim_picker = "fzf" -- Already enabled by LazyVim fzf extra
 -- g.lazyvim_picker = "telescope" -- for testing plugins

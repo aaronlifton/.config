@@ -324,7 +324,7 @@ return {
     },
   },
   {
-    "echasnovski/mini.ai",
+    "nvim-mini/mini.ai",
     opts = function(_, opts)
       opts.custom_textobjects = vim.tbl_extend("force", opts.custom_textobjects, { h = miniai_spec })
     end,

@@ -3,7 +3,7 @@ return {
   { "rolv-apneseth/tfm.nvim", enabled = false },
   {
     "A7Lavinraj/fyler.nvim",
-    dependencies = { "echasnovski/mini.icons" },
+    dependencies = { "nvim-mini/mini.icons" },
     opts = {}, -- check the default options in the README.md
   },
 }

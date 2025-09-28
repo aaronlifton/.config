@@ -24,7 +24,7 @@ return {
       { "<F11>", function() require("dap").step_into() end, desc = "Debug: Step into" },
       { "<F12>", function() require("dap").step_out() end, desc = "Debug: Step out" },
       { "<F2>", function() require("dap").toggle_breakpoint() end, desc = "Debug: Toggle breakpoint" },
-      { "<M-C-S-D-2>", function() require("dap").set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, desc = "Breakpoint Condition" },
+      { "<F3>", function() require("dap").set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, desc = "Breakpoint Condition" },
       { "<leader>dQ", function() require('dap').list_breakpoints() end, desc = "Add breakpoints to qflist"}
     },
   },

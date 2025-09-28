@@ -1,5 +1,5 @@
 return {
-  { "echasnovski/mini.hipatterns", enabled = false },
+  { "nvim-mini/mini.hipatterns", enabled = false },
   {
     "catgoose/nvim-colorizer.lua",
     event = "BufReadPre",

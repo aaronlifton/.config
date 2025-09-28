@@ -38,6 +38,7 @@ local function get_icon(name)
 end
 
 return {
+  { import = "lazyvim.plugins.extras.editor.neo-tree" },
   {
     "nvim-neo-tree/neo-tree.nvim",
     optional = true,
@@ -225,6 +226,17 @@ return {
           },
           -- Handled by edgy
           ["e"] = "",
+          ["T"] = function(state)
+            local node = state.tree:get_node()
+            local path = node:get_id()
+            local fs_stat = vim.uv.fh_stat(path)
+            if fs_stat and fs_stat.type == "file" then path = vim.fn.fnamemodify(path, ":h") end
+
+            require("triptych").toggle_triptych(path)
+          end,
+          ["<leader>"] = function()
+            vim.api.nvim_echo({ { "Neo-tree: Use 'e' to toggle file explorer", "Normal" } }, true, {})
+          end,
           unpack(astrovim_style and {
             ["[b"] = "prev_source",
             ["]b"] = "next_source",

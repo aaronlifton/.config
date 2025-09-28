@@ -57,12 +57,12 @@ return {
   keys = {
     -- stylua: ignore start
     { "<leader>ql", function() require("persistence").load() end, desc = "Restore Session" },
-    { "<leader>qs", function() require("persistence").select() end,desc = "Select Session" },
+    { "<leader>qS", function() require("persistence").select() end,desc = "Select Session" },
     { "<leader>qL", function() require("persistence").load({ last = true }) end, desc = "Restore Last Session" },
     { "<leader>qd", function() require("persistence").stop() end, desc = "Don't Save Current Session" },
     -- stylua: ignore end
     {
-      "<leader>qS",
+      "<leader>qs",
       function()
         require("persistence").save()
         LazyVim.notify("Session Saved", { title = "Persistence" })

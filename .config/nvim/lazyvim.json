@@ -20,7 +20,6 @@
     "plugins.extras.ai.mcphub",
     "plugins.extras.ai.model",
     "plugins.extras.ai.yank-for-claude",
-    "plugins.extras.cmp.autopairs",
     "plugins.extras.coding.annotation",
     "plugins.extras.coding.cmp-extended",
     "plugins.extras.coding.luapad",
@@ -42,6 +41,7 @@
     "plugins.extras.editor.search-replace",
     "plugins.extras.editor.triptych",
     "plugins.extras.editor.trouble-extended",
+    "plugins.extras.editor.yazi",
     "plugins.extras.formatting.prettier-extended",
     "plugins.extras.formatting.trim_newlines",
     "plugins.extras.lang.bash",
@@ -55,6 +55,7 @@
     "plugins.extras.lang.markdown-extended",
     "plugins.extras.lang.python-extended",
     "plugins.extras.lang.ruby-extended",
+    "plugins.extras.lang.rust-extended",
     "plugins.extras.lang.sql-extended",
     "plugins.extras.lang.tilt",
     "plugins.extras.lang.web.html-css",
@@ -65,17 +66,13 @@
     "plugins.extras.linting.eslint-extended",
     "plugins.extras.linting.stylelint",
     "plugins.extras.lsp.lspconfig-extended",
-    "plugins.extras.lsp.otter",
-    "plugins.extras.lsp.tiny-code-action",
     "plugins.extras.marks.bookmarks",
     "plugins.extras.marks.grapple",
     "plugins.extras.mini.mini-ai-extended",
     "plugins.extras.mini.mini-diff-extended",
     "plugins.extras.mini.mini-files-extended",
+    "plugins.extras.mini.mini-pick",
     "plugins.extras.mini.mini-surround-extended",
-    "plugins.extras.nvchad.floaterm2",
-    "plugins.extras.nvchad.menu",
-    "plugins.extras.nvchad.showkeys",
     "plugins.extras.ui.bufferline-extended",
     "plugins.extras.ui.colorful_winsep",
     "plugins.extras.ui.colorschemes.astrotheme",
@@ -103,7 +100,7 @@
   ],
   "install_version": 7,
   "news": {
-    "NEWS.md": "10960"
+    "NEWS.md": "11866"
   },
   "version": 8
 }

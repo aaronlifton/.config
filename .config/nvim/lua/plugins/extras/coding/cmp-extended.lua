@@ -29,10 +29,7 @@ return {
       -- { "hrsh7th/cmp-cmdline", lazy = true },
       { "hrsh7th/cmp-nvim-lua", lazy = true },
       { "chrisgrieser/cmp_yanky" },
-      {
-        "Snikimonkd/cmp-go-pkgs",
-        branch = "minor-tweaks",
-      },
+      { "Snikimonkd/cmp-go-pkgs" },
     },
     keys = {
       { "<leader>ciC", "<cmd>CmpStatus<CR>", desc = "Cmp Status" },
@@ -199,7 +196,31 @@ return {
         ["<C-k>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
         ["<C-u>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), { "i", "c" }),
         ["<C-d>"] = cmp.mapping(cmp.mapping.scroll_docs(4), { "i", "c" }),
+        ["<CR>"] = LazyVim.cmp.confirm({ select = auto_select }),
       })
+      opts.mapping["<C-CR>"] = LazyVim.cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace }) -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+      opts.mapping["<S-CR>"] = function(fallback)
+        cmp.abort()
+        fallback()
+      end
+
+      -- opts.mapping = cmp.mapping.preset.insert({
+      --   ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+      --   ["<C-f>"] = cmp.mapping.scroll_docs(4),
+      --   ["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
+      --   ["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+      --   ["<C-Space>"] = cmp.mapping.complete(),
+      --   -- ["<CR>"] = LazyVim.cmp.confirm({ select = auto_select }),
+      --   ["<C-y>"] = LazyVim.cmp.confirm({ select = true }),
+      --   ["<S-CR>"] = LazyVim.cmp.confirm({ behavior = cmp.ConfirmBehavior.Replace }), -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+      --   ["<C-CR>"] = function(fallback)
+      --     cmp.abort()
+      --     fallback()
+      --   end,
+      --   ["<tab>"] = function(fallback)
+      --     return LazyVim.cmp.map({ "snippet_forward", "ai_accept" }, fallback)()
+      --   end,
+      -- })
 
       if LazyVim.has("supermaven.nvim") and vim.g.ai_accept_word_provider == "supermaven" then
         opts.mapping = vim.tbl_extend("force", opts.mapping, {

@@ -52,7 +52,7 @@ end
 return {
   { import = "lazyvim.plugins.extras.editor.mini-diff" },
   {
-    "echasnovski/mini.diff",
+    "nvim-mini/mini.diff",
     optional = true,
     -- Examples:
     -- - `vip` followed by `gh` / `gH` applies/resets hunks inside current paragraph.

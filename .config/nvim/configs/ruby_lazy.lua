@@ -5,13 +5,13 @@ return {
   { "nvim-tree/nvim-web-devicons", lazy = true },
 
   -- Mini plugins
-  { "echasnovski/mini.surround", version = false },
-  { "echasnovski/mini.diff", version = false },
-  { "echasnovski/mini.move", version = false },
-  { "echasnovski/mini.ai", version = false },
-  { "echasnovski/mini.pairs", version = false },
-  { "echasnovski/mini.files", version = false },
-  { "echasnovski/mini.hipatterns", version = false },
+  { "nvim-mini/mini.surround", version = false },
+  { "nvim-mini/mini.diff", version = false },
+  { "nvim-mini/mini.move", version = false },
+  { "nvim-mini/mini.ai", version = false },
+  { "nvim-mini/mini.pairs", version = false },
+  { "nvim-mini/mini.files", version = false },
+  { "nvim-mini/mini.hipatterns", version = false },
 
   -- Navigation and editing
   { "gbprod/yanky.nvim", opts = {} },

@@ -29,7 +29,7 @@ return {
       { "<S-CR>", "<cmd>AutolistToggleCheckbox<cr><CR>", mode = { "n" }, ft = fts },
       { "<C-r>", "<cmd>AutolistRecalculate<cr>", mode = { "n" }, ft = fts },
 
-      { "],", "<cmd>AutolistCycleNext<cr>", mode = { "n" }, ft = fts, desc = "Next List Type" },
+      { "].", "<cmd>AutolistCycleNext<cr>", mode = { "n" }, ft = fts, desc = "Next List Type" },
       { "[.", "<cmd>AutolistCyclePrev<cr>", mode = { "n" }, ft = fts, desc = "Prev List Type" },
 
       { ">>", ">><cmd>AutolistRecalculate<cr>", mode = { "n" }, ft = fts },

@@ -22,6 +22,7 @@ return {
       "spectre",
       "alpha",
       "edgy",
+      "grapple",
     },
   },
 }

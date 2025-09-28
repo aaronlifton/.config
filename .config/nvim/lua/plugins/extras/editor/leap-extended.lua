@@ -231,6 +231,9 @@ return {
             -- vim.api.nvim_echo({ { event.data.register, "Normal" } }, false, {})
             local cursor = vim.api.nvim_win_get_cursor(0)
             local char_at_cursor = vim.fn.getline(cursor[1]):sub(cursor[2], cursor[2])
+            local debug_opts = {
+              char_at_cursor = char_at_cursor,
+            }
             if vim.v.operator == "y" and event.data.register == "+" then
               if char_at_cursor:match("['\".]") ~= nil then vim.cmd("normal h") end
               vim.cmd("normal! p")

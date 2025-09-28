@@ -27,6 +27,7 @@ return {
         { path = "nvim-treesitter", words = { "TSNode", "TS%w" } },
         { path = "overseer.nvim", words = { "overseer%." } },
         { path = "edgy.nvim", words = { "edgy%." } },
+        { path = "rustaceanvim", words = { "rustaceanvim%." } },
         -- { path = "luassert-types/library", words = { "assert" } },
         { path = "busted-types/library", words = { "describe" } },
       })
@@ -54,6 +55,8 @@ return {
                 library = {
                   -- Source files are in /Applications/Hammerspoon.app/Contents/Resources/extensions/hs/*.lua
                   string.format("%s/.hammerspoon/Spoons/EmmyLua.spoon/annotations", os.getenv("HOME")),
+                  -- https://github.com/yazi-rs/plugins/tree/main/types.yazi
+                  string.format("%s/.config/yazi/plugins/types.yazi", os.getenv("HOME")),
                 },
               },
             },

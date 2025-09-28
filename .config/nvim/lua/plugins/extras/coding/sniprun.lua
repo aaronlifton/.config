@@ -54,7 +54,8 @@ return {
       { "<F6>",        function() require("sniprun").run("v") end, mode = { "v" }, desc = "Run" },
       { "<leader>cui", function() require("sniprun").info() end, desc = "Info" },
       { "<leader>cuR", function() require("sniprun").reset() end, desc = "Reset" },
-      { "<S-F6>",      function() require("sniprun").reset() end, desc = "Reset" },
+      -- Shift+F6 on Mode65 is F18
+      { "<F18>",      function() require("sniprun").reset() end, desc = "Reset" },
       { "<leader>cul", function() require("sniprun.live_mode").toggle() end, desc = "Live" },
     },
   },

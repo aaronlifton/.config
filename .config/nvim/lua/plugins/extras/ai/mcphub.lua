@@ -41,17 +41,38 @@ return {
         auto_approve = true, -- Auto approve mcp tool calls
         auto_toggle_mcp_servers = true, -- Let LLMs start and stop MCP servers automatically
         native_servers = {
-          "nvim_helper",
-          "git_helper",
-        }, -- add your custom lua native servers here
+          -- Definition-based servers (mcphub.nvim/doc/mcp/native/registration.md)
+          system_info = {
+            name = "system_info",
+            displayName = "System Info",
+            capabilities = {
+              resources = {
+                {
+                  name = "cwd",
+                  description = "Current working directory",
+                  uri = "system://cwd",
+                  handler = function(req, res)
+                    if req.uri ~= "system://cwd" then res:error("Invalid URI: " .. req.uri) end
+
+                    local cwd = vim.fn.getcwd()
+                    return res:text(cwd)
+                  end,
+                },
+              },
+            },
+          },
+        },
         extensions = {
           avante = {
             make_slash_commands = true, -- make /slash commands from MCP server prompts
           },
         },
+        global_env = {
+          GITHUB_PERSONAL_ACCESS_TOKEN = os.getenv("GITHUB_PERSONAL_ACCESS_TOKEN"),
+        },
       })
 
-      -- Load custom MCP servers
+      -- Load API-based MCP servers (mcphub.nvim/doc/mcp/native/registration.md)
       pcall(require, "custom.mcp_servers.nvim_helper")
       pcall(require, "custom.mcp_servers.git_helper")
     end,

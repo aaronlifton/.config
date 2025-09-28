@@ -1,7 +1,7 @@
 return {
   { import = "lazyvim.plugins.extras.editor.mini-files" },
   {
-    "echasnovski/mini.files",
+    "nvim-mini/mini.files",
     optional = true,
     opts = {
       windows = {
@@ -35,7 +35,7 @@ return {
     },
   },
   {
-    "echasnovski/mini.files",
+    "nvim-mini/mini.files",
     optional = true,
     opts = function()
       local MiniFiles = require("mini.files")

@@ -23,9 +23,9 @@ return {
           -- (<A-o> <A-up>) Expand selection to parent syntax node
           -- (<A-down> <A-i>) Shrink selection to previously expanded syntax node
           init_selection = "<M-o>",
-          node_incremental = "<M-o>",
           scope_incremental = false,
-          node_decremental = "<M-i>",
+          node_incremental = "<M-o>", -- v
+          node_decremental = "<M-i>", -- V
         },
       },
       textobjects = {

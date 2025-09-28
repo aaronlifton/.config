@@ -42,8 +42,9 @@ return {
       "nvim-lua/plenary.nvim",
       "MunifTanjim/nui.nvim",
       --- The below dependencies are optional,
-      "nvim-tree/nvim-web-devicons", -- or echasnovski/mini.icons
+      "nvim-tree/nvim-web-devicons", -- or nvim-mini/mini.icons
       -- "zbirenbaum/copilot.lua", -- for providers='copilot'
+      "nvim-mini/mini.pick", -- for file_selector provider mini.pick
       {
         -- support for image pasting
         -- requires osascript (OSX builtin) and pngpaste (brew install pngpaste)
@@ -425,6 +426,7 @@ return {
         { opts.mappings.chat, "<Plug>(AvanteChat)", desc = "avante: chat", mode = { "n" } },
         { opts.mappings.toggle.suggestion, function() require("avante").toggle.suggestion() end, desc = "avante: suggest", mode = { "n" } },
         { opts.mappings.toggle.hint, function() require("avante").toggle.hint() end, desc = "avante: hint", mode = { "n" } },
+        { "<leader>axh", function() require("avante").toggle.hint() end, desc = "avante: hint", mode = { "n" } },
         { opts.mappings.toggle.debug, function() require("avante").toggle.debug() end, desc = "avante: debug", mode = { "n" } },
       }
       -- stylua: ignore end

@@ -37,7 +37,7 @@ return {
         ft = { "codecompanion" },
       },
       {
-        "echasnovski/mini.diff",
+        "nvim-mini/mini.diff",
         optional = true,
       },
       -- {

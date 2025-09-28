@@ -31,8 +31,8 @@ return {
         ["<C-q>"] = "<C-q>",
         ["0"] = "<C-l>",
         -- Add H and L keybindings for yazi navigation
-        ["H"] = "H", -- Go back in history
-        ["L"] = "L", -- Go forward in history
+        H = "H", -- Go back in history
+        L = "L", -- Go forward in history
       },
       -- Customise UI. The below options are the default
       ui = {

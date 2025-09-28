@@ -1,3 +1,4 @@
+-- Custom MCP Server for Git helper functions
 local mcphub = require("mcphub")
 
 -- Add tool for git status

@@ -84,7 +84,7 @@ return {
     dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-treesitter/nvim-treesitter",
-      { "williamboman/mason.nvim", optional = true }, -- by default use Mason for go dependencies
+      { "mason-org/mason.nvim", optional = true }, -- by default use Mason for go dependencies
       {
         "folke/which-key.nvim",
         opts = {
@@ -305,7 +305,7 @@ return {
     dependencies = {
       -- { "nvim-telescope/telescope.nvim" }, -- optional
       -- { "folke/snacks.nvim" }, -- optional
-      -- { "echasnovski/mini.pick" }, -- optional
+      -- { "nvim-mini/mini.pick" }, -- optional
       { "ibhagwan/fzf-lua" }, -- optional
       {
         "nvim-treesitter/nvim-treesitter",

@@ -65,6 +65,7 @@ local enabled_autocommands = {
 --   end,
 -- })
 
+-- NOTE: keep or remove heirline
 ac({ "VimEnter" }, {
   desc = "Nvim user event that trigger a few ms after nvim starts",
   callback = function()
@@ -109,7 +110,8 @@ ac("FileType", {
 local group_id = ag("LuaReloadModule", { clear = true })
 ac("BufWritePost", {
   group = group_id,
-  pattern = "*.lua",
+  -- /opt/homebrew/Cellar/neovim/0.11.4/share/nvim/runtime/doc/autocmd.txt:1273
+  pattern = "~/.config/nvim/lua/*.lua",
   callback = function()
     local first_line = vim.api.nvim_buf_get_lines(0, 0, 1, false)[1]
     -- Only reload if the first line is local M = {}
@@ -240,21 +242,51 @@ if enabled_autocommands.numbertoggle then
   })
 end
 
+-- BufNew ?
 ac({ "BufEnter" }, {
-  pattern = { "*.md", "help" },
-  group = ag("readme", { clear = true }),
-  callback = function()
+  pattern = { "*.md", "help", "log" },
+  group = ag("Textfiles", { clear = true }),
+  callback = function(event)
     vim.opt_local.spell = false
+    if vim.tbl_contains({ "log" }, event.match) then vim.diagnostic.enable(false) end
   end,
 })
 
-ac({ "BufNewFile", "BufRead" }, {
-  pattern = { "Tiltfile", "*.tiltfile" },
-  group = ag("tiltfile", { clear = true }),
-  callback = function()
-    vim.api.nvim_command(":set ft=tiltfile syntax=starlark")
+vim.filetype.add({
+  filename = {
+    ["Tiltfile"] = "tiltfile",
+    [".tiltfile"] = "tiltfile",
+  },
+})
+vim.api.nvim_create_autocmd({ "FileType" }, {
+  group = vim.api.nvim_create_augroup("snacks_bigfile", { clear = true }),
+  pattern = "bigfile",
+  callback = function(ev)
+    -- vim.opt_local:set("syntax", "starlark")
+    vim.bo[ev.buf].syntax = "starlark"
   end,
 })
+-- ac({ "BufNewFile", "BufRead" }, {
+--   pattern = { "Tiltfile", "*.tiltfile" },
+--   group = ag("tiltfile", { clear = true }),
+--   callback = function()
+--     vim.api.nvim_command(":set ft=tiltfile syntax=starlark")
+--   end,
+-- })
+
+-- ac({ "FileType" }, {
+--   pattern = { "markdown" },
+--   callback = function(_args)
+--     vim.opt_local.spell = false
+--   end,
+-- })
+-- ac({ "FileType" }, {
+--   pattern = { "log" },
+--   callback = function(_args)
+--     vim.opt_local.spell = false
+--     vim.diagnostic.enable(false)
+--   end,
+-- })
 
 -- ac("ColorScheme", {
 --   pattern = "*",
@@ -303,13 +335,6 @@ ac({ "FileType" }, {
 -- })
 
 ac({ "FileType" }, {
-  pattern = { "markdown" },
-  callback = function(_args)
-    vim.opt_local.spell = false
-  end,
-})
-
-ac({ "FileType" }, {
   pattern = { "markdown", "mchat" },
   callback = function(args)
     vim.keymap.set("n", "]n", function()
@@ -332,44 +357,16 @@ ac({ "FileType" }, {
 })
 
 ac({ "FileType" }, {
-  pattern = { "log" },
-  callback = function(_args)
-    vim.opt_local.spell = false
-    vim.diagnostic.enable(false)
-  end,
-})
-
-ac({ "FileType" }, {
   pattern = { "*js.snap" },
   callback = function(_args)
     vim.cmd("set ft=html")
   end,
 })
 
--- NOTE: Doesn't work since avante sets the buffer cmp right after this
--- Add multi-buffer word completion to AvanteInput
--- ac({ "FileType" }, {
---   pattern = { "AvanteInput" },
---   callback = function(_args)
---     require("cmp").setup.buffer({
---       sources = {
---         {
---           name = "buffer",
---           option = {
---             get_bufnrs = require("util.win").editor_bufs,
---           },
---         },
---       },
---     })
---   end,
--- })
-
-local bigfiles = {
-  "common.json",
-  "listing_drafts_controller_spec.rb",
-}
-
 -- Modified from snacks.bigfile
+-- TODO: see if it's worth to copy anhd extend snacks.bigfile instead of
+-- keeping a filename list.
+local bigfiles = { "common.json" }
 ac({ "BufRead" }, {
   callback = function(ctx)
     local filepath = vim.api.nvim_buf_get_name(ctx.buf)
@@ -381,11 +378,11 @@ ac({ "BufRead" }, {
         --   vim.bo[args.buf].syntax = ft
         -- end)
         -- vim.bo[args.buf].filetype = "bigfile"
-        vim.cmd([[NoMatchParen]])
+        if vim.fn.exists(":NoMatchParen") ~= 0 then vim.cmd([[NoMatchParen]]) end
         Snacks.util.wo(0, { foldmethod = "manual", statuscolumn = "", conceallevel = 0 })
         vim.b.minianimate_disable = true
         vim.schedule(function()
-          vim.bo[ctx.buf].syntax = ctx.ft
+          if vim.api.nvim_buf_is_valid(ctx.buf) then vim.bo[ctx.buf].syntax = ctx.ft end
         end)
         break
       end
@@ -398,15 +395,11 @@ ac("User", {
   pattern = "LazyVimKeymaps",
   once = true,
   callback = function()
-    -- Override gitui/snacks.picker keymap with lazygit
+    -- Override gitui/snacks.picker keymap with lazygit, as this mapping gets
+    -- deleted here: LazyVim/lua/lazyvim/plugins/extras/util/gitui.lua:30
     vim.keymap.set("n", "<leader>gl", function()
       Snacks.lazygit.log({ cwd = LazyVim.root.git() })
     end, { desc = "Lazygit Log" })
-    -- Use Snacks.git.blame_line until Snacks.picker.git_log_line improves
-    vim.keymap.set("n", "<leader>gb", function()
-      Util.git.blame_line()
-      -- Snacks.git.blame_line()
-    end, { desc = "git blame line" })
   end,
 })
 
@@ -435,31 +428,85 @@ vim.api.nvim_create_autocmd("User", {
 --   end,
 -- })
 
-require("config.abstract.autocmds").auto_resize_splited_window()
+local group_resize = ag("AutoResizeSplits", { clear = true })
+ac("VimResized", {
+  group = group_resize,
+  desc = "Auto-resize split windows",
+  pattern = "*",
+  command = "tabdo wincmd =",
+})
 
+-- lazyvim/util/init.lua:185
 ac("User", {
   pattern = "LazyLoad",
   desc = "Initialize Util module",
-  callback = function(args)
+  callback = function(event)
     require("util")
   end,
 })
 
-ac("BufWritePost", {
-  pattern = vim.fn.expand("~/.config/karabiner.edn"),
-  callback = function()
-    vim.notify("Running gokuw...", vim.log.levels.INFO, { title = "Karabiner" })
-    vim.system({ "gokuw" }, { detach = true }, function(obj)
-      if obj.code == 0 then
-        vim.schedule(function()
-          vim.notify("gokuw completed successfully", vim.log.levels.INFO, { title = "Karabiner" })
-        end)
-      else
-        vim.schedule(function()
-          vim.notify("gokuw failed with code " .. obj.code, vim.log.levels.ERROR, { title = "Karabiner" })
-        end)
-      end
-    end)
-  end,
-  desc = "Run gokuw after saving karabiner.edn",
-})
+-- local gokuw_running = false
+-- ac("BufWritePost", {
+--   pattern = vim.fn.expand("~/.config/karabiner.edn"),
+--
+--   callback = function()
+--     -- Check if goku service is already running
+--     local result = vim.system({ "launchctl", "list" }, { text = true }):wait()
+--     if result.code == 0 and result.stdout:find("homebrew%.mxcl%.goku") then return end -- homebrew.mxcl.goku
+--
+--     -- If you have a launch agent with KeepAlive = true
+--     LazyVim.notify("Starting gokuw sevice", { title = "Karabiner", level = vim.log.levels.INFO, once = true })
+--     vim.system({ "launchctl", "load", vim.fn.expand("~/Library/LaunchAgents/homebrew.mxcl.goku.plist") }, {
+--       detach = true,
+--       stdout = function(err, data)
+--         if data then
+--           local log_file = io.open("/Users/aaron/Library/Logs/goku.log", "a")
+--           if log_file then
+--             log_file:write(data)
+--             log_file:close()
+--           end
+--         end
+--       end,
+--       stderr = function(err, data)
+--         if data then
+--           local log_file = io.open("/Users/aaron/Library/Logs/goku.log", "a")
+--           if log_file then
+--             log_file:write(data)
+--             log_file:close()
+--           end
+--         end
+--       end,
+--     })
+--
+--     -- Otherwise, start gokuw directly
+--     -- local log_file_path = ("/Users/%s/Library/Logs/goku.log"):format(Util.system.user())
+--     -- local function handle_output(err, data)
+--     --   if data then
+--     --     local log_file = io.open(log_file_path, "a")
+--     --     if log_file then
+--     --       log_file:write(data)
+--     --       log_file:close()
+--     --     end
+--     --   end
+--     -- end
+--     --
+--     -- vim.notify("Running gokuw...", vim.log.levels.INFO, { title = "Karabiner" })
+--     -- vim.system({ "gokuw" }, {
+--     --   detach = true,
+--     --   stdout = handle_output,
+--     --   stderr = handle_output,
+--     -- }, function(obj)
+--     --   if obj.code == 0 then
+--     --     gokuw_running = false
+--     --     vim.schedule(function()
+--     --       vim.notify("gokuw completed successfully", vim.log.levels.INFO, { title = "Karabiner" })
+--     --     end)
+--     --   else
+--     --     vim.schedule(function()
+--     --       vim.notify("gokuw failed with code " .. obj.code, vim.log.levels.ERROR, { title = "Karabiner" })
+--     --     end)
+--     --   end
+--     -- end)
+--   end,
+--   desc = "Run gokuw after saving karabiner.edn",
+-- })

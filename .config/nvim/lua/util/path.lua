@@ -40,11 +40,53 @@ M.absolute_file_line = function()
   return abs_path .. ":" .. tostring(current_line)
 end
 
+--- Convert parts table with highlight groups into a plain string
+--- @param parts table Array of {text, highlight_group} pairs
+--- @return string Combined text from all parts
+local function parts_to_string(parts)
+  local result = {}
+  for _, part in ipairs(parts) do
+    table.insert(result, part[1]) -- Extract just the text portion
+  end
+  return table.concat(result)
+end
+
+--- Alternative approach using parts structure (if you need to build complex messages)
+--- @param parts table Array of {text, highlight_group} pairs
+--- @param level? number|string Log level
+--- @param opts? table Additional notification options
+local function notify_with_parts(parts, level, opts)
+  local msg = parts_to_string(parts)
+  local notification_opts = vim.tbl_extend("force", {
+    timeout = 2000,
+    hl = {
+      title = "Title",
+      icon = "DiagnosticSignInfo",
+      border = "FloatBorder",
+      footer = "Comment",
+      msg = "Normal",
+    },
+  }, opts or {})
+
+  vim.notify(msg, level or vim.log.levels.INFO, notification_opts)
+end
+
+--- Example of how to use highlights with Snacks notifier
+--- For Snacks notifier, use the title field and hl option instead of parts
 M.echo = function(path)
-  vim.api.nvim_echo({
-    { "Current path\n", "Title" },
-    { path, "Normal" },
-  }, false, {})
+  -- Use Snacks notifier with proper title and highlight options
+  vim.notify(path, vim.log.levels.INFO, {
+    title = "Current path",
+    timeout = 2000,
+    -- Custom highlight overrides if needed
+    hl = {
+      title = "Title", -- Use Title highlight for the title
+      icon = "DiagnosticSignInfo", -- Highlight for the icon
+      border = "FloatBorder", -- Highlight for the border
+      footer = "Comment", -- Highlight for the footer
+      msg = "Normal", -- Use Normal highlight for the message
+    },
+  })
 end
 
 M.copy_abs_path = function()

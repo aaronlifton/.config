@@ -37,6 +37,16 @@ function M.get(t, ...)
   return result
 end
 
+-- function M.tbl_slice(tbl, start_idx, end_idx)
+--   local ret = {}
+--   if not start_idx then start_idx = 1 end
+--   if not end_idx then end_idx = #tbl end
+--   for i = start_idx, end_idx do
+--     table.insert(ret, tbl[i])
+--   end
+--   return ret
+-- end
+
 --- Usage: TableExt({ 1, 2, 3 }):find_index(2)
 ---@param t table
 ---@return table
@@ -54,12 +64,5 @@ function TableExt:new(t)
   return t
 end
 M.TableExt = TableExt
-
-M.find_index = function(t, value)
-  for i, v in ipairs(t) do
-    if v == value then return i end
-  end
-  return nil
-end
 
 return M

@@ -39,7 +39,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
     }
     if LazyVim.is_loaded("nvim-treesitter") and LazyVim.is_loaded("nvim-treesitter-textobjects") then
       ---@diagnostic disable-next-line: missing-fields
-      require("nvim-treesitter.configs").setup({
+      require("nvim-treesitter").setup({
         textobjects = {
           move = {
             goto_next_start = {
@@ -65,6 +65,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
       })
       local bufnr = vim.fn.bufnr()
       require("nvim-treesitter.textobjects.move").attach(bufnr, "ruby")
+      -- require("nvim-treesitter.textobjects").setup()
     else
       vim.api.nvim_echo({ { "nvim-treesitter not loaded", "Error" } }, true, {})
     end

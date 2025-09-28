@@ -26,6 +26,8 @@ end
 
 local yadm_cache = {} ---@type table<string, boolean>
 local function is_yadm_root(dir)
+  if not dir then return false end
+
   if yadm_cache[dir] == nil then
     local files = vim.fn.system({ "yadm", "ls-files", dir })
     yadm_cache[dir] = files ~= ""

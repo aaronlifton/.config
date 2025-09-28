@@ -2,7 +2,7 @@ return vim.g.highlight_provider == "mini.hipatterns" and {
   import = "lazyvim.extras.util.hipatterns",
 } or {
   { "uga-rosa/ccc.nvim", enabled = false },
-  { "echasnovski/mini.hipatterns", enabled = false },
+  { "nvim-mini/mini.hipatterns", enabled = false },
   {
     "brenoprata10/nvim-highlight-colors",
     event = "VeryLazy",

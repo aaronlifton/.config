@@ -141,7 +141,6 @@ map("v", "<D-c>", '"+y', { noremap = true }) -- Copy
 
 -- Paste options
 map("v", "p", '"_dP', { desc = "Paste without overwriting" }, { silent = true })
--- require("config.abstract.mappings").smart_visual_paste()
 -- map("x", "p", [[<Cmd>silent! normal! "_dP<CR>]], { noremap = true, silent = true })
 
 -- Working paste in neovide terminal
@@ -325,7 +324,9 @@ map("n", "<leader>cir", "<cmd>LazyRoot<cr>", { desc = "Root" })
 --   })
 -- end, { desc = "Reveal in neo-tree" })
 
-map("n", "<M-e>", "<cmd>Neotree reveal_force_cwd<cr>", { desc = "Reveal current file in neo-tree at cwd" })
+if package.loaded["neo-tree"] then
+  map("n", "<M-e>", "<cmd>Neotree reveal_force_cwd<cr>", { desc = "Reveal current file in neo-tree at cwd" })
+end
 
 map("n", "<leader>wh", function()
   require("util.win").switch_to_highest_window()
@@ -345,11 +346,6 @@ end, { desc = "Fold table contents" })
 local path_util = require("util.path")
 -- map("n", "<leader>ccp", ":let @+=expand('%:p')<cr>", { desc = "Copy path to clipboard" })
 map("n", "<leader>cpp", function()
-  -- -- ":let @+=expand('%:p')<cr>"
-  -- local current_path = vim.fn.expand("%:p")
-  -- vim.api.nvim_echo({ { current_path, "Normal" } }, false, {})
-  -- vim.cmd("let @+=expand('%:p')")
-  -- -- vim.api.nvim_call_function('setreg', {'+', "test"})
   path_util.copy_abs_path()
 end, { desc = "Copy path to clipboard", silent = true })
 map("n", "<leader>cpr", function()
@@ -369,22 +365,15 @@ map("v", "<leader>cpm", function()
   clipboard.set_clipboard(require("util.selection").markdown_code_fence())
 end, { desc = "Copy markdown code fence" })
 
-require("config.abstract.mappings").ctrl_backspace_delete({})
--- map("n", "gzaM", function()
---
---   local start_pos = vim.fn.getpos("'[")
---   local end_pos = vim.fn.getpos("']")
---
---   -- Insert code fences
---   vim.api.nvim_buf_set_lines(0, start_pos[2] - 1, start_pos[2] - 1, false, { "```" })
---   vim.api.nvim_buf_set_lines(0, end_pos[2] + 1, end_pos[2] + 1, false, { "```" })
--- end, { desc = "Surround with markdown code fence" })
-
 map("n", "<leader>cq", function()
   vim.diagnostic.open_float(nil, { source = true })
 end, { desc = "Line Diagnostics (Source)" })
 
 -- Git Browse (copy)
+map("n", "<leader>gb", function()
+  Util.git.blame_line()
+end, { desc = "Git Blame Line" })
+
 local gitbrowse_prefix = "<leader>gY"
 local gitbrowse_mappings = {
   c = { desc = "file:line (current branch)" },
@@ -440,6 +429,8 @@ end, { desc = "Lazygit (YADM)" })
 map("n", "<leader>fT", function()
   Snacks.terminal(nil, { win = { position = "float", border = "rounded", backdrop = 60, width = 0.5, height = 0.5 } })
 end, { desc = "Terminal (float)" })
+map("n", "<C-S-/>", "<leader>fT", { desc = "Terminal (float)", remap = true })
+
 map("n", "<leader>ft", function()
   Snacks.terminal(
     nil,

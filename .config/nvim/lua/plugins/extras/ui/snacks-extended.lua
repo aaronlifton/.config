@@ -121,6 +121,8 @@ return {
         function()
           Snacks.picker.explorer({
             layout = { preset = "vertical", preview = true },
+            main = { current = true },
+            auto_close = true,
           })
         end,
         "n",

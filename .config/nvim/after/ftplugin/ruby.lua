@@ -41,19 +41,19 @@ if LazyVim.has("mini.ai") then
       }),
     },
   }
-  
+
   -- Programmatically generate keymaps from the ai_config
   local ai_keymaps = require("util.ai_keymaps")
   ai_keymaps.generate_buffer_keymaps({
-    mode = {"o", "x"}, -- Generate for both operator-pending and visual modes
-    prefix = "",       -- No prefix needed
-    buffer = true      -- Make these buffer-local
+    mode = { "o", "x" }, -- Generate for both operator-pending and visual modes
+    prefix = "", -- No prefix needed
+    buffer = true, -- Make these buffer-local
   })
 end
 
 if LazyVim.is_loaded("nvim-treesitter") and LazyVim.is_loaded("nvim-treesitter-textobjects") then
   ---@diagnostic disable-next-line: missing-fields
-  require("nvim-treesitter.configs").setup({
+  require("nvim-treesitter").setup({
     textobjects = {
       move = {
         goto_next_start = {

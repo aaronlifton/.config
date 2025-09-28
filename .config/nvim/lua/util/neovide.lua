@@ -1,163 +1,255 @@
 if not vim.g.neovide then return {} end
 
-local M = {}
+local FontScaler = require("util.neovide.FontScaler")
+
+---@class FontConfig
+---@field family string Font name
+---@field size number Font size
+---@field scale? number Font scale factor
+---@field linespace? number Line spacing
+---@field options? string|table Font options
+
+local M = {
+  defaults = {
+    linespace = 0,
+  },
+  state = {
+    current_font = nil,
+  },
+  scaler = FontScaler,
+}
+-- local default_linespace = 8 -- default 0
 
 vim.api.nvim_echo({ { vim.inspect("Welcome to Neovide version %s", vim.g.neovide_version), "Normal" } }, true, {})
 
 local map = vim.keymap.set
 local g = vim.g
-
-local state = {
-  current_font = nil,
-}
--- local default_linespace = 8 -- default 0
+local o = vim.opt
 
 -- Font
 -- See https://github.com/neovide/neovide/blob/main/website/docs/configuration.md#display
-local fonts = {
-  inputmono = {
-    -- face = "InputMono Nerd Font",
-    face = "InputMonoCondensedEx Nerd Font",
-    size = 18,
-  },
-  lilex = {
-    -- face = "Input Mono Narrow",
-    face = "Lilex Nerd Font Mono",
-    size = 15,
-  },
-  firacode = {
-    face = "FiraCode Nerd Font",
-    size = 16,
-  },
-  meslo = {
-    face = "MesloLGLDZ Nerd Font Mono",
-    size = 16,
-  },
-  berkeley = {
-    face = "BerkeleyMono Nerd Font",
-    size = 15,
-    options = "#e-subpixelantialias",
-  },
+local font_library = {
   monolisa = {
-    face = "MonoLisa Nerd Font Mono",
+    family = "MonoLisa Nerd Font Mono",
     size = 15,
     scale = 0.9,
     linespace = 12,
+    options = {
+      "#e-subpixelantialias",
+    },
+  },
+  commitmono = {
+    family = "CommitMonoCustom4 Nerd Font",
+    size = 15,
+    options = "#e-subpixelantialias",
+    -- linespace = M.defaults.linespace + 1,
+    linespace = 0,
+  },
+  inputmono = {
+    -- family = "InputMono Nerd Font",
+    family = "InputMonoCondensedEx Nerd Font",
+    size = 18,
+  },
+  lilex = {
+    -- family = "Input Mono Narrow",
+    family = "Lilex Nerd Font Mono",
+    size = 15,
+  },
+  firacode = {
+    family = "FiraCode Nerd Font",
+    size = 16,
+  },
+  meslo = {
+    family = "MesloLGLDZ Nerd Font Mono",
+    size = 16,
+  },
+  berkeley = {
+    family = "BerkeleyMono Nerd Font",
+    size = 15,
+    options = "#e-subpixelantialias",
   },
   geist = {
-    face = "GeistMono Nerd Font Mono",
+    family = "GeistMono Nerd Font Mono",
     size = 16,
   },
   hack = {
-    face = "Hack Nerd Font Mono",
+    family = "Hack Nerd Font Mono",
     size = 15,
   },
   firacode_symbols = {
-    face = "Fira Code,Symbols Nerd Font Mono",
+    family = "Fira Code,Symbols Nerd Font Mono",
     size = 34,
     scale = 0.3,
   },
   cascadia = {
-    face = "Cascadia Code Light,MesloLGS NF,Hack Nerd Font",
+    family = "Cascadia Code Light,MesloLGS NF,Hack Nerd Font",
     size = 15,
   },
   iosevka = {
-    face = "Iosevka SS08 Light",
+    family = "Iosevka SS08 Light",
     size = 18,
     options = "#e-subpixelantialias",
   },
   jetbrains = {
-    face = "JetBrainsMono Nerd Font",
+    family = "JetBrainsMono Nerd Font",
     size = 14,
     linespace = 0,
   },
   recursive = {
-    face = "RecursiveMnCslSt Nerd Font",
+    family = "RecursiveMnCslSt Nerd Font",
     size = 16,
   },
 }
 
-function M.set_font(name)
-  local font = fonts[name:lower()]
-  if not font then vim.notify("Font " .. name .. " not found", vim.log.levels.ERROR) end
+-- https://neovide.dev/configuration.html
+-- 'vim.o.guifont = "Source Code Pro:h14"' -- text below applies for VimScript
+-- Controls the font used by Neovide. Also check the config file to see how to configure features. This is the only setting which is actually controlled through an option, and as such it's also documented in :h guifont. But to sum it up and also add Neovide's extension:
+--
+-- The basic format is:
+-- 'Primary\ Font,Fallback\ Font\ 1,Fallback\ Font\ 2:option1:option2:option3'
+--   You can have as many fallback fonts as you want (even 0) and as many options as you want (also even 0).
+-- Fonts
+--   are separated with , (commas).
+--   can contain spaces by either escaping them or using _ (underscores).
+-- Options
+--   apply to all fonts at once.
+--   are separated from the fonts and themselves through : (colons).
+--   can be one of the following:
+--     hX — Sets the font size to X points, while X can be any (even floating-point) number.
+--     wX (available since 0.11.2) — Sets the width relative offset to be X points, while X can be again any number. Negative values shift characters closer together, positive values shift them further apart.
+--     b — Sets the font bold.
+--     i — Sets the font italic.
+--     #e-X (available since 0.10.2) — Sets edge pixels to be drawn opaquely or with partial transparency, while X is a type of edging:
+--       antialias (default)
+--       subpixelantialias
+--       alias
+--     #h-X (available since 0.10.2) - Sets level of glyph outline adjustment, while X is a type of hinting:
+--       full (default)
+--       normal
+--       slight
+--       none
+-- Some examples:
+--   Hack,Noto_Color_Emoji:h12:b — Hack at size 12 in bold, with Noto Color Emoji as fallback should Hack fail to contain any glyph.
+--   Roboto_Mono_Light:h10 — Roboto Mono Light at size 10.
+--   Hack:h14:i:#e-subpixelantialias:#h-none
+local function generate_font_options_string(opts)
+  if not opts or type(opts) ~= "table" then return "" end
 
-  g.gui_font_face = font.face
-  g.gui_font_size = font.size
-  vim.o.guifont = font.face .. ":h" .. font.size .. (font.options or "")
-  if font.scale then g.neovide_scale_factor = font.scale end
+  local options = {}
 
-  if font.linespace then
-    vim.opt.linespace = font.linespace
-  else
-    vim.opt.linespace = default_linespace
+  -- Handle size option (hX)
+  if opts.size then table.insert(options, "h" .. opts.size) end
+
+  -- Handle width offset (wX) - available since 0.11.2
+  if opts.width then table.insert(options, "w" .. opts.width) end
+
+  -- Handle bold (b)
+  if opts.bold then table.insert(options, "b") end
+
+  -- Handle italic (i)
+  if opts.italic then table.insert(options, "i") end
+
+  -- Handle edge pixels (#e-X) - available since 0.10.2
+  if opts.edging then table.insert(options, "#e-" .. opts.edging) end
+
+  -- Handle hinting (#h-X) - available since 0.10.2
+  if opts.hinting then table.insert(options, "#h-" .. opts.hinting) end
+
+  -- Handle any custom options passed as strings
+  if opts.custom then
+    if type(opts.custom) == "table" then
+      for _, option in ipairs(opts.custom) do
+        table.insert(options, option)
+      end
+    elseif type(opts.custom) == "string" then
+      table.insert(options, opts.custom)
+    end
   end
 
-  -- Try putting a debugger here to test happy vim.noify path
-  -- vim.api.nvim_echo({ { "vim.o.guifont:\n", "Title" }, { vim.inspect(name), "Normal" } }, true, {})
-  state.current_font = name
+  return table.concat(options, ":")
 end
 
-local function set_font2(name, size, options)
-  options = options or ""
-  size = size or 16
-  g.gui_font_face = name
-  g.gui_font_size = size
-  vim.o.guifont = string.format("%s:h%s%s", name, size, options)
+local function generate_font_string(font_config)
+  return font_config.family .. ":h" .. font_config.size .. generate_font_options_string(font_config.options)
+end
 
-  vim.api.nvim_echo({ { "Font:\n", "Title" }, { vim.inspect(vim.o.guifont), "Normal" } }, true, {})
-  state.current_font = name
+--- Set a single font
+---@param font_config FontConfig
+function M.set_font(font_config)
+  vim.o.guifont = generate_font_string(font_config)
+
+  if font_config.scale then g.neovide_scale_factor = font_config.scale end
+
+  if font_config.linespace then
+    vim.opt.linespace = font_config.linespace
+  else
+    vim.opt.linespace = M.defaults.linespace
+  end
+
+  -- vim.api.nvim_echo({ { "vim.o.guifont:\n", "Title" }, { vim.inspect(vim.o.guifont), "Normal" } }, true, {})
+  vim.notify("Font set to " .. vim.o.guifont, vim.log.levels.INFO)
+
+  M.state.current_font = vim.o.guifont
+end
+
+--- Set multiple fonts with fallbacks
+---@param font_config FontConfig
+---@vararg FontConfig[]
+function M.set_fonts(font_config, ...)
+  local font_configs = { font_config, unpack(...) }
+  local font_string = ""
+  for i, config in ipairs(font_configs) do
+    font_string = font_string .. (i > 1 and "," or "") .. generate_font_string(config)
+  end
 end
 
 -- Set default font
--- M.set_font("jetbrains")
-M.set_font("monolisa")
--- M.set_font("inputmono")
--- M.set_font("berkeley")
--- M.set_font("lilex")
--- M.set_font("recursive")
--- M.set_font2("BerkeleyMono Nerd Font", 18, "#e-subpixelantialias")
-
-vim.notify("Font set to " .. vim.o.guifont, vim.log.levels.INFO)
-vim.opt.winblend = 20
+-- M.set_font(fonts.jetbrains)
+-- M.set_font(font_library.monolisa)
+-- M.set_font(font_library.commitmono)
+-- M.set_font(fonts.inputmono)
+-- M.set_font(fonts.berkeley)
+-- M.set_font(fonts.lilex)
+-- M.set_font(fonts.recursive)
+-- M.set_font2(fonts.BerkeleyMono Nerd Font, 18, "#e-subpixelantialias")
 
 --------------------------------------------------------------------------------
 
-RefreshGuiFont = function()
-  vim.opt.guifont = string.format("%s:h%s", g.gui_font_face, g.gui_font_size)
-  -- SetGuiFont(g.gui_font_face, g.gui_font_size)
-end
-
-ResizeGuiFont = function(delta)
-  g.gui_font_size = g.gui_font_size + delta
-  RefreshGuiFont()
-end
-
-ResetGuiFont = function()
-  vim.g.gui_font_size = fonts[state.current_font].size
-  RefreshGuiFont()
-end
-
----@param scale_factor number
----@return number
-local function clamp_scale_factor(scale_factor)
-  return math.max(math.min(scale_factor, vim.g.neovide_max_scale_factor), vim.g.neovide_min_scale_factor)
-end
-
----@param scale_factor number
----@param clamp? boolean
 local function set_scale_factor(scale_factor, clamp)
-  vim.g.neovide_scale_factor = clamp and clamp_scale_factor(scale_factor) or scale_factor
+  M.scaler.set(scale_factor, clamp)
 end
 
 local function reset_scale_factor()
-  vim.g.neovide_scale_factor = vim.g.neovide_initial_scale_factor
+  M.scaler.reset()
 end
 
----@param increment number
----@param clamp? boolean
 local function change_scale_factor(increment, clamp)
-  set_scale_factor(vim.g.neovide_scale_factor + increment, clamp)
+  M.scaler.change(increment, clamp)
 end
+--
+-- local opts = { noremap = true, silent = true }
+map({ "n" }, "<D-=>", function()
+  change_scale_factor(vim.g.neovide_increment_scale_factor * vim.v.count1, true)
+end)
+map({ "n" }, "<D-->", function()
+  change_scale_factor(-vim.g.neovide_increment_scale_factor * vim.v.count1, true)
+end)
+map({ "n" }, "<D-0>", reset_scale_factor)
+
+-- local function update_scale_factor(delta)
+--   M.scaler.multiply(delta)
+--   vim.opt.guifont = string.format("%s:h%s", g.gui_font_face, g.gui_font_size)
+-- end
+-- local scale_increment = 0.05 -- 0.25
+-- map("n", "<D-=>", function()
+--   update_scale_factor(1 + scale_increment)
+-- end)
+-- map("n", "<D-->", function()
+--   update_scale_factor(1 / (1 + scale_increment))
+-- end)
+-- map("n", "<D-0>", function()
+--   M.scaler.set(1)
+-- end)
 
 -- Command definitions
 local commands = {
@@ -193,43 +285,7 @@ for name, def in pairs(commands) do
   })
 end
 
-vim.g.neovide_increment_scale_factor = g.neovide_increment_scale_factor or 0.1
-vim.g.neovide_min_scale_factor = g.neovide_min_scale_factor or 0.7
-vim.g.neovide_max_scale_factor = g.neovide_max_scale_factor or 2.0
-vim.g.neovide_initial_scale_factor = g.neovide_scale_factor or 1
-vim.g.neovide_scale_factor = g.neovide_scale_factor or 1
-
-local opts = { noremap = true, silent = true }
-map({ "n", "i" }, "<C-=>", function()
-  ResizeGuiFont(1)
-end, opts)
-map({ "n", "i" }, "<C-->", function()
-  ResizeGuiFont(-1)
-end, opts)
-map({ "n", "i" }, "<C-0>", function()
-  ResetGuiFont()
-end, opts)
-
-local function update_scale_factor(delta)
-  g.neovide_scale_factor = g.neovide_scale_factor * delta
-  RefreshGuiFont()
-end
-local function set_scale_factor(factor)
-  g.neovide_scale_factor = factor
-  RefreshGuiFont()
-end
-
-local scale_increment = 0.05 -- 0.25
-map("n", "<D-=>", function()
-  update_scale_factor(1 + scale_increment)
-end)
-map("n", "<D-->", function()
-  update_scale_factor(1 / (1 + scale_increment))
-end)
-map("n", "<D-0>", function()
-  set_scale_factor(1)
-end)
-
+o.winblend = 20
 g.neovide_theme = "dark" -- "auto"
 g.neovide_hide_mouse_when_typing = true
 g.neovide_fullscreen = false
@@ -276,10 +332,10 @@ g.neovide_cursor_animate_in_insert_mode = true
 -- g.neovide_cursor_animate_in_replace_mode = true
 -- g.neovide_cursor_animate_in_command_mode = true
 
--- g.neovide_cursor_vfx_mode = "pixiedust" -- railgun, torpedo, pixiedust, sonicboom, ripple, wireframe
+g.neovide_cursor_vfx_mode = "pixiedust" -- railgun, torpedo, pixiedust, sonicboom, ripple, wireframe
 
 -- Railgun
-g.neovide_cursor_vfx_mode = "railgun" -- railgun, torpedo, pixiedust, sonicboom, ripple, wireframe
+-- g.neovide_cursor_vfx_mode = "railgun" -- railgun, torpedo, pixiedust, sonicboom, ripple, wireframe
 g.neovide_cursor_vfx_particle_phase = 1.5 -- railgun
 g.neovide_cursor_vfx_particle_curl = 1.0 -- railgun
 

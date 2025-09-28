@@ -154,7 +154,7 @@ return {
     end,
   },
   {
-    "echasnovski/mini.starter",
+    "nvim-mini/mini.starter",
     optional = true,
     opts = function(_, opts)
       local util = require("util.dashboard")

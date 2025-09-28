@@ -24,13 +24,38 @@ return {
             cargo = {
               allFeatures = false,
               features = { "luajit" },
+              -- show clippy on save
+              checkOnSave = {
+                command = "clippy",
+              },
             },
           },
         },
       },
     },
     config = function()
-      vim.g.rustaceanvim.server.cmd = nil
+      ---@type rustaceanvim.Opts
+      vim.g.rustaceanvim = {
+        ---@type rustaceanvim.tools.Opts
+        tools = {
+          -- ...
+        },
+        ---@type rustaceanvim.lsp.ClientOpts
+        server = {
+          on_attach = function(client, bufnr)
+            -- Set keybindings, etc. here.
+          end,
+          default_settings = {
+            ["rust-analyzer"] = {},
+          },
+          cmd = nil, -- Use default command
+          -- ...
+        },
+        ---@type rustaceanvim.dap.Opts
+        dap = {
+          -- ...
+        },
+      }
     end,
   },
   {

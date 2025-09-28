@@ -1,7 +1,7 @@
 -- disable resize animation
 return {
   {
-    "echasnovski/mini.animate",
+    "nvim-mini/mini.animate",
     optional = true,
     event = "VeryLazy",
     opts = function(_, opts)
