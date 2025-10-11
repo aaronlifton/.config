@@ -1,6 +1,4 @@
-return vim.g.highlight_provider == "mini.hipatterns" and {
-  import = "lazyvim.extras.util.hipatterns",
-} or {
+return {
   { "uga-rosa/ccc.nvim", enabled = false },
   { "nvim-mini/mini.hipatterns", enabled = false },
   {

@@ -65,7 +65,7 @@ local enabled_autocommands = {
 --   end,
 -- })
 
--- NOTE: keep or remove heirline
+-- NOTE:
 ac({ "VimEnter" }, {
   desc = "Nvim user event that trigger a few ms after nvim starts",
   callback = function()
@@ -265,36 +265,7 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
     -- vim.opt_local:set("syntax", "starlark")
     vim.bo[ev.buf].syntax = "starlark"
   end,
-})
--- ac({ "BufNewFile", "BufRead" }, {
---   pattern = { "Tiltfile", "*.tiltfile" },
---   group = ag("tiltfile", { clear = true }),
---   callback = function()
---     vim.api.nvim_command(":set ft=tiltfile syntax=starlark")
---   end,
--- })
-
--- ac({ "FileType" }, {
---   pattern = { "markdown" },
---   callback = function(_args)
---     vim.opt_local.spell = false
---   end,
--- })
--- ac({ "FileType" }, {
---   pattern = { "log" },
---   callback = function(_args)
---     vim.opt_local.spell = false
---     vim.diagnostic.enable(false)
---   end,
--- })
-
--- ac("ColorScheme", {
---   pattern = "*",
---   group = ag("fix_highlights", { clear = true }),
---   callback = function()
---     require("config.highlights").setup()
---   end,
--- })
+}) --
 
 -- NOTE: what is this:?
 -- Clear the quickfix window keymap set on BufEnter
@@ -428,9 +399,10 @@ vim.api.nvim_create_autocmd("User", {
 --   end,
 -- })
 
-local group_resize = ag("AutoResizeSplits", { clear = true })
+-- require("config.abstract.autocmds").auto_resize_splited_window()
+local vim_resized_group = ag("VimResized", { clear = true })
 ac("VimResized", {
-  group = group_resize,
+  group = vim_resized_group,
   desc = "Auto-resize split windows",
   pattern = "*",
   command = "tabdo wincmd =",
@@ -445,68 +417,17 @@ ac("User", {
   end,
 })
 
--- local gokuw_running = false
--- ac("BufWritePost", {
---   pattern = vim.fn.expand("~/.config/karabiner.edn"),
---
---   callback = function()
---     -- Check if goku service is already running
---     local result = vim.system({ "launchctl", "list" }, { text = true }):wait()
---     if result.code == 0 and result.stdout:find("homebrew%.mxcl%.goku") then return end -- homebrew.mxcl.goku
---
---     -- If you have a launch agent with KeepAlive = true
---     LazyVim.notify("Starting gokuw sevice", { title = "Karabiner", level = vim.log.levels.INFO, once = true })
---     vim.system({ "launchctl", "load", vim.fn.expand("~/Library/LaunchAgents/homebrew.mxcl.goku.plist") }, {
---       detach = true,
---       stdout = function(err, data)
---         if data then
---           local log_file = io.open("/Users/aaron/Library/Logs/goku.log", "a")
---           if log_file then
---             log_file:write(data)
---             log_file:close()
---           end
---         end
---       end,
---       stderr = function(err, data)
---         if data then
---           local log_file = io.open("/Users/aaron/Library/Logs/goku.log", "a")
---           if log_file then
---             log_file:write(data)
---             log_file:close()
---           end
---         end
---       end,
---     })
---
---     -- Otherwise, start gokuw directly
---     -- local log_file_path = ("/Users/%s/Library/Logs/goku.log"):format(Util.system.user())
---     -- local function handle_output(err, data)
---     --   if data then
---     --     local log_file = io.open(log_file_path, "a")
---     --     if log_file then
---     --       log_file:write(data)
---     --       log_file:close()
---     --     end
---     --   end
---     -- end
---     --
---     -- vim.notify("Running gokuw...", vim.log.levels.INFO, { title = "Karabiner" })
---     -- vim.system({ "gokuw" }, {
---     --   detach = true,
---     --   stdout = handle_output,
---     --   stderr = handle_output,
---     -- }, function(obj)
---     --   if obj.code == 0 then
---     --     gokuw_running = false
---     --     vim.schedule(function()
---     --       vim.notify("gokuw completed successfully", vim.log.levels.INFO, { title = "Karabiner" })
---     --     end)
---     --   else
---     --     vim.schedule(function()
---     --       vim.notify("gokuw failed with code " .. obj.code, vim.log.levels.ERROR, { title = "Karabiner" })
---     --     end)
---     --   end
---     -- end)
---   end,
---   desc = "Run gokuw after saving karabiner.edn",
--- })
+ac("FileChangedShell", {
+  group = ag("RAPluginsInterruptless", { clear = true }),
+  callback = function()
+    vim.v.fcs_choice = "just do nothing"
+
+    local filename = vim.fn.expand("<afile>")
+
+    if vim.v.fcs_reason == "conflict" then
+      require("0x2a.notifications").warning(
+        [[Warning: File "]] .. filename .. [[" has changed and the buffer was changed in Vim as well]]
+      )
+    end
+  end,
+})

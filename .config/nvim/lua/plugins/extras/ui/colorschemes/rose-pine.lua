@@ -5,5 +5,9 @@ return {
     highlight_groups = {
       EndOfBuffer = { fg = "base" },
     },
+    disable_background = true,
+    styles = {
+      italic = false,
+    },
   },
 }

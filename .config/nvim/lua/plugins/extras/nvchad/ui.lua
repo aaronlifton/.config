@@ -3,12 +3,49 @@ return {
   { "nvim-lualine/lualine.nvim", enabled = false },
   -- { "rebelot/heirline.nvim", enabled = false },
   {
+    "NvChad/base46",
+    build = function()
+      require("base46").load_all_highlights()
+    end,
+  },
+  "nvzone/volt",
+  {
+    "nvzone/menu",
+    cmd = "NvzoneMenuOpen",
+    config = function(_, _opts)
+      vim.api.nvim_create_user_command("NvzoneMenuOpen", function()
+        require("menu").open("default")
+      end, {})
+
+      -- Keyboard uers
+      vim.keymap.et("n", "<C-t>", function()
+        require("menu").open("default")
+      end, {})
+
+      -- mouse users + nvimtree users!
+      vim.keymap.set({ "n", "v" }, "<RightMouse>", function()
+        require("menu.utils").delete_old_menus()
+
+        vim.cmd.exec('"normal! \\<RightMouse>"')
+
+        -- clicked buf
+        local buf = vim.api.nvim_win_get_buf(vim.fn.getmousepos().winid)
+        local options = vim.bo[buf].ft == "NvimTree" and "nvimtree" or "default"
+
+        require("menu").open(options, { mouse = true })
+      end, {})
+    end,
+  },
+  { "nvzone/minty", cmd = { "Huefy", "Shades" } },
+  {
     "nvchad/ui",
-    lazy = false,
+    event = "UIEnter",
     opts = {
       base46 = {
         -- theme = "onedark",
-        theme = "material-deep-ocean",
+        -- theme = "material-deep-ocean",
+        theme = "chadracula-evondev",
+        theme_toggle = { "chadracula-evondev", "chadracula-evondev" },
       },
       --       nvdash = {
       --         header = [[
@@ -47,6 +84,7 @@ return {
         statusline = {
           enabled = true,
         },
+        -- https://github.com/search?q=path%3A**%2Fplugins%2F**%2F*.lua+tabufline&type=code&query=path%3A**%2Fnvim%2F**%2Fextras%2F**nvchad+
         tabufline = {
           enabled = true,
         },
@@ -69,10 +107,35 @@ return {
       end
     end,
     config = function()
-      pcall(function()
-        dofile(vim.g.base46_cache .. "defaults")
-        dofile(vim.g.base46_cache .. "statusline")
+      for _, v in ipairs(vim.fn.readdir(vim.g.base46_cache)) do
+        dofile(vim.g.base46_cache .. v)
+      end
+
+      local map = vim.keymap.set
+      map("n", "<leader>ch", "<CMD>NvCheatsheet<CR>", { desc = "Toggle nvcheatsheet" })
+      map({ "n", "t" }, "<M-t>", function()
+        require("nvchad.term").toggle({ pos = "float", id = "floatTerm" })
+      end, { desc = "Terminal Toggle floating term" })
+      map("n", "<tab>", function()
+        require("nvchad.tabufline").next()
+      end, { desc = "Buffer goto next" })
+
+      map("n", "<S-tab>", function()
+        require("nvchad.tabufline").prev()
+      end, { desc = "Buffer goto prev" })
+
+      map({ "n", "i" }, "<A-q>", function()
+        require("nvchad.tabufline").close_buffer()
+      end, { desc = "Buffer Close" })
+
+      map("n", "<leader>th", function()
+        require("nvchad.themes").open()
+      end, { desc = "nvchad themes" })
+
+      map("n", "<leader>cp", function()
+        require("minty.huefy").open()
       end)
+
       require("nvchad")
     end,
     keys = {
@@ -102,144 +165,12 @@ return {
     },
     specs = {
       {
-        "hrsh7th/nvim-cmp",
+        "saghen/blink.cmp",
         optional = true,
         opts = function(_, opts)
-          return vim.tbl_deep_extend("force", opts, require("nvchad.cmp"))
+          return vim.tbl_deep_extend("force", opts, require("nvchad.blink").config)
         end,
-      },
-      -- Disable unnecessary plugins
-      { "rebelot/heirline.nvim", opts = { statusline = false } },
-      "folke/snacks.nvim",
-      optional = true,
-      ---@type snacks.Config
-      opts = { dashboard = { enabled = false } },
-    },
-    { "brenoprata10/nvim-highlight-colors", enabled = false },
-    { "NvChad/nvim-colorizer.lua", enabled = false },
-    -- add lazy loaded dependencies
-    { "nvim-lua/plenary.nvim", lazy = true },
-    { "NvChad/volt", lazy = true },
-    {
-      "NvChad/base46",
-      lazy = true,
-      init = function()
-        vim.g.base46_cache = vim.fn.stdpath("data") .. "/base46_cache/"
-      end,
-      build = function()
-        vim.g.base46_cache = vim.fn.stdpath("data") .. "/base46_cache/"
-        require("base46").load_all_highlights()
-      end,
-      -- load base46 cache when necessary
-      specs = {
-        {
-          "nvim-treesitter/nvim-treesitter",
-          optional = true,
-          opts = function()
-            pcall(function()
-              dofile(vim.g.base46_cache .. "syntax")
-              dofile(vim.g.base46_cache .. "treesitter")
-            end)
-          end,
-        },
-        {
-          "folke/which-key.nvim",
-          optional = true,
-          opts = function()
-            pcall(function()
-              dofile(vim.g.base46_cache .. "whichkey")
-            end)
-          end,
-        },
-        {
-          "lukas-reineke/indent-blankline.nvim",
-          optional = true,
-          opts = function()
-            pcall(function()
-              dofile(vim.g.base46_cache .. "blankline")
-            end)
-          end,
-        },
-        {
-          "nvim-telescope/telescope.nvim",
-          optional = true,
-          opts = function()
-            pcall(function()
-              dofile(vim.g.base46_cache .. "telescope")
-            end)
-          end,
-        },
-        {
-          "neovim/nvim-lspconfig",
-          optional = true,
-          opts = function()
-            pcall(function()
-              dofile(vim.g.base46_cache .. "lsp")
-            end)
-          end,
-        },
-        {
-          "nvim-tree/nvim-tree.lua",
-          optional = true,
-          opts = function()
-            pcall(function()
-              dofile(vim.g.base46_cache .. "nvimtree")
-            end)
-          end,
-        },
-        {
-          "mason-org/mason.nvim",
-          optional = true,
-          opts = function()
-            pcall(function()
-              dofile(vim.g.base46_cache .. "mason")
-            end)
-          end,
-        },
-        {
-          "lewis6991/gitsigns.nvim",
-          optional = true,
-          opts = function()
-            pcall(function()
-              dofile(vim.g.base46_cache .. "git")
-            end)
-          end,
-        },
-        {
-          "nvim-tree/nvim-web-devicons",
-          optional = true,
-          opts = function()
-            pcall(function()
-              dofile(vim.g.base46_cache .. "devicons")
-            end)
-          end,
-        },
-        {
-          "nvim-mini/mini.icons",
-          optional = true,
-          opts = function()
-            pcall(function()
-              dofile(vim.g.base46_cache .. "devicons")
-            end)
-          end,
-        },
-        {
-          "hrsh7th/nvim-cmp",
-          optional = true,
-          opts = function()
-            pcall(function()
-              dofile(vim.g.base46_cache .. "cmp")
-            end)
-          end,
-        },
       },
     },
   },
-  -- {
-  --   "nvchad/base46",
-  --   lazy = true,
-  --   build = function()
-  --     require("base46").load_all_highlights()
-  --   end,
-  -- },
 }

@@ -78,6 +78,7 @@ local function language_lookup(languages)
     if lang == "lua" then return { "lua-5.4" } end
     if lang == "javascript" then return { "javascript", "jest" } end
     if lang == "ruby" then return { "ruby-3.3", "rails-7.0" } end
+    if lang == "python" then return { "python-3.13", "python-3.14" } end
   end
   return vim.iter(new_langauges):flatten():totable()
 end
@@ -88,7 +89,7 @@ local function parse_languages(languages)
     if type(languages) == "string" then languages = { languages } end
     languages = language_lookup(languages)
   else
-    languages = { "lua-5.4", "jest", "javascript", "ruby-3.3" }
+    languages = { "lua-5.4", "jest", "javascript", "ruby-3.3", "python-3.14" }
   end
   return languages
 end

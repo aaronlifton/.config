@@ -2,7 +2,7 @@
 return {
   {
     "ravitemer/mcphub.nvim",
-    event = "VeryLazy",
+    -- event = "VeryLazy",
     dependencies = {
       "nvim-lua/plenary.nvim",
     },

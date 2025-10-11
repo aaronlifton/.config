@@ -1,85 +1,110 @@
+
 ; Integration between karabiner and hammerspoon
 ; https://github.com/alex35mil/dotfiles/blob/98c4539994572df10c4b941b04d43a14c6024ccc/home/.config/karabiner.edn
 ; Layers (for <65% keyboards)
 ; https://gist.github.com/gsinclair/f4ab34da53034374eb6164698a0a8ace
 ; Examples
 ; https://github.com/yqrashawn/GokuRakuJoudo/blob/master/examples.org
+; https://github.com/einverne/dotfiles/blob/29321884baf1063600c41ef8738bc74d42484c8c/karabiner/karabiner.edn#L895
+; Github search
+; https://github.com/search?q=path%3A**%2Fkarabiner.edn+spacebar&type=code
 ;
 ; TODO: migrate to karabiner.ts - https://github.com/nikitavoloboev/config-test/blob/e57b47f3a63de602ce2425a0468c5d77698fcb68/karabiner/karabiner.ts#L192
 
  {:profiles {:Default {:default true
-                      :sim     50     ;; simultaneous_threshold_milliseconds (def: 50)
+                       :sim     200     ;; simultaneous_threshold_milliseconds (def: 50)
                         ;; if keydown event for two different keys are pressed within :sim ms, the keypresses are considered simultaneous
-                      :delay   500    ;; to_delayed_action_delay_milliseconds (def: 500)
+                       :delay   500    ;; to_delayed_action_delay_milliseconds (def: 500)
                         ;; after :delay ms, the key press is considered to be delayed (used for double-press macros)
-                      :alone   500    ;; to_if_alone_timeout_milliseconds (def: 1000)
+                       :alone   500    ;; to_if_alone_timeout_milliseconds (def: 1000)
                         ;; if keyup event comes within :alone ms from keydown, the key is not just pressed but held
-                      :held    500}}   ;; to_if_held_down_threshold_milliseconds (def: 500)
+                       :held    500}}   ;; to_if_held_down_threshold_milliseconds (def: 500)
                         ;; key is fired twice when :held ms is elapsed (otherwise seen as a hold command)
 
  ;the default value is 250
- :simlayer-threshold 500 
- :devices {:mode65 [{:vendor_id 222 :product_id 22356}]
-             :aula75 [{:vendor_id  "00x2817" :product_id "0x2817" }]
-             :evos   [{:vendor_id 14000 :product_id 12302 } ; evo80
-                      {:vendor_id 14000 :product_id 12292 } ; evo80_bt1
+  :simlayer-threshold 250
+  :devices {:mode65 [{:vendor_id 222 :product_id 22356}]
+            :aula75 [{:vendor_id  "00x2817" :product_id "0x2817"}]
+            :evos   [{:vendor_id 14000 :product_id 12302} ; evo80
+                     {:vendor_id 14000 :product_id 12292} ; evo80_bt1
                      ]}
+  :applications {:terminals ["^net\\.kovidgoyal\\.kitty$"
+                             "^org\\.alacritty$"
+                             "^com\\.mitchellh\\.ghostty$"
+                             "^com\\.neovide\\.neovide$"
+                             ".*neovide.*"]
+                 :kitty ["^net\\.kovidgoyal\\.kitty$"]
+                 :neovide ["^com\\.neovide\\.neovide$"]
+                 :vscode ["^com\\.microsoft\\.VSCode$"]
+                 :claude ["^com\\.anthropic\\.claudefordesktop$"]
+                 :chrome ["^com\\.google\\.Chrome$"]
+                 :zenBrowser ["^app\\.zen-browser\\.zen$"]
+                 :raycast ["^com\\.raycast\\.macos$"]
+                 :screenContinuity ["^com\\.apple\\.ScreenContinuity$"]
+                 :systemPreferences ["^com\\.apple\\.systempreferences$"]
+                 :spotify ["^com\\.spotify\\.client$"]
+                 :fontbook ["^com\\.apple\\.FontBook$"]
+                 :scrypted ["^com\\.electron\\.scrypted$"]}
 
+  :templates  {:launch "osascript -e 'tell application \"%s\" to activate'"
+               :open "open \"%s\""
+               :hs "hs -A -n -q -t 0.1 -c \"%s\""
+               :show "osascript -e 'set appName to \"%s\"\nset startIt to false\ntell application \"System Events\"\n  if not (exists process appName) then\n    set startIt to true\n  else\n    set frontmost of process appName to true\n  end if\nend tell\nif startIt then\n  tell application appName to activate\nend if'\n"
+               :toggle "osascript -e 'set appName to \"%s\"\nset startIt to false\ntell application \"System Events\"\n  if not (exists process appName) then\n    set startIt to true\n  else if frontmost of process appName then\n    set visible of process appName to false\n  else\n    set frontmost of process appName to true\n  end if\nend tell\nif startIt then\n  tell application appName to activate\nend if'"
+               :type "osascript -e 'tell application \"System Events\" to keystroke \"%s\" as text'"
+               :raycast "open -g \"raycast://extensions/%s\""}
 
-   :applications {:terminals ["^net\\.kovidgoyal\\.kitty$"
-                              "^org\\.alacritty$"
-                              "^com\\.mitchellh\\.ghostty$"
-                              "^com\\.neovide\\.neovide$"
-                              ".*neovide.*"]
-                  :chrome ["^com.google.Chrome$"]
-                  :neovide ["^com\\.neovide\\.neovide$"]
-                  :raycast ["^com\\.raycast\\.macos"]}
+  ;; ------------ Cheatsheet ------------
+  ;; ! stand for mandatory
+  ;; # stand for optional
+  ;; !! stand for mandatory command + control + option + shift (hyper)
+  ;; T O C S for left control option command shift
+  ;; Q W E R for right command control option shift
+  ;; F for fn
+  ;; need to prefix C T O S F Q W E R with ! or #
+  ;; !  | means mandatory -   (s) alone when pressend change behavior
+  ;; #  | means optional  -   modifiers are optional (but atleast one necessary)
+  ;; examples:
+  ;; :!Ca is keycode :a and prefix a with !C
 
+  ;; C  | left_command
+  ;; T  | left_control
+  ;; O  | left_option
+  ;; S  | left_shift
+  ;; F  | fn
+  ;; Q  | right_command
+  ;; W  | right_control
+  ;; E  | right_option
+  ;; R  | right_shift
 
-   ;; ------------ Cheatsheet ------------
-   ;; ! stand for mandatory
-   ;; # stand for optional
-   ;; !! stand for mandatory command + control + option + shift (hyper)
-   ;; T O C S for left control option command shift
-   ;; Q W E R for right command control option shift
-   ;; F for fn
-   ;; need to prefix C T O S F Q W E R with ! or #
-   ;; !  | means mandatory -   (s) alone when pressend change behavior
-   ;; #  | means optional  -   modifiers are optional (but atleast one necessary)
-   ;; examples:
-   ;; :!Ca is keycode :a and prefix a with !C
+  ;; ## | optional any
+  ;; !! | command + control + optional + shift (hyper)
+  :cheatsheet ;; ignored by code
+  {:!Ca        "command a"
+   :!Ta        "control a"
+   :!Oa        "option a"
+   :!Sa        "shift a"
+   :#Sa        "shift a"
+   :!CTOa      "command control option a"
+   :!Cspacebar "command space"
+   :!Fa        "fn a"
+   :##a        "keycode a optional any"
+   :!!a        "hyper (control command option shift) a "}
 
-   ;; C  | left_command
-   ;; T  | left_control
-   ;; O  | left_option
-   ;; S  | left_shift
-   ;; F  | fn
-   ;; Q  | right_command
-   ;; W  | right_control
-   ;; E  | right_option
-   ;; R  | right_shift
+  :layers {:hyper-mode {:key :caps_lock :alone {:key :escape}}}
 
-   ;; ## | optional any
-   ;; !! | command + control + optional + shift (hyper)
-   :cheatsheet ;; ignored by code
-   {:!Ca        "command a"
-    :!Ta        "control a"
-    :!Oa        "option a"
-    :!Sa        "shift a"
-    :#Sa        "shift a"
-    :!CTOa      "command control option a"
-    :!Cspacebar "command space"
-    :!Fa        "fn a"
-    :##a        "keycode a optional any"
-    :!!a        "hyper (control command option shift) a "}
+ ;; simlayers are basically "hyper" keys
+ ;; recommended for non-typing keys like `.` or tab or space
+ ;; or keys like z which are used less often
+  :simlayers {:spacebar-mode {:key :spacebar}}
 
-   :main [;; Device-specific modifications
-          {:des "Device-specific modifications for Mode65"
-           :rules [:mode65
-                   [:right_control :right_command]
-                   [:!Sescape :!Sgrave_accent_and_tilde]
-                   [:!Tescape :grave_accent_and_tilde]
-                   [:!Oescape :grave_accent_and_tilde]]}
+  :main [;; Device-specific modifications
+         {:des "Device-specific modifications for Mode65"
+          :rules [:mode65
+                  [:right_control :right_command]
+                  [:!Sescape :!Sgrave_accent_and_tilde]
+                  [:!Tescape :grave_accent_and_tilde]
+                  [:!Oescape :grave_accent_and_tilde]]}
 
          ; {:des "s-mode for punctuation"   ;;    ' " `    , . &    ; : ~
           ;  :rules [:s-mode
@@ -94,47 +119,99 @@
           ;        [:##period :!Sgrave_accent_and_tilde]]}
           ;
 
-          ;; Change caps_lock key to command+control+option+shift. (Use shift+caps_lock as caps_lock)
-          {:des "Change caps_lock key to command+control+option+shift. (Use shift+caps_lock as caps_lock)"
-           :rules [; [:!Scaps_lock :caps_lock] ; gets pressed too often
-                   [:##caps_lock :!CTOleft_shift :!terminals {:alone [:escape] }]]}
+         {:des "Hyper Mode - vim style navigation"
+          :rules [:hyper-mode
+                  ; [:j :down_arrow]
+                  ; [:k :up_arrow]
+                  ; [:h :left_arrow]
+                  ; [:l :right_arrow]
+                  ; [:b :!Oleft_arrow]
+                  ; [:w :!Oright_arrow]
+                  ; [:u :home]
+                  ; [:i :end]
+                  [:k [:open "/Applications/Kitty.app"]]
+                  [:z [:open "/Applications/Zen.app"]]
+                  ; [:c [:open "/Applications/Google Chrome.app"]]
+                  [:c [:open "/Applications/Zen.app"]]
+                  [:a [:toggle "Dash"]]
+                  [:d [:toggle "Discord"]]
+                  ; [:v [:open "/Applications/Visual Studio Code.app"]]
+                  [:!Oj {:mkey {:y 1536}}]
+                  [:!Ok {:mkey {:y -1536}}]
+                  [:!Oh {:mkey {:x -1536}}]
+                  [:!Ol {:mkey {:x 1536}}]
+                  [:o [:open "/Applications/Obsidian.app"]]
+                  [:1 [:open "/Applications/1Password.app"]]]}
 
-          {:des "Change right_option to 4 modifiers combination, f17 when used alone"
+         ;; Change caps_lock key to command+control+option+shift. (Use shift+caps_lock as caps_lock)
+         {:des "Change caps_lock key to command+control+option+shift. (Use shift+caps_lock as caps_lock)"
+          :rules [; [:!Scaps_lock :caps_lock] ; gets pressed too often
+                  [:##caps_lock :!CTOleft_shift :!terminals {:alone [:escape]}]]}
+
+         {:des "Change right_option to 4 modifiers combination, f17 when used alone, in terminals"
           :rules [:mode65
                    ; [:right_option :!CTOleft_shift nil {:alone [:f17]}]
-                  [:right_option :!CTOleft_shift nil {:alone [:escape] :to_if_held_down :f17}]
-                   ]}
+                  [:right_option :!CTOleft_shift :terminals {:alone [:escape] :to_if_held_down :f17}]]}
 
-          ;; Change caps_lock to control if pressed with other keys, to escape if pressed alone.
+;; Change caps_lock to control if pressed with other keys, to escape if pressed alone.
           ; {:des "Change caps_lock to control if pressed with other keys, to escape if pressed alone."
           ;  :rules [[]] ;; Disabled rule
           ;  :enabled false}
           ;; CapsLock to Esc when press & to Control when hold
-          {:des "CapsLock to Esc when press & to Control when hold"
-           :rules [[:condi :terminals]
-                   [:##caps_lock :right_control nil {:to_if_alone :escape}]]}
-          {:des "CapsLock to Esc when press & to Control when hold"
-           :rules [[:##caps_lock :right_control nil {:to_if_alone :escape :condi [:terminals]}]
-                   [:##caps_lock :right_gui nil {:to_if_alone :escape}]]}
+         {:des "CapsLock to Esc when press & to Control when hold"
+          :rules [[:condi :terminals]
+                  [:##caps_lock :right_control nil {:to_if_alone :escape}]]}
+         {:des "CapsLock to Esc when press & to Control when hold"
+          :rules [[:##caps_lock :right_control nil {:to_if_alone :escape :condi [:terminals]}]
+                  [:##caps_lock :right_gui nil {:to_if_alone :escape}]]}
 
-          ;; Funntion key mappings
+         {:des "Disable cmd+q"
+          :rules [[:!C##q [:!Cq ["command-q" 0]] ["command-q" 1]]
+                  [:!C##q ["command-q" 1] nil {:delayed {:invoked ["command-q" 0] :canceled ["commandq" 0]}}]]}
+
+         ; {:des "left_command alone -> ⌘ + tab to last app"
+         ;  :rules [[:left_command :left_command nil {:alone :!Ctab}]]}
+
+         {:des "Quit application by command + Q only when pressing twice"
+          :rules [[:!Cq
+                   [:!Cq ["command-q" 0]]
+                   ["command-q" 1]]
+                  [:!Cq
+                   ["command-q" 1]
+                   nil
+                   {:delayed {:invoked ["command-q" 0] :canceled ["command-q" 0]}}]]}
+
+         {:des "Quit certain applications by pressing command-q twice"
+          :rules [[:!C##q ["command-q" 1] nil {:delayed {:invoked ["command-q" 0] :canceled ["commandq" 0]}}]]}
+
+          ;; Function key mappings
           ;;    {:des "Function key mappings"
           ;;     :rules [[:f3 :mission_control]
           ;;             [:f4 :launchpad]]}
-          {:des "simultaneous j l press to F18" :rules [[[:j :l] :f18]]}
 
-          {:des   "Press right_shift twice to enter double shift mode, press right_shift once to leave it"
-           :rules [[:right_shift ["double-right-shift-mode" 1] ["shift-pressed-once" 1]]
-                   [:right_shift [:right_shift ["shift-pressed-once" 1]] ["double-right-shift-mode" 0] {:delayed {:invoked ["shift-pressed-once" 0] :canceled ["shift-pressed-once" 0]}}]
-                   :double-right-shift-mode
-                   [:right_shift ["double-right-shift-mode" 0]]
-                   [:x "say 'know we are in double shift mode'"]
-                   [[:a :d] :f17]
-                   [[:a :s] :f16]
-                   [[:a :z] :f19]
-                   ]}]}
-          
-          ; {:des "Function keys"
+         {:des "simultaneous j l press to F18" :rules [[[:j :l] :f18]]}
+
+         {:des   "Press right_shift twice to enter double shift mode, press right_shift once to leave it"
+          :rules [[:right_shift ["double-right-shift-mode" 1] ["shift-pressed-once" 1]]
+                  [:right_shift [:right_shift ["shift-pressed-once" 1]] ["double-right-shift-mode" 0] {:delayed {:invoked ["shift-pressed-once" 0] :canceled ["shift-pressed-once" 0]}}]
+                  :double-right-shift-mode
+                  [:right_shift ["double-right-shift-mode" 0]]
+                  [:x "say 'know we are in double shift mode'"]
+                  [[:a :d] :f17]
+                  [[:a :s] :f16]
+                  [[:a :z] :f19]]}
+
+         {:des   "launch mode"
+          :rules [:spacebar-mode
+                  [:k [:open "/Applications/Kitty"]]
+                  [:c [:open "/Applications/Google Chrome.app"]]
+                  [:v [:open "/Applications/Visual Studio Code.app"]]
+                  [:o [:open "/Applications/Obsidian.app"]]
+                  [:1 [:open "/Applications/1Password.app"]]
+                  [:z [:open "/Applications/Zen.app"]]
+                  [:a [:toggle "Dash"]]]}]}
+
+; {:des "Function keys"
           ; :rules [[[:f :1] :f1]
           ;         [[:f :2] :f2]
           ;         [[:f :3] :f3]
@@ -155,3 +232,5 @@
           ;                                :double-right-shift-mode
           ;                                [:right_shift ["double-right-shift-mode" 0]]
           ;                                [:a "say 'know we are in double shift mode'"]]}]}
+
+

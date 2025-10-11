@@ -4,7 +4,6 @@ vim.opt_local.shiftwidth = 4
 vim.opt_local.expandtab = false
 
 LazyVim.lsp.on_attach(function(_, _)
-  -- Nightly feature
   vim.lsp.inlay_hint.enable(false, { bufnr = 0 })
 end, "gopls")
 

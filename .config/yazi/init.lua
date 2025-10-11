@@ -92,6 +92,8 @@ else
 	})
 end
 
+require("folder-rules"):setup()
+
 -- require("fg"):setup({
 -- 	default_action = "jump",
 -- })

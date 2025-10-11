@@ -83,7 +83,8 @@ return {
 
           delete_char = "<BS>",
           delete_char_right = "<Del>",
-          delete_left = "<C-u>",
+          -- delete_left = "<C-u>",
+          delete_left = "<M-u>",
           delete_word = "<C-w>",
 
           mark = "<C-x>",
@@ -98,10 +99,12 @@ return {
           refine = "<C-Space>",
           refine_marked = "<M-Space>",
 
-          scroll_down = "<C-f>",
+          -- scroll_down = "<C-f>",
+          scroll_down = "<C-d>",
           scroll_left = "<C-h>",
           scroll_right = "<C-l>",
-          scroll_up = "<C-b>",
+          -- scroll_up = "<C-b>",
+          scroll_up = "<C-u>",
 
           stop = "<Esc>",
 
@@ -110,7 +113,7 @@ return {
         },
       })
 
-      vim.ui.select = MiniPick.select
+      -- vim.ui.select = MiniPick.select
       custom_mini_pick_buffers(MiniPick)
       --
       vim.api.nvim_create_augroup("MiniPick", { clear = true })
@@ -118,7 +121,8 @@ return {
     keys = {
       --stylua: ignore start
       { "<d-p>", function() require("mini.pick").builtin.files() end, desc = "files" },
-      { "<leader>fp", function()  require("mini.pick").builtin.files() end, desc = "Buffer lines" },
+      { "<D-P>", function() require("mini.pick").builtin.files({ source = { cwd  = Snacks.git.get_root() } }) end, desc = "files" },
+      { "<leader>,", ":Pick my_buffers", desc = "Buffers (recent)" },
       -- { "<leader>Pb", function() MiniExtra.pickers.buf_lines() end, desc = "Buffer lines" },
       -- { "<leader>Pf", function() MiniExtra.pickers.explorer() end, desc = "Explorer" },
       -- { "<leader>PF", function() MiniExtra.pickers.git_files({ scope = "modified" }) end, desc = "Git files" },

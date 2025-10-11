@@ -1099,12 +1099,12 @@ M.Flutter = {
 --     bold = true,
 --   },
 -- }
-M.WakaTime = {
-  provider = function()
-    return " " .. require("wakastat").wakatime() .. " "
-  end,
-  hl = { fg = c.cyan, bg = "NONE" },
-}
+-- M.WakaTime = {
+--   provider = function()
+--     return " " .. require("wakastat").wakatime() .. " "
+--   end,
+--   hl = { fg = c.cyan, bg = "NONE" },
+-- }
 
 local AiProgressDetectors = {
   CodeCompanionProgress = {

@@ -350,6 +350,12 @@ run = ['layout floating']
 
 [[on-window-detected]]
 if.app-id = 'org.pqrs.Karabiner-Elements.Settings'
-check-further-callbacks = true
+check-further-callbacks = false
+run = ['layout floating']
+
+
+[[on-window-detected]]
+if.app-id = 'org.pqrs.Karabiner-EventViewer'
+check-further-callbacks = false
 run = ['layout floating']
 ### /FLOATING WINDOWS

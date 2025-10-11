@@ -18,7 +18,7 @@ desc = "Open in Neovim"
 [[mgr.prepend_keymap]]
 on = ["O"]
 run = "shell \"open -a Finder ./\""
-desc = "Open in Neovim"
+desc = "Open in Finder"
 
 [[mgr.prepend_keymap]]
 on = ["!"]
@@ -111,11 +111,6 @@ run = "create --dir"
 desc = "Create a dir"
 
 [[mgr.prepend_keymap]]
-on = ["g", "r"]
-run = "shell -- ya emit cd \"$(git rev-parse --show-toplevel)\""
-desc = "Root of Git Repo"
-
-[[mgr.prepend_keymap]]
 on = "H"
 desc = "Switch to the previous tab"
 run = "tab_switch -1 --relative"
@@ -131,12 +126,17 @@ run = "tab_swap -1"
 desc = "Swap current tab with previous tab"
 
 [[mgr.prepend_keymap]]
+on = "T"
+run = "plugin smart-tab"
+desc = "Create a tab and enter the hovered directory"
+
+[[mgr.prepend_keymap]]
 on = ">"
 run = "tab_swap 1"
 desc = "Swap current tab with next tab"
 
 [[mgr.prepend_keymap]]
-on = "T"
+on = "P"
 run = "plugin toggle-pane min-preview"
 desc = "Show or hide the preview pane"
 
@@ -171,10 +171,20 @@ on = ["E"]
 run = "open --interactive"
 desc = "Open the selected files interactively"
 
+[[mgr.prepend_keymap]]
+on = ["g", "r"]
+run = "shell -- ya emit cd \"$(git rev-parse --show-toplevel)\""
+desc = "Root of Git Repo"
+
 [[mgr.append_keymap]]
 on = ["g", "c"]
 run = "cd ~/.config"
 desc = "Go to ~/.config"
+
+[[mgr.append_keymap]]
+on = ["g", "C"]
+run = "cd ~/Code"
+desc = "Go to the code directory"
 
 [[mgr.append_keymap]]
 on = ["g", "n", "n"]
@@ -185,11 +195,6 @@ desc = "Go to the nvim directory"
 on = ["g", "n", "p"]
 run = "cd ~/.local/share/nvim/lazy"
 desc = "Go to the nvim plugins directory"
-
-[[mgr.append_keymap]]
-on = ["g", "n", "k"]
-run = "cd ~/.config/km-nvim"
-desc = "Go to the km-nvim directory"
 
 [[mgr.append_keymap]]
 on = ["g", "n", "a"]
@@ -211,7 +216,6 @@ on = ["g", "k"]
 run = "cd ~/.config/kitty"
 desc = "Go to the kitty directory"
 
-
 [[mgr.append_keymap]]
 on = ["g", "a"]
 run = "cd ~/.config/alacritty"
@@ -222,16 +226,11 @@ on = ["g", "y"]
 run = "cd ~/.config/yazi"
 desc = "Go to the yazi directory"
 
+# Dotfile inspos
 [[mgr.append_keymap]]
-on = ["g", "m"]
-run = "cd ~/Code/Matt-FTW-dotfiles/.config/"
+on = ["g", "i", "m"]
+run = "cd ~/Code/dotfiles/Matt-FTW-dotfiles/.config/"
 desc = "Go to the Matt-FTW directory"
-
-[[mgr.append_keymap]]
-on = ["g", "C"]
-run = "cd ~/Code"
-desc = "Go to the code directory"
-
 
 [[input.prepend_keymap]]
 on = ["<Esc>"]

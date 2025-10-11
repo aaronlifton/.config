@@ -222,7 +222,7 @@ return {
       --   end,
       -- })
 
-      if LazyVim.has("supermaven.nvim") and vim.g.ai_accept_word_provider == "supermaven" then
+      if LazyVim.has("supermaven.nvim") then
         opts.mapping = vim.tbl_extend("force", opts.mapping, {
           ["<C-w>"] = require("cmp").mapping(function(fallback)
             local suggestion = require("supermaven-nvim.completion_preview")

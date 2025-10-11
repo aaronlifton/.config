@@ -4,18 +4,19 @@
 # Fixes for zsh
 # # Inserts a blank line between shell prompts
 # add_newline = true
-#
+
 # # https://docs.warp.dev/terminal/appearance/prompt
 # [line_break]
 # disabled = true
-# #
+
+# Fix for warp -- comment out or remove these lines
 # # Get editor completions based on the config schema
 # '' = 'https://starship.rs/config-schema.json'
 #
 # # Disables the custom module
 # [custom]
 # disabled = false
-# /End
+# /End fix
 
 format = """
 $directory\

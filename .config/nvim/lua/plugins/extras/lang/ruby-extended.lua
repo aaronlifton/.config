@@ -71,7 +71,6 @@ if use_ruby_lsp_rubocop then
 end
 
 return {
-  { import = "lazyvim.plugins.extras.lang.ruby" },
   {
     "mason-org/mason.nvim",
     opts = {
@@ -83,6 +82,7 @@ return {
       },
     },
   },
+  { "tpope/vim-endwise", ft = "ruby" },
   {
     "tpope/vim-rails",
     ft = "ruby",
@@ -93,10 +93,12 @@ return {
             "spec/requests/{}_controller_spec.rb",
             "spec/controllers/{}_controller_spec.rb",
           },
-        },
-        ["spec/requests/*_spec.rb"] = {
+          -- Added
           alternate = {
-            "app/controllers/{}.rb",
+            "spec/requests/{}_spec.rb",
+            "spec/requests/{}_request_spec.rb",
+            "spec/requests/{}_controller_spec.rb",
+            "spec/{}_controller_spec.rb",
           },
         },
         ["app/lib/*.rb"] = {
@@ -112,6 +114,19 @@ return {
           alternate = {
             "lib/tasks/{}.rake",
           },
+        },
+        -- Added
+        ["app/*.rb"] = {
+          alternate = "spec/{}_spec.rb",
+        },
+        ["spec/*_spec.rb"] = {
+          alternate = "app/{}.rb",
+        },
+        ["spec/requests/*_spec.rb"] = {
+          alternate = { "app/controllers/{}_controller.rb", "app/controllers/{}.rb" },
+        },
+        ["spec/requests/*_request_spec.rb"] = {
+          alternate = { "app/controllers/{}_controller.rb", "app/controllers/{}.rb" },
         },
       }
     end,
@@ -401,7 +416,7 @@ return {
     dependencies = {
       "olimorris/neotest-rspec",
     },
-    opts = {
+    ops = {
       adapters = {
         ["neotest-rspec"] = {
           -- NOTE: By default neotest-rspec uses the system wide rspec gem instead of the one through bundler
@@ -425,11 +440,11 @@ return {
     opts = {
       ensure_installed = {
         "ruby-3.3",
-        -- "ruby-3.4",
+        "ruby-3.4",
         "rails-7.0",
-        -- "rails-7.1",
-        -- "rails-7.2",
-        -- "rails-8.0"
+        "rails-7.1",
+        "rails-7.2",
+        "rails-8.0",
       },
     },
   },

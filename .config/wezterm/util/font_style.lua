@@ -18,10 +18,14 @@ M.set_config = function(config, name)
 		config.freetype_load_target = "Mono" -- Normal, Light, Mono, HorizontalLcd - https://wezfurlong.org/wezterm/config/lua/config/freetype_load_target.html
 		config.freetype_load_flags = "DEFAULT" -- DEFAULT, NO_HINTING, NO_BITMAP, FORCE_AUTOHINT, MONOCHROME, NO_AUTOHINT - https://wezfurlong.org/wezterm/config/lua/config/freetype_load_flags.html
 		config.line_height = 1.1
-		config.font_size = 15.0
+		config.font_size = 14.0
+		config.cell_width = 0.99
 		config.font = wezterm.font("ProFontIIx Nerd Font Mono")
 	end
 	if name == "DaddyTimeMono" then
+		config.freetype_render_target = "HorizontalLcd" -- Normal, Light, HorizontalLcd - https://wezfurlong.org/wezterm/config/lua/config/freetype_render_target.html
+		config.freetype_load_target = "Mono" -- Normal, Light, Mono, HorizontalLcd - https://wezfurlong.org/wezterm/config/lua/config/freetype_load_target.html
+		config.freetype_load_flags = "DEFAULT" -- DEFAULT, NO_HINTING, NO_BITMAP, FORCE_AUTOHINT, MONOCHROME, NO_AUTOHINT - https://wezfurlong.org/wezterm/config/lua/config/freetype_load_flags.html
 		config.line_height = 1
 		config.font_size = 15.0
 		config.font = wezterm.font({

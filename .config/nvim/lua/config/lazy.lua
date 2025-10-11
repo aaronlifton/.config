@@ -1,77 +1,50 @@
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.uv.fs_stat(lazypath) then
-  -- bootstrap lazy.nvim
-  -- stylua: ignore
-  vim.fn.system({ "git", "clone", "--filter=blob:none", "https://github.com/folke/lazy.nvim.git", "--branch=stable",
-    lazypath })
-end
-vim.opt.rtp:prepend(vim.env.LAZY or lazypath)
-
-local spec = {}
-spec = {
-  -- { "LazyVim/LazyVim", import = "lazyvim.plugins", branch = "fix/mason-v2" },
-  {
-    "LazyVim/LazyVim",
-    import = "lazyvim.plugins",
-    opts = {
-      colorscheme = "tokyonight-moon",
-    },
-  },
-  { import = "lazyvim.plugins.extras.vscode" },
-  { import = "plugins" },
-}
-
-require("lazy").setup({
-  spec = spec,
+local opts = {
+  spec = { import = "plugins" },
   defaults = {
-    -- By default, only LazyVim plugins will be lazy-loaded. Your custom plugins will load during startup.
-    -- If you know what you're doing, you can set this to `true` to have all your custom plugins lazy-loaded by default.
     lazy = true,
-    -- It's recommended to leave version=false for now, since a lot the plugin that support versioning,
-    -- have outdated releases, which may break your Neovim install.
     version = false, -- always use the latest git commit
-    -- version = "*", -- try installing the latest stable version for plugins that support semver
   },
-  -- colorscheme that will be used when installing plugins.
-  -- install = { colorscheme = { "tokyonight", "habamax" } },
-  -- install = { colorscheme = {  "habamax" } },
-  checker = { enabled = true }, -- automatically check for plugin updates
+  install = { colorscheme = { "default" } },
+  checker = {
+    enabled = true, -- check for plugin updates periodically
+    notify = false, -- notify on update
+  }, -- automatically check for plugin updates
   performance = {
+    paths = {}, -- add any custom paths here that you want to includes in the rtp
     rtp = {
       -- disable some rtp plugins
       disabled_plugins = {
         "gzip",
         -- "matchit",
         -- "matchparen",
-        "netrwPlugin",
+        "netrwPlugin", -- originally commented out
         "tarPlugin",
         "tohtml",
         "tutor",
         "zipPlugin",
         --
-        -- NVChad
-        -- "2html_plugin",
-        -- "getscript",
-        -- "getscriptPlugin",
-        -- "logipat",
-        -- "netrw",
-        -- "netrwPlugin",
-        -- "netrwSettings",
-        -- "netrwFileHandlers",
-        -- "matchit",
-        -- "tar",
-        -- "rrhelper",
-        -- "spellfile_plugin",
-        -- "vimball",
-        -- "vimballPlugin",
-        -- "zip",
-        -- "rplugin",
-        -- "syntax",
-        -- "synmenu",
-        -- "optwin",
-        -- "compiler",
-        -- "bugreport",
-        -- "ftplugin",
+        "2html_plugin",
+        "getscript",
+        "getscriptPlugin",
+        "gzip",
+        "logipat",
+        "netrw",
+        "netrwSettings",
+        "netrwFileHandlers",
+        "matchit",
+        "tar",
+        "rrhelper",
+        "spellfile_plugin",
+        "vimball",
+        "vimballPlugin",
+        "zip",
+        "rplugin",
+        "syntax",
+        "synmenu",
+        "optwin",
+        "compiler",
+        "bugreport",
+        "ftplugin",
       },
     },
   },
@@ -79,8 +52,8 @@ require("lazy").setup({
     path = "~/Code/nvim-plugins",
     ---@type string[] plugins that match these patterns will use your local versions instead of being fetched from GitHub
     patterns = {},
-    -- Fallback to git when local plugin doesn't exist
-    fallback = true,
+    -- Fallback to git when local plugin doesn't exist fallback = true,
+    fallback = false,
   },
   ui = {
     custom_keys = {
@@ -96,11 +69,56 @@ require("lazy").setup({
         end,
         desc = "Open lazygit log",
       },
+
+      ["<localleader>i"] = {
+        function(plugin)
+          Util.notify(vim.inspect(plugin), {
+            title = "Inspect " .. plugin.name,
+            lang = "lua",
+          })
+        end,
+        desc = "Inspect Plugin",
+      },
+
+      ["<localleader>t"] = {
+        function(plugin)
+          require("lazy.util").float_term(nil, {
+            cwd = plugin.dir,
+          })
+        end,
+        desc = "Open terminal in plugin dir",
+      },
     },
   },
   icons = vim.g.icon_size == "small" and { kinds = require("util.icons").kinds } or {},
-})
+  profiling = {
+    -- Enables extra stats on the debug tab related to the loader cache.
+    -- Additionally gathers stats about all package.loaders
+    loader = false,
+    -- Track each new require in the Lazy profiling tab
+    require = false,
+  },
+}
 
+local fn = vim.fn
+local lazypath = fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+  local out = fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+  if vim.v.shell_error ~= 0 then
+    vim.api.nvim_echo({
+      { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+      { out, "WarningMsg" },
+      { "\nPress any key to exit..." },
+    }, true, {})
+    fn.getchar()
+    os.exit(1)
+  end
+end
+
+vim.opt.rtp:prepend(lazypath)
+
+require("lazy").setup(opts)
 -- dofile(vim.g.base46_cache .. "defaults")
 -- dofile(vim.g.base46_cache .. "statusline")
 --
@@ -110,4 +128,3 @@ require("lazy").setup({
 --     dofile(vim.g.base46_cache .. name)
 --   end
 -- end
---

@@ -20,8 +20,12 @@ local function setup_hide_blink_on_copilot_suggestion_autocmds()
   })
 end
 
+local function depriprotize_lsp(name, a, b)
+  if (a.client_name == nil or b.client_name == nil) or (a.client_name == b.client_name) then return end
+  return b.client_name == name
+end
+
 return {
-  { import = "plugins.coding.cmp-extended", optional = true, enabled = false },
   { import = "hrsh7th/nvim-cmp", optional = true, enabled = false },
   { import = "lazyvim.plugins.extras.coding.blink" },
   {
@@ -36,6 +40,7 @@ return {
           require("blink-go-import").setup()
         end,
       },
+      { "marcoSven/blink-cmp-yanky" },
     },
     optional = true,
     event = { "InsertEnter", "CmdlineEnter" },
@@ -46,30 +51,41 @@ return {
         keymap = {
           ["<C-k>"] = { "select_prev", "fallback" },
           ["<C-j>"] = { "select_next", "fallback" },
-          -- ["<C-y>"] = { "select_and_accept" },
+          ["<C-y>"] = { "select_and_accept" },
           ["<C-e>"] = { "hide", "fallback" },
+          -- Testing
+          ["<C-u>"] = { "scroll_signature_up", "fallback" },
+          ["<C-d>"] = { "scroll_signature_down", "fallback" },
           -- Supertab
           ["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
-
-          ["<Tab>"] = {
-            function(cmp)
-              if cmp.is_in_snippet() then
-                return cmp.accept()
-              else
-                return cmp.select_and_accept()
-              end
-            end,
-            "snippet_forward",
-            "fallback",
-          },
+          -- LazyVim implements this:
+          -- ["<Tab>"] = {
+          --   -- Ref to: `if cmp.snippet_active() then return cmp.accept() else return cmp.select_and_accept() end`
+          --   require("blink.cmp.keymap.presets").get("super-tab")["<Tab>"][1],
+          --   LazyVim.cmp.map({ "snippet_forward", "ai_nes", "ai_accept" }),
+          --   "fallback",
+          -- },
           ["<S-Tab>"] = {
-            "select_prev",
             "snippet_backward",
-            function(cmp)
-              if vim.api.nvim_get_mode().mode == "c" then return cmp.show() end
-            end,
+            "select_prev",
             "fallback",
           },
+          -- stylua: ignore start
+          ['<A-1>'] = {
+            ---@param cmp blink.cmp.API
+            function(cmp) cmp.accept({ index = 1 }) end,
+          },
+          ['<A-2>'] = { function(cmp) cmp.accept({ index = 2 }) end },
+          ['<A-3>'] = { function(cmp) cmp.accept({ index = 3 }) end },
+          ['<A-4>'] = { function(cmp) cmp.accept({ index = 4 }) end },
+          ['<A-5>'] = { function(cmp) cmp.accept({ index = 5 }) end },
+          ['<A-6>'] = { function(cmp) cmp.accept({ index = 6 }) end },
+          ['<A-7>'] = { function(cmp) cmp.accept({ index = 7 }) end },
+          ['<A-8>'] = { function(cmp) cmp.accept({ index = 8 }) end },
+          ['<A-9>'] = { function(cmp) cmp.accept({ index = 9 }) end },
+          ['<A-0>'] = { function(cmp) cmp.accept({ index = 10 }) end },
+          -- stylua: ignore end
+          --
           -- ["<Tab>"] = {
           --   "select_next",
           --   "snippet_forward",
@@ -91,6 +107,7 @@ return {
           -- implementation = 'lua',
           implementation = "prefer_rust_with_warning",
           sorts = {
+            -- depriprotize_lsp('emmet_ls'),
             "exact",
             -- defaults
             "score",
@@ -109,12 +126,12 @@ return {
                 { "item_idx", "kind_icon", "kind" },
                 { "label", "label_description", gap = 1 },
               },
-              -- To right-align the kind label ext https://github.com/Saghen/blink.cmp/pull/245#issuecomment-2463659508
+              -- To right-align the kind label https://github.com/Saghen/blink.cmp/pull/245#issuecomment-2463659508
               components = {
                 -- kind_icon = { width = { fill = true } },
                 item_idx = {
                   text = function(ctx)
-                    return ctx.idx == 10 and "0" or ctx.idx >= 10 and " " or tostring(ctx.idx)
+                    return ctx.idx == 10 and "0" or ctx.idx >= 10 and " " or tostring(ctx.idx) .. " "
                   end,
                   highlight = "BlinkCmpItemIdx", -- optional, only if you want to change its color
                 },
@@ -122,6 +139,23 @@ return {
             },
             auto_show = function(ctx)
               return ctx.mode ~= "cmdline" or not vim.tbl_contains({ "/", "?" }, vim.fn.getcmdtype())
+            end,
+            auto_show_delay_ms = 200,
+            direction_priority = function()
+              local ctx = require("blink.cmp").get_context()
+              local item = require("blink.cmp").get_selected_item()
+              if ctx == nil or item == nil then return { "s", "n" } end
+
+              local item_text = item.textEdit ~= nil and item.textEdit.newText or item.insertText or item.label
+              local is_multi_line = item_text:find("\n") ~= nil
+
+              -- after showing the menu upwards, we want to maintain that direction
+              -- until we re-open the menu, so store the context id in a global variable
+              if is_multi_line or vim.g.blink_cmp_upwards_ctx_id == ctx.id then
+                vim.g.blink_cmp_upwards_ctx_id = ctx.id
+                return { "n", "s" }
+              end
+              return { "s", "n" }
             end,
           },
           documentation = {
@@ -146,17 +180,18 @@ return {
         signature = {
           enabled = true,
           window = {
+            border = "single",
             winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder",
           },
         },
         sources = {
-          -- default = { "lsp", "path", "snippets", "buffer" },
-          default = { "avante", "lsp", "path", "snippets", "buffer", "go_pkgs" },
+          default = { "copilot", "avante", "yank", "lsp", "path", "snippets", "buffer", "go_pkgs" },
           providers = {
             lsp = {
               name = "LSP",
               module = "blink.cmp.sources.lsp",
               transform_items = function(_, items)
+                -- ignore keywords like if, while, else, etc.
                 return vim.tbl_filter(function(item)
                   return item.kind ~= require("blink.cmp.types").CompletionItemKind.Keyword
                 end, items)
@@ -177,92 +212,41 @@ return {
               module = "blink-cmp-avante",
               name = "Avante",
             },
-            -- snippets = {
-            --   score_offset = -2,
-            -- },
-
+            yank = {
+              name = "yank",
+              module = "blink-yanky",
+              opts = {
+                minLength = 5,
+                onlyCurrentFiletype = true,
+                trigger_characters = { '"' },
+                kind_icon = "󰅍",
+              },
+            },
             -- copilot = {
             --   score_offset = 100
             -- }
             -- buffer = {
-            -- should_show_items = false,
+            --   should_show_items = false,
             -- },
           },
-          -- Included by default, but override LazyVim setting empty cmdline sources
-          cmdline = function()
-            local type = vim.fn.getcmdtype()
-            -- Search forward and backward
-            if type == "/" or type == "?" then return { "buffer" } end
-            -- Commands
-            if type == ":" then return { "cmdline" } end
-            return {}
-          end,
         },
         cmdline = {
-          keymap = {
-            ["<Tab>"] = { "show", "accept" }, -- recommended, as the default keymap will only show and select the next item
-          },
-          completion = {
-            menu = { auto_show = true },
-            ghost_text = { enabled = false },
-          },
+          -- sources = {
+          --   "buffer",
+          --   "cmdline",
+          --   function()
+          --     local type = vim.fn.getcmdtype()
+          --     -- Search forward and backward
+          --     if type == "/" or type == "?" then return { "buffer" } end
+          --     -- Commands
+          --     if type == ":" then return { "cmdline" } end
+          --     return {}
+          --   end,
+          -- },
         },
       })
 
-      -- Should already be done by ~/.local/share/nvim/lazy/LazyVim/lua/lazyvim/plugins/extras/coding/blink.lua:142
-      -- opts.sources.providers.copilot.transform_items = function(ctx, items)
-      --   for _, item in ipairs(items) do
-      --     item.kind_icon = ""
-      --     item.kind_name = "Copilot"
-      --   end
-      --   return items
-      -- end
-
-      -- opts.sources.providers.copilot.transform_items = function(_, items)
-      --   local CompletionItemKind = require("blink.cmp.types").CompletionItemKind
-      --   local kind_idx = #CompletionItemKind + 1
-      --   CompletionItemKind[kind_idx] = "Copilot"
-      --   for _, item in ipairs(items) do
-      --     item.kind = kind_idx
-      --   end
-      --   return items
-      -- end
       return new_opts
     end,
   },
-  -- Configure per-filetype completion sources
-  -- {
-  --   "saghen/blink.cmp",
-  --   optional = true,
-  --   config = function(_, opts)
-  --     -- { "lsp", "path", "snippets", "buffer", "lazydev", "dadbod", "copilot" }
-  --     opts.sources.completion = opts.sources.completion or {}
-  --     local prev_enabled_providers = opts.sources.completion.enabled_providers
-  --     opts.sources.completion.enabled_providers = function()
-  --       if vim.bo.filetype == "mchat" then return { "buffer", "path" } end
-  --
-  --       return prev_enabled_providers
-  --     end
-  --   end,
-  -- },
 }
-
---   ['<C-e>'] = { 'hide', 'fallback' },
---
---   ['<Tab>'] = {
---     function(cmp)
---       if cmp.snippet_active() then return cmp.accept()
---       else return cmp.select_and_accept() end
---     end,
---     'snippet_forward',
---     'fallback'
---   },
---   ['<S-Tab>'] = { 'snippet_backward', 'fallback' },
---
---   ['<Up>'] = { 'select_prev', 'fallback' },
---   ['<Down>'] = { 'select_next', 'fallback' },
---   ['<C-p>'] = { 'select_prev', 'fallback' },
---   ['<C-n>'] = { 'select_next', 'fallback' },
---
---   ['<C-b>'] = { 'scroll_documentation_up', 'fallback' },
---   ['<C-f>'] = { 'scroll_documentation_down', 'fallback' },

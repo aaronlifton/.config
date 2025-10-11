@@ -235,7 +235,8 @@ config.colors = colors
 -- config.color_scheme = "Catppuccin Mocha"
 config.color_scheme_dirs = { "/Users/aaron/.config/wezterm/colors" }
 
-font_style.set_config(config, "Geist")
+local font = "MonoLisa"
+font_style.set_config(config, font)
 config.front_end = "WebGpu" -- OpenGL, Software, WebGpu
 config.inactive_pane_hsb = {
 	saturation = 0.8,
@@ -243,6 +244,7 @@ config.inactive_pane_hsb = {
 }
 -- config.window_frame = {}
 config.window_frame = {
+	font = wezterm.font({ family = "Roboto", weight = "Bold" }),
 	font_size = 13.0,
 	active_titlebar_bg = colors.background,
 }
@@ -250,11 +252,11 @@ config.window_padding = { left = 10, right = 10, top = 10, bottom = 10 }
 config.window_decorations = "RESIZE"
 config.enable_scroll_bar = false
 config.min_scroll_bar_height = "2cell"
-config.window_background_opacity = 0.999
+-- config.window_background_opacity = 0.999
 config.window_close_confirmation = "NeverPrompt"
 config.use_fancy_tab_bar = true
 config.hide_tab_bar_if_only_one_tab = true
-config.max_fps = 120
+config.max_fps = 60 -- Studio Display
 config.quick_select_alphabet = "arstqwfpzxcvneioluymdhgjbk"
 -- Comman palette
 config.command_palette_font_size = 16.0

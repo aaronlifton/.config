@@ -385,32 +385,33 @@ return {
           mcphub_tool,
         }
       end,
-      completion = {
-        cmp = {
-          input_container = {
-            sources = {
-              {
-                name = "buffer",
-                option = {
-                  -- get_bufnrs = require("util.win").editor_bufs,
-                  get_bufnrs = function()
-                    local windows = vim.api.nvim_tabpage_list_wins(0)
-                    return vim
-                      .iter(windows)
-                      :map(function(win)
-                        return vim.api.nvim_win_get_buf(win)
-                      end)
-                      :filter(function(buf)
-                        return vim.bo[buf].buflisted
-                      end)
-                      :totable()
-                  end,
-                },
-              },
-            },
-          },
-        },
-      },
+      -- TODO: remove
+      -- completion = {
+      --   cmp = {
+      --     input_container = {
+      --       sources = {
+      --         {
+      --           name = "buffer",
+      --           option = {
+      --             -- get_bufnrs = require("util.win").editor_bufs,
+      --             get_bufnrs = function()
+      --               local windows = vim.api.nvim_tabpage_list_wins(0)
+      --               return vim
+      --                 .iter(windows)
+      --                 :map(function(win)
+      --                   return vim.api.nvim_win_get_buf(win)
+      --                 end)
+      --                 :filter(function(buf)
+      --                   return vim.bo[buf].buflisted
+      --                 end)
+      --                 :totable()
+      --             end,
+      --           },
+      --         },
+      --       },
+      --     },
+      --   },
+      -- },
     },
     keys = function(_, keys)
       ---@type avante.Config

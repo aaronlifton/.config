@@ -46,15 +46,6 @@ M.config = setmetatable({}, {
   end,
 })
 
--- TODO: remove
----@param extra string
-function M.has_extra(extra)
-  local Config = require("lazyvim.config")
-  local modname = "plugins.extras." .. extra
-  return vim.tbl_contains(require("lazy.core.config").spec.modules, modname)
-    or vim.tbl_contains(Config.json.data.extras, modname)
-end
-
 --- Convenient wapper to save code when we Trigger events.
 --- To listen for an event triggered by this function you can use `autocmd`.
 --- @param event string Name of the event.

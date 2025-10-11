@@ -149,7 +149,7 @@ return {
           exclude = { "**/dist/**.js*", "*{-,.}min.js" },
         })
       end, desc = "Grep" },
-      { "<leader>fli", function() Snacks.picker.lazy() end, desc = "Plugins (Installed)" },
+      { "<leader>fi", function() Snacks.picker.lazy() end, desc = "Plugins (Installed)" },
       -- Override Snacks.picker.notifications keymap
       { "<leader>n", function() Snacks.notifier.show_history() end, desc = "Notification History" },
       { "<leader>si", function() Snacks.picker.icons() end, desc = "Icons" },

@@ -1,44 +1,14 @@
 local prefix = "<leader>cl"
+
 return {
   {
     "neovim/nvim-lspconfig",
-    -- init = function()
-    --   local keys = require("lazyvim.plugins.lsp.keymaps").get()
-    --
-    --   keys[#keys + 1] = { prefix, false }
-    --   keys[#keys + 1] = { "<leader>cil", "<cmd>LspInfo<cr>", desc = "Lsp" }
-    --   keys[#keys + 1] = { prefix .. "r", "<cmd>LspRestart<cr>", desc = "Restart Lsp" }
-    --   keys[#keys + 1] = { prefix .. "s", "<cmd>LspStart<cr>", desc = "Start Lsp" }
-    --   keys[#keys + 1] = { prefix .. "S", "<cmd>LspStop<cr>", desc = "Stop Lsp" }
-    --   keys[#keys + 1] = { prefix .. "K", "<cmd>LspStop ++force<cr>", desc = "Stop Lsp (force)" }
-    --
-    --   -- stylua: ignore start
-    --   keys[#keys + 1] = { prefix .. "R", function() vim.lsp.buf.remove_workspace_folder() end, desc = "Remove workspace" }
-    --   keys[#keys + 1] = { prefix .. "a", function() vim.lsp.buf.add_workspace_folder() end, desc = "Add workspace" }
-    --   keys[#keys + 1] = {
-    --     prefix .. "l",
-    --     function()
-    --       local workspace_folders = vim.lsp.buf.list_workspace_folders()
-    --       local printed = vim.inspect(workspace_folders)
-    --       local with_newlines = printed:gsub(" ", "\n"):gsub(",", "\n")
-    --       vim.api.nvim_echo(
-    --         {
-    --           { "Workspace folders:\n", "Normal" },
-    --           { with_newlines, "Comment" },
-    --         },
-    --         true,
-    --         {}
-    --       )
-    --     end,
-    --     desc = "List workspaces"
-    --   }
-    --   -- stylua: ignore end
-    -- end,
     opts = {
       diagnostics = {
         virtual_text = {
           -- prefix = "icons",
           float = {
+            -- border = "rounded",
             border = {
               { "┌", "FloatBorder" },
               { "─", "FloatBorder" },

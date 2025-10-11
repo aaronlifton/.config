@@ -8,8 +8,10 @@ return {
       { "nvim-lua/plenary.nvim", lazy = true },
     },
     keys = {
-      { "<leader>fe", "<cmd>Yazi<cr>", desc = "Yazi (Root Dir)" },
-      { "<leader>fE", "<cmd>Yazi cwd<cr>", desc = "Yazi (Cwd)" },
+      -- <leader>fe
+      { "<leader>e", "<cmd>Yazi<cr>", desc = "Yazi (Root Dir)" },
+      -- <leader>fE
+      { "<leader>E", "<cmd>Yazi cwd<cr>", desc = "Yazi (Cwd)" },
       { "<a-e>", "<cmd>Yazi toggle<cr>", desc = "Resume Last Yazi Session" },
     },
     opts = {

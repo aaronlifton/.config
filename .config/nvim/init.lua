@@ -1,30 +1,40 @@
--- bootstrap lazy.nvim, LazyVim and your plugins
--- require("pre-lazy")
-vim.g.base46_cache = vim.fn.stdpath("data") .. "/nvchad/base46/"
-
+require("config.options_pre")
 require("config.lazy")
+-- vim.opt.runtimepath:remove(vim.fn.expand("~/.config/nvim"))
 
--- if vim.env.CURSOR then
---   require("util.cursor")
-if vim.g.vscode then
-  -- require("util.myvscode")
-  vim.notify("Loading cursor settings", vim.log.levels.INFO)
-  vim.api.nvim_echo({ { vim.inspect("Loading cursor settings"), "Normal" } }, true, {})
-  require("util.cursor")
-end
-if vim.g.neovide then require("util.neovide") end
-require("util.lazy.root").setup({
-  integrations = {
-    resolve_relative_path_implementation = function(args, get_relative_path)
-      -- By default, the path is resolved from the file/dir yazi was focused on
-      -- when it was opened. Here, we change it to resolve the path from
-      -- Neovim's current working directory (cwd) to the target_file.
-      local cwd = vim.fn.getcwd()
-      local path = get_relative_path({
-        selected_file = args.selected_file,
-        source_dir = cwd,
-      })
-      return path
-    end,
-  },
-})
+vim.schedule(function()
+  require("config.options")
+  require("config.keymaps")
+
+  local custom_modules = {
+    {
+      path = "util.cursor",
+      cond = function()
+        return vim.g.vscode and vim.env.CURSOR
+      end,
+    },
+    {
+      path = "util.myvscode",
+      cond = function()
+        -- return vim.g.vscode
+        return false
+      end,
+    },
+    {
+      path = "util.neovide",
+      cond = function()
+        return vim.g.neovide
+      end,
+    },
+  }
+
+  for _, mod in ipairs(custom_modules) do
+    if type(mod.cond) == "function" and mod.cond() == true then
+      local ok, err = pcall(require, mod.path)
+      local modname = mod.path:match("[^%.]+$") or mod.path
+      if not ok then vim.notify(("Error loading %s module\n\n%s"):format(modname, err), vim.log.levels.ERROR) end
+
+      vim.notify(("Loaded %s module"):format(modname), vim.log.levels.INFO)
+    end
+  end
+end)

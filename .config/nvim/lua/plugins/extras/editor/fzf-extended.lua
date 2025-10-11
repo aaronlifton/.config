@@ -306,7 +306,7 @@ return {
       { "<leader>s<C-d>", function() require("util.fzf.devdocs").open_async({ languages = vim.bo.filetype }) end, desc = "Devdocs" },
       -- stylua: ignore end
       {
-        "<leader>flp",
+        "<leader>fp",
         function()
           pick(
             "files",
@@ -320,7 +320,7 @@ return {
         desc = "Plugins",
       },
       {
-        "<leader>flP",
+        "<leader>sp",
         function()
           pick(
             "live_grep",
@@ -331,7 +331,7 @@ return {
             })
           )
         end,
-        desc = "Grep plugins",
+        desc = "Plugins",
       },
       {
         "<leader>sY",
@@ -355,6 +355,7 @@ return {
           local path = get_module_path(cwd)
           if path then pick("live_grep", { cwd = path })() end
         end,
+        desc = "Within node_modules subdirectory",
       },
       {
         "<leader>gR",
@@ -376,16 +377,19 @@ return {
       {
         "<leader>sZ",
         function()
-          require("fzf-lua").fzf_exec({ 1, 2, 3, 4 }, {
-            keymap = { fzf = { ["backward-eof"] = "print(_myaction)+accept" } },
-            actions = {
-              ["enter"] = function(sel, _opts)
-                print("enter, num sel:", #sel)
-              end,
-              ["_myaction"] = function(sel, _opts)
-                print("_myaction, num sel", #sel)
-              end,
-            },
+          FzfLua.fzf_exec({ "foo", "bar" }, {
+            -- @param selected: the selected entry or entries
+            -- @param opts: fzf-lua caller/provider options
+            -- @param line: originating buffer completed line
+            -- @param col: originating cursor column location
+            -- @return newline: will replace the current buffer line
+            -- @return newcol?: optional, sets the new cursor column
+            complete = function(selected, opts, line, col)
+              local newline = line:sub(1, col) .. selected[1]
+              -- set cursor to EOL, since `nvim_win_set_cursor`
+              -- is 0-based we have to lower the col value by 1
+              return newline, #newline - 1
+            end,
           })
         end,
         desc = "No-bind interal action test",

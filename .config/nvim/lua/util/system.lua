@@ -2,27 +2,13 @@
 local M = {}
 local _cache = {}
 
----@return string|nil
+---@return string
 function M.hostname()
-  local f = io.popen("hostname")
-  if not f then return nil end
-  local hostname = f:read("*a")
-  hostname = string.sub(hostname, 1, -2)
-  f:close()
-  return hostname
+  return vim.fn.hostname()
 end
 
 function M.user()
   return vim.fn.expand("$USER")
-end
-
-function M.sysopen()
-  local sysopen
-  if vim.uv.os_uname().sysname == "Darwin" then
-    sysopen = "open"
-  else
-    sysopen = "xdg-open"
-  end
 end
 
 local Mcache = {}

@@ -20,7 +20,9 @@ M.log_cword = function()
   local pos = vim.api.nvim_win_get_cursor(0)
   local row = pos[1]
   local col = pos[2]
-  local scope = Snacks.scope.get({
+  local function cb(scope) end
+  vim.notify("here", vim.log.levels.INFO)
+  Snacks.scope.get(cb, {
     buf = buf,
     pos = {
       row,
@@ -43,7 +45,4 @@ M.log_cword = function()
       },
     },
   })
-  local indent = scope and (scope.indent + vim.bo.shiftwidth) or 0
-  new_row = string.rep(" ", indent) .. new_row
-  vim.api.nvim_buf_set_lines(0, row, row, false, { new_row })
 end

@@ -95,11 +95,10 @@ return {
       },
     }, -- config options here
     keys = {
-      -- { '<leader>-', ':Triptych<CR>' },
       -- Lua function is faster
-      { "<leader>e", ":Triptych<CR>" },
+      -- { "<leader>fe", ":Triptych<CR>" },
       {
-        "<leader>e",
+        "<leader>fe",
         -- "<leader><D-e>",
         function()
           local buf = vim.api.nvim_get_current_buf()
@@ -109,7 +108,7 @@ return {
         end,
       },
       {
-        "<leader>E",
+        "<leader>fE",
         -- "<leader><D-E>",
         function()
           -- local project_root = vim.fn.getcwd()
@@ -120,7 +119,7 @@ return {
         desc = "Open Triptych (CWD)",
       },
       {
-        "<leader><C-e>",
+        "<leader>f<C-e>",
         function()
           local nvim_config_dir = vim.fn.expand("~/.config/nvim")
           require("triptych").toggle_triptych(nvim_config_dir)

@@ -6,7 +6,6 @@ local o = vim.opt
 local lazyutil = require("lazy.util")
 local git_util = require("util.git")
 
-map({ "n", "i", "v", "x" }, "<C-7>", "<cmd>WhichKey<cr>", { desc = "WhichKey" })
 -- Buffers
 map("n", "<leader>bf", "<cmd>bfirst<cr>", { desc = "First Buffer" })
 map("n", "<leader>ba", "<cmd>blast<cr>", { desc = "Last Buffer" })
@@ -26,15 +25,6 @@ map("n", "<leader>u|", function()
   local col = vim.o.colorcolumn
   if col == "" then
     vim.o.colorcolumn = "81"
-  else
-    vim.o.colorcolumn = ""
-  end
-end, { desc = "Toggle colorcolumn" })
-
-map("n", "<leader>u<PageUp>", function()
-  local col = vim.o.colorcolumn
-  if col == "" then
-    vim.o.colorcolumn = "101"
   else
     vim.o.colorcolumn = ""
   end
@@ -80,7 +70,6 @@ map("n", "E", "ge")
 -- Increment/decrement
 -- map("n", "+", "<C-a>")
 -- map("n", "-", "<C-x>")
-
 -- Tabs
 map("n", "<tab>", "<cmd>tabnext<cr>", { desc = "Next Tab" })
 map("n", "<s-tab>", "<cmd>tabprevious<cr>", { desc = "Previous Tab" })
@@ -117,50 +106,24 @@ end, { desc = "Tabs" })
 
 -- Replaced by default keymap <C-w>g<Tab>
 map("n", "<leader><tab>\\", "<C-w>g<Tab>", { desc = "Alt Tab", remap = true })
--- map("n", "<leader><tab>\\", function()
---   if vim.g.last_tabpage == nil then return end
---   local tabpages = vim.api.nvim_list_tabpages()
---   for _, tab in ipairs(tabpages) do
---     if tab == vim.g.last_tabpage then return vim.api.nvim_set_current_tabpage(vim.g.last_tabpage) end
---   end
---   vim.g.last_tabpage = nil
--- end, { desc = "Alt Tab" })
 
 map({ "n", "x" }, "gw", "*N", { desc = "Search word under cursor" })
 
 -- CMD keys
 map({ "n", "v", "s", "i" }, "<D-s>", "<cmd>w<cr>", { noremap = true })
 
--- map({ "n", "v", "s", "i" }, "<D-v>", "<cmd>norm gpa<cr>", { noremap = true })
--- map({ "s", "i" }, "<D-v>", "<cmd>norm gpa<cr>", { noremap = true })
 map("i", "<D-v>", '<C-r>"', { desc = "Paste on insert mode" })
 map({ "v", "t" }, "<D-v>", '"+P', { noremap = true })
+map("v", "<D-c>", '"+y', { noremap = true }) -- Copy
 map("n", "<D-v>", "<cmd>norm gpa<cr>", { noremap = true })
 map("c", "<D-v>", "<C-R>+", { noremap = true }) -- Paste command mode, add a hack to force render it
-map("v", "<D-c>", '"+y', { noremap = true }) -- Copy
-
--- Paste options
-map("v", "p", '"_dP', { desc = "Paste without overwriting" }, { silent = true })
--- map("x", "p", [[<Cmd>silent! normal! "_dP<CR>]], { noremap = true, silent = true })
-
 -- Working paste in neovide terminal
 map("t", "<D-v>", [[<C-\><C-o>p]], { noremap = true, silent = true })
+map("n", "<M-x>", '""x', { desc = "Delete character without overwriting" })
 
--- Doesn't work - https://neovide.dev/faq.html
--- if vim.g.neovide then
---   vim.keymap.set("n", "<D-s>", ":w<CR>") -- Save
---   vim.keymap.set("v", "<D-c>", '"+y') -- Copy
---   vim.keymap.set("n", "<D-v>", '"+P') -- Paste normal mode
---   vim.keymap.set("v", "<D-v>", '"+P') -- Paste visual mode
---   vim.keymap.set("c", "<D-v>", "<C-R>+") -- Paste command mode
---   vim.keymap.set("i", "<D-v>", '<ESC>l"+Pli') -- Paste insert mode
--- end
---
--- -- Allow clipboard copy paste in neovim
--- vim.api.nvim_set_keymap("", "<D-v>", "+p<CR>", { noremap = true, silent = true })
--- vim.api.nvim_set_keymap("!", "<D-v>", "<C-R>+", { noremap = true, silent = true })
--- vim.api.nvim_set_keymap("t", "<D-v>", "<C-R>+", { noremap = true, silent = true })
--- vim.api.nvim_set_keymap("v", "<D-v>", "<C-R>+", { noremap = true, silent = true })
+-- Paste options
+map("v", "p", '"_dP', { desc = "Paste without overwriting", silent = true })
+map("n", "<M-v>", "cw<C-r>0<ESC>", { desc = "Change word under cursor with register 0" })
 
 -- Copy whole text to clipboard
 map("n", "<leader><C-c>", ":%y+<CR>", { desc = "Copy whole text to clipboard", silent = true })
@@ -170,20 +133,12 @@ map("c", "<C-a>", "<C-b>", { desc = "Start Of Line" })
 map("i", "<C-a>", "<Home>", { desc = "Start Of Line" })
 map("i", "<C-e>", "<End>", { desc = "End Of Line" })
 
--- Check this
-map("n", "<M-v>", "cw<C-r>0<ESC>", { desc = "Change word under cursor with register 0" })
-
 -- Move to beginning/end of line
 map({ "n", "x", "o" }, "<M-l>", "$", { desc = "Last Character of Line", noremap = true })
 map({ "n", "x", "o" }, "<M-h>", "_", { desc = "First character of Line" })
 map({ "n", "x", "o" }, "<M-b>", "b", { desc = "Previous Word", noremap = true })
 map({ "n", "x", "o" }, "<M-w>", "w", { desc = "Next Word", noremap = true })
 
--- Helix
--- TODO: implement the following:
--- [x] "Move to end of the parent node (<A-e>)", "Move to beginning of the parent node (<A-b>)",
--- [x] "Expand selection to parent syntax node (<A-o> <A-up>)", "Shrink selection to previously expanded syntax node (<A-down> <A-i>)",
--- [ ] "Select next sibling in syntax tree (<A-n> <A-right>)", "Select previous sibling in syntax tree (<A-left> <A-p>)"
 --
 -- Delete and change without yanking (from Helix)
 map({ "n", "x" }, "<M-d>", '"_d', { desc = "Delete without yanking" })
@@ -197,7 +152,6 @@ map({ "n", "x" }, "<C-c>", '"_ciw', { desc = "Change word without yanking" })
 
 -- Enable delete to end of line in NUI inputs. Gets overriden by LSP keymap
 -- otherwise.
--- map("i", "<C-k>", "<C-o>dd", { desc = "Delete line" })
 map("i", "<C-k>", "<C-o>D", { desc = "Delete to end of line", noremap = true })
 
 -- Deleting without yanking empty line
@@ -217,11 +171,7 @@ map("x", "g/", "<esc>/\\%V", { silent = false, desc = "Search Inside Visual Sele
 map("x", "*", [[y/\V<C-R>=escape(@", '/\')<CR><CR>]], { desc = "Search Selected Text", silent = true })
 map("x", "#", [[y?\V<C-R>=escape(@", '?\')<CR><CR>]], { desc = "Search Selected Text (Backwards)", silent = true })
 
--- Currently set by better-escape.nvim
--- Press jk fast to enter
--- map("i", "jk", "<ESC>", { silent = true })
-
--- commenting (override LazyVim keymap to save to unnamed register)
+-- commenting (override default LazyVim keybindings so they save to unnamed register)
 map("n", "gco", 'o<esc>V"_cx<esc><cmd>normal gcc<cr>fxa<bs>', { desc = "Add Comment Below" })
 map("n", "gcO", 'O<esc>V"_cx<esc><cmd>normal gcc<cr>fxa<bs>', { desc = "Add Comment Above" })
 
@@ -262,13 +212,13 @@ map("n", "<leader>L", "<Nop>") -- Changeloog
 map("n", "<leader>ll", "<cmd>Lazy<cr>", { desc = "Lazy" })
 
 map("n", "<leader>ld", function()
-  vim.fn.system({ "xdg-open", "https://lazyvim.org" })
+  vim.ui.open("https://lazyvim.org")
 end, { desc = "LazyVim Docs" })
 map("n", "<leader>lr", function()
-  vim.fn.system({ "xdg-open", "https://github.com/LazyVim/LazyVim" })
+  vim.ui.open("https://github.com/LazyVim/LazyVim")
 end, { desc = "LazyVim Repo" })
 map("n", "<leader>lr", function()
-  vim.fn.system({ "xdg-open", "https://github.com/folke/lazy.nvim" })
+  vim.ui.open("https://github.com/folke/lazy.nvim")
 end, { desc = "lazy.nvim Repo" })
 
 -- stylua: ignore start
@@ -288,6 +238,8 @@ map("n", "<leader>cic", "<cmd>ConformInfo<cr>", { desc = "Conform" })
 
 local linters = function()
   local buf = vim.api.nvim_get_current_buf()
+  if not package.loaded["lint"] then return end
+
   local linters_attached = require("lint").get_running(buf)
 
   if #linters_attached == 0 then
@@ -302,6 +254,8 @@ end
 map("n", "<leader>ciL", linters, { desc = "Lint" })
 map("n", "<leader>cir", "<cmd>LazyRoot<cr>", { desc = "Root" })
 
+map("n", "<leader>lo", (":e %s"):format(vim.fn.stdpath("config")), { desc = "Edit config" })
+map("n", "<leader>lk", (":e %s/keymaps.lua"):format(vim.fn.stdpath("config")), { desc = "Edit keymaps" })
 --- Neotree
 -- map("n", "<M-e>", function()
 --   local reveal_file = vim.fn.expand("%:p")
@@ -707,22 +661,20 @@ end, { desc = "Jump to item 1" })
 
 -- Custom finders
 local T = require("util.fzf.finders")
-map("n", "<leader>flg", function()
+map("n", "<leader>s<M-l>", function()
   T.grep_lazyvim_files()
 end, { desc = "Grep lazyvim files" })
-map("n", "<leader>fll", function()
+map("n", "<leader>fl", function()
   T.find_lazyvim_files()
 end, { desc = "Find lazyvim files" })
-map("n", "<leader>fla", function()
-  T.grep_dir("astrovim", {})
-end, { desc = "Grep astrovim files" })
-map("n", "<leader>flm", function()
+map("n", "<leader>s<M-c>", function()
   T.grep_config_files({})
 end, { desc = "Grep config files" })
-map("n", "<leader>flM", function()
-  T.find_config_files({})
-end, { desc = "Find config files" })
--- map("n", "<leader>flI", function()
+-- Already mapped to <leader>fc
+-- map("n", "<leader>flM", function()
+--   T.find_config_files({})
+-- end, { desc = "Find config files" })
+-- map("n", "<leader>f<M-i>", function()
 --   T.grep_inspiration_files({ layout_strategy = "center" })
 -- end)
 
@@ -732,51 +684,8 @@ map("n", "<leader>wD", function()
 end, { desc = "Toggle Diff Windows" })
 
 map("n", "<leader>rl", function()
-  local buf = vim.api.nvim_get_current_buf()
-  local word = vim.fn.expand("<cword>")
-  local filetype = vim.bo.filetype
-  local new_row
-  if filetype == "lua" then
-    new_row = ('vim.api.nvim_echo({{ "%s\\n", "Title"}, { vim.inspect(%s), "Normal" } }, true, {})'):format(word, word)
-  elseif filetype == "javascript" then
-    new_row = ("console.log('### %s: ', { %s })"):format(word, word)
-  elseif filetype == "ruby" then
-    new_row = ('Rails.logger.info("%s")'):format(word)
-  else
-    vim.notify("Unsupported filetype", vim.log.levels.INFO, { title = "Debug Print" })
-    return
-  end
-
-  local pos = vim.api.nvim_win_get_cursor(0)
-  local row = pos[1]
-  local col = pos[2]
-  local scope = Snacks.scope.get({
-    buf = buf,
-    pos = {
-      row,
-      col,
-    },
-    treesitter = {
-      enabled = true,
-      blocks = {
-        "function_declaration",
-        "function_definition",
-        "method_declaration",
-        "method_definition",
-        "class_declaration",
-        "class_definition",
-        "do_statement",
-        "while_statement",
-        "repeat_statement",
-        "if_statement",
-        "for_statement",
-      },
-    },
-  })
-  local indent = scope and (scope.indent + vim.bo.shiftwidth) or 0
-  new_row = string.rep(" ", indent) .. new_row
-  vim.api.nvim_buf_set_lines(0, row, row, false, { new_row })
-end, { desc = "Debug Print (console.log)", silent = true })
+  require("util.debug_print").log_cword()
+end, { desc = "Debug Print", silent = true })
 
 -- map("n", "<C-S-P>", "[h<esc>zz", { desc = "Previous hunk", remap = true })
 -- map("n", "<C-S-N>", "]h<esc>zz", { desc = "Next hunk", remap = true })

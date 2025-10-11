@@ -3,6 +3,7 @@ vim.keymap.set({ "n", "x" }, "[#", [[?^#\+ .*<CR>]], { desc = "Prev Heading", bu
 
 vim.diagnostic.enable(false)
 vim.opt_local.spell = false
+vim.b.completion = false
 -- vim.schedule_wrap(function()
 --   vim.cmd("lua vim.opt_local.spell = false")
 -- end)
