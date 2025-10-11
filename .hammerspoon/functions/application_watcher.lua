@@ -1,5 +1,5 @@
 local CHROME = "Google Chrome"
-local logger = require("functions/logger").null_logger
+local logger = Logger
 
 --- Application watcher
 ---@param appName string

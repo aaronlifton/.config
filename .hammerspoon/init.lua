@@ -1,9 +1,4 @@
--- Omarchy-inspired keybindings (optional)
--- Uncomment the following lines to enable Omarchy-style tiling window manager keybindings
--- These use Super/Cmd as the main modifier key, similar to Hyprland/i3 window managers
-
--- local omarchy = require("omarchy")
--- omarchy.init()
+local M = {}
 
 -- Docs
 -- Keycodes:
@@ -11,8 +6,9 @@
 -- hs.application - https://www.hammerspoon.org/docs/hs.application.html
 
 hs.allowAppleScript(true)
+
 Logger = require("functions.logger")
-local colors = require("colors")
+Theme = require("theme")
 local configurator = require("configurator")
 
 Util = require("Util")
@@ -20,17 +16,33 @@ ProcessManager = require("functions.process_manager")
 Window = require("functions.window")
 Screens = {
   main = "Studio Display",
-  secondary = "Built-in Retina Display",
+  -- secondary = "Built-in Retina Display",
 }
+Config = {
+  aerospaceEnabled = false,
+  screenCount = #hs.screen.allScreens(),
+  username = os.getenv("USER"),
+  useOmarchy = false,
+  theme = "catppuccin_macchiato",
+}
+Theme.setTheme(Config.theme)
 
 ---@diagnostic disable: inject-field
 -- install hammerspoon cli
 local brewPrefixOutput, _, _, _ = hs.execute("brew --prefix", true)
 
+-- local function checkIpcStatus()
+--   hs.execute('hs -A -n -q -t 0.1 -c "hs.ipc.cliStatus("/opt/homebrew/", true)"')
+-- end
+
 if brewPrefixOutput then
-  local brewPrefix = string.gsub(brewPrefixOutput, "%s+", "")
   require("hs.ipc")
-  hs.ipc.cliInstall(brewPrefix)
+  if not hs.ipc.cliStatus(brewPrefixOutput) then
+    local brewPrefix = string.gsub(brewPrefixOutput, "%s+", "")
+    hs.ipc.cliInstall(brewPrefix)
+  else
+    Logger.d("ipc status: connected")
+  end
 end
 
 K = {
@@ -50,18 +62,17 @@ K = {
   },
 }
 
-Config = {
-  aerospaceEnabled = false,
-  screenCount = #hs.screen.allScreens(),
-}
-
 -- 913794
 -- Make all our animations really fast
+-- https://github.com/Hammerspoon/hammerspoon/blob/master/extensions/alert/alert.lua#L17
 hs.alert.defaultStyle = {
   strokeWidth = 2,
-  strokeColor = { white = 0, alpha = 0 },
-  fillColor = { white = 1, alpha = 0.5 },
-  textColor = { black = 1, alpha = 1 },
+  -- strokeColor = { white = 0, alpha = 0 },
+  strokeColor = { hex = Theme.base, alpha = 0 },
+  -- fillColor = { white = 1, alpha = 0.5 },
+  fillColor = { hex = Theme.mantle, alpha = 1 },
+  -- textColor = { black = 1, alpha = 1 },
+  textColor = { hex = Theme.text, alpha = 1 },
   textFont = ".AppleSystemUIFont",
   textSize = 18,
   radius = 2,
@@ -81,20 +92,56 @@ spoon.SpoonInstall.repos.official = {
   url = "https://github.com/Hammerspoon/Spoons",
   desc = "Official spoon repository",
 }
-spoon.SpoonInstall.repos.wwmoraes = {
-  url = "https://github.com/wwmoraes/spoons",
-  desc = "wwmoraes' spoons",
-  branch = "release",
-}
+
+if Config.useOmarchy then
+  spoon.SpoonInstall.repos.wwmoraes = {
+    url = "https://github.com/wwmoraes/spoons",
+    desc = "wwmoraes' spoons",
+    branch = "release",
+  }
+  spoon.SpoonInstall.repos.mogenson = {
+    url = "https://github.com/mogenson/Drag.spoon",
+    desc = "mogenson' spoons",
+    branch = "main",
+  }
+
+  -- https://github.com/Hammerspoon/Spoons/blob/master/Source/SpoonInstall.spoon/init.lua#L369
+  -- Install:installSpoonFromRepo("mogenson", "Drag.spoon")
+  -- Install:installSpoonFromZipURL("https://github.com/mogenson/Drag.spoon/archive/refs/heads/main.zip")
+  Drag = hs.loadSpoon("Drag")
+end
+
 Install = spoon.SpoonInstall
 Install.use_syncinstall = true
 
 Install:andUse("ReloadConfiguration")
 Logger.d("ReloadConfiguration spoon loaded")
-spoon.ReloadConfiguration:start()
 
 Install:andUse("ModalMgr")
 Logger.d("ModalMgr spoon loaded")
+
+if hs.spoons.isLoaded("ModalMgr") then
+  spoon.ModalMgr.modal_tray[1] = {
+    type = "circle",
+    action = "fill",
+    fillColor = { hex = Theme.base, alpha = 0.9 },
+  }
+
+  local screenWidth = hs.screen.mainScreen():frame().w
+  local whichKeyWidth = math.max(screenWidth * spoon.ModalMgr.width_factor, spoon.ModalMgr.min_width)
+  -- spoon.ModalMgr.which_key = hs.canvas.new({ x = 0, y = 0, w = 0, h = 0 })
+  spoon.ModalMgr.which_key = hs.canvas.new({ x = screenWidth - whichKeyWidth, h = 0 })
+  spoon.ModalMgr.which_key:level(hs.canvas.windowLevels.tornOffMenu)
+
+  spoon.ModalMgr.which_key[1] = {
+    type = "rectangle",
+    action = "fill",
+    frame = { x = screenWidth - whichKeyWidth },
+    fillColor = { hex = Theme.crust, alpha = 0.95 },
+    roundedRectRadii = { xRadius = 10, yRadius = 10 },
+  }
+end
+
 ---
 ---Inspo: https://github.com/orionpax1997/hugo-blog/blob/a070d7464b810e4ad1b4670e43a45d0e038e5667/content/posts/hammerspoon.md?plain=1#L55
 ---https://github.com/rickysaurav/dotfiles/blob/326b3027fcb3a758c3ebea4f56526d2ce4633062/modules/home-manager/dots/hammerspoon/init.lua#L104
@@ -103,45 +150,46 @@ Logger.d("ModalMgr spoon loaded")
 ---https://github.com/wwmoraes/dotfiles/blob/ab0f83ff97ce975e4193900092d7983f75b95599/.shadow.d/.hammerspoon/init.lua
 ---
 ---@param mouse_follows_focus spoon.MouseFollowsFocus
-Install:andUse("MouseFollowsFocus", {
-  start = true,
-  fn = function(mouse_follows_focus)
-    ---@type spoon.ModalMgr
-    local modal_mgr = spoon.ModalMgr
-    modal_mgr:new("MouseFollowsFocus")
-    ---@type hs.hotkey.modal
-    local cmodal = modal_mgr.modal_list["MouseFollowsFocus"]
-    ---@type hs.hotkey.modAl
-    local supervisor = modal_mgr.supervisor
-    cmodal:bind("", "escape", "Exit", function()
-      Logger.d("Deactivating cmodal")
-      modal_mgr:deactivate({ "MouseFollowsFocus" })
-      supervisor:exit()
-    end)
-    cmodal:bind("", "M", "Start mouse follow focus", function()
-      mouse_follows_focus:start()
-      hs.alert.show("Mouse Follows Focus Started")
-      supervisor:exit()
-    end)
-    cmodal:bind("shift", "M", "Stop mouse follow focus", function()
-      mouse_follows_focus:stop()
-      hs.alert.show("Mouse Follows Focus Stopped")
-      supervisor:exit()
-    end)
-    cmodal:bind("shift", "/", "Cheatsheet", function()
-      modal_mgr:toggleCheatsheet()
-    end)
-    supervisor:bind("", "m", "Enter Mouse Focus Management", function()
-      modal_mgr:deactivateAll()
-      Logger.d("Activating cmodal")
-      modal_mgr:activate({ "MouseFollowsFocus" }, nil, true)
-    end)
-  end,
-})
-Logger.d("MouseFollowsFocus spoon loaded")
-Install:andUse("AppWindowSwitcher")
+-- Install:andUse("MouseFollowsFocus", {
+--   start = true,
+--   fn = function(mouse_follows_focus)
+--     ---@type spoon.ModalMgr
+--     local modal_mgr = spoon.ModalMgr
+--     modal_mgr:new("MouseFollowsFocus")
+--     ---@type hs.hotkey.modal
+--     local cmodal = modal_mgr.modal_list["MouseFollowsFocus"]
+--     ---@type hs.hotkey.modAl
+--     local supervisor = modal_mgr.supervisor
+--     cmodal:bind("", "escape", "Exit", function()
+--       Logger.d("Deactivating cmodal")
+--       modal_mgr:deactivate({ "MouseFollowsFocus" })
+--       supervisor:exit()
+--     end)
+--     cmodal:bind("", "M", "Start mouse follow focus", function()
+--       mouse_follows_focus:start()
+--       hs.alert.show("Mouse Follows Focus Started")
+--       supervisor:exit()
+--     end)
+--     cmodal:bind("shift", "M", "Stop mouse follow focus", function()
+--       mouse_follows_focus:stop()
+--       hs.alert.show("Mouse Follows Focus Stopped")
+--       supervisor:exit()
+--     end)
+--     cmodal:bind("shift", "/", "Cheatsheet", function()
+--       modal_mgr:toggleCheatsheet()
+--     end)
+--     supervisor:bind("", "m", "Enter Mouse Focus Management", function()
+--       modal_mgr:deactivateAll()
+--       Logger.d("Activating cmodal")
+--       modal_mgr:activate({ "MouseFollowsFocus" }, nil, true)
+--     end)
+--   end,
+-- })
+-- Logger.d("MouseFollowsFocus spoon loaded")
+-- Install:andUse("AppWindowSwitcher")
 
 hs.loadSpoon("EmmyLua")
+
 -- hs.loadSpoon("HSearch")
 -- Install:andUse("HSearch")
 -- logger.d("HSearch spoon loaded")
@@ -180,16 +228,21 @@ local appWatcher = require("functions.application_watcher")
 local browser = require("functions.browser")
 local keys = require("keys")
 HyperBinding = K.mod.hyper
+hs.hotkey.bind(HyperBinding, "escape", function()
+  ExitHyperMode()
+end)
+-- hs.hotkey.bind(HyperBinding, "1", function()
+--   require("functions.layouts_example").customLayouts["1"]()
+-- end)
 
 hs.grid.MARGINX = 0
 hs.grid.MARGINY = 0
 hs.grid.GRIDWIDTH = 8
 hs.grid.GRIDHEIGHT = 4
 
---hyper f18
--- https://ritam.me/posts/hammerspoon-hyper-key/
-local FRemap = require("foundation_remapping")
-FoundationRemapper = FRemap.new()
+-- hyper f18 - https://ritam.me/posts/hammerspoon-hyper-key/
+-- local FRemap = require("foundation_remapping")
+-- FoundationRemapper = FRemap.new()
 
 -- https://github.com/posky/dev-configs/blob/a611d509bb56e95fa331d083df449b59abb2eca8/hammerspoon/.hammerspoon/init.lua#L13
 -- capslock to F19
@@ -203,24 +256,26 @@ FoundationRemapper = FRemap.new()
 -- FoundationRemapper:register()
 
 local shutdownCallback = function()
-  FoundationRemapper:unregister()
+  -- FoundationRemapper:unregister()
   appWatcher:stop()
   -- configWatcher:stop()
   configurator.cleanup()
+  spoon.ModalMgr:deactivateAll()
+
+  if Config.useOmarchy and hs.spoons.isLoaded("Omarchy") then Omarchy.teardown() end
 end
 hs.shutdownCallback = shutdownCallback
 
+require("app_switcher")
+
 -- A global variable for the Hyper Mode
 Hyper = hs.hotkey.modal.new({}, "F19")
-
-ChromeModal = hs.hotkey.modal.new({}, nil, nil)
-ChromeModal:bind({ "alt" }, "t", "Opening tab to the right", browser.newTabToRight)
 
 -- Enter Hyper Mode when F19 (Hyper/Capslock) is pressed
 function EnterHyperMode()
   Hyper.triggered = false
   Hyper:enter()
-  hs.alert.show(" on")
+  hs.alert.show("Hyper on")
 end
 
 -- Leave Hyper Mode when F19 (Hyper/Capslock) is pressed,
@@ -246,35 +301,15 @@ Hyper:bind({}, "k", nil, function()
 end)
 
 -- Bind the Hyper key
-F19 = hs.hotkey.bind({}, "F19", EnterHyperMode, ExitHyperMode)
 F18 = hs.hotkey.bind({}, "F18", EnterHyperMode, ExitHyperMode)
+-- double-right-shift-mode -> [:a :z]
+F19 = hs.hotkey.bind({}, "F19", ExitHyperMode, nil)
+-- /hyper
 
---/hyper f18
-
--- Bit masks for remapped modifier key and hyper key modifiers
--- local flagMasks = hs.eventtap.event.rawFlagMasks
--- local originalKeyMask = flagMasks["deviceRightAlternate"] -- right option
--- local hyperKeyMask = flagMasks["control"] | flagMasks["alternate"] | flagMasks["command"] | flagMasks["shift"]
---
--- -- Create a global listener to monitor keyboard events
--- local events = { hs.eventtap.event.types.keyDown, hs.eventtap.event.types.keyUp }
--- KeyEventListener = hs.eventtap
---   .new(events, function(event)
---     -- Filter out irrelevant data from the event's modifier flags
---     -- https://www.hammerspoon.org/docs/hs.eventtap.event.html#rawFlagMasks
---     local flags = event:rawFlags() & 0xdffffeff
---
---     -- Check if the keyboard event includes the desired modifier key to remap
---     -- If so, update the event's modifier flags to use hyper key modifiers
---     if flags & originalKeyMask ~= 0 then
---       logger.d("Remapping key event with originalKeyMask")
---       event:rawFlags(hyperKeyMask)
---     end
---
---     -- Propagate event to system
---     return false
---   end)
---   :start()
+-- chrome
+ChromeModal = hs.hotkey.modal.new({}, nil, nil)
+ChromeModal:bind({ "alt" }, "t", "Opening tab to the right", browser.newTabToRight)
+-- /chrome
 
 hs.window.animationDuration = 0.0
 
@@ -292,309 +327,35 @@ hs.grid.setMargins(hs.geometry.size(0, 0))
 -- hs.grid.setMargins({ x = 0, y = 0 })
 hs.grid.setGrid("2x2")
 
-local appMap = require("hyper_apps")
-
--- Create a modal manager for nested key sequences
----@type table
-local modal_mgr = spoon.ModalMgr
-
-local singleLetterApps = {}
-local hyperLogger = hs.logger.new("hyper")
-
--- Function to handle app binding execution
-local function check_binding(app, key)
-  if type(app) == "string" then
-    -- Check if the string starts with com., org., etc. (likely a bundle ID)
-    singleLetterApps[app] = { K.mod.hyper, app }
-    Window.activateApp(app)
-  elseif type(app) == "function" then
-    app()
-  else
-    hyperLogger:e("Invalid mapping for key")
-  end
-end
-
-hyperLogger.d("Creating single letter app bindings")
--- spoon.SpoonInstall:andUse("AppWindowSwitcher", {
---   hotkeys = singleLetterApps,
--- })
-hs.loadSpoon("AppWindowSwitcher"):setLogLevel("debug"):bindHotkeys(singleLetterApps)
-
--- TODO: implement focus on last focused window after recurvise modal activation
--- local lastFocusedWindow = nil
-
--- Recursive function to create modal bindings for nested key maps
--- path is the sequenje of keys pressed so far (for display purposes)
--- prefix is the modal name prefix
-local function create_modal_bindings(keymap, path, prefix)
-  local modal_name = prefix
-  ---@diagnostic disable-next-line: undefined-field
-  local cmodal = modal_mgr.modal_list[modal_name]
-
-  -- For each key in this level
-  for key, action in pairs(keymap) do
-    local current_path = path .. key
-
-    if type(action) == "table" then
-      -- This is a nested keymap, create a new modal for it
-      local nested_modal_name = prefix .. "_" .. key
-      modal_mgr:new(nested_modal_name)
-
-      -- Bind the key to activate the nested modal
-      cmodal:bind("", key, function()
-        modal_mgr:deactivate({ modal_name })
-        modal_mgr:activate({ nested_modal_name }, "#FFBD2E", true)
-
-        -- Show a hint about which modal is active
-        hs.alert.show(current_path .. " mode active", 1)
-      end)
-
-      -- Recursively create bindings for the nested keymap
-      create_modal_bindings(action, current_path .. "+", nested_modal_name)
-    else
-      -- This is a leaf action, bind it directly
-      cmodal:bind("", key, function()
-        check_binding(action)
-        modal_mgr:deactivate({ modal_name })
-      end)
-    end
-  end
-
-  -- Add escape key to exit the modal
-  cmodal:bind("", "escape", function()
-    modal_mgr:deactivate({ modal_name })
-  end)
-
-  -- Add a help key to show available options
-  cmodal:bind("shift", "/", "Show available keys", function()
-    local help_text = "Available keys for " .. path:sub(1, -2) .. ":\n"
-    for nested_key, nested_action in pairs(keymap) do
-      if type(nested_action) == "table" then
-        help_text = help_text .. "  " .. nested_key .. " → [submenu]\n"
-      else
-        help_text = help_text .. "  " .. nested_key .. "\n"
-      end
-    end
-    hs.alert.show(help_text, 3)
-  end)
-end
-
--- Process the app mappings
-local appWindowSwitcherApps = {}
-for key, app in pairs(appMap) do
-  if type(app) == "table" then
-    -- Create a new modal for this key
-    local modal_name = "Hyper_" .. key
-    modal_mgr:new(modal_name)
-
-    -- Bind the initial key to activate the modal
-    hs.hotkey.bind(HyperBinding, key, function()
-      -- NOTE: Not sure if this needs to be commented
-      -- if App.is_current(App.bundles.terminals) then return end
-
-      -- Activate the modal for this key
-      modal_mgr:activate({ modal_name }, colors.catppuccin_macchiato.green, true)
-
-      -- Show a hint about which modal is active
-      hs.alert.show("Hyper+" .. key .. " mode active", 1)
-    end)
-
-    -- Create recursive bindings for this keymap
-    create_modal_bindings(app, "Hyper+" .. key .. "+", modal_name)
-  else
-    -- For non-nested keys, bind directly
-    hs.hotkey.bind(HyperBinding, key, function()
-      check_binding(app, key)
-    end)
-  end
-end
-
-local superModal = modal_mgr:new("super")
-
--- for key, app in pairs(stringApps) do
--- end
--- hs.loadSpoon("AppWindowSwitcher"):setLogLevel("debug"):bindHotkeys(appWindowSwitcherApps)
-
-hs.hotkey.bind(HyperBinding, "escape", function()
-  ExitHyperMode()
-end)
-
--- hs.hotkey.bind(HyperBinding, "tab", function()
---   local windows = hs.window.orderedWindows()
---   if #windows > 1 then
---     local window = windows[2]
---     window:focus():raise()
---   end
--- end)
-
-hs.hotkey.bind(HyperBinding, "tab", function()
-  local focusedWindow = hs.window.focusedWindow()
-  if not focusedWindow then return end
-
-  -- Put focused window on left half
-  hs.grid.set(focusedWindow, Grid.leftHalf)
-
-  -- Get other windows on same screen
-  local otherWindows = focusedWindow:otherWindowsSameScreen()
-  if #otherWindows == 0 then return end
-
-  -- Calculate height for each window in the right half
-  local heightPerWindow = 2 / #otherWindows
-
-  -- Tile other windows on right half
-  for i, window in ipairs(otherWindows) do
-    local yPos = (i - 1) * heightPerWindow
-    local gridString = "1," .. yPos .. " 1x" .. heightPerWindow
-    hs.grid.set(window, gridString)
-    window:raise()
-  end
-end)
-
--- Tiling layout: focused window left half, next windows right top/bottom, continue on next screen if available
-hs.hotkey.bind(HyperBinding, "0", function()
-  local focusedWindow = hs.window.focusedWindow()
-  if not focusedWindow then return end
-
-  -- Get all visible windows across all screens
-  local allWindows = hs.window.visibleWindows()
-  if #allWindows <= 1 then return end
-
-  -- Filter out minimized windows and get screens
-  local validWindows = {}
-  for _, window in ipairs(allWindows) do
-    if not window:isMinimized() and window:isStandard() then table.insert(validWindows, window) end
-  end
-
-  if #validWindows <= 1 then return end
-
-  -- Get available screens
-  local screens = hs.screen.allScreens()
-  local hasMultipleScreens = Config.screenCount and Config.screenCount > 1
-
-  -- Sort windows so focused window is first
-  local sortedWindows = {}
-  table.insert(sortedWindows, focusedWindow)
-  for _, window in ipairs(validWindows) do
-    if window:id() ~= focusedWindow:id() then table.insert(sortedWindows, window) end
-  end
-
-  local windowIndex = 1
-  local screenIndex = 1
-  local currentScreen = screens[screenIndex]
-
-  -- Process windows in groups of 3 (1 left, 2 right)
-  while windowIndex <= #sortedWindows do
-    local window = sortedWindows[windowIndex]
-
-    if windowIndex == 1 or (windowIndex - 1) % 3 == 0 then
-      -- First window of group goes to left half
-      if hasMultipleScreens and screenIndex <= #screens then
-        currentScreen = screens[screenIndex]
-        window:moveToScreen(currentScreen)
-      end
-      hs.grid.set(window, Grid.leftHalf)
-      window:raise()
-      windowIndex = windowIndex + 1
-    elseif (windowIndex - 1) % 3 == 1 then
-      -- Second window of group goes to right top half
-      if hasMultipleScreens and screenIndex <= #screens then window:moveToScreen(currentScreen) end
-      hs.grid.set(window, Grid.rightTopHalf)
-      window:raise()
-      windowIndex = windowIndex + 1
-    elseif (windowIndex - 1) % 3 == 2 then
-      -- Third window of group goes to right bottom half
-      if hasMultipleScreens and screenIndex <= #screens then window:moveToScreen(currentScreen) end
-      hs.grid.set(window, Grid.rightBottomHalf)
-      window:raise()
-      windowIndex = windowIndex + 1
-
-      -- Move to next screen if available and we have more windows
-      if hasMultipleScreens and windowIndex <= #sortedWindows then
-        screenIndex = screenIndex + 1
-        if screenIndex > #screens then
-          -- No more screens available, handle remaining windows
-          break
-        end
-      elseif not hasMultipleScreens then
-        -- Single screen: hide remaining windows
-        break
-      end
-    end
-  end
-
-  -- Handle remaining windows
-  if windowIndex <= #sortedWindows then
-    if hasMultipleScreens then
-      -- If we have multiple screens but no more screens available,
-      -- continue tiling on the last screen
-      for i = windowIndex, #sortedWindows do
-        local window = sortedWindows[i]
-        window:moveToScreen(screens[#screens])
-        -- Stack remaining windows on right side
-        local stackPosition = 1 + ((i - windowIndex) * 0.5)
-        if stackPosition > 2 then stackPosition = 2 end
-        local gridString = "1," .. (stackPosition - 1) .. " 1x0.5"
-        hs.grid.set(window, gridString)
-        window:raise()
-      end
-    else
-      -- Single screen: hide/minimize remaining windows
-      for i = windowIndex, #sortedWindows do
-        local window = sortedWindows[i]
-        window:minimize()
-      end
-    end
-  end
-end)
-hs.hotkey.bind(HyperBinding, "1", function()
-  require("functions.layouts_example").customLayouts["1"]()
-end)
-
-Clipboard = require("Helpers.Clipboard")
-App = require("Helpers.App")
-
--- /start hotfix
--- https://github.com/indirect/miro-windows-manager/blob/61b5a4cb261645b4704f1ee40057d82c55cb88fa/MiroWindowsManager.spoon/init.lua#L35
--- https://github.com/Hammerspoon/hammerspoon/issues/3224
--- Patch hs.window to work around accessibility forcing animations
-local function axHotfix(win)
-  if not win then win = hs.window.frontmostWindow() end
-
-  local axApp = hs.axuielement.applicationElement(win:application())
-  if not axApp then return end
-
-  local wasEnhanced = axApp.AXEnhancedUserInterface
-  axApp.AXEnhancedUserInterface = false
-
-  return function()
-    hs.timer.doAfter(hs.window.animationDuration * 2, function()
-      axApp.AXEnhancedUserInterface = wasEnhanced
-    end)
-  end
-end
-
-local function withAxHotfix(fn, position)
-  if not position then position = 1 end
-  return function(...)
-    local revert = axHotfix(select(position, ...))
-    fn(...)
-    if revert then revert() end
-  end
-end
-
-local windowMT = hs.getObjectMetatable("hs.window")
----@diagnostic disable: need-check-nil
-windowMT.setFrame = withAxHotfix(windowMT.setFrame)
-windowMT.maximize = withAxHotfix(windowMT.maximize)
-windowMT.moveToUnit = withAxHotfix(windowMT.moveToUnit)
----@diagnostic enable: need-check-nil
--- /end hotfix
---
 configurator.initConfig(Config)
 
-appWatcher:start()
--- configWatcher:watch_config_and_reload()
 keys.bind()
+
+if Config.useOmarchy then
+  Omarchy = hs.loadSpoon("OmarchyOSX")
+  Omarchy:start({
+    nvimMappings = {
+      superShiftH = false,
+      superShiftL = false,
+    },
+  })
+end
+
+require("ax_hotfix")
+
+-- setmetatable(spoon.ReloadConfiguration, {
+--   __index = function(t, k)
+--     if k == "bindHotkeys" then
+--       return reload_config
+--     else
+--       return rawget(t, k)
+--     end
+--   end,
+-- })
+
+spoon.ReloadConfiguration:start()
+
+appWatcher:start()
 
 -- local omarchy = require("omarchy")
 -- omarchy.init({
@@ -612,64 +373,3 @@ keys.bind()
 -- init_layout()
 
 -- require("yabai")
-
--- hs.loadSpoon("TilingWindowManager")
--- 		:setLogLevel("debug")
--- 		:bindHotkeys({
--- 			tile = { hyperKey, "t" },
--- 			incMainRatio = { hyperKey, "p" },
--- 			decMainRatio = { hyperKey, "o" },
--- 			incMainWindows = { hyperKey, "i" },
--- 			decMainWindows = { hyperKey, "u" },
--- 			focusNext = { hyperKey, "k" },
--- 			focusPrev = { hyperKey, "j" },
--- 			swapNext = { hyperKey, "l" },
--- 			swapPrev = { hyperKey, "h" },
--- 			toggleFirst = { hyperKey, "return" },
--- 			tall = { hyperKey, "y" },
--- 			talltwo = { hyperKey, "m" },
--- 			fullscreen = { hyperKey, "e" },
--- 			wide = { hyperKey, "-" },
--- 			display = { hyperKey, "d" },
--- 			float = { hyperKey, "f" },
--- 		})
--- 		:start({
--- 			menubar = true,
--- 			dynamic = true,
--- 			layouts = {
--- 				spoon.TilingWindowManager.layouts.floating,
--- 				spoon.TilingWindowManager.layouts.fullscreen,
--- 				spoon.TilingWindowManager.layouts.tall,
--- 				spoon.TilingWindowManager.layouts.talltwo,
--- 				spoon.TilingWindowManager.layouts.wide,
--- 			},
--- 			displayLayout = true,
--- 			fullscreenRightApps = {
--- 				"org.hammerspoon.Hammerspoon",
--- 				"com.apple.mobileSMS",
--- 				-- "dev.warp.Warp-Stable",
--- 				"com.github.wez.wezterm",
--- 				"uet.kovidgoyal.kitty",
--- 				-- "com.microsoft.VSCode",
--- 				-- "org.alacritty",
--- 			},
--- 			floatApps = {
--- 				"com.apple.systempreferences",
--- 				"com.apple.ActivityMonitor",
--- 				"com.apple.Stickies",
--- 				"com.raycast.macos",
--- 				"org.hammerspoon.Hammerspoon",
--- 				-- "com.github.wez.wezterm",
--- 				-- "com.microsoft.VSCode",
--- 				-- "org.alacritty",
--- 				-- "uet.kovidgoyal.kitty"
--- 				"org.pqrs.Karabiner-Elements.Settings",
--- 				"org.pqrs.Karabiner-EventViewer",
--- 				"com.apple.systempreferences",
--- 				"com.apple.SystemProfiler",
--- 				"com.apple.LocalAuthentication.UIAgent",
--- 				"com.apple.MobileSMS",
--- 				"com.apple.Preview",
--- 			},
--- 		})
--- 		:setLayoutCurrentSpace(spoon.TilingWindowManager.layouts.fullscreen)

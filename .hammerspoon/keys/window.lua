@@ -16,7 +16,7 @@ end
 -- These return the { top, left, width, height } tables relative to the screen.
 -- These are just data definitions, not functions that perform actions yet.
 
----@alias WindowLayoutDef { top: number?, left: number?, width: number?, height: number? }
+---@alias WindowLayoutDef { top?: number, left?: number, width?: number, height?: number }
 ---@alias WindowLayout WindowLayoutDef|fun(...):WindowLayoutDef
 
 --- WindowLayout[]
@@ -174,12 +174,12 @@ M.bindings = {
   -- { mod = K.mod.cmdAlt, key = "l", action = M.layouts.centered(2 / 3, 2 / 3) }, -- Toggle Centered 2/3
 
   -- Screenshot: ⌘⌥ F - Center Third (1/3 centered)
-  { mod = K.mod.cmdAlt, key = "f", action = M.layouts.centered(1 / 3, 1 / 3), use_restore = true }, -- Toggle Centered 1/3
+  { mod = K.mod.cmdAlt, key = "f", action = M.layouts.centered(1 / 3, 1 / 3) }, -- Toggle Centered 1/3
 
   -- Screenshot: ⌘⌥⇧ R - Center 3/4 (Reasonable Size)
   -- This calls the `reasonable_size` function which internally applies a layout.
 
-  { mod = K.mod.cmdAlt, key = "r", action = M.layouts.centered(0.75, 0.75), use_restore = true }, -- Toggle 3/4 (Reasonable Size)
+  { mod = K.mod.cmdAlt, key = "r", action = M.layouts.centered(0.75, 0.75) }, -- Toggle 3/4 (Reasonable Size)
 
   -- Screenshot: ⌘⌥ D - First Third (Left third)
   { mod = K.mod.cmdAlt, key = "d", action = M.layouts.first_third },

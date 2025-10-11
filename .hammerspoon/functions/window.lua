@@ -19,7 +19,7 @@ grid.GRIDHEIGHT = 2
 ---@field thunk_grid fun(cell: hs.geometry) : function
 ---@field maximize_window fun() : boolean
 ---@field maximize_with_delay fun(delay: number) : nil
----@field move_and_resize fun(layout: table<string, number>) : function
+---@field move_and_resize fun(layout: table<string, number?>) : function
 ---@field move_one_screen_south fun() : nil
 ---@field bring_app_to_front fun(bundleID: string) : nil
 ---@field check_frontmost_window fun(target_bundle_id: string) : nil
@@ -87,7 +87,7 @@ function M.maximize_with_delay(delay)
   hs.timer.doAfter(delay or 0.5, M.maximize_window)
 end
 
----@param layout fun(x: table): table<string, number>
+---@param layout fun(x: table): table<string, number?>
 M.move_and_resize = function(layout)
   return function()
     if type(layout) == "function" then
@@ -357,6 +357,7 @@ function M.iterateWindows(appNameOrBundleID)
 end
 
 function M.activateApp(appNameOrBundleID, shouldToggle)
+  local appName
   if string.match(appNameOrBundleID, "^[%w%.]+%.[%w%.]+") or not string.match(appNameOrBundleID, "%.app$") then
     -- Treat as bundle identifier
     local appInstance = hs.application.get(appNameOrBundleID)
@@ -367,6 +368,7 @@ function M.activateApp(appNameOrBundleID, shouldToggle)
       return
     end
 
+    appName = appInstance:name()
     local bundleID = appInstance:bundleID()
     if appInstance then
       if shouldToggle then

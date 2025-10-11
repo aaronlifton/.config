@@ -3,5 +3,6 @@ Spoons/**/
 # Allow specific Spoons as submodules
 !Spoons/EnhancedSpaces.spoon/
 .bak
+.bk
 */*.bak
 *.bak

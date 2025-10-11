@@ -2,7 +2,6 @@ local M = {}
 
 ---@alias FKeyMap {number_key: string, f_key: string}
 
--- Add Function Key bindings using a loop
 --- @type FKeyMap[]
 local fkey_mappings = {
   { number_key = "1", f_key = "f1" },
@@ -21,7 +20,6 @@ local fkey_mappings = {
 
 M.bindings = {}
 
--- Loop generated below the main table definition
 for _, mapping in ipairs(fkey_mappings) do
   table.insert(M.bindings, {
     mod = K.mod.cmdShift,

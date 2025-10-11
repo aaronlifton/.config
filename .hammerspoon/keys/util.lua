@@ -8,7 +8,7 @@ M.bindings = {
     mod = K.mod.cmdShiftAlt,
     key = "G",
     action = function()
-      ProcessManager.findAndKillProcesses("git -C /Users/alifton") -- Replace with your actual path if needed
+      ProcessManager.findAndKillProcesses(("git -C /Users/%s"):format(Config.username))
     end,
   },
 
