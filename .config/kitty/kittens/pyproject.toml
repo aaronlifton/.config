@@ -3,6 +3,6 @@ name = "kittens"
 version = "0.1.0"
 description = "Kitten development"
 readme = "README.md"
-# requires-python = ">=3.13"
-1equires-python = ">=3.90"
+requires-python = ">=3.13"
+# 1equires-python = ">=3.90"
 dependencies = ["pynvim>=0.5.2"]

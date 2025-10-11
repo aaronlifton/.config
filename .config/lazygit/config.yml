@@ -51,7 +51,8 @@ git:
     # useConfig: false
     pager: delta --paging=never --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
   branchLogCmd: "git log --graph --color=always --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)' {{branchName}} --"
-  allBranchesLogCmd: "git log --graph --all --color=always --abbrev-commit --date-relative --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'"
+  allBranchesLogCmds:
+    - "git log --graph --all --color=always --abbrev-commit --date-relative --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'"
   parseEmoji: true
   # log:
   #   # one of always, never, when-maximised
@@ -161,7 +162,7 @@ keybinding:
     viewResetOptions: "D"
     fetch: "f"
     toggleTreeView: "`"
-    openMergeTool: "M"
+    openMergeOptions: "M"
     openStatusFilter: "<c-b>"
   branches:
     createPullRequest: "o"

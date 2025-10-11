@@ -55,7 +55,7 @@ program = "/opt/homebrew/bin/fish"
 # program = "/bin/zsh"
 
 [font]
-# size = 15.0
+size = 15.6
 
 [general]
 live_config_reload = true
@@ -64,12 +64,12 @@ import = [
   "~/.config/alacritty/keyboard.toml",
   # "~/.config/alacritty/fonts/menlo-lgs.toml",
   # "~/.config/alacritty/fonts/iosevka.toml",
-  # "~/.config/alacritty/fonts/commit-mono.toml",
-  "~/.config/alacritty/fonts/maple-mono.toml",
+  # "~/.config/alacritty/fonts/input-mono.toml",
+  "~/.config/alacritty/fonts/commit-mono.toml",
+  # "~/.config/alacritty/fonts/maple-mono.toml",
   # "~/.config/alacritty/fonts/profontIIx.toml",
   # "~/.config/alacritty/fonts/monolisa.toml",
 ]
-
 
 [[hints.enabled]]
 # Each hint must have at least one of regex or hyperlinks and either an action or a command.

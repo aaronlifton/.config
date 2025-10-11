@@ -7,12 +7,35 @@
   "profiles" : [ {
     "complex_modifications" : {
       "parameters" : {
-        "basic.simultaneous_threshold_milliseconds" : 50,
+        "basic.simultaneous_threshold_milliseconds" : 200,
         "basic.to_delayed_action_delay_milliseconds" : 500,
         "basic.to_if_alone_timeout_milliseconds" : 500,
         "basic.to_if_held_down_threshold_milliseconds" : 500
       },
       "rules" : [ {
+        "description" : "Auto generated layer conditions",
+        "manipulators" : [ {
+          "type" : "basic",
+          "to" : [ {
+            "set_variable" : {
+              "name" : "hyper-mode",
+              "value" : 1
+            }
+          } ],
+          "from" : {
+            "key_code" : "caps_lock"
+          },
+          "to_after_key_up" : [ {
+            "set_variable" : {
+              "name" : "hyper-mode",
+              "value" : 0
+            }
+          } ],
+          "to_if_alone" : [ {
+            "key_code" : "escape"
+          } ]
+        } ]
+      }, {
         "description" : "Device-specific modifications for Mode65",
         "manipulators" : [ {
           "from" : {
@@ -86,6 +109,172 @@
           "type" : "basic"
         } ]
       }, {
+        "description" : "Hyper Mode - vim style navigation",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "k"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Kitty.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "hyper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "z"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Zen.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "hyper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "c"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Zen.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "hyper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "a"
+          },
+          "to" : [ {
+            "shell_command" : "osascript -e 'set appName to \"Dash\"\nset startIt to false\ntell application \"System Events\"\n  if not (exists process appName) then\n    set startIt to true\n  else if frontmost of process appName then\n    set visible of process appName to false\n  else\n    set frontmost of process appName to true\n  end if\nend tell\nif startIt then\n  tell application appName to activate\nend if'"
+          } ],
+          "conditions" : [ {
+            "name" : "hyper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "d"
+          },
+          "to" : [ {
+            "shell_command" : "osascript -e 'set appName to \"Discord\"\nset startIt to false\ntell application \"System Events\"\n  if not (exists process appName) then\n    set startIt to true\n  else if frontmost of process appName then\n    set visible of process appName to false\n  else\n    set frontmost of process appName to true\n  end if\nend tell\nif startIt then\n  tell application appName to activate\nend if'"
+          } ],
+          "conditions" : [ {
+            "name" : "hyper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "j",
+            "modifiers" : {
+              "mandatory" : [ "left_option" ]
+            }
+          },
+          "to" : [ {
+            "mouse_key" : {
+              "y" : 1536
+            }
+          } ],
+          "conditions" : [ {
+            "name" : "hyper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "k",
+            "modifiers" : {
+              "mandatory" : [ "left_option" ]
+            }
+          },
+          "to" : [ {
+            "mouse_key" : {
+              "y" : -1536
+            }
+          } ],
+          "conditions" : [ {
+            "name" : "hyper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "h",
+            "modifiers" : {
+              "mandatory" : [ "left_option" ]
+            }
+          },
+          "to" : [ {
+            "mouse_key" : {
+              "x" : -1536
+            }
+          } ],
+          "conditions" : [ {
+            "name" : "hyper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "l",
+            "modifiers" : {
+              "mandatory" : [ "left_option" ]
+            }
+          },
+          "to" : [ {
+            "mouse_key" : {
+              "x" : 1536
+            }
+          } ],
+          "conditions" : [ {
+            "name" : "hyper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "o"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Obsidian.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "hyper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
+            "key_code" : "1"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/1Password.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "hyper-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
         "description" : "Change caps_lock key to command+control+option+shift. (Use shift+caps_lock as caps_lock)",
         "manipulators" : [ {
           "to_if_alone" : [ {
@@ -108,7 +297,7 @@
           "type" : "basic"
         } ]
       }, {
-        "description" : "Change right_option to 4 modifiers combination, f17 when used alone",
+        "description" : "Change right_option to 4 modifiers combination, f17 when used alone, in terminals",
         "manipulators" : [ {
           "to_if_alone" : [ {
             "key_code" : "escape"
@@ -121,6 +310,9 @@
             "modifiers" : [ "left_command", "left_control", "left_option" ]
           } ],
           "conditions" : [ {
+            "type" : "frontmost_application_if",
+            "bundle_identifiers" : [ "^net\\.kovidgoyal\\.kitty$", "^org\\.alacritty$", "^com\\.mitchellh\\.ghostty$", "^com\\.neovide\\.neovide$", ".*neovide.*" ]
+          }, {
             "identifiers" : [ {
               "vendor_id" : 222,
               "product_id" : 22356
@@ -166,6 +358,146 @@
           },
           "to" : [ {
             "key_code" : "right_gui"
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "Disable cmd+q",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "q",
+            "modifiers" : {
+              "mandatory" : [ "left_command" ],
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "q",
+            "modifiers" : [ "left_command" ]
+          }, {
+            "set_variable" : {
+              "name" : "command-q",
+              "value" : 0
+            }
+          } ],
+          "conditions" : [ {
+            "name" : "command-q",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "to_delayed_action" : {
+            "to_if_invoked" : [ {
+              "set_variable" : {
+                "name" : "command-q",
+                "value" : 0
+              }
+            } ],
+            "to_if_canceled" : [ {
+              "set_variable" : {
+                "name" : "commandq",
+                "value" : 0
+              }
+            } ]
+          },
+          "from" : {
+            "key_code" : "q",
+            "modifiers" : {
+              "mandatory" : [ "left_command" ],
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "command-q",
+              "value" : 1
+            }
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "Quit application by command + Q only when pressing twice",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "q",
+            "modifiers" : {
+              "mandatory" : [ "left_command" ]
+            }
+          },
+          "to" : [ {
+            "key_code" : "q",
+            "modifiers" : [ "left_command" ]
+          }, {
+            "set_variable" : {
+              "name" : "command-q",
+              "value" : 0
+            }
+          } ],
+          "conditions" : [ {
+            "name" : "command-q",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "to_delayed_action" : {
+            "to_if_invoked" : [ {
+              "set_variable" : {
+                "name" : "command-q",
+                "value" : 0
+              }
+            } ],
+            "to_if_canceled" : [ {
+              "set_variable" : {
+                "name" : "command-q",
+                "value" : 0
+              }
+            } ]
+          },
+          "from" : {
+            "key_code" : "q",
+            "modifiers" : {
+              "mandatory" : [ "left_command" ]
+            }
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "command-q",
+              "value" : 1
+            }
+          } ],
+          "type" : "basic"
+        } ]
+      }, {
+        "description" : "Quit certain applications by pressing command-q twice",
+        "manipulators" : [ {
+          "to_delayed_action" : {
+            "to_if_invoked" : [ {
+              "set_variable" : {
+                "name" : "command-q",
+                "value" : 0
+              }
+            } ],
+            "to_if_canceled" : [ {
+              "set_variable" : {
+                "name" : "commandq",
+                "value" : 0
+              }
+            } ]
+          },
+          "from" : {
+            "key_code" : "q",
+            "modifiers" : {
+              "mandatory" : [ "left_command" ],
+              "optional" : [ "any" ]
+            }
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "command-q",
+              "value" : 1
+            }
           } ],
           "type" : "basic"
         } ]
@@ -339,6 +671,324 @@
           } ],
           "type" : "basic"
         } ]
+      }, {
+        "description" : "launch mode",
+        "manipulators" : [ {
+          "from" : {
+            "key_code" : "k"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Kitty\""
+          } ],
+          "conditions" : [ {
+            "name" : "spacebar-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 250
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "spacebar-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Kitty\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "spacebar"
+            }, {
+              "key_code" : "k"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "spacebar-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "c"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Google Chrome.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "spacebar-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 250
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "spacebar-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Google Chrome.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "spacebar"
+            }, {
+              "key_code" : "c"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "spacebar-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "v"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Visual Studio Code.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "spacebar-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 250
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "spacebar-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Visual Studio Code.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "spacebar"
+            }, {
+              "key_code" : "v"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "spacebar-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "o"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Obsidian.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "spacebar-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 250
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "spacebar-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Obsidian.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "spacebar"
+            }, {
+              "key_code" : "o"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "spacebar-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "1"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/1Password.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "spacebar-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 250
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "spacebar-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/1Password.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "spacebar"
+            }, {
+              "key_code" : "1"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "spacebar-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "z"
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Zen.app\""
+          } ],
+          "conditions" : [ {
+            "name" : "spacebar-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 250
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "spacebar-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open \"/Applications/Zen.app\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "spacebar"
+            }, {
+              "key_code" : "z"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "spacebar-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        }, {
+          "from" : {
+            "key_code" : "a"
+          },
+          "to" : [ {
+            "shell_command" : "osascript -e 'set appName to \"Dash\"\nset startIt to false\ntell application \"System Events\"\n  if not (exists process appName) then\n    set startIt to true\n  else if frontmost of process appName then\n    set visible of process appName to false\n  else\n    set frontmost of process appName to true\n  end if\nend tell\nif startIt then\n  tell application appName to activate\nend if'"
+          } ],
+          "conditions" : [ {
+            "name" : "spacebar-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 250
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "spacebar-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "osascript -e 'set appName to \"Dash\"\nset startIt to false\ntell application \"System Events\"\n  if not (exists process appName) then\n    set startIt to true\n  else if frontmost of process appName then\n    set visible of process appName to false\n  else\n    set frontmost of process appName to true\n  end if\nend tell\nif startIt then\n  tell application appName to activate\nend if'"
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "spacebar"
+            }, {
+              "key_code" : "a"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "spacebar-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
+        } ]
       } ]
     },
     "devices" : [ {
@@ -365,6 +1015,14 @@
     }, {
       "identifiers" : {
         "is_keyboard" : true,
+        "is_pointing_device" : true,
+        "product_id" : 12292,
+        "vendor_id" : 14000
+      },
+      "ignore" : false
+    }, {
+      "identifiers" : {
+        "is_keyboard" : true,
         "product_id" : 22356,
         "vendor_id" : 222
       },
@@ -386,11 +1044,10 @@
     }, {
       "identifiers" : {
         "is_keyboard" : true,
-        "is_pointing_device" : true,
-        "product_id" : 12292,
-        "vendor_id" : 14000
+        "product_id" : 50470,
+        "vendor_id" : 1133
       },
-      "ignore" : false
+      "ignore_vendor_events" : true
     } ],
     "fn_function_keys" : [ {
       "from" : {

@@ -3,7 +3,6 @@
 start-at-login = true
 # Available commands: https://nikitabobko.github.io/AeroSpace/commands
 after-login-command = []
-# Available commands : https://nikitabobko.github.io/AeroSpace/commands
 after-startup-command = []
 
 # Normalizations: https://nikitabobko.github.io/AeroSpace/guide#normalization
@@ -66,9 +65,17 @@ outer.left = 0
 outer.bottom = 0
 outer.top = 0
 outer.right = 0
+# 8px padding
+# inner.horizontal = 8
+# inner.vertical = 8
+# outer.left = 8
+# outer.bottom = 8
+# outer.top = 8
+# outer.right = 8
 
 # 'main' binding mode declaration
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
+# Commands: https://nikitabobko.github.io/AeroSpace/commands#focus
 [mode.main.binding]
 # All possible keys:
 # - Letters.        a, b, c, ..., z
@@ -95,37 +102,52 @@ outer.right = 0
 cmd-alt-h = [] # Disable "hide others"
 
 # Terminal launcher (Omarchy equivalent)
-cmd-enter = '''exec-and-forget osascript -e '
-tell application "Kitty"
-do script
-activate
-end tell'
-'''
+# Interferes with kitty "new window"
+# cmd-enter = '''exec-and-forget osascript -e '
+# tell application "Kitty"
+# do script
+# activate
+# end tell'
+# '''
 
 # LAYOUT CONTROLS (Omarchy-inspired)
 # cmd-j toggles horizontal layout (matches Omarchy's Super+J for horizontal toggle)
-cmd-shift-j = 'layout tiles horizontal vertical'
-cmd-shift-t = 'layout accordion horizontal vertical' # Using cmd-t for navigation/layout (Omarchy uses Super+T)
+# these conflict with Format in raycast notes
+ctrl-alt-j = 'layout tiles horizontal vertical'
+ctrl-alt-t = 'layout accordion horizontal vertical' # Using cmd-t for navigation/layout (Omarchy uses Super+T)
 alt-slash = 'layout tiles horizontal vertical'
 alt-comma = 'layout accordion horizontal vertical'
 
-# FOCUS MOVEMENT (Omarchy uses Super + Arrow keys)
-# Primary navigation with arrow keys (Omarchy style)
-cmd-left = 'focus left'
-cmd-down = 'focus down'
-cmd-up = 'focus up'
-cmd-right = 'focus right'
+# FOCUS
+# Window focus (Omarchy style - Super + Arrow keys)
+cmd-left = "focus --boundaries-action wrap-around-the-workspace left"
+cmd-down = "focus --boundaries-action wrap-around-the-workspace down"
+cmd-up = "focus --boundaries-action wrap-around-the-workspace up"
+cmd-right = "focus --boundaries-action wrap-around-the-workspace right"
+
+# Window focus (vim-style), works outside of Kitty
+alt-h = "focus --boundaries-action wrap-around-the-workspace left"
+alt-j = "focus --boundaries-action wrap-around-the-workspace down"
+alt-k = "focus --boundaries-action wrap-around-the-workspace up"
+alt-l = "focus --boundaries-action wrap-around-the-workspace right"
+# alt-leftSquareBracket = "join-with right"
+alt-r = 'mode resize'
+# alt-rightSquareBracket = "join-with down"
+
 # Window focus (vim-style) - Using Alt-Shift to prioritize nvim/tmux
 # alt-shift-h = 'focus left'
 # alt-shift-j = 'focus down'
 # alt-shift-k = 'focus up'
 # alt-shift-l = 'focus right'
 
-# WINDOW MOVEMENT (Omarchy uses Super + Shift + Arrow for swapping/moving)
+# WINDOW MOVEMENT 
+# Omarchy style (Omarchy uses Super + Shift + Arrow for swapping/moving)
 cmd-shift-left = 'move left'
 cmd-shift-down = 'move down'
 cmd-shift-up = 'move up'
 cmd-shift-right = 'move right'
+
+# Vim style, works outside of Kitty
 alt-shift-h = 'move left'
 alt-shift-j = 'move down'
 alt-shift-k = 'move up'
@@ -141,10 +163,14 @@ cmd-shift-minus = 'resize smart -50'
 cmd-shift-equal = 'resize smart +50'
 alt-shift-minus = 'resize smart -50'
 alt-shift-equal = 'resize smart +50'
+# For Kitty, where cmd-shift and alt-shift are already in use
+ctrl-alt-equal = 'resize smart +50'
+ctrl-alt-minus = 'resize smart -50'
 
-# Quick actions
+# QUICK ACTIONS
 # alt-f10 = 'fullscreen' # Omarchy uses f11, but this supports smaller keyboards
-f10 = 'fullscreen' # Omarchy uses f11, but this supports smaller keyboards
+f10 = 'fullscreen'                                 # Omarchy uses f11, but this supports smaller keyboards
+f9 = 'exec-and-forget ./scripts/aerospace-wm.fish'
 # alt-o = 'focus-back-and-forth'
 alt-o = 'focus-back-and-forth'
 alt-tab = 'focus-back-and-forth'
@@ -165,6 +191,7 @@ ctrl-cmd-alt-shift-9 = 'workspace 10'
 ctrl-cmd-alt-shift-0 = 'workspace 10'                      # Using 10 for the 0 key to match Omarchy's 1-10 pattern
 ctrl-cmd-alt-shift-leftSquareBracket = ['workspace prev']
 ctrl-cmd-alt-shift-rightSquareBracket = ['workspace next']
+
 
 # Extended workspaces (keeping some letter workspaces for flexibility)
 # cmd-a = 'workspace A'
@@ -193,7 +220,7 @@ ctrl-cmd-alt-shift-rightSquareBracket = ['workspace next']
 # Primary workspace movement (matching Omarchy pattern)
 cmd-ctrl-shift-1 = ['move-node-to-workspace 1', 'workspace 1']
 cmd-ctrl-shift-2 = ['move-node-to-workspace 2', 'workspace 2']
-cmd-ctrl-shift-3 = ['move-node-to-workspace 3']
+cmd-ctrl-shift-3 = ['move-node-to-workspace 3', 'workspace 3']
 cmd-ctrl-shift-4 = 'move-node-to-workspace 4'
 cmd-ctrl-shift-5 = 'move-node-to-workspace 5'
 cmd-ctrl-shift-6 = 'move-node-to-workspace 6'
@@ -211,47 +238,19 @@ cmd-ctrl-shift-leftSquareBracket = [
   'workspace next',
 ]
 
-
-# Extended workspace movement
-# cmd-shift-a = 'move-node-to-workspace A'
-# cmd-shift-b = 'move-node-to-workspace B'
-# cmd-shift-c = 'move-node-to-workspace C'
-# cmd-shift-d = 'move-node-to-workspace D'
-# cmd-shift-e = 'move-node-to-workspace E'
-# cmd-shift-f = 'move-node-to-workspace F'
-# cmd-shift-g = 'move-node-to-workspace G'
-# cmd-shift-i = 'move-node-to-workspace I'
-# cmd-shift-m = 'move-node-to-workspace M'
-# cmd-shift-n = 'move-node-to-workspace N'
-# cmd-shift-o = 'move-node-to-workspace O'
-# cmd-shift-p = 'move-node-to-workspace P'
-# cmd-shift-q = 'move-node-to-workspace Q'
-# cmd-shift-r = 'move-node-to-workspace R'
-# cmd-shift-s = 'move-node-to-workspace S'
-# cmd-shift-u = 'move-node-to-workspace U'
-# cmd-shift-v = 'move-node-to-workspace V'
-# cmd-shift-w = 'move-node-to-workspace W'
-# cmd-shift-x = 'move-node-to-workspace X'
-# cmd-shift-y = 'move-node-to-workspace Y'
-# cmd-shift-z = 'move-node-to-workspace Z'
-
 # WORKSPACE AND MONITOR MANAGEMENT
 cmd-tab = 'workspace-back-and-forth'
 cmd-shift-tab = 'move-workspace-to-monitor --wrap-around next'
 
 # SERVICE MODE (keeping semicolon for service mode)
 cmd-shift-semicolon = 'mode service'
+cmd-shift-pageUp = 'mode service'
 
-# ADDITIONAL OMARCHY-INSPIRED BINDINGS
-# Add some alternative bindings that might be useful
-ctrl-alt-shift-t = 'layout tiles horizontal vertical'     # Alternative layout toggle
-ctrl-alt-shift-a = 'layout accordion horizontal vertical' # Alternative accordion toggle
-ctrl-alt-shift-f = 'layout floating'
-
-# 'service' binding mode declaration.
+# SERVICE BINDING
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
 [mode.service.binding]
 esc = ['reload-config', 'mode main']
+enter = ['reload-config', 'mode main']
 r = ['flatten-workspace-tree', 'mode main'] # reset layout
 f = [
   'layout floating tiling',
@@ -264,18 +263,22 @@ down = 'volume down'
 up = 'volume up'
 shift-down = ['volume set 0', 'mode main']
 
-## Window detections
-# System preferences
-[[on-window-detected]]
-if.app-id = 'com.apple.systempreferences'
-check-further-callbacks = true
-run = ['layout floating']
+alt-shift-h = ['join-with left', 'mode main']
+alt-shift-j = ['join-with down', 'mode main']
+alt-shift-k = ['join-with up', 'mode main']
+alt-shift-l = ['join-with right', 'mode main']
 
-# Preview
-[[on-window-detected]]
-if.app-id = 'com.apple.Preview'
-check-further-callbacks = true
-run = ['layout floating']
+# RESIZE BINDING
+[mode.resize.binding]
+alt-h = 'resize width -50'
+alt-j = 'resize height +50'
+alt-k = 'resize height -50'
+alt-l = 'resize width +50'
+alt-r = 'mode main'
+enter = 'mode main'
+esc = 'mode main'
+
+# WINDOW DETECTIONS
 
 # Scrypted
 [[on-window-detected]]
@@ -295,6 +298,42 @@ if.app-id = 'com.raycast.macos'
 if.window-title-regex-substring = 'AI Chat'
 run = 'layout tiling'
 
+
+[[on-window-detected]]
+if.app-id = 'com.jetbrains.rustrover'
+check-further-callbacks = true
+run = ['move-node-to-workspace 4']
+
+
+[[on-window-detected]]
+if.app-id = 'net.kovidgoyal.kitty'
+check-further-callbacks = true
+run = ['move-node-to-workspace 1']
+
+[[on-window-detected]]
+if.app-id = 'app.zen-browser.zen'
+check-further-callbacks = true
+run = ['move-node-to-workspace 1']
+
+### FLOATING WINDOWS
+# System preferences
+[[on-window-detected]]
+if.app-id = 'com.apple.systempreferences'
+check-further-callbacks = true
+run = ['layout floating']
+
+# Preview
+[[on-window-detected]]
+if.app-id = 'com.apple.Preview'
+check-further-callbacks = true
+run = ['layout floating']
+
+# Dash
+[[on-window-detected]]
+if.app-id = 'com.kapeli.dashdoc'
+check-further-callbacks = true
+run = ['layout floating', 'move-node-to-workspace 1']
+
 # 1Password
 [[on-window-detected]]
 if.app-id = 'com.1password.1password'
@@ -308,3 +347,9 @@ run = 'layout floating'
 if.app-name-regex-substring = 'hammerspoon'
 check-further-callbacks = true
 run = ['layout floating']
+
+[[on-window-detected]]
+if.app-id = 'org.pqrs.Karabiner-Elements.Settings'
+check-further-callbacks = true
+run = ['layout floating']
+### /FLOATING WINDOWS

@@ -27,15 +27,94 @@ theme = "dark"
 title_hidden=true
 # vsync = false
 vsync = true
+# This defaults to true because out-of-sync rendering on macOS can cause kernel panics (macOS 14.4+) and performance issues for external displays over some hardware such as DisplayLink. If you want to minimize input latency, set this to false with the known aforementioned risks.
 wsl = false
 
-# This defaults to true because out-of-sync rendering on macOS can cause kernel panics (macOS 14.4+) and performance issues for external displays over some hardware such as DisplayLink. If you want to minimize input latency, set this to false with the known aforementioned risks.
+# Font
+# * [font] table in configuration file contains:
+#   * normal: required, FontDescription
+#   * bold: optional, SecondaryFontDescription
+#   * italic: optional, SecondaryFontDescription
+#   * bold_italic: optional, SecondaryFontDescription
+#   * features: optional, { "<font>" = ["<string>"] }
+#   * size: required,
+#   * width: optional,
+#   * hinting: optional,
+#   * edging: optional,
+# * `FontDescription` can be:
+#     * a table with two keys `family` and `style`, `family` is required, `style` is optional,
+#     * a string, indicate the font family,
+#     * an array of string or tables in previous two forms.
+# * `SecondaryFontDescription` can be:
+#     * a table with two keys `family` and `style`, both are optional,
+#     * a string, indicate the font family,
+#     * an array of string or tables in previous two forms.
+# * Font styles consist of zero or more space separated parts, each parts can be:
+#     * pre-defined style name
+#         * weight: `Thin`, `ExtraLight`, `Light`, `Normal`, `Medium`, `SemiBold`, `Bold`, `ExtraBold`, `Black`, `ExtraBlack`
+#         * slant: `Italic`, `Oblique`
+#     * variable font weight: `W<weight>`, e.g. `W100`, `W200`, `W300`, `W400`, `W500`, `W600`, `W700`, `W800`, `W900`
+# * Font features are a table with font family as key and an array of string as value, each string is a font feature.
+#     * Font feature is a string with format `+<feature>`, `-<feature>` or `<feature>=<value>`, e.g. `+ss01`, `-calt`, `ss02=2`. `+<feature>` is a shorthand for `<feature>=1`, `-<feature>` is a shorthand for `<feature>=0`.
+#
+# Options
+#  * apply to all fonts at once.
+#  * are separated from the fonts and themselves through : (colons).
+#  * can be one of the following:
+#    * hX — Sets the font size to X points, while X can be any (even floating-point) number.
+#    * wX (available since 0.11.2) — Sets the width relative offset to be X points, while X can be again any number. Negative values shift characters closer together, positive values shift them further apart.
+#    * b — Sets the font bold.
+#    * i — Sets the font italic.
+#    * #e-X (available since 0.10.2) — Sets edge pixels to be drawn opaquely or with partial transparency, while X is a type of edging:
+#      * antialias (default)
+#      * subpixelantialias
+#      * alias
+#    * #h-X (available since 0.10.2) - Sets level of glyph outline adjustment, while X is a type of hinting:
+#      * full (default)
+#      * normal
+#      * slight
+#      * none
+
+# MonoLisa
+# [font]
+# normal = [] # Will use the bundled Fira Code Nerd Font by default
+# size = 16.0
+# hinting = "full"
+# # edging = "subpixelantialias"
+# edging = "antialias"
+#
+# [[font.normal]]
+# family = "MonoLisa Nerd Font Mono"
+# style = "Regular"
+# [[font.italic]]
+# family = "MonoLisa Nerd Font Mono"
+# style = "Italic"
+# [[font.bold]]
+# family = "MonoLisa Nerd Font Mono"
+# style = "Bold"
+# [[font.bold_italic]]
+# family = "MonoLisa Nerd Font Mono"
+# style = "Bold Italic"
+
+# CommitMono
 [font]
-# normal = []             # Will use the bundled Fira Code Nerd Font by default
-normal = "MonoLisa Nerd Font Mono"
-italic = "MonoLisaNerdFontCompleteM-Italic"
-bold = "MonoLisaNerdFontCompleteM-Bold"
-bold_italic = "MonoLisaNerdFontCompleteM-Bold-Italic"
+size = 16.0
+hinting = "full"
+# edging = "subpixelantialias"
+edging = "antialias"
+
+[[font.normal]]
+family = "CommitMonoCustom4 Nerd Font"
+style = "Regular"
+[[font.italic]]
+family = "CommitMonoCustom4 Nerd Font"
+style = "Italic"
+[[font.bold]]
+family = "CommitMonoCustom4 Nerd Font"
+style = "Bold"
+[[font.bold_italic]]
+family = "CommitMonoCustom4 Nerd Font"
+style = "Bold Italic"
 
 # bold = "Maple Mono NF Bold"
 # italic = "MapleMono-NF-Italic"
@@ -90,7 +169,7 @@ bold_italic = "MonoLisaNerdFontCompleteM-Bold-Italic"
 # italic = "MonaspiceXe Nerd Font Mono"
 # bold_italic = "MonaspiceXe Nerd Font Mono"
 # hinting = true
-size = 16.0
+
 # allow_float_size = true
 [font.features]
 "MonoLisa Nerd Font Mono" = [

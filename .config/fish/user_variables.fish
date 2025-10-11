@@ -1,6 +1,6 @@
 set -g fish_output_env_vars false
 set -x nvm_default_version v21.7.1
-set -x fish_config_path /Users/$USER/.config/fish
+set -lx fish_config_path /Users/$USER/.config/fish
 
 # Setting PATH for node
 # fish_add_path /Users/$USER/.local/share/nvm/v19.7.0/bin
@@ -36,6 +36,9 @@ fish_add_path /Users/$USER/.config/emacs/bin
 # fish_add_path /opt/homebrew/sbin
 fish_add_path /Users/$USER/.pixi/bin
 
+# source ~/.orbstack/shell/init2.fish 2>/dev/null || :
+fish_add_path -aP /Users/aaron/.orbstack/bin
+
 # XDG
 set -gx XDG_CONFIG_HOME "$HOME/.config"
 
@@ -49,6 +52,8 @@ set -lx LLVM_LDFLAG "-L/opt/homebrew/opt/llvm/lib/c++ -Wl,-rpath/opt/homebrew/op
 # set -x LDFLAGS $LLVM_LDFLAG $POSTGRES_LDFLAG
 #               -L/opt/homebrew/opt/llvm/lib/c++ -Wl,-rpath,/opt/homebrew/opt/llvm/lib/c++ -L/opt/homebrew/opt/llvm/lib, -L/opt/homebrew/opt/llvm/lib/c++ -Wl,-rpath,/opt/homebrew/opt/llvm/lib/c++ -L/opt/homebrew/opt/llvm/lib, -L/opt/homebrew/opt/postgresql@16/lib
 set -x CPPFLAGS "-I/opt/homebrew/opt/llvm/include,-I/opt/homebrew/opt/postgresql@16/include"
+
+set -gx PNPM_HOME /Users/$USER/Library/pnpm
 
 # set -x lazy_path /Users/$USER/.local/share/nvim/lazy
 set -x lazy_path /Users/$USER/.local/share/nvim/lazy

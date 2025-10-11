@@ -1,9 +1,8 @@
 [font]
-normal = { family = "Iosevka Nerd Font", style = "Regular" }
+normal = { family = "Iosevka ", style = "Regular" }
 bold = { family = "Iosevka Nerd Font", style = "Bold" }
 italic = { family = "Iosevka Nerd Font", style = "Italic" }
-size = 18
+size = 16
 
 offset = { x = 1, y = 4 }
 glyph_offset = { x = 0, y = 0 }
-

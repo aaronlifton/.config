@@ -66,9 +66,9 @@ def handle_result(
             _ = boss.call_remote_control(
                 win, ("goto-layout", "--match=state:focused", "tall")
             )
-        _ = boss.call_remote_control(
-            win, ("focus-window", "--match=neighbor:left", "--no-response")
-        )
+        # _ = boss.call_remote_control(
+        #     win, ("focus-window", "--match=neighbor:left", "--no-response")
+        # )
         _ = boss.call_remote_control(
             win, ("resize-window", f"--match=id:{new_win}", "--axis=reset")
         )

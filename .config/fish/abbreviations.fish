@@ -12,6 +12,7 @@ abbr -a grep rg
 abbr -a find fd
 abbr -a cat bat --style grid
 abbr -a b brew
+abbr -a bi brew install
 
 abbr --add tar 'tar -zxvf'
 

@@ -79,12 +79,12 @@ adjust-cursor-thickness=2
 
 # font-family-italic="ComicShannsMono Nerd Font Mono"
 
+# BERKELEY
 font-family=Berkeley Mono Nerd Font Mono
 font-family-italic=Berkeley Mono Nerd Font Mono
 font-family-bold=Berkeley Mono Nerd Font Mono
 # Berkeley Mono ligeratures
 font-feature="+002E +003D +007D, +0021, +007E, +003C +003D, +003E, +002A +003d +0021 +003D +003F +002E"
-# lolk  is it kjust Real? -- @ $ & % Q => -> $foo @foo &foo
 # cv02: a with top arm, no effect on italic a
 # cv03: i without left bottom bar
 # cv04: l with left bottom bar, like consolas, will be overrided by cv35 in
@@ -97,9 +97,23 @@ font-thicken=false
 # For zsh
 # font-family = "MesloLGS NF"
 
+## PROFONTIIx
+font-family=ProFontIIx Nerd Font Mono
+freetype-load-flags=monochrome
+adjust-cell-width=-1
 
+## TERMINESS
+# font-family=TerminessTTF Nerd Font Mono
+# freetype-load-flags=monochrome
+# # adjust-cell-width=-1
 
-
+# MAPLE MONO
+# font-family=MapleMono-NF-
+# font-feature="+calt +ss02 +ss04 +cv35"
+# font-family-bold=MapleMono-NF-SemiBold
+# font-family-italic=MapleMono-NF-
+# font-family-bold=MapleMono-NF-SemiBoldItalic
+# font-size=15
 
 # bold-is-bright=true
 macos-option-as-alt=true
@@ -113,7 +127,7 @@ theme="Harper"
 # theme=catppuccin-macchiato
 # theme=solarized-osaka-night
 # theme="Ghostty Default StyleDark"
-theme="tokyonight_moon"
+theme="/Users/aaron/.local/share/nvim/lazy/tokyonight/colors/tokyonight_moon"
 # theme="citruszest"
 # theme="everblush"
 # theme="Later THis Evening"
@@ -153,7 +167,7 @@ maximize = true
 # custom-shader = shaders/crt-shader-with-chromatic-aberration-glow-scanlines-dot-matrix.glsl
 # This one
 # custom-shader = shaders/bloom051.glsl
-custom-shader = shaders/bloom060.glsl
+# custom-shader = shaders/bloom060.glsl
 # custom-shader = shaders/bloom075.glsl
 # custom-shader = shaders/bloom1.glsl
 # custom-shader = shaders/crt.glsl
@@ -167,9 +181,10 @@ custom-shader = shaders/bloom060.glsl
 # custom-shader = shaders/glow-rgbsplit-twitchy.glsl
 # custom-shader = shaders/gradient-background.glsl
 # custom-shader = shaders/inside-the-matrix.glsl
-# custom-hader = shaders/just-snow.glsl
+# custom-hkkkkader = shaders/just-snow.glsl
 # custom-shader = shaders/matrix-hallway.glsl
 # custom-shader = shaders/negative.glsl
+# This one is cool
 # custom-shader = shaders/retro-terminal.glsl
 # custom-shader = shaders/smoke-an-ghost.glsl
 # custom-shader = shaders/sparks-from-fire.glsl

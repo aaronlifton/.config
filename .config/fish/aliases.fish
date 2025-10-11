@@ -20,3 +20,6 @@ alias docker-gui="open -a Docker"
 # Ueberzug for LazyVim
 # alias ueberzug="ueberzug-og"
 # alias ueberzug="ueberzugpp"
+
+# Avante zen mode
+alias avante='nvim -c "lua vim.defer_fn(function()require(\"avante.api\").zen_mode()end, 100)"'

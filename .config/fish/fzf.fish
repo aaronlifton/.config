@@ -31,8 +31,8 @@ ctrl-u:half-page-up,ctrl-d:half-page-down,\
 shift-up:preview-top,shift-down:preview-bottom,\
 alt-up:half-page-up,alt-down:half-page-down,\
 alt-g:first,\
-ctrl-x:jump,jump-cancel:abort
-"
+ctrl-x:jump,jump-cancel:abort"
+
 #   --bind 'ctrl-y:execute-silent(printf {} | cut -f 2- | pbcopy)' \
 #   ctrl-y:preview-up,ctrl-e:preview-down,\
 #   ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down,\
@@ -64,7 +64,10 @@ ctrl-x:jump,jump-cancel:abort
 #   --color=separator:#ff966c \
 #   --color=spinner:#ff007c \
 # "
-set -xg _ZO_FZF_OPTS $FZF_DEFAULT_OPTS
+
+# For `zoxide query -i`
+set -xg _ZO_FZF_OPTS $FZF_DEFAULT_OPTS --no-sort --exact
+
 # set -xg fzf_preview_dir_cmd eza --long --header --icons --all --color=always --group-directories-first --hyperlink
 set -xg fzf_preview_dir_cmd lsd --color always --tree --depth 1
 set -xg fzf_fd_opts --hidden --color=always
