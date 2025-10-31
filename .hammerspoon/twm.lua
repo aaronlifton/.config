@@ -1,0 +1,60 @@
+hs.loadSpoon("TilingWindowManager")
+  :setLogLevel("debug")
+  :bindHotkeys({
+    tile = { hyperKey, "t" },
+    incMainRatio = { hyperKey, "p" },
+    decMainRatio = { hyperKey, "o" },
+    incMainWindows = { hyperKey, "i" },
+    decMainWindows = { hyperKey, "u" },
+    focusNext = { hyperKey, "k" },
+    focusPrev = { hyperKey, "j" },
+    swapNext = { hyperKey, "l" },
+    swapPrev = { hyperKey, "h" },
+    toggleFirst = { hyperKey, "return" },
+    tall = { hyperKey, "y" },
+    talltwo = { hyperKey, "m" },
+    fullscreen = { hyperKey, "e" },
+    wide = { hyperKey, "-" },
+    display = { hyperKey, "d" },
+    float = { hyperKey, "f" },
+  })
+  :start({
+    menubar = true,
+    dynamic = true,
+    layouts = {
+      spoon.TilingWindowManager.layouts.floating,
+      spoon.TilingWindowManager.layouts.fullscreen,
+      spoon.TilingWindowManager.layouts.tall,
+      spoon.TilingWindowManager.layouts.talltwo,
+      spoon.TilingWindowManager.layouts.wide,
+    },
+    displayLayout = true,
+    fullscreenRightApps = {
+      "org.hammerspoon.Hammerspoon",
+      "com.apple.mobileSMS",
+      -- "dev.warp.Warp-Stable",
+      "com.github.wez.wezterm",
+      "uet.kovidgoyal.kitty",
+      -- "com.microsoft.VSCode",
+      -- "org.alacritty",
+    },
+    floatApps = {
+      "com.apple.systempreferences",
+      "com.apple.ActivityMonitor",
+      "com.apple.Stickies",
+      "com.raycast.macos",
+      "org.hammerspoon.Hammerspoon",
+      -- "com.github.wez.wezterm",
+      -- "com.microsoft.VSCode",
+      -- "org.alacritty",
+      -- "uet.kovidgoyal.kitty"
+      "org.pqrs.Karabiner-Elements.Settings",
+      "org.pqrs.Karabiner-EventViewer",
+      "com.apple.systempreferences",
+      "com.apple.SystemProfiler",
+      "com.apple.LocalAuthentication.UIAgent",
+      "com.apple.MobileSMS",
+      "com.apple.Preview",
+    },
+  })
+  :setLayoutCurrentSpace(spoon.TilingWindowManager.layouts.fullscreen)

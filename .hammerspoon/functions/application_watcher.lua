@@ -12,17 +12,15 @@ local function application_watcher(appName, eventType, appObject)
       logger.d("Entered Chrome modal")
       ChromeModal:enter()
     end
-    -- if appName == KITTY then
-    --   ExitHyperMode()
-    --   FoundationRemapper:unregister()
-    -- end
   end
+
   if eventType == hs.application.watcher.deactivated then
     if appName == CHROME then
       logger.d("Exited Chrome modal")
       ChromeModal:exit()
     end
   end
+
   -- if eventType == hs.application.watcher.activated then
   -- 	if appName == "Kitty" then
   -- 		fk_modal:enter()
@@ -35,6 +33,8 @@ local function application_watcher(appName, eventType, appObject)
   -- end
 end
 
----@type hs.application.watcher
+---@class hs.application.watcher
+---@field start function
+---@field stop function
 local appWatcher = hs.application.watcher.new(application_watcher)
 return appWatcher

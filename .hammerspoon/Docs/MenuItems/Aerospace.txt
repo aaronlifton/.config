@@ -1,0 +1,658 @@
+{ {
+    AXChildren = { { {
+          AXEnabled = true,
+          AXMenuItemCmdChar = "",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <1>{},
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "About AeroSpace"
+        }, <2>{
+          AXEnabled = false,
+          AXMenuItemCmdChar = "",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <3>{ "cmd" },
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = ""
+        }, {
+          AXChildren = { { {
+                AXEnabled = true,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Activity Monitor"
+              }, {
+                AXEnabled = true,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Allocations & Leaks"
+              }, {
+                AXEnabled = true,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "File Activity"
+              }, {
+                AXEnabled = true,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "System Trace"
+              }, {
+                AXEnabled = true,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Time Profile Active Application"
+              }, {
+                AXEnabled = true,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Time Profile App Under Mouse"
+              }, {
+                AXEnabled = true,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Time Profile Entire System"
+              }, {
+                AXEnabled = true,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Toggle Instruments Recording"
+              }, {
+                AXEnabled = true,
+                AXMenuItemCmdChar = "P",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <4>{ "shift", "ctrl" },
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Paletro: Command Palette"
+              }, {
+                AXEnabled = true,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Services Settings…"
+              } } },
+          AXEnabled = true,
+          AXMenuItemCmdChar = "",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 3>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Services"
+        }, <table 2>, {
+          AXEnabled = false,
+          AXMenuItemCmdChar = "H",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 3>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Hide AeroSpace"
+        }, {
+          AXEnabled = true,
+          AXMenuItemCmdChar = "H",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <5>{ "cmd", "alt" },
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Hide Others"
+        }, {
+          AXEnabled = false,
+          AXMenuItemCmdChar = "",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 1>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Show All"
+        }, <table 2>, {
+          AXEnabled = true,
+          AXMenuItemCmdChar = "Q",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 3>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Quit AeroSpace"
+        } } },
+    AXEnabled = true,
+    AXMenuItemCmdChar = "",
+    AXMenuItemCmdGlyph = "",
+    AXMenuItemCmdModifiers = <table 3>,
+    AXMenuItemMarkChar = "",
+    AXRole = "AXMenuBarItem",
+    AXTitle = "AeroSpace"
+  }, {
+    AXChildren = { { {
+          AXEnabled = false,
+          AXMenuItemCmdChar = "Z",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 3>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Undo"
+        }, {
+          AXEnabled = false,
+          AXMenuItemCmdChar = "Z",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = { "cmd", "shift" },
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Redo"
+        }, <table 2>, {
+          AXEnabled = false,
+          AXMenuItemCmdChar = "X",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 3>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Cut"
+        }, {
+          AXEnabled = false,
+          AXMenuItemCmdChar = "C",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 3>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Copy"
+        }, {
+          AXEnabled = false,
+          AXMenuItemCmdChar = "V",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 3>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Paste"
+        }, {
+          AXEnabled = false,
+          AXMenuItemCmdChar = "",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 1>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Delete"
+        }, {
+          AXEnabled = false,
+          AXMenuItemCmdChar = "A",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 3>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Select All"
+        }, <table 2>, {
+          AXChildren = { { {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Show Writing Tools"
+              }, <table 2>, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Proofread"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Rewrite"
+              }, <table 2>, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Make Friendly"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Make Professional"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Make Concise"
+              }, <table 2>, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Summarize"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Create Key Points"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Make List"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Make Table"
+              }, <table 2>, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Compose…"
+              } } },
+          AXEnabled = true,
+          AXMenuItemCmdChar = "",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 3>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Writing Tools"
+        }, {
+          AXChildren = { { {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Contact…"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Passwords…"
+              } } },
+          AXEnabled = true,
+          AXMenuItemCmdChar = "",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 3>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "AutoFill"
+        }, {
+          AXEnabled = true,
+          AXMenuItemCmdChar = "",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 1>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Start Dictation…"
+        }, {
+          AXEnabled = true,
+          AXMenuItemCmdChar = "E",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 1>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Emoji & Symbols"
+        } } },
+    AXEnabled = true,
+    AXMenuItemCmdChar = "",
+    AXMenuItemCmdGlyph = "",
+    AXMenuItemCmdModifiers = <table 3>,
+    AXMenuItemMarkChar = "",
+    AXRole = "AXMenuBarItem",
+    AXTitle = "Edit"
+  }, {
+    AXChildren = { { {
+          AXEnabled = false,
+          AXMenuItemCmdChar = "F",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 1>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Enter Full Screen"
+        } } },
+    AXEnabled = true,
+    AXMenuItemCmdChar = "",
+    AXMenuItemCmdGlyph = "",
+    AXMenuItemCmdModifiers = <table 3>,
+    AXMenuItemMarkChar = "",
+    AXRole = "AXMenuBarItem",
+    AXTitle = "View"
+  }, {
+    AXChildren = { { {
+          AXEnabled = false,
+          AXMenuItemCmdChar = "W",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 3>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Close"
+        }, {
+          AXEnabled = true,
+          AXMenuItemCmdChar = "W",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 5>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Close All"
+        }, {
+          AXEnabled = false,
+          AXMenuItemCmdChar = "M",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 3>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Minimize"
+        }, {
+          AXEnabled = true,
+          AXMenuItemCmdChar = "M",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 5>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Minimize All"
+        }, {
+          AXEnabled = false,
+          AXMenuItemCmdChar = "",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 1>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Zoom"
+        }, {
+          AXEnabled = true,
+          AXMenuItemCmdChar = "",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <6>{ "alt" },
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Zoom All"
+        }, {
+          AXEnabled = false,
+          AXMenuItemCmdChar = "F",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <7>{ "ctrl" },
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Fill"
+        }, {
+          AXEnabled = false,
+          AXMenuItemCmdChar = "C",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 7>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Center"
+        }, <table 2>, {
+          AXChildren = { { {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Halves"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 7>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Left"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 7>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Right"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 7>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Top"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 7>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Bottom"
+              }, <table 2>, <8>{
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Quarters"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Top Left"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Top Right"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Bottom Left"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Bottom Right"
+              }, <table 2>, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 3>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Arrange"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 4>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Left & Right"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <9>{ "shift", "alt", "ctrl" },
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Left & Quarters"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 4>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Right & Left"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 9>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Right & Quarters"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 4>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Top & Bottom"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 9>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Top & Quarters"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 4>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Bottom & Top"
+              }, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 9>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Bottom & Quarters"
+              }, <table 8>, <table 2>, {
+                AXEnabled = false,
+                AXMenuItemCmdChar = "R",
+                AXMenuItemCmdGlyph = "",
+                AXMenuItemCmdModifiers = <table 7>,
+                AXMenuItemMarkChar = "",
+                AXRole = "AXMenuItem",
+                AXTitle = "Return to Previous Size"
+              } } },
+          AXEnabled = true,
+          AXMenuItemCmdChar = "",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 3>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Move & Resize"
+        }, {
+          AXEnabled = false,
+          AXMenuItemCmdChar = "",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 3>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Full Screen Tile"
+        }, <table 2>, {
+          AXEnabled = false,
+          AXMenuItemCmdChar = "",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 3>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Remove Window from Set"
+        }, <table 2>, {
+          AXEnabled = true,
+          AXMenuItemCmdChar = "",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 1>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Bring All to Front"
+        }, {
+          AXEnabled = true,
+          AXMenuItemCmdChar = "",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 6>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "Arrange in Front"
+        } } },
+    AXEnabled = true,
+    AXMenuItemCmdChar = "",
+    AXMenuItemCmdGlyph = "",
+    AXMenuItemCmdModifiers = <table 3>,
+    AXMenuItemMarkChar = "",
+    AXRole = "AXMenuBarItem",
+    AXTitle = "Window"
+  }, {
+    AXChildren = { { {
+          AXEnabled = true,
+          AXMenuItemCmdChar = "?",
+          AXMenuItemCmdGlyph = "",
+          AXMenuItemCmdModifiers = <table 3>,
+          AXMenuItemMarkChar = "",
+          AXRole = "AXMenuItem",
+          AXTitle = "AeroSpace Help"
+        } } },
+    AXEnabled = true,
+    AXMenuItemCmdChar = "",
+    AXMenuItemCmdGlyph = "",
+    AXMenuItemCmdModifiers = <table 3>,
+    AXMenuItemMarkChar = "",
+    AXRole = "AXMenuBarItem",
+    AXTitle = "Help"
+  } }

@@ -20,15 +20,19 @@ block = true
 [[open.prepend_rules]]
 name = "bulk-rename.txt"
 use = "bulk-rename"
+
 [opener]
 folder = [
   # { run = 'hyprctl dispatch run "[float; size 60% 60%; center 1] open" "$@"', desc = "Open in GUI File Manager" },
   { run = "open --background --new-window $1", desc = "Open in GUI File Manager" },
   { run = '''fish -c "nvim "$1""''', block = true, desc = "neovim", for = "macos" },
   { run = 'kitty --detach nvim "$@"', orphan = true, desc = "neovim (detached)", for = "macos" },
+  { run = '''fish -c "hx "$1""''', block = true, desc = "helix", for = "macos" },
   { run = '''fish -c "lazygit -p "$1""''', block = true, desc = "lazygit", for = "macos" },
   { run = 'cursor  "$@"', orphan = true, desc = "cursor", for = "macos" },
   { run = 'kitty "$@"', orphan = true, desc = "kitty", for = "macos" },
+  { run = 'kitten @ launch --type=tab --cwd="$@"', orphan = true, desc = "kitty (new tab)", for = "macos" },
+  { run = 'kitten @ launch --type=window --cwd="$@"', orphan = true, desc = "kitty (new window)", for = "macos" },
   { run = 'open "$@"', orphan = true, desc = "open", for = "macos" },
 ]
 text = [
@@ -39,8 +43,12 @@ text = [
   { run = 'open "$@"', orphan = true, desc = "open", for = "macos" },
 ]
 edit = [
-  { run = 'helix "$@"', block = true, for = "unix" },
-  { run = 'helix %*', block = true, for = "windows" },
+  # Default:
+  # { run = '${EDITOR:-vi} "$@"', desc = "$EDITOR", block = true, for = "unix" },
+
+  # Helix
+  # { run = 'helix "$@"', block = true, for = "unix" },
+  # { run = 'helix %*', block = true, for = "windows" },
 ]
 document = [
   { run = 'open "$@"', orphan = true, desc = "open", for = "macos" },
@@ -66,28 +74,46 @@ fallback = [
 
 [open]
 rules = [
-  { name = "*/", use = "folder" },
 
-  { mime = "text/*", use = "text" },
+  # Default: { mime = "text/*", run = "code" },
   { mime = "text/docx", use = "docx" },
-  { mime = "image/*", use = "image" },
+  # Default for {video/audio}: use = ["play", "reveal"]
   { mime = "video/*", use = "video" },
   { mime = "audio/*", use = "audio" },
   { mime = "inode/x-empty", use = "text" },
+  # Default:
+  # { mime = "inode/empty", use = [ "edit", "reveal" ] },
 
-  { mime = "application/json", use = "text" },
-  { mime = "*/javascript", use = "text" },
+  # Default: use = "code"
+  # { mime = "text/*", use = "text" },
+  # { mime = "application/json", use = "text" },
+  # { mime = "*/javascript", use = "text" },
 
-  { mime = "application/pdf", use = "pdf" },
-  { mime = "application/zip", use = "archive" },
-  { mime = "application/gzip", use = "archive" },
-  { mime = "application/x-bzip", use = "archive" },
-  { mime = "application/x-bzip2", use = "archive" },
-  { mime = "application/x-tar", use = "archive" },
-  { mime = "application/x-7z-compressed", use = "archive" },
-  { mime = "application/x-rar", use = "archive" },
+  # Default:
+  # { mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", use = [ "extract", "reveal" ] },
+  { mime = "application/x-{bzip*,tar,7z*,rar,gzip}", use = [
+    "extract",
+    "reveal",
+  ] },
 
-  { mime = "*", use = "text" },
+  # Default: run = "file"
+  # { mime = "*", use = "text" },
+]
+
+[plugin]
+prepend_previewers = [
+  # Archive previewer
+  { mime = "application/*zip", run = "ouch" },
+  { mime = "application/x-tar", run = "ouch" },
+  { mime = "application/x-bzip2", run = "ouch" },
+  { mime = "application/x-7z-compressed", run = "ouch" },
+  { mime = "application/x-rar", run = "ouch" },
+  { mime = "application/vnd.rar", run = "ouch" },
+  { mime = "application/x-xz", run = "ouch" },
+  { mime = "application/xz", run = "ouch" },
+  { mime = "application/x-zstd", run = "ouch" },
+  { mime = "application/zstd", run = "ouch" },
+  { mime = "application/java-archive", run = "ouch" },
 ]
 
 [[plugin.prepend_fetchers]]

@@ -58,5 +58,35 @@ use = "yazi-rs/plugins:chmod"
 rev = "d7588f6"
 hash = "1adc12c2b2b025411ab61eb8f0879574"
 
+[[plugin.deps]]
+use = "yazi-rs/plugins:vcs-files"
+rev = "9a52857"
+hash = "4ee57085277d616acfa0ef1fef37dc00"
+
+[[plugin.deps]]
+use = "ndtoan96/ouch"
+rev = "0742fff"
+hash = "2bd799b42b8e42b8ef100310be71f8d1"
+
+[[plugin.deps]]
+use = "wekauwau/yatline-modified-time"
+rev = "2d33471"
+hash = "8fa6028ef832b34cf32f4ee43cb0ae35"
+
+[[plugin.deps]]
+use = "yazi-rs/plugins:no-status"
+rev = "9a52857"
+hash = "3e023d31f29201efdac2a6ae35fedb78"
+
+[[plugin.deps]]
+use = "wekauwau/yatline-tokyo-night"
+rev = "b4a6310"
+hash = "215729a555fe5286f1eb35520963d08"
+
+[[plugin.deps]]
+use = "h-hg/yamb"
+rev = "22af003"
+hash = "7cc42012a7c2099f80064d228feb8d44"
+
 [flavor]
 deps = []
