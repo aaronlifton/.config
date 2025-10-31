@@ -414,7 +414,7 @@ map("n", "<M-S-Bslash>", function()
   end
 
   vim.cmd((":cd %s"):format(Util.path.bufdir(buf)))
-  vim.cmd(":Yazi cwd")
+  require("yazi").yazi({ no_edgy = true })
   -- Snacks.terminal("yazi", { cwd = cwd, env = { NVIM_FLOAT_WINDOW = true } })
 end, { desc = "Yazi" })
 
@@ -837,7 +837,7 @@ end, { desc = "CD to current file directory" })
 -- map("n", "<leader>ca", function()
 --   require("tiny-code-action").code_action({})
 -- end, { noremap = true, silent = true })
-
+--
 map("n", "<leader>16", function()
   local hyper_keys_path = "/Users/alifton/.hammerspoon/hyper_apps.lua"
   vim.cmd("e " .. hyper_keys_path)

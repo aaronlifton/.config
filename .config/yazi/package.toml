@@ -88,5 +88,10 @@ use = "h-hg/yamb"
 rev = "22af003"
 hash = "7cc42012a7c2099f80064d228feb8d44"
 
+[[plugin.deps]]
+use = "yazi-rs/plugins:smart-filter"
+rev = "8f1d971"
+hash = "bcda8eeb3f4013bae156aecabfc745e8"
+
 [flavor]
 deps = []

@@ -95,7 +95,7 @@ return {
           -- invocation if you want to customize the behaviour
 
           -- Reset horizontal scroll if insert mode is exited
-          vim.keymap.set("n", "<M-r>", "jk0", { buffer = yazi_buffer_id })
+          vim.keymap.set("n", "<M-r>", "jk0", { noremap = true, buffer = yazi_buffer_id })
 
           local winid = vim.fn.bufwinid(yazi_buffer_id)
 
@@ -108,7 +108,7 @@ return {
 
             if edgy_editor.get_win(winid) then vim.w[winid].edgy = true end
           end
-          vim.api.nvim_buf_set_var(yazi_buffer_id, "yazi_context", "edgy")
+          vim.api.nvim_buf_set_var(yazi_buffer_id, "yazi_context", config)
         end,
         -- on_yazi_ready = function(buffer, config, process_api)
         --   require("yazi").yazi()
@@ -155,6 +155,17 @@ return {
           sidescrolloff = 0,
           winfixbuf = true,
         },
+        filter = function(buf, win)
+          local yazi_ctx = vim.api.nvim_buf_get_var(buf, "yazi_context")
+          local no_edgy
+          if yazi_ctx then
+            -- vim.api.nvim_echo({ { vim.inspect(yazi_ctx), "Normal" } }, true, {})
+            if yazi_ctx.no_edgy then no_edgy = true end
+          else
+            vim.api.nvim_echo({ { vim.inspect("no yazi_config"), "Normal" } }, true, {})
+          end
+          return not no_edgy
+        end,
       }
       table.insert(opts.left, yazi_view)
       for _, pos in ipairs({ "top", "bottom", "left", "right" }) do

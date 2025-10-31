@@ -1,8 +1,12 @@
 --- @since 25.5.31
 
 local shell = os.getenv("SHELL"):match(".*/(.*)")
-local get_cwd = ya.sync(function() return cx.active.current.cwd end)
-local fail = function(s, ...) ya.notify { title = "fr", content = string.format(s, ...), timeout = 5, level = "error" } end
+local get_cwd = ya.sync(function()
+	return cx.active.current.cwd
+end)
+local fail = function(s, ...)
+	ya.notify({ title = "fr", content = string.format(s, ...), timeout = 5, level = "error" })
+end
 
 local fmt_opts = function(opt)
 	if type(opt) == "string" then
@@ -52,11 +56,16 @@ local fzf_from = function(job_args, opts_tbl)
 				.. " {q} {}' --preview-window=up,66%",
 			prompt = "--prompt='rga> '",
 		},
+		fd = {
+			grep = "fd --color=always",
+			prev = "--preview='bat --color=always " .. opts_tbl.bat .. " {}' --preview-window=up,66%",
+			prompt = "--prompt='fd> '",
+		},
 	}
 
 	local cmd = cmd_tbl[job_args]
 	if not cmd then
-		return fail("`%s` is not a valid argument. Use `rg` or `rga` instead", job_args)
+		return fail("`%s` is not a valid argument. Use `rg`, `rga`, or `fd` instead", job_args)
 	end
 
 	local fzf_tbl = {
@@ -120,7 +129,7 @@ local function entry(_, job)
 	elseif output.status.code == 130 then -- interrupted with <ctrl-c> or <esc>
 		return
 	elseif output.status.code == 1 then -- no match
-		return ya.notify { title = "fr", content = "No file selected", timeout = 5 }
+		return ya.notify({ title = "fr", content = "No file selected", timeout = 5 })
 	elseif output.status.code ~= 0 then -- anything other than normal exit
 		return fail("`fzf` exited with error code %s", output.status.code)
 	end

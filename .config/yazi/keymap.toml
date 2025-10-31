@@ -91,6 +91,11 @@ run = "filter --smart"
 desc = "Filter files"
 
 [[mgr.prepend_keymap]]
+on = ["f", "F"]
+run = "plugin smart-filter"
+desc = "Smart filter"
+
+[[mgr.prepend_keymap]]
 on = ["s"]
 run = "plugin searchjump --autocd"
 desc = "Flash"
@@ -231,6 +236,15 @@ on = ["g", "b"]
 run = "cd ~/.local/bin"
 desc = "Go to the local bin directory"
 
+[[mgr.append_keymap]]
+on = ["g", "I", "h"]
+run = "cd '/Users/aaron/Library/Mobile Documents/'"
+desc = "Go to the iCloud Drive directory"
+
+[[mgr.append_keymap]]
+on = ["g", "I", "b"]
+run = "cd '/Users/aaron/Library/Mobile Documents/com~apple~CloudDocs/Books'"
+desc = "Go to the iCloud Books directory"
 
 [[mgr.append_keymap]]
 on = ["g", "i", "m"]
