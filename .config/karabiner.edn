@@ -51,10 +51,11 @@
                :hs "hs -A -n -q -t 0.1 -c \"%s\""
                :show "osascript -e 'set appName to \"%s\"\nset startIt to false\ntell application \"System Events\"\n  if not (exists process appName) then\n    set startIt to true\n  else\n    set frontmost of process appName to true\n  end if\nend tell\nif startIt then\n  tell application appName to activate\nend if'\n"
                :toggle "osascript -e 'set appName to \"%s\"\nset startIt to false\ntell application \"System Events\"\n  if not (exists process appName) then\n    set startIt to true\n  else if frontmost of process appName then\n    set visible of process appName to false\n  else\n    set frontmost of process appName to true\n  end if\nend tell\nif startIt then\n  tell application appName to activate\nend if'"
+               :bundleIdToggle "osascript -e 'set bundleId to \"%s\"\nset startIt to false\ntell application \"System Events\"\n  set appProc to first application process whose bundle identifier is bundleId\n  if appProc exists then\n    if frontmost of appProc then\n      set visible of appProc to false\n    else\n      set frontmost of appProc to true\n    end if\n  else\n    set startIt to true\n  end if\nend tell\nif startIt then\n  tell application id bundleId to activate\nend if'"
                :toggleMinimize "osascript -e 'set appName to \"%s\"\nset startIt to false\ntell application \"System Events\"\n  if not (exists process appName) then\n    set startIt to true\n  else if frontmost of process appName then\n    set miniaturized of every window to true\n  else\n    set frontmost of process appName to true\n  end if\nend tell\nif startIt then\n  tell application appName to activate\nend if'"
                :type "osascript -e 'tell application \"System Events\" to keystroke \"%s\" as text'"
-               :raycast "open -g \"raycast://extensions/%s\""
-               :raycastDeeplink "open -g \"raycast://%s\""
+               :raycastExt "open -g \"raycast://extensions/%s\""
+               :raycast "open -g \"raycast://%s\""
                :hsl
                "/opt/homebrew/bin/hs -A -n -q -t 0.01 -c 'hs.application.launchOrFocus(\"%s\")'"
                :kitten               "/Applications/kitty.app/Contents/MacOS/kitten @ --to unix:/tmp/tkitty %s"
@@ -131,14 +132,15 @@
 
          {:des "w-key (windows)"
           :rules [:w-mode
-                  [:c [:raycastDeeplink
+                  [:c [:raycast
                        "customWindowManagementCommand?&name=Center%2060/80&position=center&relativeWidth=0.6&relativeHeight=0.8"]]
-                  [:!Sc [:raycastDeeplink "window-management/center"]]]}
+                  [:!Sc [:raycast "window-management/center"]]
+                  [:t [:raycastExt "EvanZhouDev/raycast-apple-intelligence/list-writing-tools"]]]}
 
          {:des "o-key (obsidian)"
           :rules [:o-mode
                    ;; Create clipping
-                  [:c [:raycastDeeplink "extensions/trevware/obs-clippings/index"]]
+                  [:c [:raycast "extensions/trevware/obs-clippings/index"]]
                   ; Raycast daily note modal
                   [:d [:f20]]]}
          {:des "f-key (essentials)"
@@ -171,7 +173,7 @@
                    ; [:right_option :!CTOleft_shift nil {:alone [:f17]}]
                   [:right_option :!CTOleft_shift  nil {:alone :escape}]]}
 
-; {:des "Caps Lock in Terminals"
+         ; {:des "Caps Lock in Terminals"
          ;  :rules [[:##caps_lock :right_control :terminals
          ;           {:to_if_alone :escape}]]}
 
@@ -181,12 +183,14 @@
 
          {:des "Hyper apps"
           :rules [[:!!k [:open "/Applications/Kitty.app"]]
+                  [:!!g [:open "/Applications/Ghostty.app"]]
                   [:!!z [:open "/Applications/Zen.app"]]
                   [:!!c [:open "/Applications/Firefox Nightly.app"]]
-                  [:!!f [:open "/Applications/Finder.app"]]
+                  ; [:!!f [:bundleIdToggle "com.apple.finder"]]
+                  [:!!f [:open "/System/Library/CoreServices/Finder.app"]]
                   [:!!o [:open "/Applications/Obsidian.app"]]
                   ; !![:1 [:toggle "/Applications/1Password.app"]]
-                  [:!!e [:toggle "org.pqrs.Karabiner-EventViewer"]]
+                  [:!!e [:bundleIdToggle "org.pqrs.Karabiner-EventViewer"]]
                   [:!!s [:open "/Applications/Scrypted.app"]]
                   [:!!spacebar [:spacebar ["capspace" 1]] nil
                    {:alone :spacebar
@@ -201,8 +205,8 @@
                   [:z [:open "/Applications/Zen.app"]]
                   [:c [:open "/Applications/Firefox Nightly.app"]]
                   [:f [:open "/Applications/Finder.app"]]
-                  [:a [:toggle "Dash"]]
-                  [:d [:open "Discord"]]
+                  [:d [:toggle "/Applications/Dash.app"]]
+                  [:!Od [:open "Discord"]]
                   [:!Oj {:mkey {:y 1536}}]
                   [:!Ok {:mkey {:y -1536}}]
                   [:!Oh {:mkey {:x -1536}}]
@@ -211,7 +215,7 @@
                   [:!Obackslash [{:pkey :button2}]]
                   [:o [:open "/Applications/Obsidian.app"]]
                   [:1 [:toggle "/Applications/1Password.app"]]
-                  [:e [:toggle "org.pqrs.Karabiner-EventViewer"]]
+                  [:e [:bundleIdToggle "org.pqrs.Karabiner-EventViewer"]]
                   [:spacebar [:spacebar ["capspace" 1]] nil
                    {:alone :spacebar
                     :afterup ["capspace" 0]}]
@@ -258,7 +262,7 @@
                   [:x "say 'know we are in double shift mode'"]
                   [[:a :d] :f17]
                   [[:a :s] :f16]
-                  [[:a :z] :f19]]}]}
+                  [[:a :z] :f19]]}]
 
          ; {:des "Application launcher"
          ;  :rules [ ; enter launch_layer with spacebar
