@@ -1,4 +1,8 @@
 ### AeroSpace Window Manager Configuration
+
+# Also installed:
+# https://github.com/acsandmann/aerospace-swipe?tab=readme-ov-file
+
 ## Startup & Behavior
 start-at-login = true
 # Available commands: https://nikitabobko.github.io/AeroSpace/commands
@@ -132,6 +136,7 @@ alt-k = "focus --boundaries-action wrap-around-the-workspace up"
 alt-l = "focus --boundaries-action wrap-around-the-workspace right"
 # alt-leftSquareBracket = "join-with right"
 alt-r = 'mode resize'
+cmd-shift-alt-r = 'mode resize'
 # alt-rightSquareBracket = "join-with down"
 
 # Window focus (vim-style) - Using Alt-Shift to prioritize nvim/tmux
@@ -353,6 +358,10 @@ if.app-id = 'org.pqrs.Karabiner-Elements.Settings'
 check-further-callbacks = false
 run = ['layout floating']
 
+[[on-window-detected]]
+if.app-id = 'com.electron.scrypted'
+check-further-callbacks = true
+run = ['layout floating']
 
 [[on-window-detected]]
 if.app-id = 'org.pqrs.Karabiner-EventViewer'

@@ -166,3 +166,7 @@ end
 
 string match -q "$TERM_PROGRAM" vscode
 and . (code --locate-shell-integration-path fish)
+
+~/.local/bin/mise activate fish | source
+
+string match -q "$TERM_PROGRAM" "kiro" and . (kiro --locate-shell-integration-path fish)

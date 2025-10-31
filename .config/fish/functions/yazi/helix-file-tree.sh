@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-desired_width=25
+desired_width=100
 
 # Open window on the left
 # yazi_path=$(type -p yazi)

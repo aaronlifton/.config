@@ -5,192 +5,55 @@
 # adjust-underline-position=8
 # adjust-underline-thickness=1
 # cursor-style=block
-keybind = super+q=quit
-keybind = super+shift+,=reload_config
-keybind = super+n=new_window
-keybind = super+c=copy_to_clipboard
-keybind = super+v=paste_from_clipboard
-keybind = super+d=new_split:right
-keybind = super+plus=increase_font_size:1
-keybind = super+minus=decrease_font_size:1
-keybind = super+enter=toggle_fullscreen
-keybind = super+alt+i=inspector:toggle
-keybind = global:super+\=toggle_quick_terminal
 
-keybind = super+s=text:\x1b\x3a\x77\x0a
-# lazygit
-keybind = super+g=text:\x00\x67
-# Go to file in vim using fzf
-keybind = super+o=text:\x20\x20
 
-keybind=global:cmd+/=toggle_quick_terminal
-keybind = "ctrl+f=write_scrollback_file:open"
-# macos-titlebar-style="tabs"
+# MACOS
+macos-titlebar-style="hidden"
 macos-titlebar-style="transparent"
-# macos-titlebar-style = hidden
-# adjust-cell-height="60%"
-# MonoLisa
-adjust-cell-height="20%"
-# Berkeley Mono
-adjust-cell-height=1
-adjust-font-baseline=00
-# Disabled for perf
-# background-blur-radius=20
-# background-opacity=0.85
-# background-blur=false
-background-opacity=1
-command="fish"
+macos-option-as-alt=true
+macos-non-native-fullscreen=true
+macos-window-buttons=hidden
+macos-icon=holographic
+macos-secure-input-indication=true
+macos-dock-drop-behavior=window
+macos-non-native-fullscreen = true
+macos-window-shadow=false
+
+config-file = configs/window.conf
+
+# May cause kernal panics (macOS 14.4+)
+# window-vsync = true
+# command=fish
+
 cursor-click-to-move=true
 cursor-style-blink=false
-cursor-style="block"
+cursor-style="underline"
 adjust-cursor-thickness=2
 # adjust-cursor-height=10
 
-# font-family="MonoLisa Nerd Font Mono"
-# font-family="Monolisa Nerd Font Mono"
+config-file = configs/fonts/berkeley-mono.conf
+# config-file = configs/fonts/comic-shanns.conf
+# config-file = ./configs/fonts/profontIIx.conf
+# config-file = ./configs/fonts/input-mono.conf
+# config-file = ./configs/fonts/commit-mono.conf
 
+bold-color=bright
+cursor-color=cell-foreground
+cursor-text=cell-background
 
-# font-family = "CaskaydiaCove Nerd Font Mono"
-# font-style = "light"
-
-# font-family="3270Condensed Nerd Font"
-# font-family="MonaspiceNe Nerd Font Mono"
-
-# font-family="Input Mono Condensed"
-# font-family-italic="Input Mono Condensed"
-# font-family-bold="Input Mono Condensed"
-
-
-# Monospice
-# font-size = 15
-# font-family = MonaspiceNe Nerd Font Mono
-# font-family-italic = MonaspiceRnNFM-Italic
-# font-family-bold-italic = MonaspiceRnNFM-MediumItalic
-# font-variation = wdth=112.5
-# font-variation = wght=200
-# font-variation-bold = wdth=112.5
-# font-variation-bold = wght=600
-# font-variation-italic = wdth=112.5
-# font-variation-italic = wght=200
-# font-variation-bold-italic = wdth=112.5
-# font-variation-bold-italic = wght=600
-# font-feature = liga
-# font-feature = calt
-
-# font-family-italic="ComicShannsMono Nerd Font Mono"
-
-# BERKELEY
-font-family=Berkeley Mono Nerd Font Mono
-font-family-italic=Berkeley Mono Nerd Font Mono
-font-family-bold=Berkeley Mono Nerd Font Mono
-# Berkeley Mono ligeratures
-font-feature="+002E +003D +007D, +0021, +007E, +003C +003D, +003E, +002A +003d +0021 +003D +003F +002E"
-# cv02: a with top arm, no effect on italic a
-# cv03: i without left bottom bar
-# cv04: l with left bottom bar, like consolas, will be overrided by cv35 in
-#                                             [CharVars (cvXX)]    [MapleMono Italic-Only]                         [Maple style sets]
-## font-feature="+calt +liga +zero +ss02, +ss03, +cv01, +cv02, +cv03, +cv3x, +cv3x, +cv33, +cv34, +cv04, +cv35, +cv36 +ss04 +ss05 +ss06 +ss07 +ss08"
-font-feature="+calt +ss02 +liga +clig +003A +003C +003D +003E +002A +003F +002E +007E +0021 "
-font-size=13
-font-thicken=false
-
-# For zsh
-# font-family = "MesloLGS NF"
-
-## PROFONTIIx
-font-family=ProFontIIx Nerd Font Mono
-freetype-load-flags=monochrome
-adjust-cell-width=-1
-
-## TERMINESS
-# font-family=TerminessTTF Nerd Font Mono
-# freetype-load-flags=monochrome
-# # adjust-cell-width=-1
-
-# MAPLE MONO
-# font-family=MapleMono-NF-
-# font-feature="+calt +ss02 +ss04 +cv35"
-# font-family-bold=MapleMono-NF-SemiBold
-# font-family-italic=MapleMono-NF-
-# font-family-bold=MapleMono-NF-SemiBoldItalic
-# font-size=15
-
-# bold-is-bright=true
-macos-option-as-alt=true
 mouse-hide-while-typing=true
-shell-integration-features="title, no-cursor"
-shell-integration="fish"
+# shell-integration=fish
 
-theme=BlueBerryPie
-theme="Harper"
-# theme="rose-pine-moon"
-# theme=catppuccin-macchiato
-# theme=solarized-osaka-night
-# theme="Ghostty Default StyleDark"
-theme="/Users/aaron/.local/share/nvim/lazy/tokyonight/colors/tokyonight_moon"
-# theme="citruszest"
-# theme="everblush"
-# theme="Later THis Evening"
-# theme="mirage"
-# theme="molokai"
-# theme="Monokai Pro Octagon"
-# theme="Vague"
-# theme=lovelace
-# theme="Vesper"
+config-file = configs/theme.conf
+background-opacity=0.85
+background-blur=true
+# background-opacity-cells = true
+# split-divider-color = 
 
 clipboard-read = allow
+selection-clear-on-copy=true
 unfocused-split-opacity=0.75
-window-colorspace="display-p3"
-window-decoration="auto"
-window-height=136
-window-inherit-working-directory=true
-window-new-tab-position="current"
-window-padding-x=8
-window-padding-y=2
-window-padding-balance=true
-window-save-state="always"
-window-title-font-family="Victor Mono"
-# window-title-font-family="InputSansNarrowIta Nerd Font"
-# window-title-font-family="ComicShannsMono Nerd Font Mono"
-window-width=1706
-maximize = true
 
-# https://github.com/hackrmomo/ghostty-shaders
-# custom-shader = shaders/animated-gradient-shader.glsl
-# custom-shader = shaders/bettercrt.glsl
-# custom-shader = shaders/bloom.glsl
-# custom-shader = shaders/bloom1.glsl
-# custom-shader = shaders/bloom075.glsl
-# custom-shader = shaders/bloom060.glsl
-# custom-shader  shaders/bloom050.glsl
-# custom-shader = shaders/my-ghostty-shaders/matrix-hallway_working_original.glsl
-# custom-shader = shaders/crt-shader-with-chromatic-aberration-glow-scanlines-dot-matrix.glsl
-# This one
-# custom-shader = shaders/bloom051.glsl
-# custom-shader = shaders/bloom060.glsl
-# custom-shader = shaders/bloom075.glsl
-# custom-shader = shaders/bloom1.glsl
-# custom-shader = shaders/crt.glsl
-# custom-shader = shaders/cubes.glsl
-# custom-shader = shaders/dither.glsl
-# custom-shader = shaders/drunkard.glsl
-# custom-shader = shaders/fireworks-rockets.glsl
-# custom-shader = shaders/fireworks.glsl
-# custom-shader = shaders/gears-and-belts.glsl
-# custom-shader = shaders/glitchy.glsl
-# custom-shader = shaders/glow-rgbsplit-twitchy.glsl
-# custom-shader = shaders/gradient-background.glsl
-# custom-shader = shaders/inside-the-matrix.glsl
-# custom-hkkkkader = shaders/just-snow.glsl
-# custom-shader = shaders/matrix-hallway.glsl
-# custom-shader = shaders/negative.glsl
-# This one is cool
-# custom-shader = shaders/retro-terminal.glsl
-# custom-shader = shaders/smoke-an-ghost.glsl
-# custom-shader = shaders/sparks-from-fire.glsl
-# custom-shader = shaders/spotlight.glsl
-# custom-shader = shaders/starfield-colors.glsl
-# custom-shader = shaders/starfield.glsl
-# custom-shader = shaders/tft.glsl
-# custom-shader = shaders/underwater.glsl
-# custom-shader = shaders/water.glsl
+config-file = configs/keybinds.conf
+config-file = configs/command-pallete.conf
+config-file = configs/custom-shaders.conf

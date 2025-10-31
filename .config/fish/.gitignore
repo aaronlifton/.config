@@ -4,3 +4,4 @@ tmp/
 .DS_Store
 config-backup.fish
 *.swp
+work_variables.fish

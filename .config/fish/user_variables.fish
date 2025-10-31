@@ -4,10 +4,10 @@ set -lx fish_config_path /Users/$USER/.config/fish
 
 # Setting PATH for node
 # fish_add_path /Users/$USER/.local/share/nvm/v19.7.0/bin
-fish_add_path /usr/local/bin/
 fish_add_path -m /Users/$USER/.asdf/shims
 fish_add_path -m Users/aaron/.local/share/bob/nvim-bin
 fish_add_path -m /opt/homebrew/bin
+fish_add_path -m /usr/local/bin/
 fish_add_path -m /Users/$USER/Code/venv/bin
 # fish_add_path /opt/homebrew/opt/asdf/lib/exec/bin
 # fish_add_path /opt/homebrew/opt/ccache/libexec
@@ -129,19 +129,12 @@ set -xg BAT_THEME tokyonight_moon #Catppuccin-macchiato
 ## Starship
 set -xg STARSHIP_LOG error
 
-
-if test -f "work_variabes.fish"
-    source "work_variabes.fish"
-end
-# TODO: move into above file
-set -xg GOPRIVATE git.synack.com
-# set -xg PRETTIERD_DEFAULT_CONFIG /Users/alifton/.config/nvim/rules/.prettierrc.json
-
-if type -q hx
-    # For helix-gpt
-    set -xg HANDLER copilot
-    set -xg MODULITH_RULES /Users/alifton/synack/client-modulith/.cursor/
-end
-
 # Cargo
 set -gx CARGO_NET_GIT_FETCH_WITH_CLI false
+
+set -gx FIREFOX_NIGHTLY_PROFILE_PATH "/Users/$USER/Library/Application Support/Firefox/Profiles/1u2rlbp6.default-nightly/"
+
+# Work computer variables (if present, git-ignored by default)
+if test -f "work_variables.fish"
+    source "work_variables.fish"
+end

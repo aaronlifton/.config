@@ -1,0 +1,26 @@
+# name: GYOKURO colors for Ghostty
+# url: https://github.com/ghostty-org/ghostty
+# upstream: https://github.com/cdmill/neomodern.nvim/raw/main/extras/ghostty/gyokuro
+# author: Casey Miller
+
+palette = 0=#767777
+palette = 1=#9e5560
+palette = 2=#72966c
+palette = 3=#a2ad7b
+palette = 4=#50616F
+palette = 5=#8B7177
+palette = 6=#5B6078
+palette = 7=#7B7B7F
+palette = 8=#767777
+palette = 9=#b08c7d
+palette = 10=#8bab85
+palette = 11=#bbc7b1
+palette = 12=#748fa6
+palette = 13=#d6a9b3
+palette = 14=#868db5
+palette = 15=#bbbac1
+background = #1b1c1d
+foreground = #bbbac1
+cursor-color = #bbbac1
+selection-background = #323334
+selection-foreground = #bbc7b1
