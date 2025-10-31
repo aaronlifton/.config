@@ -1,0 +1,11 @@
+[project]
+name = "genincludes"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "pydantic>=2.12.3",
+    "pyyaml>=6.0.3",
+    "types-pyyaml>=6.0.12.20250915",
+]

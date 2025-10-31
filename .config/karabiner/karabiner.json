@@ -180,6 +180,51 @@
               } ]
             }
           }
+        }, {
+          "from" : {
+            "key_code" : "t"
+          },
+          "to" : [ {
+            "shell_command" : "open -g \"raycast://extensions/EvanZhouDev/raycast-apple-intelligence/list-writing-tools\""
+          } ],
+          "conditions" : [ {
+            "name" : "w-mode",
+            "value" : 1,
+            "type" : "variable_if"
+          } ],
+          "type" : "basic"
+        }, {
+          "type" : "basic",
+          "parameters" : {
+            "basic.simultaneous_threshold_milliseconds" : 250
+          },
+          "to" : [ {
+            "set_variable" : {
+              "name" : "w-mode",
+              "value" : 1
+            }
+          }, {
+            "shell_command" : "open -g \"raycast://extensions/EvanZhouDev/raycast-apple-intelligence/list-writing-tools\""
+          } ],
+          "from" : {
+            "simultaneous" : [ {
+              "key_code" : "w"
+            }, {
+              "key_code" : "t"
+            } ],
+            "simultaneous_options" : {
+              "detect_key_down_uninterruptedly" : true,
+              "key_down_order" : "strict",
+              "key_up_order" : "strict_inverse",
+              "key_up_when" : "any",
+              "to_after_key_up" : [ {
+                "set_variable" : {
+                  "name" : "w-mode",
+                  "value" : 0
+                }
+              } ]
+            }
+          }
         } ]
       }, {
         "description" : "o-key (obsidian)",
@@ -522,6 +567,17 @@
           "type" : "basic"
         }, {
           "from" : {
+            "key_code" : "g",
+            "modifiers" : {
+              "mandatory" : [ "left_command", "left_control", "left_option", "left_shift" ]
+            }
+          },
+          "to" : [ {
+            "shell_command" : "open \"/Applications/Ghostty.app\""
+          } ],
+          "type" : "basic"
+        }, {
+          "from" : {
             "key_code" : "z",
             "modifiers" : {
               "mandatory" : [ "left_command", "left_control", "left_option", "left_shift" ]
@@ -550,7 +606,7 @@
             }
           },
           "to" : [ {
-            "shell_command" : "open \"/Applications/Finder.app\""
+            "shell_command" : "open \"/System/Library/CoreServices/Finder.app\""
           } ],
           "type" : "basic"
         }, {
@@ -572,7 +628,7 @@
             }
           },
           "to" : [ {
-            "shell_command" : "osascript -e 'set appName to \"org.pqrs.Karabiner-EventViewer\"\nset startIt to false\ntell application \"System Events\"\n  if not (exists process appName) then\n    set startIt to true\n  else if frontmost of process appName then\n    set visible of process appName to false\n  else\n    set frontmost of process appName to true\n  end if\nend tell\nif startIt then\n  tell application appName to activate\nend if'"
+            "shell_command" : "osascript -e 'set bundleId to \"org.pqrs.Karabiner-EventViewer\"\nset startIt to false\ntell application \"System Events\"\n  set appProc to first application process whose bundle identifier is bundleId\n  if appProc exists then\n    if frontmost of appProc then\n      set visible of appProc to false\n    else\n      set frontmost of appProc to true\n    end if\n  else\n    set startIt to true\n  end if\nend tell\nif startIt then\n  tell application id bundleId to activate\nend if'"
           } ],
           "type" : "basic"
         }, {

@@ -1,0 +1,60 @@
+# config.yml
+# Express conditional logic as a small decision tree.
+# Each node can be:
+#   - a "if" node: contains "cond" (a python expression string) and "then"/"else" subnodes
+#   - a "value" node: contains "code" (a python expression string) that will be embedded in template
+#
+# The generator will walk this tree and produce a compact inline python expression
+# that matches your original templates (keeps runtime expressions like title, index, etc.).
+
+colors:
+  fg_default: "_40486A"
+  fg_active: "_6E7698"
+  fg_tab: "tab"
+  bold_token: "{fmt.bold}"
+
+symbols:
+  stack_symbol: " "
+
+format:
+  max_title_len: 30
+  truncate_to: 30
+  center_width_even: 6
+  center_width_odd: 5
+
+# Decision tree for selecting the "display name" part of the title.
+# This tree corresponds to logic:
+#   if title.startswith(('nvim', '~/')): pick last path segment; else: title
+# You can extend this tree with more rules.
+title_selector:
+  type: if
+  # cond: "title.startswith(('nvim', '~/'))"
+  cond:
+    func: startswith
+    args:
+      - nvim
+      - "~/"
+  then:
+    type: value
+    code: "title.split('/')[-1]"
+  _else:
+    type: value
+    code: "title"
+
+# Decision tree for final presentation (truncate or center)
+# It expects `display` variable (the output of title_selector)
+title_presentation:
+  type: if
+  cond: "title.rindex(title[-1]) + 1 > format.max_title_len"
+  then:
+    type: value
+    code: "f'{{display[:{format.truncate_to}]}}…'"
+  _else:
+    type: if
+    cond: "(title.rindex(title[-1]) + 1) % 2 == 0"
+    then:
+      type: value
+      code: "display.center(format.center_width_even)"
+    _else:
+      type: value
+      code: "display.center(format.center_width_odd)"
