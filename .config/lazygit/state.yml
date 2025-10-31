@@ -1,48 +1,14 @@
 lastupdatecheck: 0
 recentrepos:
-    - /Users/alifton
-    - /Users/alifton/Code/rust/nvim-oxi
-    - /Users/alifton/synack/client-modulith
-    - /Users/alifton/.local/share/nvim/lazy/avante.nvim
-    - /Users/alifton/Code/mcp-go
-    - /Users/alifton/Code/Matt-FTW-dotfiles
-    - /Users/alifton/.local/share/nvim/lazy/fzf-lua
-    - /Users/alifton/.local/share/nvim/lazy/neogit
-    - /Users/alifton/synack/frontend_client
-    - /Users/alifton/.local/share/nvim/lazy/LazyVim
-    - /Users/alifton/.local/share/nvim/lazy/nvim-lspconfig
-    - /Users/alifton/.local/share/nvim/lazy/mason-lspconfig.nvim
-    - /Users/alifton/synack/synack
-    - /Users/alifton/synack/api-automation-framework
-    - /Users/alifton/.local/share/nvim/lazy/multicursor.nvim
-    - /Users/alifton/.local/share/nvim/lazy/model.nvim
-    - /Users/alifton/.local/share/nvim/lazy/leap.nvim
-    - /Users/alifton/synack/synack-automation-e2e-tests
-    - /Users/alifton/.local/share/nvim/lazy/nvim-treesitter-textobjects
-    - /Users/alifton/.local/share/nvim/lazy/nvim-cmp
-    - /Users/alifton/.local/share/nvim/lazy/copilot.lua
-    - /Users/alifton/.local/share/nvim/lazy/mini.diff
-    - /Users/alifton/synack/frontend_researcher
-    - /Users/alifton/.local/share/nvim/lazy/mini.ai
-    - /Users/alifton/.local/share/nvim/lazy/conform.nvim
-    - /Users/alifton/.local/share/nvim/lazy/yanky.nvim
-    - /Users/alifton/.local/share/nvim/lazy/lualine.nvim
-    - /Users/alifton/.local/share/nvim/lazy/cyberdream
-    - /Users/alifton/.local/share/nvim/lazy/inc-rename.nvim
-    - /Users/alifton/.local/share/nvim/lazy/plenary.nvim
-    - /Users/alifton/synack/local-k8s-dev
-    - /Users/alifton/.local/share/nvim/lazy/snacks.nvim
-    - /Users/alifton/.local/share/nvim/lazy/noice.nvim
-    - /Users/alifton/.local/share/nvim/lazy/nvim-treesitter
-    - /Users/alifton/.local/share/nvim/lazy/mini.surround
-    - /Users/alifton/.local/share/nvim/lazy/lazy.nvim
+    - /Users/aaron
 startuppopupversion: 5
-lastversion: 0.42.0
+lastversion: 0.43.1
 customcommandshistory:
     - ecf5513d51ae77db42d810425829ead45a8a554a
 hidecommandlog: true
 ignorewhitespaceindiffview: false
 diffcontextsize: 2
+renamesimilaritythreshold: 50
 localbranchsortorder: recency
 remotebranchsortorder: alphabetical
 gitlogorder: author-date-order
