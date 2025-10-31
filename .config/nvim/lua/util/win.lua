@@ -7,6 +7,8 @@ function M.switch_to_highest_window()
   local windows = vim.api.nvim_list_wins()
   local highest_win = windows[1]
   local highest_zindex = vim.api.nvim_win_get_config(highest_win).zindex
+  if not highest_zindex then return end
+
   for _, win in ipairs(windows) do
     if vim.api.nvim_win_get_config(win).relative ~= "" then
       highest_win = win

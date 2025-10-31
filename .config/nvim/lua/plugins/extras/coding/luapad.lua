@@ -1,5 +1,6 @@
 return {
   "rafcamlet/nvim-luapad",
+  filetype = "lua",
   name = "luapad",
   config = function(_, opts)
     require("luapad").setup(opts)

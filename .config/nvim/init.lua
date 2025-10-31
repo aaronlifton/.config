@@ -1,10 +1,13 @@
 require("config.options_pre")
+-- bootstrap lazy.nvim, LazyVim and your plugins
 require("config.lazy")
--- vim.opt.runtimepath:remove(vim.fn.expand("~/.config/nvim"))
+
+-- TODO: when LazyVim dependency is removed
+-- require("config.options")
 
 vim.schedule(function()
-  require("config.options")
-  require("config.keymaps")
+  -- TODO: when LazyVim dependency is removed
+  -- require("config.keymaps")
 
   local custom_modules = {
     {

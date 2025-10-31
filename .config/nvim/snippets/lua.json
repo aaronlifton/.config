@@ -17,13 +17,7 @@
     "prefix": "local M"
   },
   "export module": {
-    "body": [
-      "local M = {}",
-      "--------------------------------------------------------------------------------",
-      "",
-      "$0--------------------------------------------------------------------------------",
-      "return M"
-    ],
+    "body": ["local M = {}", "", "$0", "", "return M"],
     "prefix": "export module"
   },
   "find all in string": {
@@ -33,7 +27,7 @@
       "\ttable.insert(${1:matches}, match)",
       "end"
     ],
-    "prefix": "find all in string"
+    "prefix": "fais"
   },
   "home": {
     "body": "os.getenv(\"HOME\")",
@@ -62,5 +56,29 @@
   "vim.inspect": {
     "body": "vim.inspect(${1:string})",
     "prefix": "ins"
+  },
+  "if not return nil": {
+    "body": ["if not ${1:condition} then return nil end"],
+    "prefix": ["if not", "if not then"]
+  },
+  "keymap": {
+    "prefix": ["keymap", "vim.keymap"],
+    "body": [
+      "vim.keymap.set(\"${1:mode}\", \"${2:keys}\", function()",
+      "  ${0}",
+      "end, { buffer = event.buffer, desc = \"${3:description}\" })"
+    ]
+  },
+  "pvi": {
+    "prefix": "pvi",
+    "body": ["print(vim.inspect(${0}))"]
+  },
+  "p": {
+    "prefix": "p",
+    "body": ["print(${0})"]
+  },
+  "vi": {
+    "prefix": "vi",
+    "body": ["vim.inspect(${0})"]
   }
 }

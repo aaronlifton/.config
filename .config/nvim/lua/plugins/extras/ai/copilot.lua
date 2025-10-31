@@ -157,7 +157,9 @@ return {
       --   end,
       -- })
       return {
-        model = "gpt-4.1",
+        -- model = "gpt-4.1",
+        -- model = "gpt-5"
+        model = "grok-code-fast-1",
         debug = true,
         temperature = 0,
         question_header = " " .. icons.ui.User .. " ",

@@ -15,3 +15,7 @@ if LazyVim.has("mini.ai") then
     },
   }
 end
+
+vim.keymap.set("n", "<leader>cug", function()
+  require("util.lang.go.ginkgo").prepare_ginkgo_command_from_clipboard()
+end, { noremap = true, silent = true })

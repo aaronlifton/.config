@@ -10,4 +10,10 @@ function M.get_leap_for_buf(buf)
   end
 end
 
+function M.buf_leap()
+  local buf = vim.api.nvim_get_current_buf()
+  local leap = M.get_leap_for_buf(buf)()
+  leap()
+end
+
 return M

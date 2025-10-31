@@ -54,12 +54,13 @@ return {
       { "<leader>l", group = "lazy" },
       { "<leader>a", "", desc = "+ai", mode = { "n", "v" } },
       { "<leader>o", "", desc = "+options", mode = { "n" }, icon = { icon = " ", color = "grey" } },
-      { "<leader>ax", group = "+controls", icon = { icon = "󰙵 ", color = "grey" } },
       { "<leader>L", group = "Notepads", icon = { icon = "󰓩 ", color = "green" } },
       { "<leader>cp", group = "Copy path", icon = { icon = "󰓩 " } },
-      -- { "g<C-r>", group = "Modify register", icon = { icon = "󰈔 ", color = "orange" } },
-      -- { "<leader>fl", group = "My Config", icon = { icon = " " } },
       { "<leader>gY", group = "Git Browse (copy)" },
+      -- { "g<C-r>", group = "Modify register", icon = { icon = "󰈔 ", color = "orange" } },
+      -- AI
+      { "<leader>ax", group = "+controls", icon = { icon = "󰙵 ", color = "grey" } },
+      { "<leader>au", group = "+utils", icon = { icon = " ", color = "grey" } },
     },
   },
   keys = {

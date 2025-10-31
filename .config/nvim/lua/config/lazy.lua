@@ -70,24 +70,24 @@ local opts = {
         desc = "Open lazygit log",
       },
 
-      ["<localleader>i"] = {
-        function(plugin)
-          Util.notify(vim.inspect(plugin), {
-            title = "Inspect " .. plugin.name,
-            lang = "lua",
-          })
-        end,
-        desc = "Inspect Plugin",
-      },
+      -- ["<localleader>i"] = {
+      --   function(plugin)
+      --     require("lazy.core.util").notify(vim.inspect(plugin), {
+      --       title = "Inspect " .. plugin.name,
+      --       lang = "lua",
+      --     })
+      --   end,
+      --   desc = "Inspect Plugin",
+      -- },
 
-      ["<localleader>t"] = {
-        function(plugin)
-          require("lazy.util").float_term(nil, {
-            cwd = plugin.dir,
-          })
-        end,
-        desc = "Open terminal in plugin dir",
-      },
+      -- ["<localleader>t"] = {
+      --   function(plugin)
+      --     require("lazy.util").float_term(nil, {
+      --       cwd = plugin.dir,
+      --     })
+      --   end,
+      --   desc = "Open terminal in plugin dir",
+      -- },
     },
   },
   icons = vim.g.icon_size == "small" and { kinds = require("util.icons").kinds } or {},

@@ -3,7 +3,6 @@
 -- Add any additional keymaps here
 local map = vim.keymap.set
 local o = vim.opt
-local lazyutil = require("lazy.util")
 local git_util = require("util.git")
 
 -- Buffers
@@ -139,9 +138,9 @@ map({ "n", "x", "o" }, "<M-h>", "_", { desc = "First character of Line" })
 map({ "n", "x", "o" }, "<M-b>", "b", { desc = "Previous Word", noremap = true })
 map({ "n", "x", "o" }, "<M-w>", "w", { desc = "Next Word", noremap = true })
 
---
 -- Delete and change without yanking (from Helix)
 map({ "n", "x" }, "<M-d>", '"_d', { desc = "Delete without yanking" })
+map({ "n", "x" }, "<M-x>", '"_x', { desc = "Delete without yanking" })
 map({ "n", "x" }, "<M-c>", '"_c', { desc = "Change without yanking" })
 map({ "n", "x" }, "<C-c>", '"_ciw', { desc = "Change word without yanking" })
 
@@ -254,8 +253,16 @@ end
 map("n", "<leader>ciL", linters, { desc = "Lint" })
 map("n", "<leader>cir", "<cmd>LazyRoot<cr>", { desc = "Root" })
 
-map("n", "<leader>lo", (":e %s"):format(vim.fn.stdpath("config")), { desc = "Edit config" })
-map("n", "<leader>lk", (":e %s/keymaps.lua"):format(vim.fn.stdpath("config")), { desc = "Edit keymaps" })
+-- stylua: ignore start
+map("n", "<leader>lo", (":e %s<CR>"):format(
+  vim.fs.joinpath(vim.fn.stdpath("config"), "lua/config/options.lua")  
+), { desc = "Edit options" })
+map("n", "<leader>lf", (":e %s/"):format( vim.fn.stdpath("config")), { desc = "Edit config file" })
+map("n", "<leader>lk", (":e %s<CR>"):format(
+  vim.fs.joinpath(vim.fn.stdpath("config"), "lua/config/keymaps.lua")  
+), { desc = "Edit keymaps" })
+-- stylua: ignore end
+
 --- Neotree
 -- map("n", "<M-e>", function()
 --   local reveal_file = vim.fn.expand("%:p")
@@ -367,6 +374,7 @@ end
 vim.api.nvim_create_user_command("LazygitYadm", function()
   Snacks.terminal({ "yadm", "enter", "lazygit" })
 end, { desc = "Lazygit (YADM)" })
+map("n", "<leader>g<M-y>", ":LazygitYadm<CR>", { desc = "Lazygit (YADM)" })
 
 -- map({"n", "x" }, "<leader>g<M-f>", function()
 --   vim.ui.select(require("util.git").mru_branches(), { prompt = "Branch: " }, function(branch)
@@ -381,7 +389,10 @@ end, { desc = "Lazygit (YADM)" })
 
 -- Terminals
 map("n", "<leader>fT", function()
-  Snacks.terminal(nil, { win = { position = "float", border = "rounded", backdrop = 60, width = 0.5, height = 0.5 } })
+  Snacks.terminal(nil, {
+    cwd = vim.fn.fnamemodify(Util.path.bufpath(), ":h"),
+    win = { position = "float", border = "rounded", backdrop = 60, width = 0.5, height = 0.5 },
+  })
 end, { desc = "Terminal (float)" })
 map("n", "<C-S-/>", "<leader>fT", { desc = "Terminal (float)", remap = true })
 
@@ -394,19 +405,17 @@ end, { desc = "Terminal (float, Root Dir)" })
 
 map("n", "<M-S-Bslash>", function()
   local buf = vim.api.nvim_get_current_buf()
+  if vim.fn.buflisted(buf) == 0 then return end
+
   local bufname = vim.api.nvim_buf_get_name(buf)
   if bufname:match("^term://.*yazi$") then
     vim.cmd("q")
     return
   end
 
-  local cwd = vim.fn.getcwd()
-  if bufname then
-    local path = vim.uv.fs_realpath(bufname)
-    cwd = vim.fn.fnamemodify(path, ":h")
-  end
-
-  Snacks.terminal("yazi", { cwd = cwd })
+  vim.cmd((":cd %s"):format(Util.path.bufdir(buf)))
+  vim.cmd(":Yazi cwd")
+  -- Snacks.terminal("yazi", { cwd = cwd, env = { NVIM_FLOAT_WINDOW = true } })
 end, { desc = "Yazi" })
 
 -- Custom leap functions
@@ -664,6 +673,9 @@ local T = require("util.fzf.finders")
 map("n", "<leader>s<M-l>", function()
   T.grep_lazyvim_files()
 end, { desc = "Grep lazyvim files" })
+map("n", "<leader>s<C-l>", function()
+  T.grep_lazyvim_files()
+end, { desc = "Grep lazyvim files" })
 map("n", "<leader>fl", function()
   T.find_lazyvim_files()
 end, { desc = "Find lazyvim files" })
@@ -772,6 +784,10 @@ Snacks.toggle({
   end,
 }):map("<leader>u<C-f>")
 
+-- Genertae keymaps for <leader><C-t> that start with the first letter of the
+-- language to set the filetype for the buffer
+--
+
 map("n", "gCc", function()
   local word = vim.fn.expand("<cword>")
   local camelCase = vim.fn.substitute(word, "\\(_\\)\\([a-z]\\)", "\\u\\2", "g")
@@ -798,79 +814,6 @@ map("n", "gCs", function()
   return "ciw" .. snakeCase .. "<esc>b"
 end, { expr = true, desc = "Convert to snake case" })
 
-map("n", "<leader>cug", function()
-  Util.lang.go.prepare_ginkgo_command_from_clipboard()
-end, { noremap = true, silent = true })
-
-map("n", "<leader>aPc", function()
-  local prompt_generator = require("util.prompt_generator")
-
-  local function input_helper_files(callback)
-    Snacks.input({
-      prompt = "Enter helper files (comma-separated):",
-      default = "",
-    }, function(helper_input)
-      local helper_files = {}
-      if helper_input and helper_input ~= "" then
-        for file in string.gmatch(helper_input, "([^,]+)") do
-          table.insert(helper_files, vim.trim(file))
-        end
-      end
-      callback(helper_files)
-    end)
-  end
-
-  local function input_new_file(old_file, start_line, end_line)
-    Snacks.input({
-      prompt = "Enter new file path:",
-      default = "",
-    }, function(new_file)
-      if not new_file or new_file == "" then return end
-
-      input_helper_files(function(helper_files)
-        local prompt = prompt_generator.generate_copy_endpoint_prompt({
-          old_file = old_file,
-          start_line = tonumber(start_line),
-          end_line = tonumber(end_line),
-          new_file = new_file,
-          helper_files = helper_files,
-        })
-
-        vim.fn.setreg("+", prompt)
-        vim.notify("Copied generated prompt to clipboard", vim.log.levels.INFO, { title = "Copy Endpoint" })
-      end)
-    end)
-  end
-
-  local function input_end_line(old_file, start_line)
-    Snacks.input({
-      prompt = "Enter end line number:",
-      default = "",
-    }, function(end_line)
-      if not end_line or end_line == "" then return end
-      input_new_file(old_file, start_line, end_line)
-    end)
-  end
-
-  local function input_start_line(old_file)
-    Snacks.input({
-      prompt = "Enter start line number:",
-      default = "",
-    }, function(start_line)
-      if not start_line or start_line == "" then return end
-      input_end_line(old_file, start_line)
-    end)
-  end
-
-  Snacks.input({
-    prompt = "Enter old file path:",
-    default = "",
-  }, function(old_file)
-    if not old_file or old_file == "" then return end
-    input_start_line(old_file)
-  end)
-end, { desc = 'Generate "Copy endpoint" prompt' })
-
 map("n", "<leader>14", function()
   Util.win.filetype()
 end, { desc = "Copy file line to clipboard" })
@@ -891,11 +834,35 @@ map("n", "<leader>15", function()
   vim.notify("Changed directory to: " .. file_dir, vim.log.levels.INFO)
 end, { desc = "CD to current file directory" })
 
-vim.keymap.set("n", "<leader>ca", function()
-  require("tiny-code-action").code_action({})
-end, { noremap = true, silent = true })
+-- map("n", "<leader>ca", function()
+--   require("tiny-code-action").code_action({})
+-- end, { noremap = true, silent = true })
 
-vim.keymap.set("n", "<leader>16", function()
+map("n", "<leader>16", function()
   local hyper_keys_path = "/Users/alifton/.hammerspoon/hyper_apps.lua"
   vim.cmd("e " .. hyper_keys_path)
 end, { desc = "edit .hammerspoon/hyper_apps.lua", noremap = true, silent = true })
+
+map("n", "<leader>ayC", function()
+  require("util.llm_context").codex.yank_line_with_diagnostics()
+end, { desc = "Yank line with diagnostics" })
+
+local llm_context_keymap = {
+  prefix = "<leader>ay",
+  modes = {
+    n = {},
+    v = {
+
+      yank_line_with_diagnostics = "D",
+    },
+  },
+}
+
+local config_file_keymap = {
+  kitty = {
+    lhs = "k",
+    rhs = "e ~/.config/kitty/kitty.conf",
+  },
+}
+
+local bind = require("util.keys.bind")

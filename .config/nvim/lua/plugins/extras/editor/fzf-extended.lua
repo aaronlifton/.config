@@ -6,11 +6,10 @@ local toggle_flag = function(flag)
 end
 
 --- Append an iglob pattern
----@param opts {search:string, resume:boolean}
+---@param opts fzf-lua.config.Grep
 ---@param path string
 local function _toggle_iglob(opts, path)
   local o = vim.tbl_deep_extend("keep", { resume = true }, opts.__call_opts)
-  -- vim.api.nvim_echo({ { vim.inspect(o), "Normal" } }, true, {})
 
   if o.search:find(path, nil, true) then
     o.search = o.search:gsub("%s*" .. vim.pesc(path), "")
@@ -184,7 +183,7 @@ return {
     dependencies = {
       {
         "drop-stones/fzf-lua-normal-mode",
-        enabled = false,
+        enabled = true,
         opts = {
           keys = {
             -- repeatable keys
@@ -194,8 +193,10 @@ return {
             { key = "G", action = "<A-G>" },
             { key = "<C-u>", action = "<C-u>" },
             { key = "<C-d>", action = "<C-d>" },
+            { key = "<M-v>", action = "<C-r>0" },
+            { key = "<C-w>", action = ":" },
             -- additional user input keys
-            { key = "s", action = "<your-jumps-keybind>", wait_user_input = true },
+            { key = "s", action = function() end, wait_user_input = true },
             -- exit keys
             { key = "q", action = "<Esc>", repeatable = false },
             { key = "<Enter>", action = "<CR>", repeatable = false },
@@ -241,6 +242,17 @@ return {
           -- async_or_timeout = true,
           async_or_timeout = 35000,
         },
+        codeaction_native = {
+          diff_opts = { ctxlen = 3 },
+          -- git-delta is automatically detected as pager, set `pager=false`
+          -- to disable, can also be set under 'lsp.code_actions.preview_pager'
+          -- recommended styling for delta
+          pager = [[delta --width=$COLUMNS --hunk-header-style="omit" --file-style="omit"]],
+        },
+
+        -- on_create = function()
+        --   vim.keymap.set("t", "<M-v>", "<C-r>0", { silent = true, buffer = true })
+        -- end,
         -- grep = {
         --   rg_glob = false, -- 1. Disable automatic --iglob injection by fzf-lua
         --   fn_transform_cmd = function(query, cmd, _)
@@ -259,6 +271,8 @@ return {
       })
     end,
     keys = {
+      -- This is handled by mini.pick instead
+      { "<leader>,", false },
       -- stylua: ignore start
       { "<leader><space>", function() pick("files", vim.tbl_extend("force", file_opts, { git_icons = false, fd_opts = fd_opts })) end, desc = "Find Files (Root Dir)" },
       -- { "<leader><S-space>", LazyVim.pick("files", vim.tbl_extend("force", file_opts, { git_icons = false, fd_opts = fd_opts, root = false })), desc = "Find Files (cwd)" },
@@ -364,6 +378,28 @@ return {
         end,
         desc = "Recently commited",
       },
+
+      {
+        "<C-x><C-f>",
+        function()
+          FzfLua.complete_path()
+        end,
+        desc = "Fuzzy complete path",
+        mode = { "n", "v", "i" },
+        silent = true,
+      },
+      {
+        "<C-x><C-f>",
+        function()
+          FzfLua.complete_file({
+            cmd = "rg --files",
+            winopts = { preview = { hidden = true } },
+          })
+        end,
+        desc = "Fuzzy complete file",
+        mode = { "n", "v", "i" },
+        silent = true,
+      },
       -- interferes with ins-completion, which is unused
       -- {
       --   "<C-x><C-f>",
@@ -393,6 +429,10 @@ return {
           })
         end,
         desc = "No-bind interal action test",
+      },
+      {
+        "<leader>s<C-a>",
+        function() end,
       },
       -- {
       --   "<leader>sX",

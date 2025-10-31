@@ -78,6 +78,22 @@ return {
               { win = "preview", title = "{preview}", border = "rounded", width = 0.6 },
             },
           },
+          default_adjusted = {
+            layout = {
+              box = "horizontal",
+              width = 0.8,
+              min_width = 75,
+              height = 0.8,
+              {
+                box = "vertical",
+                border = "none",
+                title = "{title} {live} {flags}",
+                { win = "input", height = 1, border = "rounded" },
+                { win = "list", border = "rounded" },
+              },
+              { win = "preview", title = "{preview}", border = "rounded", width = 0.65 },
+            },
+          },
         },
       },
       image = {

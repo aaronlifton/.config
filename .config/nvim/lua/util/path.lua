@@ -8,9 +8,77 @@
 ---@field copy_rel_file_line fun()
 local M = {}
 
+-- Sets the system clipboard to the given string
+---@param str string
 local function set_clipboard(str)
   vim.api.nvim_call_function("setreg", { "+", str })
 end
+
+-- From ~/.local/share/nvim/lazy/lazy.nvim/lua/lazy/core/util.lua#L74
+-- Normalize a file path, expanding `~` to the home directory
+-- and substituting backslashes with forward slashes.
+---@return string
+function M.norm(path)
+  if path:sub(1, 1) == "~" then
+    local home = vim.uv.os_homedir()
+    if home:sub(-1) == "\\" or home:sub(-1) == "/" then home = home:sub(1, -2) end
+    path = home .. path:sub(2)
+  end
+  path = path:gsub("\\", "/"):gsub("/+", "/")
+  return path:sub(-1) == "/" and path:sub(1, -2) or path
+end
+
+--- Get the cwd of the current file
+---
+---@param buf number|nil
+---@return string?|uv.error_name
+M.bufpath = function(buf)
+  buf = buf or vim.api.nvim_get_current_buf()
+  local normalized_path = M.norm(vim.api.nvim_buf_get_name(buf))
+  return vim.uv.fs_realpath(normalized_path)
+end
+
+---@param buf number|nil
+---@return string|nil
+M.bufdir = function(buf)
+  local real_path = M.bufpath(buf)
+  if real_path then return vim.fn.fnamemodify(real_path, ":h") end
+  return nil
+end
+
+function M.is_within_dir(path, dir)
+  local normalized_dir = dir:gsub("/+$", "")
+  local normalized_path = path:gsub("/+$", "")
+  if normalized_path == normalized_dir then return true end
+  return vim.startswith(normalized_path, normalized_dir .. "/")
+end
+
+-- M.bufpath_test = function()
+--   local bufpath = function(buf)
+--     buf = buf or vim.api.nvim_get_current_buf()
+--     local normalized_path = Util.path.norm(vim.api.nvim_buf_get_name(buf))
+--     vim.api.nvim_echo({ { "normalized", "Title" }, { vim.inspect(normalized_path), "Normal" } }, true, {})
+--     vim.api.nvim_echo(
+--       { { "fs_realpath", "Title" }, { vim.inspect(vim.uv.fs_realpath(normalized_path)), "Normal" } },
+--       true,
+--       {}
+--     )
+--     return vim.uv.fs_realpath(normalized_path)
+--   end
+--
+--   local wins = vim.api.nvim_list_wins()
+--   local wins_with_files = vim.iter(wins):filter(function(win)
+--     local buf = vim.api.nvim_win_get_buf(win)
+--     local name = vim.api.nvim_buf_get_name(buf)
+--     return name ~= ""
+--   end)
+--   local firstbuf = wins_with_files
+--     :map(function(win)
+--       return vim.api.nvim_win_get_buf(win)
+--     end)
+--     :nth(1)
+--   print(bufpath(firstbuf))
+-- end
 
 --- Get the absolute path of the current file.
 M.absolute = function()

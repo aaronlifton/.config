@@ -1,3 +1,4 @@
+-- Inspo: https://github.com/hoangcongminh/.dotfiles/blob/340643068f347eeb526043f3cd0349d9d54ff6ba/.config/nvim/lua/plugins/flutter.lua#L10
 return {
   {
     "nvim-flutter/flutter-tools.nvim",
@@ -5,8 +6,73 @@ return {
     dependencies = {
       "nvim-lua/plenary.nvim",
       "stevearc/dressing.nvim", -- optional for vim.ui.select
+      "RobertBrunhage/flutter-riverpod-snippets",
     },
-    config = true,
+    opts = {
+      ui = {
+        border = "solid",
+        -- border = "rounded",
+        notification_style = "native",
+      },
+      debugger = {
+        -- enabled = is_nightly,
+        -- run_via_dap = is_nightly,
+        exception_breakpoints = {},
+      },
+      outline = { auto_open = false },
+      decorations = {
+        statusline = { device = true, app_version = true },
+      },
+      widget_guides = { enabled = true, debug = false },
+      dev_log = { enabled = true, open_cmd = "tabedit" },
+      closing_tags = {
+        highlight = "ErrorMsg", -- Highlight closing tags of widgets
+        prefix = ">", -- Add prefix > to closing tags
+        enabled = true,
+      },
+      lsp = {
+        color = {
+          enabled = true,
+          background = true,
+          virtual_text = true,
+        },
+        settings = {
+          showTodos = false,
+          renameFilesWithClasses = "always",
+          updateImportsOnRename = true,
+          completeFunctionCalls = true,
+          lineLength = 100,
+        },
+      },
+    },
+    config = function(_, opts)
+      require("flutter-tools").setup(opts)
+
+      local function on_attach(_, bufnr)
+        vim.keymap.set("n", "<space>fa", vim.cmd.FlutterRun, opts)
+        vim.keymap.set("n", "<space>fq", vim.cmd.FlutterQuit, opts)
+        vim.keymap.set("n", "<space>fR", vim.cmd.FlutterRestart, opts)
+        vim.keymap.set("n", "<space>dv", vim.cmd.FlutterDevices, opts)
+        vim.keymap.set("n", "<space>o", vim.cmd.FlutterOutlineToggle, opts)
+        vim.keymap.set("n", "<Space>rl", vim.cmd.FlutterReload, opts)
+        vim.keymap.set("n", "<space>fpg", vim.cmd.FlutterPubGet, opts)
+        vim.keymap.set("n", "<space>fd", vim.cmd.FlutterLogToggle, opts)
+        vim.keymap.set("n", "<space>fl", vim.cmd.FlutterLogClear, opts)
+        vim.keymap.set("n", "<space>rn", vim.cmd.FlutterRename, opts)
+
+        vim.api.nvim_create_user_command("FlutterBuildRunner", bufnr, function()
+          vim.cmd("Dispatch flutter pub get; flutter pub run build_runner build --delete-conflicting-outputs")
+        end, { force = true })
+
+        vim.api.nvim_create_user_command("FlutterCLean", bufnr, function()
+          vim.cmd("Dispatch flutter clean")
+        end, { force = true })
+
+        vim.api.nvim_create_user_command("FlutterRunRelease", bufnr, function()
+          vim.cmd("Dispatch flutter clean; flutter pub get; flutter run --release")
+        end, { force = true })
+      end
+    end,
     -- config = function(_, opts)
     --   -- alternatively you can override the default configs
     --   require("flutter-tools").setup({
@@ -114,17 +180,28 @@ return {
     -- end,
   },
   {
-    "nvim-lualine/lualine.nvim",
-    optional = true,
-    event = "VeryLazy",
+    "nvim-neotest/neotest",
+    dependencies = {
+      { "sidlatau/neotest-dart" },
+    },
     opts = function(_, opts)
-      table.insert(
-        opts.sections.lualine_x,
-        2,
-        LazyVim.lualine.status(LazyVim.config.icons.kinds.Property, function()
-          return vim.g.flutter_tools_decorations.app_version
-        end)
-      )
+      vim.list_extend(opts.adapters, {
+        require("neotest-dart")({ command = "flutter" }),
+      })
     end,
   },
+  -- {
+  --   "nvim-lualine/lualine.nvim",
+  --   optional = true,
+  --   event = "VeryLazy",
+  --   opts = function(_, opts)
+  --     table.insert(
+  --       opts.sections.lualine_x,
+  --       2,
+  --       LazyVim.lualine.status(LazyVim.config.icons.kinds.Property, function()
+  --         return vim.g.flutter_tools_decorations.app_version
+  --       end)
+  --     )
+  --   end,
+  -- },
 }

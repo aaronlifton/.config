@@ -1,3 +1,4 @@
+-- TODO: remove this class, just use remote
 ---@class util.git.github
 local M = {}
 

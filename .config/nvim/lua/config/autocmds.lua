@@ -65,21 +65,29 @@ local enabled_autocommands = {
 --   end,
 -- })
 
--- NOTE:
-ac({ "VimEnter" }, {
-  desc = "Nvim user event that trigger a few ms after nvim starts",
-  callback = function()
-    -- If nvim is opened passing a filename, trigger the event inmediatelly.
-    if #vim.fn.argv() >= 1 then
-      -- In order to avoid visual glitches.
-      Util.trigger_event("User BaseDefered", true)
-      Util.trigger_event("BufEnter", true) -- also, initialize tabline_buffers.
-    else -- Wait some ms before triggering the event.
-      vim.defer_fn(function()
-        Util.trigger_event("User BaseDefered")
-      end, 70)
-    end
-  end,
+-- NOTE: for testing heirline
+-- ac({ "VimEnter" }, {
+--   desc = "Nvim user event that trigger a few ms after nvim starts",
+--   callback = function()
+--     if not package.loaded["heirline"] then return end
+--
+--     -- If nvim is opened passing a filename, trigger the event inmediatelly.
+--     if #vim.fn.argv() >= 1 then
+--       -- In order to avoid visual glitches.
+--       Util.trigger_event("User BaseDefered", true)
+--       Util.trigger_event("BufEnter", true) -- also, initialize tabline_buffers.
+--     else -- Wait some ms before triggering the event.
+--       vim.defer_fn(function()
+--         Util.trigger_event("User BaseDefered")
+--       end, 70)
+--     end
+--   end,
+-- })
+
+-- NOTE: https://github.com/LazyVim/LazyVim/issues/80#issuecomment-1478662212
+ac("BufEnter", {
+  group = ag("LazyVimOverrides", { clear = false }),
+  command = "set formatoptions-=o",
 })
 
 -- After
@@ -107,9 +115,9 @@ ac("FileType", {
   callback = close_buf,
 })
 
-local group_id = ag("LuaReloadModule", { clear = true })
+local lua_reload_ag = ag("LuaReloadModule", { clear = true })
 ac("BufWritePost", {
-  group = group_id,
+  group = lua_reload_ag,
   -- /opt/homebrew/Cellar/neovim/0.11.4/share/nvim/runtime/doc/autocmd.txt:1273
   pattern = "~/.config/nvim/lua/*.lua",
   callback = function()
@@ -425,9 +433,12 @@ ac("FileChangedShell", {
     local filename = vim.fn.expand("<afile>")
 
     if vim.v.fcs_reason == "conflict" then
-      require("0x2a.notifications").warning(
-        [[Warning: File "]] .. filename .. [[" has changed and the buffer was changed in Vim as well]]
+      vim.fn.notify(
+        [[Warning: File "]] .. filename .. [[" has changed and the buffer was changed in Vim as well]],
+        vim.log.levels.WARN
       )
     end
   end,
 })
+
+local avante_group = ag("Avante", { clear = true })

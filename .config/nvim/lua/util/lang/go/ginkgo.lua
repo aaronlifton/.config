@@ -38,7 +38,7 @@ function M.prepare_ginkgo_command_from_clipboard()
   -- 4. Construct the final command string
   --    The format is: ❯ godotenv ... --focus='<escaped_clipboard_content>' -v <final_path_part>
   --    Using single quotes for the focus string is safer for shell execution
-  local command_template = [[❯ godotenv -f .env.test ginkgo --tags=component --focus='%s' -v %s]]
+  local command_template = [[godotenv -f .env.test ginkgo --tags=component --focus='%s' -v %s]]
   local final_command = command_template:format(escaped_clipboard_content, final_path_part)
 
   -- 5. Set the system clipboard register (+) to the new command string

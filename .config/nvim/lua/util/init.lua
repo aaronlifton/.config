@@ -1,28 +1,32 @@
 ---@class util
----@field async util.async
----@field git util.git
----@field leap util.leap
----@field lsp util.lsp
----@field writing util.writing
----@field table util.table
----@field win util.win
----@field ui util.ui
----@field system util.system
----@field selection util.selection
----@field model util.model
 ---@field ai util.ai
----@field nui util.nui
----@field fzf util.fzf
----@field treesitter util.treesitter
+---@field async util.async
+---@field bind util.bind
 ---@field bufferline util.bufferline
+---@field colors util.colors
 ---@field format util.format
----@field path util.path
+---@field fzf util.fzf
+---@field git util.git
 ---@field lang util.lang
+---@field leap util.leap
 ---@field lint util.lint
+---@field llmContext util.llmContext
+---@field lsp util.lsp
+---@field model util.model
+---@field nui util.nui
+---@field path util.path
+---@field selection util.selection
 ---@field snacks util.snacks
 ---@field string util.string
----@field colors util.colors
-local M = {}
+---@field system util.system
+---@field table util.table
+---@field treesitter util.treesitter
+---@field ui util.ui
+---@field win util.win
+---@field writing util.writing
+local M = {
+  verbose = false,
+}
 
 setmetatable(M, {
   __index = function(t, k)
@@ -46,6 +50,9 @@ M.config = setmetatable({}, {
   end,
 })
 
+function M.notify(msg, level)
+  if M.verbose then vim.notify(msg, level or vim.log.levels.INFO) end
+end
 --- Convenient wapper to save code when we Trigger events.
 --- To listen for an event triggered by this function you can use `autocmd`.
 --- @param event string Name of the event.
@@ -70,6 +77,32 @@ function M.trigger_event(event, is_urgent)
   else
     vim.schedule(trigger)
   end
+end
+
+M.lazy_require = function(module)
+  local mod = nil
+
+  local function load()
+    if not mod then
+      mod = require(module)
+      package.loaded[module] = mod
+    end
+    return mod
+  end
+  -- if already loaded, return the module
+  -- otherwise return a lazy module
+  return type(package.loaded[module]) == "table" and package.loaded[module]
+    or setmetatable({}, {
+      __index = function(_, key)
+        return load()[key]
+      end,
+      __newindex = function(_, key, value)
+        load()[key] = value
+      end,
+      __call = function(_, ...)
+        return load()(...)
+      end,
+    })
 end
 
 return M

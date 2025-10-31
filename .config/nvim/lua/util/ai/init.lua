@@ -1,5 +1,6 @@
 ---@class util.ai
 ---@field context util.ai.context
+---@field avante util.ai.avante
 local M = {}
 
 M.models = {

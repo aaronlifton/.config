@@ -8,7 +8,7 @@ M.fg = "#ffffff"
 M.day_brightness = 0.3
 
 ---@param hex_str string hexadecimal value of a color
-local hex_to_rgb = function(hex_str)
+local hex2rgb = function(hex_str)
   local hex = "[abcdef0-9][abcdef0-9]"
   local pat = "^#(" .. hex .. ")(" .. hex .. ")(" .. hex .. ")$"
   hex_str = string.lower(hex_str)
@@ -23,8 +23,8 @@ end
 ---@param bg string background color
 ---@param alpha number number between 0 and 1. 0 results in bg, 1 results in fg
 function M.blend(fg, bg, alpha)
-  bg = hex_to_rgb(bg)
-  fg = hex_to_rgb(fg)
+  bg = hex2rgb(bg)
+  fg = hex2rgb(fg)
 
   local blendChannel = function(i)
     local ret = (alpha * fg[i] + ((1 - alpha) * bg[i]))
@@ -37,8 +37,8 @@ end
 -- /Users/alifton/.local/share/nvim/lazy/tokyonight/lua/tokyonight/util.lua
 function M.blend2(foreground, alpha, background)
   alpha = type(alpha) == "string" and (tonumber(alpha, 16) / 0xff) or alpha
-  local bg = rgb(background)
-  local fg = rgb(foreground)
+  local bg = hex2rgb(background)
+  local fg = hex2rgb(foreground)
 
   local blendChannel = function(i)
     local ret = (alpha * fg[i] + ((1 - alpha) * bg[i]))
@@ -150,7 +150,7 @@ local function rgb2Hex(rgb)
 end
 
 function M.increase_saturation(hex, percentage)
-  local rgb = hex_to_rgb(hex)
+  local rgb = hex2rgb(hex)
 
   local saturation_float = percentage
 

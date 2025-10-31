@@ -1,0 +1,60 @@
+{
+  "describe": {
+    "prefix": "desc",
+    "body": "describe('${1:description}', () => {\n\t${0}\n})"
+  },
+  "desc": {
+    "body": ["describe('${1:my thing}', () => {", "\t$0", "})"],
+    "prefix": "desc2"
+  },
+  "it": {
+    "prefix": "it",
+    "body": "it('${1:description}', () => {\n\t${0}\n})"
+  },
+  "it async": {
+    "prefix": "ita",
+    "body": "it('${1:description}', async () => {\n\t${0}\n})"
+  },
+  "beforeAll": {
+    "prefix": "ba",
+    "body": "beforeAll(async () => {\n\t${0}\n})"
+  },
+  "beforeEach": {
+    "prefix": "bfe",
+    "body": "beforeEach(() => {\n\t${0}\n})"
+  },
+  "beforeEachAsync": {
+    "prefix": "bfea",
+    "body": "beforeEach(async () => {\n\t${0}\n})"
+  },
+  "afterAll": {
+    "prefix": "aa",
+    "body": "afterAll(() => {\n\t${0}\n})"
+  },
+  "afterEach": {
+    "prefix": "afe",
+    "body": "afterEach(() => {\n\t${0}\n})"
+  },
+  "waitFor": {
+    "prefix": "wf",
+    "body": "await waitFor(() => {\n${0}\n})"
+  },
+  "constContainer": {
+    "prefix": "cc",
+    "body": "const { container } = "
+  },
+  "expectMatchSnapshot": {
+    "prefix": "ems",
+    "body": "expect(${1:element}).toMatchSnapshot()"
+  },
+  "screen.debug": {
+    "prefix": "sd",
+    "body": "screen.debug()$0",
+    "description": "screen.debug"
+  },
+  "screen.logTestingPlaygroundURL": {
+    "prefix": "playground",
+    "body": "screen.logTestingPlaygroundURL()$0",
+    "description": "screen.logTestingPlaygroundURL"
+  }
+}

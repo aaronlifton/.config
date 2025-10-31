@@ -14,6 +14,11 @@ return {
       { "<leader>E", "<cmd>Yazi cwd<cr>", desc = "Yazi (Cwd)" },
       { "<a-e>", "<cmd>Yazi toggle<cr>", desc = "Resume Last Yazi Session" },
     },
+    cmd = {
+      "Yazi",
+      "Yazi cwd",
+      "Yazi toggle",
+    },
     opts = {
       open_for_directories = true,
       floating_window_scaling_factor = 0.8,
@@ -26,14 +31,93 @@ return {
         grep_in_directory = "fzf-lua",
         grep_in_selected_files = "fzf-lua",
         resolve_relative_path_application = "grealpath",
+        resolve_relative_path_implementation = function(args, get_relative_path)
+          -- Resolve relative paths from the current Neovim cwd while offering a few
+          -- fun alternate renderings (Markdown links, GitHub URLs).
+          local cwd = vim.fn.getcwd()
+          local cwd_abs = vim.fn.fnamemodify(cwd, ":p")
+          local selected_abs_path = vim.fn.fnamemodify(args.selected_file, ":p")
+
+          local function is_within_dir(path, dir)
+            local normalized_dir = dir:gsub("/+$", "")
+            local normalized_path = path:gsub("/+$", "")
+            if normalized_path == normalized_dir then return true end
+            return vim.startswith(normalized_path, normalized_dir .. "/")
+          end
+
+          local function default_fallback()
+            return get_relative_path(args)
+          end
+
+          if not is_within_dir(selected_abs_path, cwd_abs) then
+            -- Fall back to the configured resolver (grealpath) when the target
+            -- file does not live inside the current working directory.
+            return default_fallback()
+          end
+
+          local relative_from_cwd = get_relative_path({
+            selected_file = args.selected_file,
+            source_dir = cwd,
+          })
+
+          local mode = vim.g.yazi_relative_path_mode or "smart"
+          if mode == "smart" then
+            if vim.bo.filetype == "markdown" then
+              mode = "markdown"
+            else
+              -- use "plain" for non-markdown files
+              mode = "plain"
+            end
+          end
+
+          local resolvers = require("util.yazi.resolvers")
+
+          local Resolver = resolvers[mode]
+          if Resolver == nil then
+            vim.notify(
+              string.format("Yazi resolver mode '%s' not found, falling back to default", mode),
+              vim.log.levels.WARN,
+              { title = "Yazi" }
+            )
+
+            return relative_from_cwd
+          else
+            return Resolver.resolve(selected_abs_path, relative_from_cwd)
+          end
+        end,
       },
       keymaps = {
         ["show-help"] = "~",
       },
+      hooks = {
+        yazi_opened = function(preselected_path, yazi_buffer_id, config)
+          -- you can optionally modify the config for this specific yazi
+          -- invocation if you want to customize the behaviour
+
+          -- Reset horizontal scroll if insert mode is exited
+          vim.keymap.set("n", "<M-r>", "jk0", { buffer = yazi_buffer_id })
+
+          local winid = vim.fn.bufwinid(yazi_buffer_id)
+
+          if vim.api.nvim_win_is_valid(winid) then
+            local edgy_editor = require("edgy.editor")
+            if type(edgy_editor.get_win) ~= "function" then
+              vim.notify("Edgy API must have changed!", vim.log.levels.DEBUG)
+              return
+            end
+
+            if edgy_editor.get_win(winid) then vim.w[winid].edgy = true end
+          end
+          vim.api.nvim_buf_set_var(yazi_buffer_id, "yazi_context", "edgy")
+        end,
+        -- on_yazi_ready = function(buffer, config, process_api)
+        --   require("yazi").yazi()
+        -- end,
+      },
     },
     -- 👇 if you use `open_for_directories=true`, this is recommended
     init = function()
-      -- mark netrw as loaded so it's not loaded at all
+      -- mark netrw as loaded sinito it's not loaded at all
       vim.g.loaded_netrwPlugin = 1
     end,
   },
@@ -53,11 +137,11 @@ return {
     "folke/edgy.nvim",
     optional = true,
     opts = function(_, opts)
-      opts.left = opts.left or {}
-      table.insert(opts.left, {
+      opts.left = opts.left or {} ---@type (Edgy.View.Opts|string)[]
+      local yazi_view --- @type (Edgy.View.Opts)
+      yazi_view = {
         ft = "yazi",
         title = "Yazi",
-        size = { width = 45 },
         keys = {
           ["<C-Right>"] = function(win)
             win:resize("width", 4)
@@ -67,10 +151,15 @@ return {
             win:resize("width", -4)
           end,
         },
-      })
+        wo = {
+          sidescrolloff = 0,
+          winfixbuf = true,
+        },
+      }
+      table.insert(opts.left, yazi_view)
       for _, pos in ipairs({ "top", "bottom", "left", "right" }) do
-        opts[pos] = opts[pos] or {}
-        table.insert(opts[pos], {
+        opts[pos] = opts[pos] or {} ---@type (Edgy.View.Opts|string)[]
+        local snacks_terminal_view = { --- @type (Edgy.View.Opts)
           ft = "snacks_terminal",
           size = { height = 0.4 },
           title = "%{b:snacks_terminal.id}: %{b:term_title}",
@@ -80,7 +169,8 @@ return {
               and vim.w[win].snacks_win.relative == "editor"
               and not vim.w[win].trouble_preview
           end,
-        })
+        }
+        table.insert(opts[pos], snacks_terminal_view)
       end
     end,
   },

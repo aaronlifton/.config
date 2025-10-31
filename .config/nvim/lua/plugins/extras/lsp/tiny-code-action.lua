@@ -24,6 +24,18 @@ return {
       },
     },
     event = "LspAttach",
+    keys = {
+      {
+        "<space>ca",
+        function()
+          require("tiny-code-action").code_action({})
+        end,
+        mode = { "n", "x" },
+        desc = "Code Action",
+        noremap = true,
+        silent = true,
+      },
+    },
     opts = {
       --- The backend to use, currently only "vim", "delta", "difftastic", "diffsofancy" are supported
       -- backend = "vim",
@@ -44,7 +56,7 @@ return {
       --    -- text_based = "Fix all" => "f", "Fix others" => "o" (first non assigned letter of the action)
       --    -- text_diff_based = "Fix all" => "fa", "Fix others" => "fo" smarter than text_based
       -- }
-      -- VALID_PICKERS = { telescope = true, snacks = true, select = true, buffer = true, }
+      -- VALID_PICKERS = { telescope = true, snacks = true, select = true, buffer = true }
       picker = "snacks",
       backend_opts = {
         delta = {

@@ -14,7 +14,7 @@ return {
         { path = "lazydev.nvim", words = { "lazydev" } },
         { path = "neotest", words = { "neotest%." } },
         { path = "nvim-dap-ui", words = { "dap%." } },
-        { path = "fzf-lua", words = { "fzf%." } },
+        { path = "fzf-lua", words = { "fzf-lua%." } },
         { path = "codeium.vim", words = { "codeium%." } },
         { path = "conform.nvim", words = { "conform%." } },
         { path = "copilot.lua", words = { "copilot%." } },

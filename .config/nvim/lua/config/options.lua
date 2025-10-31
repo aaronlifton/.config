@@ -6,8 +6,6 @@ local env = vim.env
 local o = vim.opt
 local g = vim.g
 local config_path = vim.fn.stdpath("config")
-local diagnostic = vim.diagnostic
-local sev = diagnostic.severity
 
 ---Get the full path to the LazyVim src dir
 ---@return string
@@ -24,7 +22,6 @@ end
 -- Fix for https://github.com/neovim/neovim/issues/31675
 vim.hl = vim.highlight
 
-o.formatoptions = "jcroqlnt" -- tcqj
 o.shell = "fish"
 o.spell = false
 o.spelllang:append("en_us")
@@ -35,6 +32,7 @@ o.sps = "file:" .. config_path .. "/spell/sugg,best"
 o.swapfile = false -- This must be set to true `recover` and `undo`
 o.textwidth = 80
 -- o.winborder = "rounded"
+-- o.colorcolumn = "80"
 
 -- Disable annoying cmd line stuff
 o.showcmd = false
@@ -44,11 +42,15 @@ o.cmdheight = 0
 -- Disable mouse
 -- o.mouse = ""
 
--- o.formatoptions = "jcrqlnt" -- "jcroqlnt" -- tcqj
--- o.colorcolumn = "80"
--- Custom global options
--- g.lazyvim_picker = "fzf" -- Already enabled by LazyVim fzf extra
--- g.lazyvim_picker = "telescope" -- for testing plugins
+-- LazyVim default:
+-- o.formatoptions = "jcroqlnt" -- tcqj
+
+-- Remove 'o':
+-- TODO: when LazyVim dependency is removed
+-- o.formatoptions = "jcrqlnt"
+-- vim.opt.formatoptions:remove({ "o" })
+-------------------------------------------------
+
 -- Custom global options
 g.lsp_goto_source = "fzf" -- "fzf", "glance"
 g.lualine_info_extras = true
@@ -57,7 +59,11 @@ g.highlight_provider = "mini.hipatterns" -- "nvim-highlight-colors", "mini.hipat
 g.markdown_previewer = "markdown-preview" -- "markdown-preview", "peek"
 g.smooth_scroll_provider = "snacks" -- "cinnamon", mini.animate", "snacks"
 g.dprint_needs_config = true
+-- g.lazyvim_picker = "fzf" -- Already enabled by LazyVim fzf extra
+-- g.lazyvim_picker = "telescope" -- for testing plugins
 
+-------------------------------------------------
+-- Lazyvim options
 -- g.lazyvim_cmp = "nvim-cmp" -- "nvim-cmp", "blink.cmp"
 g.lazyvim_cmp = "blink.cmp"
 g.cmp_widths = { abbr = 80, menu = 30 }
@@ -74,6 +80,7 @@ g.editorconfig = true
 env.XDG_CACHE_HOME = env.XDG_CACHE_HOME or env.HOME .. "/.cache"
 env.XDG_CONFIG_HOME = env.XDG_CONFIG_HOME or env.HOME .. "/.config"
 env.XDG_DATA_HOME = env.XDG_DATA_HOME or env.HOME .. "/.local/share"
+env.XDG_STATE_HOME = env.XDG_STATE_HOME or env.HOME .. "/.local/state"
 
 -- Install via `pip install neovim-remote`
 if vim.fn.executable("nvr") == 1 then

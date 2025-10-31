@@ -1,7 +1,8 @@
 return {
+  { "wakatime/vim-wakatime", lazy = false },
   {
     "fiqryq/wakastat.nvim",
-    dependencies = { "rebelot/heirline.nvim" },
+    dependencies = { "rebelot/heirline.nvim", optional = true },
     config = function()
       require("wakastat").setup({
         args = { "--today" }, -- or "--week", "--month"

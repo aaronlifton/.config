@@ -3,7 +3,6 @@ return {
   {
     "folke/sidekick.nvim",
     keys = {
-      -- nes is also useful in normal mode
       {
         "<leader>aN",
         function()
@@ -18,6 +17,13 @@ return {
           require("sidekick.cli").toggle({ name = "codex", focus = true })
         end,
         desc = "Sidekick Codex Toggle",
+      },
+      {
+        "<leader>aC",
+        function()
+          require("sidekick.cli").toggle({ name = "claude", focus = true })
+        end,
+        desc = "Sidekick Claude Toggle",
       },
     },
   },

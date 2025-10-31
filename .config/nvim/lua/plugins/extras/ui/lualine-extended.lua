@@ -110,6 +110,9 @@ return {
 
       table.insert(opts.sections.lualine_x, 2, { "lsp_status" })
 
+      -- vim.list_extend(opts.extensions, { "avante" })
+      --------------------------------------------------------------------------
+
       if enable_tabs then
         opts.tabline = {
           lualine_a = { "buffers" },

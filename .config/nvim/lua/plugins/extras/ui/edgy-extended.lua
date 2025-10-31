@@ -56,7 +56,8 @@ return {
       -- end
       -- if dbui_idx then opts.right[#opts.right + 1] = table.remove(opts.right, dbui_idx) end
 
-      opts.keys["e"] = toggle_auto_expand_width
+      if LazyVim.has_extra("editor.neo-tree") then opts.keys["e"] = toggle_auto_expand_width end
+
       opts.right = {
         {
           title = "Outline",

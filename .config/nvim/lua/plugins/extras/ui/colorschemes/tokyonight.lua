@@ -36,6 +36,13 @@ return {
 
     --- You can override specific highlights to use other groups or a hex color
     --- function will be called with a Highlights and ColorScheme table
-    on_highlights = function(highlights, colors) end,
+    on_highlights = function(hl, c)
+      require("tokyonight.colors").setup({ style = "moon" })
+      local util = require("tokyonight.util")
+
+      hl.LeapMatch = { bg = c.magenta2, fg = c.fg, bold = true }
+      hl.LeapLabel = { fg = c.magenta2, bold = true }
+      hl.LeapBackdrop = { fg = c.dark3 } -- #737aa2
+    end,
   },
 }

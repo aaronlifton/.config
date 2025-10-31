@@ -1,4 +1,4 @@
-local trigger_remote_v_immediately = false
+local trigger_remote_v_immediately = true
 local paste_on_remote_yank = true
 
 local config = {
@@ -240,17 +240,10 @@ return {
   {
     "ggandor/leap.nvim",
     keys = {
+      -- stylua: ignore start
       -- 2025 reccomended keybindings (instead of s/S for different directions on same page)
-      {
-        "s",
-        "<Plug>(leap)",
-        { "n", "x", "o" },
-      },
-      {
-        "S",
-        "<Plug>(leap-from-window)",
-        "n",
-      },
+      { "s", "<Plug>(leap)", { "n", "x", "o" } },
+      { "S", "<Plug>(leap-from-window)", "n" },
       {
         "R",
         function()
@@ -290,20 +283,8 @@ return {
       },
       -- NOTE: use `c_CTRL-G` and `c_CTRL-T` to move between matches without
       -- finishing the search.
-      {
-        "g/",
-        function()
-          require("leap.remote").action({ jumper = "/" })
-        end,
-        { "n", "o" },
-      },
-      {
-        "g?",
-        function()
-          require("leap.remote").action({ jumper = "?" })
-        end,
-        { "n", "o" },
-      },
+      { "g/", function() require("leap.remote").action({ jumper = "/" }) end, { "n", "o" } },
+      { "g?", function() require("leap.remote").action({ jumper = "?" }) end, { "n", "o" } },
       -- Remote K:
       -- {
       --   "g<M-k>",
@@ -313,13 +294,7 @@ return {
       --   desc = "Leap Remote K",
       -- },
       -- Remote gx:
-      {
-        "gX",
-        function()
-          require("leap.remote").action({ input = "gx" })
-        end,
-        desc = "Leap Remote gx",
-      },
+      { "gX", function() require("leap.remote").action({ input = "gx" }) end, desc = "Leap Remote gx" },
       {
         "<leader>ol",
         function()
@@ -329,16 +304,9 @@ return {
         desc = "Set leap mappings",
       },
       -- evil-snipe
-      {
-        "z",
-        "<Plug>(leap-forward-till)",
-        mode = { "x", "o" },
-      },
-      {
-        "Z",
-        "<Plug>(leap-backward-till)",
-        mode = { "x", "o" },
-      },
+      { "z", "<Plug>(leap-forward-till)", mode = { "x", "o" } },
+      { "Z", "<Plug>(leap-backward-till)", mode = { "x", "o" } },
+      -- stylua: ignore end
     },
     opts = {
       equivalence_classes = { " \t\r\n", "([{", ")]}", "'\"`" },
@@ -358,6 +326,7 @@ return {
       require("leap.user").set_repeat_keys("<enter>", "<backspace>")
 
       config.always_show_labels_at_beginning_of_match()
+      config.restore_default_hl("astrodark")
 
       experimental_features.one_char_search()
 

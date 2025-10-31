@@ -54,4 +54,68 @@ function M.blame_line(opts)
   return Snacks.terminal(cmd, opts)
 end
 
+-- Gets the github URL via remote.
+-- https://github.com/spider-rs/spider/blob/main/spider_cli/src/main.rs#L13
+function M.get_github_url_via_remote()
+  local git = "git"
+  local root = Snacks.git.get_root()
+  if is_yadm_root(root) then git = "yadm" end
+  local remote = vim.fn.system({ git, "-C", root, "config", "--get", "remote.origin.url" }):gsub("\n", "")
+  if remote == "" then return nil, "No remote found" end
+
+  -- Convert SSH URL to HTTPS URL
+  local https_url
+  if remote:match("^git@") then
+    -- SSH format: git@github.com:user/repo.git
+    https_url = remote:gsub("git@([^:]+):", "https://%1/"):gsub("%.git$", "")
+  elseif remote:match("^https://") then
+    -- Already HTTPS format
+    https_url = remote:gsub("%.git$", "")
+  else
+    return nil, "Unsupported remote URL format"
+  end
+
+  return https_url
+end
+
+function M.get_github_codeview_url_for_line()
+  local cursor = vim.api.nvim_win_get_cursor(0)
+  local line = cursor[1]
+  local file = vim.api.nvim_buf_get_name(0)
+  local root = Snacks.git.get_root()
+  local git = "git"
+  if is_yadm_root(root) then git = "yadm" end
+  local branch = vim.fn.system({ git, "-C", root, "rev-parse", "--abbrev-ref", "HEAD" }):gsub("\n", "")
+  if branch == "" then return nil, "Could not determine current branch" end
+
+  local relative_path = file:sub(#root + 2) -- +2 to account for the trailing slash
+
+  local remote_url, err = M.get_github_url_via_remote()
+  if not remote_url then return nil, err end
+
+  -- Construct the GitHub URL
+  local github_url = string.format("%s/blob/%s/%s#L%d", remote_url, branch, relative_path, line)
+  return github_url
+end
+
+function M.get_github_codeview_url_for_line()
+  local cursor = vim.api.nvim_win_get_cursor(0)
+  local line = cursor[1]
+  local file = vim.api.nvim_buf_get_name(0)
+  local root = Snacks.git.get_root()
+  local git = "git"
+  if is_yadm_root(root) then git = "yadm" end
+  local branch = vim.fn.system({ git, "-C", root, "rev-parse", "--abbrev-ref", "HEAD" }):gsub("\n", "")
+  if branch == "" then return nil, "Could not determine current branch" end
+
+  local relative_path = file:sub(#root + 2) -- +2 to account for the trailing slash
+
+  local remote_url, err = M.get_github_url_via_remote()
+  if not remote_url then return nil, err end
+
+  -- Construct the GitHub URL
+  local github_url = string.format("%s/blob/%s/%s#L%d", remote_url, branch, relative_path, line)
+  return github_url
+end
+
 return M

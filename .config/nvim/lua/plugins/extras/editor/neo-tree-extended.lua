@@ -140,6 +140,26 @@ return {
           local relative_path = M.remove_cwd(absolute_path)
           vim.fn.setreg("+", relative_path)
         end,
+        -- Add files to Avante
+        avante_add_files = function(state)
+          local node = state.tree:get_node()
+          local filepath = node:get_id()
+          local relative_path = require("avante.utils").relative_path(filepath)
+
+          local sidebar = require("avante").get()
+
+          local open = sidebar:is_open()
+          -- ensure avante sidebar is open
+          if not open then
+            require("avante.api").ask()
+            sidebar = require("avante").get()
+          end
+
+          sidebar.file_selector:add_selected_file(relative_path)
+
+          -- remove neo tree buffer
+          if not open then sidebar.file_selector:remove_selected_file("neo-tree filesystem [1]") end
+        end,
       },
       window = {
         ---@type table<string, string|fun(state:NeoTreeState)|table<string, string|fun(state:NeoTreeState)>>
@@ -237,6 +257,7 @@ return {
           ["<leader>"] = function()
             vim.api.nvim_echo({ { "Neo-tree: Use 'e' to toggle file explorer", "Normal" } }, true, {})
           end,
+          ["oa"] = "avante_add_files",
           unpack(astrovim_style and {
             ["[b"] = "prev_source",
             ["]b"] = "next_source",
@@ -262,7 +283,7 @@ return {
             ".DS_Store",
             "thumbs.db",
           },
-        }, -- },
+        },
       },
       source_selector = astrovim_style
           and {

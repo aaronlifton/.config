@@ -18,6 +18,67 @@ local _vendors = {
 -- local is_config_subdirectory = vim.startswith(normalized_cwd, normalized_parent)
 -- local use_cwd_as_project_root = false
 -- if is_config_subdirectory and LazyVim.root.get() ~= normalized_cwd then use_cwd_as_project_root = true end
+local ai_prefix = "<leader>a"
+local avante_prefix = ai_prefix
+local avante_prefix_with_sidekick = ai_prefix .. "v"
+local sidekick_enabled = true
+-- if package.loaded["sidekick.nvim"] then prefix = prefix_with_sidekick end
+if sidekick_enabled then avante_prefix = avante_prefix_with_sidekick end
+
+local avante_mappings = {
+  ask = avante_prefix .. "a",
+  new_ask = avante_prefix .. "n",
+  zen_mode = avante_prefix .. "z",
+  edit = avante_prefix .. "e",
+  refresh = avante_prefix .. "r",
+  focus = ai_prefix .. "f",
+  files = {
+    add_current = ai_prefix .. ".",
+    add_all_buffers = ai_prefix .. "B",
+  },
+  select_model = avante_prefix .. "?",
+  select_history = avante_prefix .. "h",
+  toggle = {
+    default = avante_prefix .. "t",
+    debug = avante_prefix .. "d",
+    selection = avante_prefix .. "C",
+    suggestion = avante_prefix .. "s",
+    repomap = avante_prefix .. "R",
+  },
+  sidebar = {
+    -- retry_user_request = "r",
+    -- edit_user_request = "e",
+    --                         Or "<Esc>"
+    close_from_input = { normal = "Q", insert = "<C-d>" },
+    toggle_code_window_from_input = { normal = "x", insert = "<C-;>" },
+  },
+}
+local astro_mappings = {
+  ask = avante_prefix .. "<CR>",
+  new_ask = avante_prefix .. "n",
+  zen_mode = avante_prefix .. "z",
+  edit = avante_prefix .. "e",
+  refresh = avante_prefix .. "r",
+  focus = avante_prefix .. "f",
+  select_model = avante_prefix .. "?",
+  stop = avante_prefix .. "S",
+  select_history = avante_prefix .. "h",
+  toggle = {
+    default = avante_prefix .. "t",
+    debug = avante_prefix .. "d",
+    selection = avante_prefix .. "C",
+    suggestion = avante_prefix .. "s",
+    repomap = avante_prefix .. "R",
+  },
+  diff = {
+    next = "]c",
+    prev = "[c",
+  },
+  files = {
+    add_current = avante_prefix .. ".",
+    add_all_buffers = avante_prefix .. "B",
+  },
+}
 
 return {
   {
@@ -82,7 +143,9 @@ return {
     --- @type avante.Config
     opts = {
       -- Defaults: ~/.local/share/nvim/lazy/avante.nvim/lua/avante/config.lua:268
-      provider = "claude",
+      -- provider = "claude",
+      -- provider = "claude-code",
+      provider = "codex",
       -- mode = "agentic", -- The default mode for interaction. "agentic" uses tools to automatically generate code, "legacy" uses the old planning method to generate code.
       -- auto_suggestions_provider = "claude",
       -- claude = {
@@ -111,28 +174,7 @@ return {
         auto_approve_tool_permissions = true, -- Defaultl: false - show permission prompts for all tools
       },
       -- Default keybindings: ~/.local/share/nvim/lazy/avante.nvim/lua/avante/config.lua:329
-      mappings = {
-        ask = "<leader>aa", -- <leader>aa
-        edit = "<leader>ae", -- <leader>ate
-        refresh = "<leader>ar", -- <leader>ar
-        chat = "<leader>aC", -- <leader>ac
-        files = {
-          add_current = "<leader>aA",
-        },
-        toggle = {
-          -- default = "<leader>at",
-          debug = "<leader>axd",
-          hint = "<leader>axh",
-          suggestion = "<leader>axs",
-          -- TODO: move to <leader>auR (AI Util category)
-          -- repomap = "<leader>aR",
-        },
-        sidebar = {
-          -- retry_user_request = "r",
-          -- edit_user_request = "e",
-          close_from_input = { normal = "Q", insert = "<C-d>" },
-        },
-      },
+      mappings = avante_mappings,
       hints = {
         enabled = false,
       },
@@ -157,6 +199,36 @@ return {
       file_selector = {
         provider = "fzf",
       },
+      acp_providers = {
+        ["gemini-cli"] = {
+          command = "gemini",
+          args = { "--experimental-acp" },
+          env = {
+            NODE_NO_WARNINGS = "1",
+            GEMINI_API_KEY = os.getenv("GEMINI_API_KEY"),
+          },
+        },
+        ["claude-code"] = {
+          command = "npx",
+          args = { "@zed-industries/claude-code-acp" },
+          env = {
+            NODE_NO_WARNINGS = "1",
+            ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY"),
+          },
+        },
+        ["goose"] = {
+          command = "goose",
+          args = { "acp" },
+        },
+        ["codex"] = {
+          command = "codex-acp",
+          env = {
+            NODE_NO_WARNINGS = "1",
+            OPENAI_API_KEY = os.getenv("OPENAI_API_KEY"),
+          },
+        },
+      },
+      -- other configuration options...
       --- @class AvanteConflictUserConfig
       disabled_tools = { "run_python", "git_commit" }, -- Claude 3.7 overuses the python tool
       custom_tools = function()
@@ -385,33 +457,6 @@ return {
           mcphub_tool,
         }
       end,
-      -- TODO: remove
-      -- completion = {
-      --   cmp = {
-      --     input_container = {
-      --       sources = {
-      --         {
-      --           name = "buffer",
-      --           option = {
-      --             -- get_bufnrs = require("util.win").editor_bufs,
-      --             get_bufnrs = function()
-      --               local windows = vim.api.nvim_tabpage_list_wins(0)
-      --               return vim
-      --                 .iter(windows)
-      --                 :map(function(win)
-      --                   return vim.api.nvim_win_get_buf(win)
-      --                 end)
-      --                 :filter(function(buf)
-      --                   return vim.bo[buf].buflisted
-      --                 end)
-      --                 :totable()
-      --             end,
-      --           },
-      --         },
-      --       },
-      --     },
-      --   },
-      -- },
     },
     keys = function(_, keys)
       ---@type avante.Config
@@ -419,19 +464,62 @@ return {
         require("lazy.core.plugin").values(require("lazy.core.config").spec.plugins["avante.nvim"], "opts", false)
 
       -- stylua: ignore start
+      -- local mappings = {
+      --   -- { "<M-->", function() require("avante.api").ask() end, desc = "avante: ask", mode = { "n", "v" } },
+      --   { opts.mappings.ask, function() require("avante.api").ask() end, desc = "avante: ask", mode = { "n", "v" } },
+      --   { opts.mappings.refresh, function() require("avante.api").refresh() end, desc = "avante: refresh", mode = "v" },
+      --   { opts.mappings.edit, function() require("avante.api").edit() end, desc = "avante: edit", mode = { "n", "v" } },
+      --   { opts.mappings.chat, "<Plug>(AvanteChat)", desc = "avante: chat", mode = { "n" } },
+      --   { opts.mappings.toggle.suggestion, function() require("avante").toggle.suggestion() end, desc = "avante: suggest", mode = { "n" } },
+      --   { opts.mappings.toggle.hint, function() require("avante").toggle.hint() end, desc = "avante: hint", mode = { "n" } },
+      --   { opts.mappings.toggle.debug, function() require("avante").toggle.debug() end, desc = "avante: debug", mode = { "n" } },
+      --   { "<leader>aw", function() require("util.ai.avante").reset_window_sizes() end, desc = "avante: reset windows" , mode = { "n" } }
+      -- }
+
       local mappings = {
-        { "<M-->", function() require("avante.api").ask() end, desc = "avante: ask", mode = { "n", "v" } },
+        -- Ask and edit operations
         { opts.mappings.ask, function() require("avante.api").ask() end, desc = "avante: ask", mode = { "n", "v" } },
-        { opts.mappings.refresh, function() require("avante.api").refresh() end, desc = "avante: refresh", mode = "v" },
+        { opts.mappings.new_ask, function() require("avante.api").ask() end, desc = "avante: new ask", mode = { "n", "v" } },
         { opts.mappings.edit, function() require("avante.api").edit() end, desc = "avante: edit", mode = { "n", "v" } },
+        { opts.mappings.refresh, function() require("avante.api").refresh() end, desc = "avante: refresh", mode = "v" },
+
+        -- Focus and zen mode
+        { opts.mappings.focus, function() require("avante.api").focus() end, desc = "avante: focus", mode = { "n" } },
+        { opts.mappings.zen_mode, function() require("avante").toggle.zen_mode() end, desc = "avante: zen mode", mode = { "n" } },
+
+        -- File operations
+        { opts.mappings.files.add_current, function()
+            if self:is_open() and self.file_selector:add_current_buffer() then
+              vim.notify("Added current buffer to file selector", vim.log.levels.DEBUG, { title = "Avante" })
+            else
+              vim.notify("Failed to add current buffer", vim.log.levels.WARN, { title = "Avante" })
+            end
+          end, desc = "avante: add current file", mode = { "n" } },
+        { opts.mappings.files.add_all_buffers, function() require("avante.api").add_buffer_files()() end, desc = "avante: add all buffers", mode = { "n" } },
+
+        -- Selection and history
+        { opts.mappings.select_model, function() require("avante.api").select_model() end, desc = "avante: select model", mode = { "n" } },
+        { opts.mappings.select_history, function() require("avante.api").select_history() end, desc = "avante: select history", mode = { "n" } },
+
+        -- Toggle operations
+        { opts.mappings.toggle.default, function() require("avante").toggle() end, desc = "avante: toggle", mode = { "n" } },
+        { opts.mappings.toggle.debug, function() require("avante").toggle.debug() end, desc = "avante: toggle debug", mode = { "n" } },
+        { opts.mappings.toggle.selection, function() require("avante").toggle.selection() end, desc = "avante: toggle selection", mode = { "n" } },
+        { opts.mappings.toggle.suggestion, function() require("avante").toggle.suggestion() end, desc = "avante: toggle suggestion", mode = { "n" } },
+        { opts.mappings.toggle.repomap, function() require("avante").toggle.repomap() end, desc = "avante: toggle repomap", mode = { "n" } },
+
+        -- Chat (if you have this in your original mappings)
         { opts.mappings.chat, "<Plug>(AvanteChat)", desc = "avante: chat", mode = { "n" } },
-        { opts.mappings.toggle.suggestion, function() require("avante").toggle.suggestion() end, desc = "avante: suggest", mode = { "n" } },
-        { opts.mappings.toggle.hint, function() require("avante").toggle.hint() end, desc = "avante: hint", mode = { "n" } },
-        { "<leader>axh", function() require("avante").toggle.hint() end, desc = "avante: hint", mode = { "n" } },
-        { opts.mappings.toggle.debug, function() require("avante").toggle.debug() end, desc = "avante: debug", mode = { "n" } },
+
+        -- Hint (if you have this in your original mappings)
+        { opts.mappings.toggle.hint, function() require("avante").toggle.hint() end, desc = "avante: toggle hint", mode = { "n" } },
+
+        -- Custom utility
+        { "<leader>aw", function() require("util.ai.avante").reset_window_sizes() end, desc = "avante: reset windows", mode = { "n" } }
       }
       -- stylua: ignore end
 
+      -- vim.keymap.set("n", "<leader>ar", M.reset_window_sizes, { desc = "Reset Avante Window Sizes" })
       mappings = vim.tbl_filter(function(m)
         return m[1] and #m[1] > 0
       end, mappings)

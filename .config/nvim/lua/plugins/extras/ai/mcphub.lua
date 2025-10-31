@@ -67,9 +67,12 @@ return {
             make_slash_commands = true, -- make /slash commands from MCP server prompts
           },
         },
-        global_env = {
-          GITHUB_PERSONAL_ACCESS_TOKEN = os.getenv("GITHUB_PERSONAL_ACCESS_TOKEN"),
-        },
+        global_env = function(context)
+          return {
+            CWD = context.cwd,
+            GITHUB_PERSONAL_ACCESS_TOKEN = os.getenv("GITHUB_PERSONAL_ACCESS_TOKEN"),
+          }
+        end,
       })
 
       -- Load API-based MCP servers (mcphub.nvim/doc/mcp/native/registration.md)

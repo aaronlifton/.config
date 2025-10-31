@@ -124,6 +124,7 @@ return {
         return not vim.g.multicursor_mode_disable
       end,
       set = function(state)
+        Snacks.notifier.hide()
         vim.g.multicursor_mode_disable = not state
         local buf = vim.api.nvim_get_current_buf()
         if state then

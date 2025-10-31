@@ -26,8 +26,8 @@ local function custom_mini_pick_buffers(MiniPick)
   local buffer_mappings = { wipeout = { char = "<C-d>", func = wipeout_cur } }
   MiniPick.registry.my_buffers = function()
     local items, cwd = {}, vim.fn.getcwd()
-    for _, buf_info in ipairs(vim.fn.getbufinfo()) do
-      if buf_info.listed == 1 and buf_info.bufnr ~= vim.api.nvim_get_current_buf() then
+    for _, buf_info in ipairs(vim.fn.getbufinfo({ buflisted = 1 })) do
+      if buf_info.bufnr ~= vim.api.nvim_get_current_buf() then
         local name = vim.fs.relpath(cwd, buf_info.name) or buf_info.name
         table.insert(items, {
           text = name,
@@ -122,7 +122,7 @@ return {
       --stylua: ignore start
       { "<d-p>", function() require("mini.pick").builtin.files() end, desc = "files" },
       { "<D-P>", function() require("mini.pick").builtin.files({ source = { cwd  = Snacks.git.get_root() } }) end, desc = "files" },
-      { "<leader>,", ":Pick my_buffers", desc = "Buffers (recent)" },
+      { "<leader>,", ":Pick my_buffers<CR>", desc = "Buffers (recent)" },
       -- { "<leader>Pb", function() MiniExtra.pickers.buf_lines() end, desc = "Buffer lines" },
       -- { "<leader>Pf", function() MiniExtra.pickers.explorer() end, desc = "Explorer" },
       -- { "<leader>PF", function() MiniExtra.pickers.git_files({ scope = "modified" }) end, desc = "Git files" },
