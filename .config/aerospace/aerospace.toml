@@ -130,10 +130,18 @@ cmd-up = "focus --boundaries-action wrap-around-the-workspace up"
 cmd-right = "focus --boundaries-action wrap-around-the-workspace right"
 
 # Window focus (vim-style), works outside of Kitty
-alt-h = "focus --boundaries-action wrap-around-the-workspace left"
-alt-j = "focus --boundaries-action wrap-around-the-workspace down"
-alt-k = "focus --boundaries-action wrap-around-the-workspace up"
-alt-l = "focus --boundaries-action wrap-around-the-workspace right"
+# alt-h = "focus --boundaries-action wrap-around-the-workspace left"
+# alt-j = "focus --boundaries-action wrap-around-the-workspace down"
+# alt-k = "focus --boundaries-action wrap-around-the-workspace up"
+# alt-l = "focus --boundaries-action wrap-around-the-workspace right"
+
+# Use caps-lock binding so alt-hjkl work in nvim
+ctrl-cmd-alt-shift-h = "focus --boundaries-action wrap-around-the-workspace left"
+ctrl-cmd-alt-shift-j = "focus --boundaries-action wrap-around-the-workspace down"
+ctrl-cmd-alt-shift-k = "focus --boundaries-action wrap-around-the-workspace up"
+ctrl-cmd-alt-shift-l = "focus --boundaries-action wrap-around-the-workspace right"
+# alt-j = '''exec-and-forget /bin/bash -lc "app=$(aerospace list-windows --focused --format %{app-bundle-id} 2>/dev/null); if [ \"$app\" = net.kovidgoyal.kitty ]; then /usr/bin/osascript -e 'tell application \"System Events\" to keystroke \"j\" using {option down}'; else aerospace focus --boundaries-action wrap-around-the-workspace down; fi"'''
+# alt-k = 'exec-and-forget /bin/bash -lc "app=$(aerospace list-windows --focused --format %{app-bundle-id} 2>/dev/null); if [ \"$app\" != net.kovidgoyal.kitty ]; then aerospace focus --boundaries-action wrap-around-the-workspace up; fi"'
 # alt-leftSquareBracket = "join-with right"
 alt-r = 'mode resize'
 cmd-shift-alt-r = 'mode resize'
@@ -251,6 +259,11 @@ cmd-shift-tab = 'move-workspace-to-monitor --wrap-around next'
 cmd-shift-semicolon = 'mode service'
 cmd-shift-pageUp = 'mode service'
 
+
+[mode.kitty.binding]
+alt-h = "focus --boundaries-action wrap-around-the-workspace left"
+alt-l = "focus --boundaries-action wrap-around-the-workspace right"
+
 # SERVICE BINDING
 # See: https://nikitabobko.github.io/AeroSpace/guide#binding-modes
 [mode.service.binding]
@@ -312,8 +325,14 @@ run = ['move-node-to-workspace 4']
 
 [[on-window-detected]]
 if.app-id = 'net.kovidgoyal.kitty'
+if.during-aerospace-startup = true
 check-further-callbacks = true
 run = ['move-node-to-workspace 1']
+
+# [[on-window-detected]]
+# if.app-id = 'net.kovidgoyal.kitty'
+# check-further-callbacks = true
+# run = ['mode kitty']
 
 [[on-window-detected]]
 if.app-id = 'app.zen-browser.zen'

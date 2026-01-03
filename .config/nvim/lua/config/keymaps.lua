@@ -58,10 +58,11 @@ map("n", "<leader>u<C-w>3", function()
 end, { desc = "Toggle formatexpr (width=120)" })
 
 -- Cursor navigation on insert mode
-map("i", "<M-h>", "<left>", { desc = "Move cursor left" })
-map("i", "<M-l>", "<right>", { desc = "Move cursor left" })
-map("i", "<M-j>", "<down>", { desc = "Move cursor left" })
-map("i", "<M-k>", "<up>", { desc = "Move cursor left" })
+-- Interferes with "Move Lines" from LazyVim keymap
+-- map("i", "<M-h>", "<left>", { desc = "Move cursor left" })
+-- map("i", "<M-l>", "<right>", { desc = "Move cursor left" })
+-- map("i", "<M-j>", "<down>", { desc = "Move cursor left" })
+-- map("i", "<M-k>", "<up>", { desc = "Move cursor left" })
 
 -- End of the word backwards
 map("n", "E", "ge")
@@ -403,20 +404,21 @@ map("n", "<leader>ft", function()
   )
 end, { desc = "Terminal (float, Root Dir)" })
 
-map("n", "<M-S-Bslash>", function()
-  local buf = vim.api.nvim_get_current_buf()
-  if vim.fn.buflisted(buf) == 0 then return end
-
-  local bufname = vim.api.nvim_buf_get_name(buf)
-  if bufname:match("^term://.*yazi$") then
-    vim.cmd("q")
-    return
-  end
-
-  vim.cmd((":cd %s"):format(Util.path.bufdir(buf)))
-  require("yazi").yazi({ no_edgy = true })
-  -- Snacks.terminal("yazi", { cwd = cwd, env = { NVIM_FLOAT_WINDOW = true } })
-end, { desc = "Yazi" })
+-- map("n", "<M-S-Bslash>", function()
+--   local buf = vim.api.nvim_get_current_buf()
+--   if vim.fn.buflisted(buf) == 0 then return end
+--
+--   local bufname = vim.api.nvim_buf_get_name(buf)
+--   if bufname:match("^term://.*yazi$") then
+--     vim.cmd("q")
+--     return
+--   end
+--
+--   vim.cmd((":cd %s"):format(Util.path.bufdir(buf)))
+--   require("util.yazi.patches.env").patch_yazi()
+--   require("yazi").yazi({ no_edgy = true, env = { NVIM_FLOAT_WINDOW = true } })
+--   -- Snacks.terminal("yazi", { cwd = cwd, env = { NVIM_FLOAT_WINDOW = true } })
+-- end, { desc = "Yazi" })
 
 -- Custom leap functions
 map("n", "<leader>j", function()
@@ -639,9 +641,8 @@ end, { desc = "Kitten - Resize Narrower" })
 -- Finders
 map("n", "<leader>fm", function()
   local module = vim.fn.input("Module: ")
-  vim.cmd("Neotree focus filesystem left")
-  vim.cmd("Neotree node_modules/" .. module)
-end, { desc = "Explorer (node_modules)" })
+  require("yazi").yazi({}, "node_modules/" .. module)
+end, { desc = "Yazi (node_modules)" })
 
 map("n", "<leader>xC", function()
   vim.fn.setqflist({})

@@ -109,10 +109,10 @@ local search_jump_theme = {
 }
 
 local IS_NVIM = os.getenv("NVIM")
-local NVIM_FLOAT_WINDOW = os.getenv("NVIM_FLOAT_WINDOW")
+local NVIM_FLOAT_WINDOW = os.getenv("NVIM_FLOAT_WINDOW") == "v:true"
+-- print("NVIM_FLOAT_WINDOW = " .. (NVIM_FLOAT_WINDOW and "true" or "nil"))
 local IS_FLOAT = NVIM_FLOAT_WINDOW
-local IS_SIDEPANE = os.getenv("YAZI_SIDEPANE")
-IS_SIDEPANE = IS_SIDEPANE or (IS_NVIM and not NVIM_FLOAT_WINDOW)
+IS_SIDEPANE = IS_NVIM and not NVIM_FLOAT_WINDOW
 
 if IS_SIDEPANE then
 	require("searchjump"):setup({
@@ -210,7 +210,7 @@ if IS_NVIM and not IS_FLOAT then
 					-- { type = "string", custom = false, name = "date", params = { "%A, %d %B %Y" } },
 				},
 				section_b = {
-					{ type = "string", custom = false, name = "date", params = { "%X" } },
+					-- { type = "string", custom = false, name = "date", params = { "%X" } },
 				},
 				section_c = {},
 			},
@@ -299,10 +299,10 @@ else
 			},
 			right = {
 				section_a = {
-					{ type = "string", custom = false, name = "date", params = { "%A, %d %B %Y" } },
+					IS_FLOAT and {} or { type = "string", custom = false, name = "date", params = { "%A, %d %B %Y" } },
 				},
 				section_b = {
-					{ type = "string", custom = false, name = "date", params = { "%X" } },
+					IS_FLOAT and {} or { type = "string", custom = false, name = "date", params = { "%X" } },
 				},
 				section_c = {
 					{ type = "coloreds", custom = false, name = "tab_path" },

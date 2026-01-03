@@ -207,6 +207,10 @@ return {
                 vim.cmd("echo 'custom action'")
               end,
             },
+            -- dotall (?s:.) ; Example: "(?s:.),\n  "in"
+            { key = "<M-m>", action = "(?s:.)" },
+            -- regular (?-s:.)
+            { key = "<M-n>", action = "(?-s:.)" },
           },
         },
       },

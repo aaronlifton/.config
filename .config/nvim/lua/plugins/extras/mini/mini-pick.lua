@@ -115,14 +115,33 @@ return {
 
       -- vim.ui.select = MiniPick.select
       custom_mini_pick_buffers(MiniPick)
+      -- require("plugins.extras.mini.minipick_registry.multigrep").setup(MiniPick)
       --
       vim.api.nvim_create_augroup("MiniPick", { clear = true })
     end,
     keys = {
       --stylua: ignore start
-      { "<d-p>", function() require("mini.pick").builtin.files() end, desc = "files" },
-      { "<D-P>", function() require("mini.pick").builtin.files({ source = { cwd  = Snacks.git.get_root() } }) end, desc = "files" },
-      { "<leader>,", ":Pick my_buffers<CR>", desc = "Buffers (recent)" },
+      { "<leader>f<M-f>", function()
+        local buf = vim.api.nvim_get_current_buf()
+        require("mini.pick").builtin.files({}, { source = { cwd = Snacks.git.get_root(Util.path.bufdir(buf)) } })
+      end, desc = "Files (cwd)" },
+      { "<D-P>", function() require("mini.pick").builtin.files({}, { source = { cwd  = Snacks.git.get_root() } }) end, desc = "Files (Root Dir)" },
+      { "<leader>s<M-g>", function()
+        local buf = vim.api.nvim_get_current_buf()
+        require("mini.pick").builtin.grep_live({}, { source = { cwd = Snacks.git.get_root(Util.path.bufdir(buf)) } })
+      end, desc = "Grep (cwd)"},
+      { "<leader>s<M-G>", function() require("mini.pick").builtin.grep_live({}, { source = { cwd  = Snacks.git.get_root() } }) end, desc = "Grep (Root Dir)"},
+      { "<leader>s<C-r>", function() require("mini.pick").builtin.resume() end, desc = "Grep (Live)"},
+      { "<leader>f<M-b>", function() require("mini.pick").builtin.buffers() end, desc = "Buffers"},
+      { "<leader>,", function() MiniPick.registry.my_buffers() end, desc = "Buffers (recent)" },
+      -- { "<leader>f<M-z>", function() MiniPick.registry.multigrep() end, desc = "Buffers (recent)" },
+      -- buffers
+      -- cli
+      -- files
+      -- grep
+      -- grep_live
+      -- help
+      -- resume
       -- { "<leader>Pb", function() MiniExtra.pickers.buf_lines() end, desc = "Buffer lines" },
       -- { "<leader>Pf", function() MiniExtra.pickers.explorer() end, desc = "Explorer" },
       -- { "<leader>PF", function() MiniExtra.pickers.git_files({ scope = "modified" }) end, desc = "Git files" },

@@ -18,6 +18,7 @@ abbr --add tar 'tar -zxvf'
 ### Lsd
 abbr --add ls lsd
 abbr --add ll lsd -la
+abbr --add lst lsd --tree
 
 abbr --add lt lsd --tree --depth 1
 abbr --add lT lsd --tree --depth 2

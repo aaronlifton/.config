@@ -157,7 +157,10 @@ return {
     require("neomodern").setup(opts)
     -- Convenience function that simply calls `:colorscheme <theme>` with the theme
     -- specified in your config.
-    require("neomodern").load()
+
+    -- Disabled below
+    -- require("neomodern").load()
+
     -- vim.api.nvim_set_hl(0, "MiniPickMatchCurrent", { link = "Visual" })
     -- vim.api.nvim_set_hl(0, "MiniPickMatchCurrent", { fg = C.func, bg = C.alt_bg })
     -- vim.api.nvim_set_hl(0, "MiniPickMatchCurrent", { bg = Util.colors.lighten("#111113", 0.6, "#bbbac1") })
