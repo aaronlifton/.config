@@ -1,5 +1,5 @@
 return {
-  "nvim-mini/mini.align",
+  "nvim-mini/mini.visits",
   opts = {},
   -- keys = {
   -- In normal mode, conflicts with leap.nvim treesitter select

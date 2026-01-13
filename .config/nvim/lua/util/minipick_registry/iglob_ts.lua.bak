@@ -1,0 +1,364 @@
+-- iglob treesitter picker
+local M = {}
+
+-- Helpers
+local H = {}
+
+H.is_executable = function(tool)
+  if tool == "fallback" then return true end
+  return vim.fn.executable(tool) == 1
+end
+H.is_array_of = function(x, ref_type)
+  if not vim.tbl_islist(x) then return false end
+  for i = 1, #x do
+    if type(x[i]) ~= ref_type then return false end
+  end
+  return true
+end
+H.get_config = function(config)
+  return vim.tbl_deep_extend("force", MiniPick.config, vim.b.minipick_config or {}, config or {})
+end
+H.full_path = function(path)
+  return (vim.fn.fnamemodify(path, ":p"):gsub("(.)/$", "%1"))
+end
+local function parse_query(raw)
+  local search, iglob = raw:match("^(.-)%s+%-%-%s+(.*)$")
+  if not search then return vim.trim(raw), {} end
+
+  local patterns = {}
+  for _, part in ipairs(vim.split(vim.trim(iglob), "%s+", { trimempty = true })) do
+    patterns[#patterns + 1] = part
+  end
+
+  return vim.trim(search), patterns
+end
+
+local function map_gsub(items, pattern, replacement)
+  return vim.tbl_map(function(item)
+    item, _ = string.gsub(item, pattern, replacement)
+    return item
+  end, items)
+end
+
+local function split_grep_item(item)
+  if type(item) ~= "string" then return nil end
+  local parts = vim.split(item, "\0", { plain = true })
+  if #parts < 4 then return nil end
+  return {
+    path = parts[1],
+    lnum = tonumber(parts[2]),
+    col = tonumber(parts[3]),
+    text = parts[4],
+  }
+end
+
+local function find_last(haystack, needle)
+  if needle == "" then return nil end
+  local last, init = nil, 1
+  while true do
+    local s = string.find(haystack, needle, init, true)
+    if not s then break end
+    last, init = s, s + 1
+  end
+  return last
+end
+
+local function get_ts_cache()
+  if H._ts_cache ~= nil then return H._ts_cache end
+  H._ts_cache = {
+    ns = vim.api.nvim_create_namespace("minipick-iglob-ts"),
+    bufs = {},
+    queries = {},
+  }
+  return H._ts_cache
+end
+
+local function ensure_scratch_buf(lang)
+  local cache = get_ts_cache()
+  if cache.bufs[lang] and vim.api.nvim_buf_is_valid(cache.bufs[lang]) then return cache.bufs[lang] end
+  local buf = vim.api.nvim_create_buf(false, true)
+  vim.bo[buf].bufhidden = "wipe"
+  cache.bufs[lang] = buf
+  return buf
+end
+
+local function get_highlight_query(lang)
+  local cache = get_ts_cache()
+  if cache.queries[lang] ~= nil then return cache.queries[lang] end
+  local query = vim.treesitter.query.get(lang, "highlights")
+  cache.queries[lang] = query
+  return query
+end
+
+local function highlight_line_ts(buf_id, row, text, lang, col_offset)
+  local cache = get_ts_cache()
+  local scratch = ensure_scratch_buf(lang)
+  vim.api.nvim_buf_set_lines(scratch, 0, -1, false, { text })
+
+  local ok_parser, parser = pcall(vim.treesitter.get_parser, scratch, lang, { error = false })
+  if not ok_parser or not parser then return end
+
+  local query = get_highlight_query(lang)
+  if not query then return end
+
+  local tree = parser:parse()[1]
+  if not tree then return end
+
+  local root = tree:root()
+  local ext_opts = { hl_mode = "combine", priority = 150 }
+  for id, node in query:iter_captures(root, scratch, 0, 1) do
+    local capture = query.captures[id]
+    local srow, scol, erow, ecol = node:range()
+    if srow == 0 and erow == 0 and ecol > scol then
+      ext_opts.hl_group = "@" .. capture
+      ext_opts.end_row = row
+      ext_opts.end_col = col_offset + ecol
+      vim.api.nvim_buf_set_extmark(buf_id, cache.ns, row, col_offset + scol, ext_opts)
+    end
+  end
+end
+
+H.default_show_with_icons = function(buf_id, items, query)
+  local sep = string.char(31)
+  local sep_pattern = vim.pesc(sep)
+  items = map_gsub(items, "%z", sep)
+  items = require("mini.align").align_strings(items, {
+    justify_side = { "left", "right", "right" },
+    merge_delimiter = { "", " ", "", " ", "" },
+    split_pattern = sep_pattern,
+  })
+  items = map_gsub(items, sep, "\0")
+  MiniPick.default_show(buf_id, items, query, { show_icons = true })
+end
+
+H.grep_ts_show = function(buf_id, items, query)
+  local sep = string.char(31)
+  local sep_pattern = vim.pesc(sep)
+  local aligned_items = map_gsub(items, "%z", sep)
+  aligned_items = require("mini.align").align_strings(aligned_items, {
+    justify_side = { "left", "right", "right" },
+    merge_delimiter = { "", " ", "", " ", "" },
+    split_pattern = sep_pattern,
+  })
+  aligned_items = map_gsub(aligned_items, sep, "│")
+
+  local tab_spaces = string.rep(" ", vim.o.tabstop)
+  local aligned_lines = vim.tbl_map(function(l)
+    return l:gsub("%z", "│"):gsub("[\r\n]", " "):gsub("\t", tab_spaces)
+  end, aligned_items)
+
+  MiniPick.default_show(buf_id, aligned_items, query, { show_icons = true })
+
+  local cache = get_ts_cache()
+  vim.api.nvim_buf_clear_namespace(buf_id, cache.ns, 0, -1)
+
+  local lines = vim.api.nvim_buf_get_lines(buf_id, 0, -1, false)
+  for i, item in ipairs(items) do
+    local parsed = split_grep_item(item)
+    if parsed and parsed.text then
+      local ft = vim.filetype.match({ filename = parsed.path })
+      if ft and ft ~= "" then
+        local ok_lang, lang = pcall(vim.treesitter.language.get_lang, ft)
+        lang = ok_lang and lang or ft
+        local line = lines[i] or ""
+        local aligned_line = aligned_lines[i] or ""
+        local prefix_len = #line - #aligned_line
+        local text_start = find_last(aligned_line, parsed.text) or (#aligned_line - #parsed.text + 1)
+        if text_start < 1 then text_start = 1 end
+        local col_offset = prefix_len + text_start - 1
+        highlight_line_ts(buf_id, i - 1, parsed.text, lang, col_offset)
+      end
+    end
+  end
+end
+
+function H.grep_get_command(pattern, globs, flags)
+  local res = {
+    "rg",
+    "--column",
+    "--line-number",
+    "--no-heading",
+    "--field-match-separator",
+    "\\x00",
+    "--color=never",
+  }
+  if flags then
+    if flags.no_ignore then table.insert(res, "--no-ignore") end
+    if flags.hidden then table.insert(res, "--hidden") end
+  end
+  for _, g in ipairs(globs) do
+    table.insert(res, "--iglob")
+    -- NOTE: no `*` as default is important to not "override" ignoring files
+    table.insert(res, g)
+  end
+  local case = vim.o.ignorecase and (vim.o.smartcase and "smart-case" or "ignore-case") or "case-sensitive"
+  vim.list_extend(res, { "--" .. case, "--", pattern })
+  return res
+end
+
+local function create_iglob_picker(MiniPick)
+  return function(local_opts, opts)
+    local function igrep_live(local_opts, opts)
+      local_opts = vim.tbl_extend("force", { tool = "rg", globs = {}, flags = {} }, local_opts or {})
+      local tool = local_opts.tool -- or H.grep_get_tool()
+      if tool == "fallback" or not H.is_executable(tool) then
+        H.error("`grep_live` needs non-fallback executable tool.")
+      end
+
+      local globs = H.is_array_of(local_opts.globs, "string") and local_opts.globs or {}
+      local flags = {
+        no_ignore = local_opts.flags.no_ignore == true,
+        hidden = local_opts.flags.hidden == true,
+      }
+      local formatted_name
+      if opts.source.name then
+        formatted_name = opts.source.name and (opts.source.name):format(" %s ") or nil
+      end
+
+      local function build_name_suffix()
+        local parts = {}
+        if #globs > 0 then parts[#parts + 1] = table.concat(globs, ", ") end
+        return #parts == 0 and "" or (" | " .. table.concat(parts, " | "))
+      end
+
+      local function build_footer_marker()
+        local markers = {}
+        if flags.hidden then markers[#markers + 1] = "[H]" end
+        if flags.no_ignore then markers[#markers + 1] = "[I]" end
+        if #markers == 0 then return "" end
+        return table.concat(markers, " ")
+      end
+
+      local function update_footer_marker()
+        local marker = build_footer_marker()
+        if marker == "" then return end
+        local state = MiniPick.get_picker_state() or {}
+        local win_id = state.windows and state.windows.main
+        if not win_id or not vim.api.nvim_win_is_valid(win_id) then return end
+
+        local config = vim.api.nvim_win_get_config(win_id)
+        local footer = config.footer
+        if type(footer) ~= "table" or not vim.tbl_islist(footer) then return end
+        if type(footer[2]) ~= "table" or type(footer[2][1]) ~= "string" then return end
+
+        local fill = footer[2][1]
+        local chars = vim.fn.split(fill, "\\zs")
+        local counts = {}
+        for _, ch in ipairs(chars) do
+          if ch ~= " " and ch ~= "[" and ch ~= "]" and ch ~= "H" and ch ~= "I" then
+            counts[ch] = (counts[ch] or 0) + 1
+          end
+        end
+        local border_char, border_count = nil, -1
+        for ch, count in pairs(counts) do
+          if count > border_count then
+            border_char, border_count = ch, count
+          end
+        end
+        if not border_char then return end
+
+        local fill_len = vim.fn.strchars(fill)
+        local marker_text = " " .. marker .. " "
+        local marker_len = vim.fn.strchars(marker_text)
+        if marker_len > fill_len then marker_text = vim.fn.strcharpart(marker_text, 0, fill_len) end
+        marker_len = vim.fn.strchars(marker_text)
+        local start = math.floor((fill_len - marker_len) / 2)
+        local fill_base = vim.fn["repeat"](border_char, fill_len)
+
+        footer[2][1] = vim.fn.strcharpart(fill_base, 0, start)
+          .. marker_text
+          .. vim.fn.strcharpart(fill_base, start + marker_len)
+        config.footer = footer
+        if not config.footer_pos then config.footer_pos = "left" end
+        pcall(vim.api.nvim_win_set_config, win_id, config)
+      end
+
+      local function build_name()
+        local name_suffix = build_name_suffix()
+        if formatted_name then
+          return string.format("Grep live (%s%s) | %s", tool, name_suffix, formatted_name)
+        end
+        return string.format("Grep live (%s%s)", tool, name_suffix)
+      end
+
+      local name = build_name()
+      local show = function(buf_id, items, query)
+        H.grep_ts_show(buf_id, items, query)
+        update_footer_marker()
+      end
+      local default_source =
+        { name = name, show = show, choose_marked = require("util.minipick_registry.trouble").trouble_choose_marked }
+
+      opts = vim.tbl_deep_extend("force", { source = default_source }, opts or {})
+      opts.source.name = default_source.name
+
+      local cwd = H.full_path(opts.source.cwd or vim.fn.getcwd())
+      local set_items_opts, spawn_opts = { do_match = false, querytick = H.querytick }, { cwd = cwd }
+      local process
+      local match = function(_, _, query)
+        ---@diagnostic disable-next-line: undefined-field
+        pcall(vim.loop.process_kill, process)
+
+        if #query == 0 then return MiniPick.set_picker_items({}, set_items_opts) end
+
+        local full_query = table.concat(query)
+        local search_pattern, iglob_patterns = parse_query(full_query)
+
+        if search_pattern == "" then return MiniPick.set_picker_items({}, set_items_opts) end
+
+        local all_globs = vim.list_extend(vim.list_extend({}, iglob_patterns), globs)
+
+        local command = H.grep_get_command(search_pattern, all_globs, flags)
+
+        process = MiniPick.set_picker_items_from_cli(command, {
+          set_items_opts = set_items_opts,
+          spawn_opts = spawn_opts,
+        })
+      end
+
+      local add_glob = function()
+        local ok, glob = pcall(vim.fn.input, "iglob pattern: ")
+        if ok then table.insert(globs, glob) end
+        MiniPick.set_picker_opts({ source = { name = build_name() } })
+        MiniPick.set_picker_query(MiniPick.get_picker_query())
+      end
+
+      local remove_glob = function()
+        if #globs > 0 then
+          table.remove(globs)
+          MiniPick.set_picker_opts({ source = { name = build_name() } })
+          MiniPick.set_picker_query(MiniPick.get_picker_query())
+        end
+      end
+
+      local toggle_no_ignore = function()
+        flags.no_ignore = not flags.no_ignore
+        MiniPick.set_picker_opts({ source = { name = build_name() } })
+        MiniPick.set_picker_query(MiniPick.get_picker_query())
+      end
+
+      local toggle_hidden = function()
+        flags.hidden = not flags.hidden
+        MiniPick.set_picker_opts({ source = { name = build_name() } })
+        MiniPick.set_picker_query(MiniPick.get_picker_query())
+      end
+
+      local mappings = {
+        add_glob = { char = "<C-o>", func = add_glob },
+        remove_glob = { char = "<C-k>", func = remove_glob },
+        toggle_no_ignore = { char = "<M-i>", func = toggle_no_ignore },
+        toggle_hidden = { char = "<M-h>", func = toggle_hidden },
+      }
+
+      opts = vim.tbl_deep_extend("force", opts or {}, { source = { items = {}, match = match }, mappings = mappings })
+      return MiniPick.start(opts)
+    end
+    return igrep_live(local_opts, opts)
+  end
+end
+
+M.setup = function(MiniPick)
+  MiniPick.registry.iglob_ts = create_iglob_picker(MiniPick)
+end
+
+return M
