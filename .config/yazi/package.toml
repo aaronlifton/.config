@@ -93,5 +93,10 @@ use = "yazi-rs/plugins:smart-filter"
 rev = "8f1d971"
 hash = "bcda8eeb3f4013bae156aecabfc745e8"
 
+[[plugin.deps]]
+use = "ktunprasert/git-files"
+rev = "c7289ad"
+hash = "cdb1a69bed63211c75b72521bbab875d"
+
 [flavor]
 deps = []

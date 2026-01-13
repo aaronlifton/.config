@@ -20,6 +20,7 @@ fish_add_path /Users/$USER/.asdf/installs/rust/1.80/bin
 
 # bass source /Users/$USER/.cargo/env
 fish_add_path /usr/local/texlive/2024/bin/universal-darwin
+fish_add_path /usr/local/texlive/2025/bin/universal-darwin
 # fish_add_path /Users/$USER/Library/Python/3.11/bin 
 # fish_add_path /Users/$USER/.rubies/truffleruby-23.1.1/bin/ 
 fish_add_path /Users/$USER/go/bin

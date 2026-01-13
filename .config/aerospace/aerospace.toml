@@ -117,17 +117,17 @@ cmd-alt-h = [] # Disable "hide others"
 # LAYOUT CONTROLS (Omarchy-inspired)
 # cmd-j toggles horizontal layout (matches Omarchy's Super+J for horizontal toggle)
 # these conflict with Format in raycast notes
-ctrl-alt-j = 'layout tiles horizontal vertical'
-ctrl-alt-t = 'layout accordion horizontal vertical' # Using cmd-t for navigation/layout (Omarchy uses Super+T)
-alt-slash = 'layout tiles horizontal vertical'
-alt-comma = 'layout accordion horizontal vertical'
+ctrl-alt-t = 'layout tiles horizontal vertical'
+ctrl-alt-a = 'layout accordion horizontal vertical' # Maybe use cmd-t for navigation/layout (Omarchy uses Super+T)
+# alt-slash = 'layout tiles horizontal vertical'
+# alt-comma = 'layout accordion horizontal vertical'
 
 # FOCUS
 # Window focus (Omarchy style - Super + Arrow keys)
 cmd-left = "focus --boundaries-action wrap-around-the-workspace left"
-cmd-down = "focus --boundaries-action wrap-around-the-workspace down"
-cmd-up = "focus --boundaries-action wrap-around-the-workspace up"
 cmd-right = "focus --boundaries-action wrap-around-the-workspace right"
+# cmd-down = "focus --boundaries-action wrap-around-the-workspace down"
+# cmd-up = "focus --boundaries-action wrap-around-the-workspace up"
 
 # Window focus (vim-style), works outside of Kitty
 # alt-h = "focus --boundaries-action wrap-around-the-workspace left"
@@ -351,6 +351,19 @@ run = ['layout floating']
 if.app-id = 'com.apple.Preview'
 check-further-callbacks = true
 run = ['layout floating']
+
+# Finder
+[[on-window-detected]]
+if.app-name-regex-substring = 'finder'
+check-further-callbacks = true
+run = ['layout floating']
+
+# Font Book
+[[on-window-detected]]
+if.app-name-regex-substring = 'font'
+check-further-callbacks = true
+run = ['layout floating']
+
 
 # Dash
 [[on-window-detected]]

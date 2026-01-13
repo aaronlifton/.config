@@ -197,7 +197,6 @@
                     :afterup ["capspace" 0]}]
                   :capspace
                   [:z [:open "/Applications/Zen.app"]]]}
-                  ]}
 
          {:des "Hyper Mode - App Launcher and Navigation"
           :rules [:hyper-mode
@@ -262,7 +261,7 @@
                   [:x "say 'know we are in double shift mode'"]
                   [[:a :d] :f17]
                   [[:a :s] :f16]
-                  [[:a :z] :f19]]}]
+                  [[:a :z] :f19]]}]}
 
          ; {:des "Application launcher"
          ;  :rules [ ; enter launch_layer with spacebar

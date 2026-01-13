@@ -131,6 +131,9 @@ if IS_SIDEPANE then
 		-- label_fg = C.tokyonight_moon.magenta2,
 		-- label_bg = C.tokyonight_moon.bg_dark1,
 	})
+
+	-- require("git-files").setup({ mode = "ls_files" })
+	-- require("git-files").entry()
 else
 	require("searchjump"):setup({
 		only_current = false, -- only search the current window

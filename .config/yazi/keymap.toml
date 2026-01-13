@@ -81,6 +81,11 @@ run = "arrow 5"
 desc = "Move cursor down half page"
 
 [[mgr.prepend_keymap]]
+on = "<A-b>"
+run = "shell --confirm --block -- for path in \"$@\"; do mv -n \"$path\" /Users/aaron/Code/bak_files/; done"
+desc = "Move to bak folder"
+
+[[mgr.prepend_keymap]]
 on = ["f", "r"]
 run = "plugin fr"
 desc = "find file by content (fuzzy match)"

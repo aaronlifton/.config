@@ -51,7 +51,6 @@ abbr 4dirs --set-cursor=! "$(string join \n -- 'for dir in */' 'cd $dir' '!' 'cd
 abbr -a L --position anywhere --set-cursor "% | less"
 
 ### Functions
-abbr --add zn z-nvim
 abbr --add fr fzf-rg-bat
 abbr --add fpd font-patcher-docker
 
@@ -107,3 +106,9 @@ abbr --add mod-ginkgo-component --set-cursor "godotenv -f .env.test ginkgo --tag
 abbr --add mod-server godotenv -f .env.test go run cmd/server/main.go
 
 abbr --add hyper-help bat --plain --language lua ~/.hammerspoon/hyper_apps.lua
+
+# Mgrep
+# Now a function (functions/mgrepw.fish) to display answer formatted with markdown in bat
+# abbr --add mgrepw --set-cursor "mgrep --web --answer \"%\""
+
+abbr --add npmpkg "yarn dlx all-the-package-names | rg "
