@@ -4,6 +4,7 @@
 ---@field bind util.bind
 ---@field bufferline util.bufferline
 ---@field colors util.colors
+---@field debug util.debug
 ---@field format util.format
 ---@field fzf util.fzf
 ---@field git util.git
@@ -16,6 +17,7 @@
 ---@field nui util.nui
 ---@field path util.path
 ---@field selection util.selection
+---@field sidekick util.sidekick
 ---@field snacks util.snacks
 ---@field string util.string
 ---@field system util.system
@@ -103,6 +105,19 @@ M.lazy_require = function(module)
         return load()(...)
       end,
     })
+end
+
+function M.do_open(uri)
+  local cmd, err = vim.ui.open(uri)
+  local rv = cmd and cmd:wait(1000) or nil
+  if cmd and rv and rv.code ~= 0 then
+    err = ("vim.ui.open: command %s (%d): %s"):format(
+      (rv.code == 124 and "timeout" or "failed"),
+      rv.code,
+      vim.inspect(cmd.cmd)
+    )
+  end
+  return err
 end
 
 return M

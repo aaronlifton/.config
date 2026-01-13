@@ -1,4 +1,4 @@
-local trigger_remote_v_immediately = true
+local trigger_remote_v_immediately = false
 local paste_on_remote_yank = true
 
 local config = {
@@ -149,8 +149,48 @@ local experimental_features = {
       end, { desc = "Leap to search matches (reverse)" })
     end
   end,
-  -- flit (enhanced f/t motions)
   one_char_search = function()
+    do
+      -- Return an argument table for `leap()`, tailored for f/t-motions.
+      local function as_ft(key_specific_args)
+        local common_args = {
+          inputlen = 1,
+          inclusive = true,
+          -- To limit search scope to the current line:
+          -- pattern = function (pat) return '\\%.l'..pat end,
+          opts = {
+            labels = "", -- force autojump
+            safe_labels = vim.fn.mode(1):match("[no]") and "" or nil, -- [1]
+          },
+        }
+        return vim.tbl_deep_extend("keep", common_args, key_specific_args)
+      end
+
+      local clever = require("leap.user").with_traversal_keys -- [2]
+      local clever_f = clever("f", "F")
+      local clever_t = clever("t", "T")
+
+      for key, key_specific_args in pairs({
+        f = { opts = clever_f },
+        F = { backward = true, opts = clever_f },
+        t = { offset = -1, opts = clever_t },
+        T = { backward = true, offset = 1, opts = clever_t },
+      }) do
+        vim.keymap.set({ "n", "x", "o" }, key, function()
+          require("leap").leap(as_ft(key_specific_args))
+        end)
+      end
+    end
+
+    -- [1] Match the modes here for which you don't want to use labels
+    --     (`:h mode()`, `:h lua-pattern`).
+    -- [2] This helper function makes it easier to set "clever-f"-like
+    --     functionality (https://github.com/rhysd/clever-f.vim), returning
+    --     an `opts` table derived from the defaults, where the given keys
+    --     are added to `keys.next_target` and `keys.prev_target`
+  end,
+  -- flit (enhanced f/t motions)
+  one_char_search_bak = function()
     do
       -- Returns an argument table for `leap()`, tailored for f/t-motions.
       local function as_ft(key_specific_args)
@@ -199,23 +239,26 @@ local experimental_features = {
   end,
   jump_to_lines = function()
     vim.keymap.set({ "n", "x", "o" }, "|", function()
-      -- stylua: ignore start
-      local _, l, c = unpack(vim.fn.getpos('.'))
-      -- Some Vim regex magic follows:
-      local pattern =
-      '\\v'
-      -- Skip 3-3 lines around the cursor (`:help /\%l`).
-      .. "(%<"..(math.max(1,l-3)).."l" .. '|' .. "%>"..(l+3).."l)"
-      -- Cursor column or EOL before the cursor (`:help /\%c`).
-      .. "(%"..c.."v" .. '|' .. "%<"..c.."v$)"
-
-      require('leap').leap {
-        pattern = pattern,
+      local line = vim.fn.line(".")
+      -- Skip 3-3 lines around the cursor.
+      local top, bot = unpack({ math.max(1, line - 3), line + 3 })
+      require("leap").leap({
+        pattern = "\\v(%<" .. top .. "l|%>" .. bot .. "l)$",
         windows = { vim.fn.win_getid() },
-        opts = { safe_labels = '' }
-      }
-      -- stylua: ignore end
+        opts = { safe_labels = "" },
+      })
     end)
+  end,
+  clever_s = function()
+    do
+      local clever_s = require("leap.user").with_traversal_keys("s", "S")
+      vim.keymap.set({ "n", "x", "o" }, "s", function()
+        require("leap").leap({ opts = clever_s })
+      end)
+      vim.keymap.set({ "n", "x", "o" }, "S", function()
+        require("leap").leap({ backward = true, opts = clever_s })
+      end)
+    end
   end,
 }
 
@@ -239,11 +282,15 @@ return {
   { "folke/flash.nvim", enabled = false, optional = true },
   {
     "ggandor/leap.nvim",
+    url = "https://codeberg.org/andyg/leap.nvim.git",
     keys = {
       -- stylua: ignore start
       -- 2025 reccomended keybindings (instead of s/S for different directions on same page)
       { "s", "<Plug>(leap)", { "n", "x", "o" } },
       { "S", "<Plug>(leap-from-window)", "n" },
+      -- evil-snipe
+      { "z", "<Plug>(leap-forward-till)", mode = { "x", "o" } },
+      { "Z", "<Plug>(leap-backward-till)", mode = { "x", "o" } },
       {
         "R",
         function()
@@ -264,6 +311,7 @@ return {
         function()
           if trigger_remote_v_immediately then
             -- Trigger visual selection right away, so that you can `gs{leap}apy`:
+            -- NOTE: has a bug with scrolling when leaping to a different window.
             require("leap.remote").action({ input = "v" })
           else
             require("leap.remote").action()
@@ -303,9 +351,6 @@ return {
         end,
         desc = "Set leap mappings",
       },
-      -- evil-snipe
-      { "z", "<Plug>(leap-forward-till)", mode = { "x", "o" } },
-      { "Z", "<Plug>(leap-backward-till)", mode = { "x", "o" } },
       -- stylua: ignore end
     },
     opts = {
@@ -324,6 +369,7 @@ return {
       end
       require("leap.user").set_default_mappings()
       require("leap.user").set_repeat_keys("<enter>", "<backspace>")
+      -- require("leap.user").set_repeat_keys(";", ".")
 
       config.always_show_labels_at_beginning_of_match()
       config.restore_default_hl("astrodark")
@@ -331,38 +377,32 @@ return {
       experimental_features.one_char_search()
 
       if paste_on_remote_yank then
-        vim.api.nvim_create_augroup("LeapRemote", {})
         vim.api.nvim_create_autocmd("User", {
           pattern = "RemoteOperationDone",
-          group = "LeapRemote",
+          group = vim.api.nvim_create_augroup("LeapRemote", {}),
           callback = function(event)
             -- Do not paste if some special register was in use.
             -- local cursor = vim.api.nvim_win_get_cursor(0)
             -- local char_at_cursor = vim.fn.getline(cursor[1]):sub(cursor[2], cursor[2])
-            if vim.v.operator == "y" and event.data.register == "+" then
+            if vim.v.operator == "y" or vim.v.operator == "d" and event.data.register == "+" then
               -- if char_at_cursor:match("['\".]") ~= nil then vim.cmd("normal h") end
-              vim.cmd("normal! p")
+              if vim.fn.getreg("+") ~= nil then vim.cmd("normal! p") end
             end
           end,
         })
       end
 
-      -- Create remote versions of all a/i text objects by inserting `r`
-      -- into the middle (`iw` becomes `irw`, etc.).
       do
-        -- A trick to avoid having to create separate hardcoded mappings for
-        -- each text object: when entering `ar`/`ir`, consume the next
-        -- character, and create the input from that character concatenated to
-        -- `a`/`i`.
-        local remote_text_object = function(prefix)
-          local ok, ch = pcall(vim.fn.getcharstr) -- pcall for handling <C-c>
-          if not ok or (ch == vim.keycode("<esc>")) then return end
-          require("leap.remote").action({ input = prefix .. ch })
-        end
-
-        for _, prefix in ipairs({ "a", "i" }) do
-          vim.keymap.set({ "x", "o" }, prefix .. "r", function()
-            remote_text_object(prefix)
+        -- Create remote versions of all a/i text objects by inserting `r` into
+        -- the middle (`iw` becomes `irw`, etc.).
+        for _, ai in ipairs({ "a", "i" }) do
+          vim.keymap.set({ "x", "o" }, ai .. "r", function()
+            -- A trick to avoid having to create separate mappings for each text
+            -- object: when entering `ar`/`ir`, consume the next character, and
+            -- create the input from that character concatenated to `a`/`i`.
+            local ok, ch = pcall(vim.fn.getcharstr) -- pcall for handling <C-c>
+            if not ok or ch == vim.keycode("<esc>") then return end
+            require("leap.remote").action({ input = ai .. ch, vim_opts = { ["wo.scrolloff"] = 0 } })
           end)
         end
 

@@ -7,7 +7,8 @@ return {
   },
   {
     "mfussenegger/nvim-lint",
-    optional = true,
+    enabled = true,
+    -- optional = true,
     opts = {
       linters_by_ft = {
         markdown = { "vale" },

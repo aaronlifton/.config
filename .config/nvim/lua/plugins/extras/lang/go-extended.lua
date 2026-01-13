@@ -62,13 +62,16 @@ return {
   },
   {
     "mfussenegger/nvim-lint",
-    cond = not use_golangci_lint_lsp,
+    -- NOTE: When developing go, uncomment this line:
+    -- cond = not use_golangci_lint_lsp,
     opts = function(_, opts)
-      Util.lint.add_linters({
-        ["go"] = { "golangcilint" },
-        ["gomod"] = { "golangcilint" },
-        ["gowork"] = { "golangcilint" },
-      })
+      if not use_golangci_lint_lsp then
+        Util.lint.add_linters({
+          ["go"] = { "golangcilint" },
+          ["gomod"] = { "golangcilint" },
+          ["gowork"] = { "golangcilint" },
+        }, opts)
+      end
 
       return opts
     end,

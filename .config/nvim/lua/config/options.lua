@@ -75,6 +75,10 @@ g.ai_cmp = true
 g.icon_size = "normal" -- "normal", "small"
 g.editorconfig = true
 -------------------------------------------------
+-- MiniPick
+g.minipick_iglob_ts_highlight = true
+-- g.minipick_iglob_ts_max_items = 200
+-------------------------------------------------
 
 -- Linux paths
 env.XDG_CACHE_HOME = env.XDG_CACHE_HOME or env.HOME .. "/.cache"

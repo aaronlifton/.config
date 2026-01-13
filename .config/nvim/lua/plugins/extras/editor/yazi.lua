@@ -12,7 +12,20 @@ return {
       { "<leader>e", "<cmd>Yazi<cr>", desc = "Yazi (Root Dir)" },
       -- <leader>fE
       { "<leader>E", "<cmd>Yazi cwd<cr>", desc = "Yazi (Cwd)" },
-      { "<a-e>", "<cmd>Yazi toggle<cr>", desc = "Resume Last Yazi Session" },
+      { "<M-e>", "<cmd>Yazi toggle<cr>", desc = "Resume Yazi" },
+      {
+        "<M-E>",
+        function()
+          local buf = vim.api.nvim_get_current_buf()
+          if vim.fn.buflisted(buf) == 0 then return end
+
+          local dir = Util.path.bufdir(buf)
+          if dir and dir ~= "" and vim.fn.isdirectory(dir) == 1 then vim.cmd((":cd %s"):format(dir)) end
+          require("util.yazi.patches.env").patch_yazi()
+          require("yazi").toggle({ no_edgy = true, env = { NVIM_FLOAT_WINDOW = true } })
+        end,
+        desc = "Resume Yazi Float",
+      },
       {
         "<leader>fe",
         function()

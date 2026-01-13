@@ -119,5 +119,8 @@ return {
       --   },
       -- },
     },
+    init = function()
+      require("util.treesitter-textobjects")
+    end,
   },
 }

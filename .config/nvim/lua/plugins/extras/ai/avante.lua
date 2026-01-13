@@ -31,7 +31,7 @@ local avante_mappings = {
   zen_mode = avante_prefix .. "z",
   edit = avante_prefix .. "e",
   refresh = avante_prefix .. "r",
-  focus = ai_prefix .. "f",
+  focus = ai_prefix .. "F",
   files = {
     add_current = ai_prefix .. ".",
     add_all_buffers = ai_prefix .. "B",
@@ -175,8 +175,8 @@ return {
       },
       -- Default keybindings: ~/.local/share/nvim/lazy/avante.nvim/lua/avante/config.lua:329
       mappings = avante_mappings,
-      hints = {
-        enabled = false,
+      selection = {
+        hint_display = "none",
       },
       windows = {
         ---@type "right" | "left" | "top" | "bottom"
@@ -197,7 +197,7 @@ return {
         -- stylua: ignore end
       },
       file_selector = {
-        provider = "fzf",
+        provider = "mini_pick",
       },
       acp_providers = {
         ["gemini-cli"] = {
@@ -221,7 +221,8 @@ return {
           args = { "acp" },
         },
         ["codex"] = {
-          command = "codex-acp",
+          command = "npx",
+          args = { "@zed-industries/codex-acp" },
           env = {
             NODE_NO_WARNINGS = "1",
             OPENAI_API_KEY = os.getenv("OPENAI_API_KEY"),

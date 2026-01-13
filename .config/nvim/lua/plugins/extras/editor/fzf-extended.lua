@@ -5,6 +5,15 @@ local toggle_flag = function(flag)
   end
 end
 
+local toggle_flags = function(flags)
+  return function(_, opts)
+    local actions = require("fzf-lua.actions")
+    for _, flag in ipairs(flags) do
+      actions.toggle_flag(_, vim.tbl_extend("force", opts, { toggle_flag = flag }))
+    end
+  end
+end
+
 --- Append an iglob pattern
 ---@param opts fzf-lua.config.Grep
 ---@param path string
@@ -106,10 +115,17 @@ local fd_opts = default_fd_opts
 local file_opts = {
   actions = {
     -- https://docs.rs/globset/latest/globset/#syntax
-    ["alt-9"] = toggle_fd_exclude_patterns({ "spec/**/*", "**{__tests__,tests?}**", "{test,tests}/" }),
+
+    -- Mnemonics:
+    --   alt-x: exclude tests/specs
+    --   alt-l: lua
+    --   alt-r: ruby
+    --   alt-n: newer
+
+    ["alt-x"] = toggle_fd_exclude_patterns({ "spec/**/*", "**{__tests__,tests?}**", "{test,tests}/" }),
     ["alt-l"] = toggle_flag("-e lua"),
     ["alt-r"] = toggle_flag("-e rb"),
-    ["alt-s"] = toggle_flag("--newer 7day"),
+    ["alt-n"] = toggle_flag("--newer 7day"),
   },
 }
 
@@ -138,30 +154,60 @@ local live_grep_opts = {
     -- ctrl-r: toggle-root-dir
     -- alt-c: toggle-root-dir
     -- ["alt-u"] = toggle_iglob("*.lua !*{test,spec}*"),
+
+    -- Mnemonics:
+    --   alt-j: js/ts (non-tests)
+    --   alt-o: only js/ts tests
+    --   alt-t: tests/specs
+    --   alt-x: e(x)clude (all except tests/specs)
+    --   alt-s: scripts (js/ts)
+    --   alt-m: exclude bundle modules (umd/cjs/esm)
+    --   alt-c: conf type
+    --   alt-w: web type
+    ------------------------------------------------
+    --   alt-g: glob case-insensitive
+    --   alt-k: context (2 lines)
+    --   alt-n: max count (1 per file)
+    --   alt-d: max depth (3)
+    --   alt-p: pcre2
+    --   alt-u: unrestricted (rg -U)
+    --   alt-l: lua type
+    --   alt-r: ruby type
+    --   alt-f: filepath sort
+
     ["alt-j"] = toggle_iglob("*.{js,ts,tsx} !*{test,spec}*"),
     ["alt-o"] = toggle_iglob("*.{js,ts,tsx} **test**"),
-    ["alt-1"] = toggle_iglob("**{test,spec}**"),
-    ["alt-2"] = toggle_iglob("!**{test,spec}**"),
-    ["alt-3"] = toggle_iglob("*.{js,ts,tsx}"),
+    ["alt-t"] = toggle_iglob("**{test,spec}**"),
+    ["alt-x"] = toggle_iglob("!**{test,spec}** !spec/**/* !**/test*/** !__tests__"),
+    ["alt-s"] = toggle_iglob("*.{js,ts,tsx}"),
+    ["alt-m"] = toggle_iglob("!**{umd,cjs,esm}**"),
+    ["alt-c"] = toggle_flags({ "--type-add 'conf:*.{toml,yaml,yml,ini,json}'", "-t conf" }),
+    ["alt-w"] = toggle_flags({ "--type-add 'web:*.{js,ts,tsx,css,scss,html,vue,svelte}'", "-t web" }),
+    ["alt-g"] = toggle_flag("--glob-case-insensitive"),
+    ["alt-k"] = toggle_flag("--context 2"),
+    ["alt-n"] = toggle_flag("--max-count 1"),
+    ["alt-d"] = toggle_flag("--max-depth 3"),
+    ["alt-p"] = toggle_flag("--pcre2"),
+    ["alt-u"] = toggle_flag("-U"), -- dotall (?s:.) ; regular (?-s:.)
+    ["alt-l"] = toggle_flag("-t lua"),
+    ["alt-r"] = toggle_flag("-t ruby"),
+    ["alt-f"] = toggle_flag("--sort path"),
+    -- ["alt-c"] = toggle_flag("--sortr=modified"),
+
+    -- Unused:
+    -- ["alt-f"] = toggle_flag("--sortr=created"),
     -- ["alt-4"] = toggle_iglob("*.rb !spec/**/*.rb"),
     -- ["alt-y"] = toggle_flag("--iglob=!{test,spec}/"),
     -- ["alt-t"] = toggle_flag("--iglob=*{spec,test}*.{lua,js,ts,tsx,rb}"),
-    ["alt-4"] = toggle_iglob("!**{umd,cjs,esm}**"),
     -- ["alt-r"] = toggle_iglob("*.rb !*{test,spec}/"),
     -- ["alt-5"] = toggle_iglob("*.rb !*{test,spec}/"),
     -- stylua: ignore start
-    ["alt-6"] = toggle_iglob("app/models/**"),
-    ["alt-7"] = toggle_iglob("app/controllers/**"),
-    ["alt-8"] = toggle_iglob("spec/**/*.rb **/test*/** **/__tests__/**"),
+    -- ["alt-6"] = toggle_iglob("app/models/**"),
+    -- ["alt-7"] = toggle_iglob("app/controllers/**"),
+    -- ["alt-8"] = toggle_iglob("spec/**/*.rb **/test*/** **/__tests__/**"),
     -- ["alt-9"] = toggle_iglob("!spec/**/* !**/test*/** !test/**"),
-    ["alt-9"] = toggle_iglob("!spec/**/* !**/test*/** !__tests__"),
-    ["alt-p"] = toggle_flag("--pcre2"),
-    -- dotall (?s:.) ; regular (?-s:.)
-    ["alt-u"] = toggle_flag("-U"),
-    ["alt-l"] = toggle_flag("-t lua"),
-    ["alt-r"] = toggle_flag("-t ruby"),
-    ["alt-R"] = toggle_iglob("*.rb !*{test,spec}/"),
-    ["alt-s"] = toggle_flag("--sortr=created"),
+    -- ["alt-x"] = toggle_iglob("!spec/**/* !**/test*/** !__tests__"),
+    -- ["alt-R"] = toggle_iglob("*.rb !*{test,spec}/"),
     -- ["alt-z"] = toggle_live_iglob("*.lua"),
     -- ["alt-x"] = function()
     --   local buf = vim.api.nvim_get_current_buf()
@@ -277,6 +323,11 @@ return {
     keys = {
       -- This is handled by mini.pick instead
       { "<leader>,", false },
+      { "<leader>sk", false },
+      { "<leader>sd", false },
+      { "<leader>sD", false },
+      { "<leader>gd", false },
+
       -- stylua: ignore start
       { "<leader><space>", function() pick("files", vim.tbl_extend("force", file_opts, { git_icons = false, fd_opts = fd_opts })) end, desc = "Find Files (Root Dir)" },
       -- { "<leader><S-space>", LazyVim.pick("files", vim.tbl_extend("force", file_opts, { git_icons = false, fd_opts = fd_opts, root = false })), desc = "Find Files (cwd)" },
@@ -292,17 +343,19 @@ return {
       { "<leader>sW", function() pick("grep_visual", vim.tbl_extend("force", live_grep_opts, { rg_glob = false, root = false })) end, desc = "Selection (cwd)", mode = "v" },
       -- { "<leader>sB", "<cmd>lua LazyVim.pick('lgrep_curbuf')()<CR>", desc = "Buffer (Live Grep)", mode = "n" },
       { "<leader>sg", function() pick("live_grep_glob", live_grep_opts_with_reset) end, desc = "Grep (Root Dir)" },
+      { "<leader>s<C-g>", function() pick("live_grep_glob", live_grep_opts_with_reset) end, desc = "Grep (Root Dir)" },
       { "<leader>sG", function() pick("live_grep_glob", vim.tbl_extend("force", live_grep_opts_with_reset, { root = false })) end, desc = "Grep (cwd)" },
       { "<leader>sP", function() pick("live_grep_glob", { rg_opts = rg_opts_pcre2, silent = true }) end, desc = "Grep (--pcre2)" },
       { "<leader>sN", function() pick("live_grep_glob", { cwd = "node_modules", rg_opts = "-uu" }) end, desc = "Grep (node_modules)" },
-      { "<leader>fM", function() pick("files", { cwd = "node_modules", fd_opts = fd_opts .. " -u" }) end, desc = "Find Files (node_modules)" },
+      { "<leader>fN", function() pick("files", { cwd = "node_modules", fd_opts = fd_opts .. " -u" }) end, desc = "Find Files (node_modules)" },
       -- { "<leader><space>", pick("files", { winopts = { height = 0.33, width = 0.33, preview = { hidden = "hidden" } } }), desc = "Find Files (Root Dir)" },
       -- { "<leader>fz", function() require("util.fzf.zoxide").fzf_zoxide() end, desc = "Zoxide"},
       { "<leader>fz", function() require("util.fzf.zoxide").fzf_zoxide_async() end, desc = "Zoxide"},
       { "<leader>sL", "<cmd>FzfLua lsp_finder<cr>", desc = "LSP Finder" },
-      { "<leader>ga", "<cmd>FzfLua git_branches<cr>", desc = "Git Branches" },
+      -- { "<leader>ga", "<cmd>FzfLua git_branches<cr>", desc = "Git Branches" },
       { "<leader>gr", "<cmd>FzfLua git_branches<cr>", desc = "Branches" },
       { "<leader>sA", "<cmd>FzfLua treesitter<cr>", desc = "Treesiter Symbols" },
+      { "<leader>sh", "<cmd>FzfLua helptags<cr>", desc = "Help Tags" },
       -- { "<leader>sX", "<cmd>FzfLua treesitter<cr>", desc = "Treesiter Symbols" },
       -- { "<leader><C-s>", "<cmd>FzfLua spell_suggest<cr>", desc = "Spelling" },
       -- Disabled in favor of Snacks.picker (syntax highlighting, etc.)
@@ -324,7 +377,7 @@ return {
       { "<leader>s<C-d>", function() require("util.fzf.devdocs").open_async({ languages = vim.bo.filetype }) end, desc = "Devdocs" },
       -- stylua: ignore end
       {
-        "<leader>fp",
+        "<leader>fP",
         function()
           pick(
             "files",
@@ -352,7 +405,7 @@ return {
         desc = "Plugins",
       },
       {
-        "<leader>sY",
+        "<leader>s<C-m>",
         function()
           local cwd = vim.fn.expand("%:p:h")
           -- TODO: make this work if a file is opened in a subdirectory of a node_modules directory
@@ -383,15 +436,15 @@ return {
         desc = "Recently commited",
       },
 
-      {
-        "<C-x><C-f>",
-        function()
-          FzfLua.complete_path()
-        end,
-        desc = "Fuzzy complete path",
-        mode = { "n", "v", "i" },
-        silent = true,
-      },
+      -- {
+      --   "<C-x><C-f>",
+      --   function()
+      --     FzfLua.complete_path()
+      --   end,
+      --   desc = "Fuzzy complete path",
+      --   mode = { "n", "v", "i" },
+      --   silent = true,
+      -- },
       {
         "<C-x><C-f>",
         function()
@@ -414,30 +467,26 @@ return {
       --   silent = true,
       --   desc = "Fuzzy complete path",
       -- },
-      {
-        "<leader>sZ",
-        function()
-          FzfLua.fzf_exec({ "foo", "bar" }, {
-            -- @param selected: the selected entry or entries
-            -- @param opts: fzf-lua caller/provider options
-            -- @param line: originating buffer completed line
-            -- @param col: originating cursor column location
-            -- @return newline: will replace the current buffer line
-            -- @return newcol?: optional, sets the new cursor column
-            complete = function(selected, opts, line, col)
-              local newline = line:sub(1, col) .. selected[1]
-              -- set cursor to EOL, since `nvim_win_set_cursor`
-              -- is 0-based we have to lower the col value by 1
-              return newline, #newline - 1
-            end,
-          })
-        end,
-        desc = "No-bind interal action test",
-      },
-      {
-        "<leader>s<C-a>",
-        function() end,
-      },
+      -- {
+      --   "<leader>sZ",
+      --   function()
+      --     FzfLua.fzf_exec({ "foo", "bar" }, {
+      --       -- @param selected: the selected entry or entries
+      --       -- @param opts: fzf-lua caller/provider options
+      --       -- @param line: originating buffer completed line
+      --       -- @param col: originating cursor column location
+      --       -- @return newline: will replace the current buffer line
+      --       -- @return newcol?: optional, sets the new cursor column
+      --       complete = function(selected, opts, line, col)
+      --         local newline = line:sub(1, col) .. selected[1]
+      --         -- set cursor to EOL, since `nvim_win_set_cursor`
+      --         -- is 0-based we have to lower the col value by 1
+      --         return newline, #newline - 1
+      --       end,
+      --     })
+      --   end,
+      --   desc = "No-bind interal action test",
+      -- },
       -- {
       --   "<leader>sX",
       --   function()

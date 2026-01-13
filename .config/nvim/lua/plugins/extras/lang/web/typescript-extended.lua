@@ -44,6 +44,8 @@ return {
           -- https://github.com/yioneko/vtsls/blob/main/packages/service/configuration.schema.json
           settings = {
             vtsls = {
+              -- For PnP to work, already enabled in LazyVim
+              -- autoUseWorkspaceTsdk = true,
               experimental = {
                 completion = {
                   entriesLimit = 50,
@@ -74,6 +76,17 @@ return {
               },
             },
           },
+          before_init = function(init_params, config)
+            local new_root_dir = config.root_dir
+            local pnp_ts = new_root_dir .. "/.yarn/sdks/typescript/lib"
+            -- vim.api.nvim_echo({ { vim.inspect(pnp_ts), "Normal" } }, true, {})
+            if vim.fn.isdirectory(pnp_ts) == 1 then
+              config.settings = vim.tbl_deep_extend("force", config.settings or {}, {
+                typescript = { tsdk = pnp_ts },
+              })
+              -- vim.api.nvim_echo({ { vim.inspect(config), "Normal" } }, true, {})
+            end
+          end,
         },
         -- denols = {
         --   enabled = false,

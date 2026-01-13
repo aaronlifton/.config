@@ -671,18 +671,16 @@ end, { desc = "Jump to item 1" })
 
 -- Custom finders
 local T = require("util.fzf.finders")
-map("n", "<leader>s<M-l>", function()
-  T.grep_lazyvim_files()
-end, { desc = "Grep lazyvim files" })
-map("n", "<leader>s<C-l>", function()
-  T.grep_lazyvim_files()
-end, { desc = "Grep lazyvim files" })
-map("n", "<leader>fl", function()
-  T.find_lazyvim_files()
-end, { desc = "Find lazyvim files" })
-map("n", "<leader>s<M-c>", function()
-  T.grep_config_files({})
-end, { desc = "Grep config files" })
+-- map("n", "<leader>s<M-l>", function()
+--   T.grep_lazyvim_files()
+-- end, { desc = "Grep lazyvim files" })
+-- map("n", "<leader>fl", function()
+--   T.find_lazyvim_files()
+-- end, { desc = "Find lazyvim files" })
+-- map("n", "<leader>s<M-c>", function()
+--   T.grep_config_files({})
+-- end, { desc = "Grep config files" })
+
 -- Already mapped to <leader>fc
 -- map("n", "<leader>flM", function()
 --   T.find_config_files({})
@@ -867,3 +865,7 @@ local config_file_keymap = {
 }
 
 local bind = require("util.keys.bind")
+
+map("n", "<leader>aJ", function()
+  Util.sidekick.leap_to_tui_window("codex")
+end, { desc = "Jump to a TUI window" })

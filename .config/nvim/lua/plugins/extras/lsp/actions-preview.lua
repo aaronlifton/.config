@@ -1,21 +1,25 @@
 return {
   {
     "neovim/nvim-lspconfig",
-    opts = function()
-      local keys = require("lazyvim.plugins.lsp.keymaps").get()
-
-      keys[#keys + 1] = {
-        "<leader>ca",
-        function()
-          require("actions-preview").code_actions()
-        end,
-        mode = { "n", "v" },
-        desc = "Code Action Preview",
-      }
-      keys[#keys + 1] = { "gr", "<cmd>Glance references<cr>", desc = "Goto References" }
-      keys[#keys + 1] = { "gy", "<cmd>Glance type_definitions<cr>", desc = "Goto T[y]pe Definitions" }
-      keys[#keys + 1] = { "gI", "<cmd>Glance implementations<cr>", desc = "Goto Implementations" }
-    end,
+    opts = {
+      servers = {
+        ["*"] = {
+          keys = {
+            {
+              "<leader>ca",
+              function()
+                require("actions-preview").code_actions()
+              end,
+              mode = { "n", "v" },
+              desc = "Code Action Preview",
+            },
+            { "gr", "<cmd>Glance references<cr>", desc = "Goto References" },
+            { "gy", "<cmd>Glance type_definitions<cr>", desc = "Goto T[y]pe Definitions" },
+            { "gI", "<cmd>Glance implementations<cr>", desc = "Goto Implementations" },
+          },
+        },
+      },
+    },
   },
   {
     "aznhe21/actions-preview.nvim",

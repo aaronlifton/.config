@@ -14,7 +14,11 @@ local function recently_committed_cmd(n)
 
   if not is_git_repo then error("Not a git repository", 0) end
 
-  return string.format('git -C %s log -n %d --pretty=format:"%%ad %%h" --date=short --name-only', git_dir, n)
+  return string.format(
+    'git -C %s log -n %d --pretty=format:"%%ad %%h" --date=short --diff-filter=AM --name-only',
+    git_dir,
+    n
+  )
 end
 
 ---@return Entry[]
