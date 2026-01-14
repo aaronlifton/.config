@@ -1,5 +1,7 @@
 local M = {}
 
+local FlagManager = require("util.minipick_registry.flag_manager")
+
 local function map_gsub(items, pattern, replacement)
   return vim.tbl_map(function(item)
     item, _ = string.gsub(item, pattern, replacement)
@@ -259,23 +261,6 @@ M.grep_ts_show = function(buf_id, items, query, show_opts)
   end
 end
 
-M.rg_flags = {
-  glob_case_insensitive = "--glob-case-insensitive",
-  context = "--context 2",
-  max_count = "--max-count 1",
-  max_depth = "--max-depth 3",
-  pcre2 = "--pcre2",
-  fixed_strings = "--fixed-strings",
-  dotall = "-U", -- dotall (?s:.) ; regular (?-s:.)
-  sort_path = "--sort path",
-  type_lua = "-t lua",
-  type_ruby = "-t ruby",
-  type_conf = "--type-add 'conf:*.{toml,yaml,yml,ini,json}' -t conf",
-  type_web = "--type-add 'web:*.{js,ts,tsx,css,scss,html,vue,svelte}' -t web",
-  hidden = "--hidden",
-  no_ignore = "--no-ignore",
-}
-
 M.iglob_patterns = {
   js_no_tests = "*.{js,ts,tsx} !*{test,spec}*",
   js_tests = "*.{js,ts,tsx} **test**",
@@ -309,7 +294,7 @@ function M.grep_get_command(pattern, globs, flags)
   }
   if flags then
     for _, flag in ipairs(flags) do
-      local rg_flag = M.rg_flags[flag] or flag
+      local rg_flag = FlagManager.rg_flags[flag] or flag
       for _, part in ipairs(vim.split(rg_flag, "%s+", { trimempty = true })) do
         table.insert(res, part)
       end

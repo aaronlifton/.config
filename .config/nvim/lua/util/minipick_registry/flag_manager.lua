@@ -27,6 +27,23 @@ M.fd_flags = {
   small = "--size -100k", -- files < 100KB
 }
 
+M.rg_flags = {
+  glob_case_insensitive = "--glob-case-insensitive",
+  context = "--context 2",
+  max_count = "--max-count 1",
+  max_depth = "--max-depth 3",
+  pcre2 = "--pcre2",
+  fixed_strings = "--fixed-strings",
+  dotall = "-U", -- dotall (?s:.) ; regular (?-s:.)
+  sort_path = "--sort path",
+  type_lua = "-t lua",
+  type_ruby = "-t ruby",
+  type_conf = "--type-add 'conf:*.{toml,yaml,yml,ini,json}' -t conf",
+  type_web = "--type-add 'web:*.{js,ts,tsx,css,scss,html,vue,svelte}' -t web",
+  hidden = "--hidden",
+  no_ignore = "--no-ignore",
+}
+
 function M.flag_index(flags, flag)
   for i, value in ipairs(flags) do
     if value == flag then return i end

@@ -50,7 +50,7 @@ local function create_rg_live_grep_picker(MiniPick)
         if #globs > 0 then parts[#parts + 1] = table.concat(globs, ", ") end
         local flag_parts = {}
         for _, flag in ipairs(flags) do
-          flag_parts[#flag_parts + 1] = Grep.rg_flags[flag] or flag
+          flag_parts[#flag_parts + 1] = FlagManager.rg_flags[flag] or flag
         end
         if show_opts.ts_highlight == false then flag_parts[#flag_parts + 1] = "no-ts" end
         if show_opts.path_max_width then flag_parts[#flag_parts + 1] = "path:" .. show_opts.path_max_width end
@@ -144,7 +144,9 @@ local function create_rg_live_grep_picker(MiniPick)
       end
 
       local function toggle_dotall()
-        local dotall_pattern = "(?s:.)"
+        -- local dotall_pattern = "(?s)."
+        -- local dotall_pattern = "(?s:.)"
+        local dotall_pattern = ".*\\n(?s:.).*"
         FlagManager.toggle_flag(flags, "dotall")
         local dotall_enabled = FlagManager.has_flag(flags, "dotall")
         local query = MiniPick.get_picker_query()

@@ -42,7 +42,7 @@ local function create_rg_grep_picker(MiniPick)
       if #globs > 0 then parts[#parts + 1] = table.concat(globs, ", ") end
       local flag_parts = {}
       for _, flag in ipairs(flags) do
-        flag_parts[#flag_parts + 1] = Grep.rg_flags[flag] or flag
+        flag_parts[#flag_parts + 1] = FlagManager.rg_flags[flag] or flag
       end
       if show_opts.ts_highlight == false then flag_parts[#flag_parts + 1] = "no-ts" end
       if show_opts.path_max_width then flag_parts[#flag_parts + 1] = "path:" .. show_opts.path_max_width end
