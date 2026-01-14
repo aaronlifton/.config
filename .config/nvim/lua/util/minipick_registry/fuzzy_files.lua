@@ -3,12 +3,22 @@ local M = {}
 -- Helpers
 local H = {}
 
+local FlagManager = require("util.minipick_registry.flag_manager")
+
 local function get_path_cache()
   if H._path_cache ~= nil then return H._path_cache end
   H._path_cache = {
     ns = vim.api.nvim_create_namespace("minipick-fuzzy-files"),
   }
   return H._path_cache
+end
+
+H.is_array_of = function(x, ref_type)
+  if not vim.tbl_islist(x) then return false end
+  for i = 1, #x do
+    if type(x[i]) ~= ref_type then return false end
+  end
+  return true
 end
 
 local function hl_group_or(group, fallback)
@@ -92,32 +102,6 @@ local function truncate_path(path, max_width, mode)
   end
 end
 
--- Predefined fd exclude patterns
-H.fd_exclude_patterns = {
-  no_tests = { "spec/**/*", "**{__tests__,tests?}**", "{test,tests}/" },
-}
-
--- Predefined fd flags
-H.fd_flags = {
-  -- Core visibility flags
-  hidden = "--hidden",
-  no_ignore = "--no-ignore",
-  -- Extension filters
-  ext_lua = "-e lua",
-  ext_rb = "-e rb",
-  ext_js = "-e js -e ts -e tsx -e jsx",
-  ext_json = "-e json",
-  ext_md = "-e md",
-  -- Time filters
-  newer = "--changed-within 7d",
-  today = "--changed-within 1d",
-  -- Depth limits
-  max_depth_3 = "--max-depth 3",
-  max_depth_5 = "--max-depth 5",
-  -- Size filters
-  small = "--size -100k", -- files < 100KB
-}
-
 local function create_fuzzy_files_picker()
   -- Example override:
   -- MiniPick.registry.fuzzy_files({
@@ -149,14 +133,23 @@ local function create_fuzzy_files_picker()
     -- State for toggleable options
     local excludes = vim.deepcopy((local_opts and local_opts.excludes) or {})
     -- Default: hidden files ON (matches typical usage)
-    local flags = vim.tbl_extend("force", { hidden = true }, (local_opts and local_opts.fd_flags) or {})
+    local default_flags = vim.tbl_extend("force", { hidden = true }, (local_opts and local_opts.fd_flags) or {})
+    local flags
+    if H.is_array_of(local_opts and local_opts.flags, "string") then
+      flags = vim.list_extend({}, local_opts.flags)
+    else
+      flags = {}
+      for key, enabled in pairs(default_flags) do
+        if enabled then table.insert(flags, key) end
+      end
+    end
 
     local function build_name_suffix()
       local parts = {}
       if #excludes > 0 then parts[#parts + 1] = "excl:" .. #excludes end
       local flag_parts = {}
-      for key, enabled in pairs(flags) do
-        if enabled then flag_parts[#flag_parts + 1] = key end
+      for _, flag in ipairs(flags) do
+        flag_parts[#flag_parts + 1] = FlagManager.fd_flags[flag] or flag
       end
       if #flag_parts > 0 then parts[#parts + 1] = table.concat(flag_parts, ", ") end
       return #parts == 0 and "" or (" | " .. table.concat(parts, " | "))
@@ -164,18 +157,20 @@ local function create_fuzzy_files_picker()
 
     local function build_name()
       local suffix = build_name_suffix()
-      if opts.source and opts.source.name then return ("%s (fuzzy, %s%s)"):format(opts.source.name, matcher, suffix) end
+      if opts.source and opts.source.name then
+        local custom_desc = local_opts.custom_desc or "fuzzy"
+        return ("%s (%s, %s%s)"):format(opts.source.name, custom_desc, matcher, suffix)
+      end
       return ("Files (fuzzy, %s%s)"):format(matcher, suffix)
     end
 
     local function build_fd_command()
       local cmd = { "fd", "--type", "f", "--color", "never", "--follow", "--exclude", ".git" }
       -- Add flags (including --hidden if enabled)
-      for key, enabled in pairs(flags) do
-        if enabled and H.fd_flags[key] then
-          for _, part in ipairs(vim.split(H.fd_flags[key], "%s+", { trimempty = true })) do
-            table.insert(cmd, part)
-          end
+      for _, flag in ipairs(flags) do
+        local flag_value = FlagManager.fd_flags[flag] or flag
+        for _, part in ipairs(vim.split(flag_value, "%s+", { trimempty = true })) do
+          table.insert(cmd, part)
         end
       end
       -- Add excludes
@@ -204,7 +199,7 @@ local function create_fuzzy_files_picker()
 
     local function toggle_fd_exclude_patterns(pattern_key)
       return function()
-        local patterns = H.fd_exclude_patterns[pattern_key]
+        local patterns = FlagManager.fd_exclude_patterns[pattern_key]
         if not patterns then return end
         -- Check if all patterns are present
         local all_present = true
@@ -251,7 +246,7 @@ local function create_fuzzy_files_picker()
 
     local function toggle_fd_flag(flag_key)
       return function()
-        flags[flag_key] = not flags[flag_key]
+        FlagManager.toggle_flag(flags, flag_key)
         MiniPick.set_picker_opts({ source = { name = build_name() } })
         refresh_items()
       end
@@ -283,6 +278,7 @@ local function create_fuzzy_files_picker()
       toggle_ext_md = { char = "<M-m>", func = toggle_fd_flag("ext_md") },
       -- Time filters
       toggle_newer = { char = "<M-n>", func = toggle_fd_flag("newer") },
+      toggle_two_days = { char = "<M-2>", func = toggle_fd_flag("two_days") },
       toggle_today = { char = "<M-t>", func = toggle_fd_flag("today") },
       -- Depth/size
       toggle_max_depth = { char = "<M-d>", func = toggle_fd_flag("max_depth_3") },
@@ -290,8 +286,8 @@ local function create_fuzzy_files_picker()
     }
 
     local function show(buf_id, items, query)
-      local path_max_width = vim.g.minipick_path_max_width
-      local path_truncate_mode = vim.g.minipick_path_truncate_mode or "smart"
+      local path_max_width = local_opts.path_max_width or vim.g.minipick_path_max_width
+      local path_truncate_mode = local_opts.path_truncate_mode or vim.g.minipick_path_truncate_mode or "smart"
 
       local display_items = items
       if path_max_width and path_max_width > 0 then
@@ -313,46 +309,49 @@ local function create_fuzzy_files_picker()
       end
     end
 
-    MiniPick.builtin.files(
-      nil,
-      vim.tbl_deep_extend("force", local_opts or {}, opts or {}, {
+    local default_match = function(stritems, indices, query)
+      local prompt = table.concat(query)
+      if prompt == "" then return indices end
+      local tokens = vim.split(prompt, "%s+", { trimempty = true })
+      if #tokens == 0 then return indices end
+
+      local use_dp = matcher == "fzf_dp" or (matcher == "auto" and #indices <= (auto_opts.threshold or 20000))
+      local matcher_impl = get_matcher(use_dp)
+
+      local result = {}
+      for _, index in ipairs(indices) do
+        local path = stritems[index]
+        local total_score = 0
+        local matched = true
+
+        for _, token in ipairs(tokens) do
+          local score = matcher_impl:match_score(path, token, { is_file = true })
+          if not score then
+            matched = false
+            break
+          end
+          total_score = total_score + score
+        end
+
+        if matched then table.insert(result, { index = index, score = total_score }) end
+      end
+
+      table.sort(result, function(a, b)
+        if a.score == b.score then return a.index < b.index end
+        return a.score > b.score
+      end)
+
+      return vim.tbl_map(function(item)
+        return item.index
+      end, result)
+    end
+
+    -- MiniPick.builtin.files
+    MiniPick.registry.files_ext(
+      local_opts,
+      vim.tbl_deep_extend("force", opts or {}, {
         source = {
-          match = function(stritems, indices, query)
-            local prompt = table.concat(query)
-            if prompt == "" then return indices end
-            local tokens = vim.split(prompt, "%s+", { trimempty = true })
-            if #tokens == 0 then return indices end
-
-            local use_dp = matcher == "fzf_dp" or (matcher == "auto" and #indices <= (auto_opts.threshold or 20000))
-            local matcher_impl = get_matcher(use_dp)
-
-            local result = {}
-            for _, index in ipairs(indices) do
-              local path = stritems[index]
-              local total_score = 0
-              local matched = true
-
-              for _, token in ipairs(tokens) do
-                local score = matcher_impl:match_score(path, token, { is_file = true })
-                if not score then
-                  matched = false
-                  break
-                end
-                total_score = total_score + score
-              end
-
-              if matched then table.insert(result, { index = index, score = total_score }) end
-            end
-
-            table.sort(result, function(a, b)
-              if a.score == b.score then return a.index < b.index end
-              return a.score > b.score
-            end)
-
-            return vim.tbl_map(function(item)
-              return item.index
-            end, result)
-          end,
+          match = opts.source.match or default_match,
           choose_marked = require("util.minipick_registry.trouble").trouble_choose_marked,
           name = name,
           show = show,

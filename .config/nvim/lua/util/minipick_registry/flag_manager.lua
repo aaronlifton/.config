@@ -1,5 +1,32 @@
 local M = {}
 
+-- Predefined fd exclude patterns
+M.fd_exclude_patterns = {
+  no_tests = { "spec/**/*", "**{__tests__,tests?}**", "{test,tests}/" },
+}
+
+-- Predefined fd flags
+M.fd_flags = {
+  -- Core visibility flags
+  hidden = "--hidden",
+  no_ignore = "--no-ignore",
+  -- Extension filters
+  ext_lua = "-e lua",
+  ext_rb = "-e rb",
+  ext_js = "-e js -e ts -e tsx -e jsx",
+  ext_json = "-e json",
+  ext_md = "-e md",
+  -- Time filters
+  newer = "--changed-within 7d",
+  today = "--changed-within 1d",
+  two_days = "--changed-within 2d",
+  -- Depth limits
+  max_depth_3 = "--max-depth 3",
+  max_depth_5 = "--max-depth 5",
+  -- Size filters
+  small = "--size -100k", -- files < 100KB
+}
+
 function M.flag_index(flags, flag)
   for i, value in ipairs(flags) do
     if value == flag then return i end

@@ -73,6 +73,7 @@ local function map_gsub(items, pattern, replacement)
     return item
   end, items)
 end
+
 local function show_align_on_null(buf_id, items, query, opts)
   -- Shorten the pathname to keep the width of the picker window to something
   -- a bit more reasonable for longer pathnames.
@@ -90,6 +91,7 @@ local function show_align_on_null(buf_id, items, query, opts)
   items = map_gsub(items, "#|#", "\0")
   MiniPick.default_show(buf_id, items, query, opts)
 end
+
 return {
   {
     "nvim-mini/mini.pick",
@@ -212,11 +214,13 @@ return {
       })
 
       -- vim.ui.select = MiniPick.select
+      require("util.minipick_registry.files_ext").setup(MiniPick)
       require("util.minipick_registry.my_buffers").setup(MiniPick)
       require("util.minipick_registry.rg_live_grep").setup(MiniPick)
       require("util.minipick_registry.rg_grep").setup(MiniPick)
       require("util.minipick_registry.fuzzy_files").setup(MiniPick)
       require("util.minipick_registry.smart").setup(MiniPick)
+      require("util.minipick_registry.smart2").setup(MiniPick)
       require("util.minipick_registry.keymaps").setup(MiniPick)
       require("util.minipick_registry.bufferlines_ts").setup(MiniPick)
 
@@ -275,7 +279,7 @@ return {
       { "<leader>s<C-r>", function() require("mini.pick").builtin.resume() end, desc = "Grep (Live)"},
       -- { "<leader>f<M-b>", function() require("mini.pick").builtin.buffers() end, desc = "Buffers"},
       { "<leader>,", function() MiniPick.registry.my_buffers() end, desc = "Buffers (recent)" },
-      { "<leader>fs", function() MiniPick.registry.smart() end, desc = "Mini Smart Picker" },
+      { "<leader>fs", function() MiniPick.registry.smart2({ flags = { "two_days" } }) end, desc = "Mini Smart Picker" },
       --stylua: ignore end
 
       -- buffers

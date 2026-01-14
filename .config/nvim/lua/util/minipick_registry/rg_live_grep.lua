@@ -36,8 +36,7 @@ local function create_rg_live_grep_picker(MiniPick)
       local globs = H.is_array_of(local_opts.globs, "string") and local_opts.globs or {}
       local flags = { "hidden" }
       if H.is_array_of(local_opts.flags, "string") then flags = vim.list_extend({}, local_opts.flags) end
-      local formatted_name
-      if opts.source.name then formatted_name = opts.source.name and (opts.source.name):format(" %s ") or nil end
+      local custom_name = opts.source.name or "Grep live"
 
       -- Show options (can be set via local_opts)
       local show_opts = {
@@ -61,8 +60,7 @@ local function create_rg_live_grep_picker(MiniPick)
 
       local function build_name()
         local name_suffix = build_name_suffix()
-        if formatted_name then return string.format("Grep live (%s%s) | %s", tool, name_suffix, formatted_name) end
-        return string.format("Grep live (%s%s)", tool, name_suffix)
+        return string.format("%s (%s%s)", custom_name, tool, name_suffix)
       end
 
       local function get_show_func()
