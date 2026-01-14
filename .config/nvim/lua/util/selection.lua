@@ -295,4 +295,49 @@ M.is_visual_mode = function(mode)
   return mode == "v" or mode == "V" or mode == "\22", mode
 end
 
+-- ~/.local/share/nvim/lazy/fzf-lua/lua/fzf-lua/utils.lua:855
+function M.get_visual_selection()
+  -- this will exit visual mode
+  -- use 'gv' to reselect the text
+  local _, csrow, cscol, cerow, cecol
+  local mode = vim.fn.mode()
+  if mode == "v" or mode == "V" or mode == "" then
+    -- if we are in visual mode use the live position
+    _, csrow, cscol, _ = unpack(vim.fn.getpos("."))
+    _, cerow, cecol, _ = unpack(vim.fn.getpos("v"))
+    if mode == "V" then
+      -- visual line doesn't provide columns
+      cscol, cecol = 0, 999
+    end
+    -- NOTE: not required since commit: e8b2093
+    -- exit visual mode
+    -- vim.api.nvim_feedkeys(
+    --   vim.api.nvim_replace_termcodes("<Esc>",
+    --     true, false, true), "n", true)
+  else
+    -- otherwise, use the last known visual position
+    _, csrow, cscol, _ = unpack(vim.fn.getpos("'<"))
+    _, cerow, cecol, _ = unpack(vim.fn.getpos("'>"))
+  end
+  -- swap vars if needed
+  if cerow < csrow then
+    csrow, cerow = cerow, csrow
+  end
+  if cecol < cscol then
+    cscol, cecol = cecol, cscol
+  end
+  local lines = vim.fn.getline(csrow, cerow)
+  ---@cast lines -string
+  -- local n = cerow-csrow+1
+  local n = #lines
+  if n <= 0 then return "" end
+  lines[n] = string.sub(assert(lines[n]), 1, cecol)
+  lines[1] = string.sub(assert(lines[1]), cscol)
+  return table.concat(lines, "\n"),
+    {
+      start = { line = csrow, char = cscol },
+      ["end"] = { line = cerow, char = cecol },
+    }
+end
+
 return M

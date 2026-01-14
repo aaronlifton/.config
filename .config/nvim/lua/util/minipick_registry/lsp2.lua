@@ -61,29 +61,14 @@ local function create_lsp_picker(MiniPick)
     MiniPick.default_choose(item)
   end
 
-  local function item_matches_cursor(item, buf_id)
-    local path = item.path or item.filename
-    if path == nil then return false end
-
-    local buf_path = vim.api.nvim_buf_get_name(buf_id)
-    if buf_path == "" then return false end
-
-    if vim.fn.fnamemodify(path, ":p") ~= vim.fn.fnamemodify(buf_path, ":p") then return false end
-
-    local cursor = vim.api.nvim_win_get_cursor(0)
-    local lnum = item.lnum or 1
-    local col = item.col or 1
-    return cursor[1] == lnum and cursor[2] + 1 == col
-  end
+  -- Reuse from Util.lsp
+  local item_matches_cursor = Util.lsp.item_matches_cursor
+  local dedupe_by_location = Util.lsp.dedupe_by_location
 
   local function pick_start(items, picker_opts, opts)
     local source = vim.tbl_deep_extend("force", { items = items }, picker_opts.source or {})
     local start_opts = vim.tbl_deep_extend("force", picker_opts, opts or {}, { source = source })
 
-    vim.api.nvim_echo({
-      { "pick_start", "Normal" },
-      { vim.inspect(start_opts), "Normal" },
-    }, true, {})
     return MiniPick.start(start_opts)
   end
 
@@ -198,7 +183,6 @@ local function create_lsp_picker(MiniPick)
         local win_id = MiniPick.get_picker_state().windows.target
         local buf = vim.api.nvim_win_get_buf(win_id)
         local ft = vim.filetype.match({ buf = buf })
-        -- vim.api.nvim_echo({ { vim.inspect({ buf = buf, ft = ft }), "Normal" } }, true, {})
         -- local lang = vim.treesitter.language.get_lang(ft)
         -- local lang = Snacks.util.get_lang(ft)
         -- if vim.tbl_contains({ "latex" }, lang) then lang = nil end
@@ -226,16 +210,7 @@ local function create_lsp_picker(MiniPick)
       items = process(items)
 
       if source == "definition" then
-        local seen = {}
-        local deduped = {}
-        for _, item in ipairs(items) do
-          local key = (item.path or "") .. ":" .. tostring(item.lnum or 1)
-          if not seen[key] then
-            seen[key] = true
-            deduped[#deduped + 1] = item
-          end
-        end
-        items = deduped
+        items = dedupe_by_location(items)
       end
 
       if #items == 1 then
@@ -261,7 +236,6 @@ local function create_lsp_picker(MiniPick)
         return MiniPick.set_picker_items(items, { do_match = true })
       end
 
-      vim.api.nvim_echo({ { "on_list", "Normal" }, { vim.inspect(opts), "Normal" } }, true, {})
       return pick_start(items, picker_opts, opts)
     end
 
@@ -281,12 +255,31 @@ local function create_lsp_picker(MiniPick)
       return vim.lsp.buf[scope](query, buf_lsp_opts)
     end
     if scope == "workspace_symbol_live" then
+      local set_items_opts = { do_match = false, querytick = MiniPick.get_querytick() }
+
       picker_opts.source.match = function(_, _, query)
-        if #query == 0 then return MiniPick.set_picker_items({}, { do_match = false }) end
+        local querytick = MiniPick.get_querytick()
+        if querytick == set_items_opts.querytick then return end
+        if #query == 0 then return MiniPick.set_picker_items({}, set_items_opts) end
+
+        set_items_opts.querytick = querytick
+
         local win_id = MiniPick.get_picker_state().windows.target
         local buf_id = vim.api.nvim_win_get_buf(win_id)
         vim.api.nvim_buf_call(buf_id, function()
-          vim.lsp.buf.workspace_symbol(table.concat(query), buf_lsp_opts)
+          vim.lsp.buf.workspace_symbol(table.concat(query), {
+            on_list = function(data)
+              -- Discard stale responses
+              if set_items_opts.querytick ~= MiniPick.get_querytick() then return end
+              local items = data.items or {}
+              for _, item in ipairs(items) do
+                item.text = item.text or item.name or ""
+                item.path = item.path or item.filename
+              end
+              items = process_items(items)
+              MiniPick.set_picker_items(items, set_items_opts)
+            end,
+          })
         end)
       end
 

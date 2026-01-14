@@ -3,95 +3,6 @@ local M = {}
 -- Helpers
 local H = {}
 
-local function get_path_cache()
-  if H._path_cache ~= nil then return H._path_cache end
-  H._path_cache = {
-    ns = vim.api.nvim_create_namespace("minipick-fuzzy-files"),
-  }
-  return H._path_cache
-end
-
-local function hl_group_or(group, fallback)
-  if vim.fn.hlexists(group) == 1 then return group end
-  return fallback
-end
-
-local function is_hidden_path(path)
-  if path:sub(1, 1) == "." then return true end
-  return path:find("/%.") ~= nil
-end
-
-local function highlight_path(buf_id, row, path, col_offset)
-  if path == "" then return end
-
-  local base_hl = hl_group_or("SnacksPickerFile", "MiniPickNormal")
-  local dir_hl = hl_group_or("SnacksPickerDir", "MiniPickNormal")
-  if is_hidden_path(path) then base_hl = hl_group_or("SnacksPickerPathHidden", base_hl) end
-
-  local dir, base = path:match("^(.*)/([^/]+)$")
-  local ext_opts = { hl_mode = "combine", priority = 120 }
-  if dir and base then
-    ext_opts.hl_group = dir_hl
-    ext_opts.end_row = row
-    ext_opts.end_col = col_offset + #dir + 1
-    vim.api.nvim_buf_set_extmark(buf_id, get_path_cache().ns, row, col_offset, ext_opts)
-
-    ext_opts.hl_group = base_hl
-    ext_opts.end_row = row
-    ext_opts.end_col = col_offset + #dir + 1 + #base
-    vim.api.nvim_buf_set_extmark(buf_id, get_path_cache().ns, row, col_offset + #dir + 1, ext_opts)
-  else
-    ext_opts.hl_group = base_hl
-    ext_opts.end_row = row
-    ext_opts.end_col = col_offset + #path
-    vim.api.nvim_buf_set_extmark(buf_id, get_path_cache().ns, row, col_offset, ext_opts)
-  end
-end
-
--- Truncate path to max_width, preserving filename
--- Modes: "head" (truncate start), "middle" (truncate middle), "smart" (keep first + last dirs)
----@param path string
----@param max_width number
----@param mode? "head"|"middle"|"smart"
----@return string
-local function truncate_path(path, max_width, mode)
-  if #path <= max_width then return path end
-  mode = mode or "smart"
-
-  local dir, filename = path:match("^(.*)/([^/]+)$")
-  if not dir then return path:sub(1, max_width - 1) .. "…" end
-
-  -- Reserve space for filename + separator + ellipsis
-  local available = max_width - #filename - 2 -- "…/"
-  if available <= 0 then
-    -- Filename alone is too long, truncate it
-    return "…" .. filename:sub(-(max_width - 1))
-  end
-
-  if mode == "head" then
-    -- Truncate from start: …/rest/of/path/file.lua
-    return "…" .. dir:sub(-available) .. "/" .. filename
-  elseif mode == "middle" then
-    -- Truncate from middle: start/…/end/file.lua
-    local half = math.floor(available / 2)
-    local left = dir:sub(1, half)
-    local right = dir:sub(-(available - half - 1))
-    return left .. "…" .. right .. "/" .. filename
-  else -- "smart"
-    -- Keep first directory and filename: first/…/file.lua
-    local first_dir = dir:match("^([^/]+)")
-    if first_dir and #first_dir + 3 < available then
-      local rest_available = available - #first_dir - 2 -- "/…"
-      local rest = dir:sub(#first_dir + 2) -- skip "first_dir/"
-      if #rest > rest_available then rest = "…" .. rest:sub(-rest_available + 1) end
-      return first_dir .. "/" .. rest .. "/" .. filename
-    else
-      -- Fall back to head truncation
-      return "…" .. dir:sub(-available) .. "/" .. filename
-    end
-  end
-end
-
 -- Predefined fd exclude patterns
 H.fd_exclude_patterns = {
   no_tests = { "spec/**/*", "**{__tests__,tests?}**", "{test,tests}/" },
@@ -289,30 +200,6 @@ local function create_fuzzy_files_picker()
       toggle_small = { char = "<M-s>", func = toggle_fd_flag("small") },
     }
 
-    local function show(buf_id, items, query)
-      local path_max_width = vim.g.minipick_path_max_width
-      local path_truncate_mode = vim.g.minipick_path_truncate_mode or "smart"
-
-      local display_items = items
-      if path_max_width and path_max_width > 0 then
-        display_items = vim.tbl_map(function(item)
-          return truncate_path(item, path_max_width, path_truncate_mode)
-        end, items)
-      end
-
-      MiniPick.default_show(buf_id, display_items, query, { show_icons = true })
-
-      local cache = get_path_cache()
-      vim.api.nvim_buf_clear_namespace(buf_id, cache.ns, 0, -1)
-      local lines = vim.api.nvim_buf_get_lines(buf_id, 0, -1, false)
-      for i, item in ipairs(display_items) do
-        local line = lines[i] or ""
-        local prefix_len = #line - #item
-        if prefix_len < 0 then prefix_len = 0 end
-        highlight_path(buf_id, i - 1, item, prefix_len)
-      end
-    end
-
     MiniPick.builtin.files(
       nil,
       vim.tbl_deep_extend("force", local_opts or {}, opts or {}, {
@@ -355,7 +242,6 @@ local function create_fuzzy_files_picker()
           end,
           choose_marked = require("util.minipick_registry.trouble").trouble_choose_marked,
           name = name,
-          show = show,
         },
         mappings = mappings,
       })

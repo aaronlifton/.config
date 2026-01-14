@@ -529,4 +529,18 @@ return {
       -- stylua: ignore end
     },
   },
+  {
+    "neovim/nvim-lspconfig",
+    opts = {
+      servers = {
+          -- stylua: ignore
+          ["*"] = {
+            keys = {
+              -- Add alternative go-to-definition keymap for testing
+              { "g<C-d>", "<cmd>FzfLua lsp_definitions     jump1=true ignore_current_line=true<cr>", desc = "Goto Definition", has = "definition" },
+            }
+          },
+      },
+    },
+  },
 }

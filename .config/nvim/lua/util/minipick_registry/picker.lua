@@ -21,21 +21,29 @@ function M.pick_files(cwd, local_opts, opts)
   require("mini.pick").registry.fuzzy_files(local_opts, opts)
 end
 
-function M.pick_grep(pattern, opts)
+function M.pick_grep(pattern, local_opts, opts)
+  pattern = pattern or Util.selection.get_visual_selection()
+  if not pattern or pattern == "" then return end
+
+  local_opts = local_opts or {}
+  opts = opts or {}
+  local_opts.pattern = pattern
+
   local MiniPick = require("mini.pick")
-  if not pattern or pattern == "" then return MiniPick.builtin.grep({}, opts) end
-  return MiniPick.builtin.grep({ pattern = pattern }, opts)
+  MiniPick.registry.rg_grep(local_opts, opts)
 end
 
-function M.pick_grep_live(opts, query)
+function M.pick_grep_live(local_opts, opts)
+  local_opts = local_opts or {}
   opts = opts or {}
+
+  opts = vim.tbl_deep_extend("force", opts, { hinted = { enable = false } })
+
   local MiniPick = require("mini.pick")
-  -- MiniPick.builtin.grep_live({}, opts)
-  opts = vim.tbl_deep_extend("force", opts, { hinted = { enable = true } })
-  MiniPick.registry.iglob_ts({}, opts)
-  if query and query ~= "" then vim.schedule(function()
-    pcall(MiniPick.set_picker_query, { query })
-  end) end
+  MiniPick.registry.rg_live_grep(local_opts, opts)
+  -- if query and query ~= "" then vim.schedule(function()
+  --   pcall(MiniPick.set_picker_query, { query })
+  -- end) end
 end
 
 function M.symbol_query_from_kind_filter()

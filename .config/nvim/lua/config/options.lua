@@ -63,6 +63,7 @@ g.dprint_needs_config = true
 -- g.lazyvim_picker = "telescope" -- for testing plugins
 
 -------------------------------------------------
+
 -- Lazyvim options
 -- g.lazyvim_cmp = "nvim-cmp" -- "nvim-cmp", "blink.cmp"
 g.lazyvim_cmp = "blink.cmp"
@@ -75,9 +76,17 @@ g.ai_cmp = true
 g.icon_size = "normal" -- "normal", "small"
 g.editorconfig = true
 -------------------------------------------------
+
 -- MiniPick
-g.minipick_iglob_ts_highlight = true
--- g.minipick_iglob_ts_max_items = 200
+g.minipick_ts_highlight = true
+-- g.minipick_max_ts_items = 200
+g.minipick_path_max_width = 40
+g.minipick_path_truncate_mode = "smart"
+g.minipick_ff_path_max_width = nil
+-- g.minipick_ff_path_trunate_mode = "head"
+-- g.minipick_path_max_width = number (default: nil, no truncation)
+-- g.minipick_path_truncate_mode = "head"|"middle"|"smart" (default: "smart")
+
 -------------------------------------------------
 
 -- Linux paths

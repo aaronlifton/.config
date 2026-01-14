@@ -52,6 +52,50 @@ local function split_grep_item(item)
   }
 end
 
+-- Truncate path to max_width, preserving filename
+-- Modes: "head" (truncate start), "middle" (truncate middle), "smart" (keep first + last dirs)
+---@param path string
+---@param max_width number
+---@param mode? "head"|"middle"|"smart"
+---@return string
+local function truncate_path(path, max_width, mode)
+  if #path <= max_width then return path end
+  mode = mode or "smart"
+
+  local dir, filename = path:match("^(.*)/([^/]+)$")
+  if not dir then return path:sub(1, max_width - 1) .. "…" end
+
+  -- Reserve space for filename + separator + ellipsis
+  local available = max_width - #filename - 2 -- "…/"
+  if available <= 0 then
+    -- Filename alone is too long, truncate it
+    return "…" .. filename:sub(-(max_width - 1))
+  end
+
+  if mode == "head" then
+    -- Truncate from start: …/rest/of/path/file.lua
+    return "…" .. dir:sub(-available) .. "/" .. filename
+  elseif mode == "middle" then
+    -- Truncate from middle: start/…/end/file.lua
+    local half = math.floor(available / 2)
+    local left = dir:sub(1, half)
+    local right = dir:sub(-(available - half - 1))
+    return left .. "…" .. right .. "/" .. filename
+  else -- "smart"
+    -- Keep first directory and filename: first/…/file.lua
+    local first_dir = dir:match("^([^/]+)")
+    if first_dir and #first_dir + 3 < available then
+      local rest_available = available - #first_dir - 2 -- "/…"
+      local rest = dir:sub(#first_dir + 2) -- skip "first_dir/"
+      if #rest > rest_available then rest = "…" .. rest:sub(-rest_available + 1) end
+      return first_dir .. "/" .. rest .. "/" .. filename
+    else
+      -- Fall back to head truncation
+      return "…" .. dir:sub(-available) .. "/" .. filename
+    end
+  end
+end
+
 local function find_last(haystack, needle)
   if needle == "" then return nil end
   local last, init = nil, 1
@@ -132,12 +176,32 @@ H.default_show_with_icons = function(buf_id, items, query)
 end
 
 -- Configuration:
---   vim.g.minipick_iglob_ts_highlight = true/false (default: true)
---   vim.g.minipick_iglob_ts_max_items = number (default: 200)
-H.grep_ts_show = function(buf_id, items, query, ts_highlight_override)
+--   vim.g.minipick_ts_highlight = true/false (default: true)
+--   vim.g.minipick_max_ts_items = number (default: 200)
+--   vim.g.minipick_path_max_width = number (default: nil, no truncation)
+--   vim.g.minipick_path_truncate_mode = "head"|"middle"|"smart" (default: "smart")
+H.grep_ts_show = function(buf_id, items, query, show_opts)
+  show_opts = show_opts or {}
+  local ts_highlight_override = show_opts.ts_highlight
+  local path_max_width = show_opts.path_max_width or vim.g.minipick_path_max_width
+  local path_truncate_mode = show_opts.path_truncate_mode or vim.g.minipick_path_truncate_mode or "smart"
+
+  -- Apply path truncation if configured
+  local display_items = items
+  if path_max_width and path_max_width > 0 then
+    display_items = vim.tbl_map(function(item)
+      local parts = vim.split(item, "\0", { plain = true })
+      if #parts >= 1 then
+        parts[1] = truncate_path(parts[1], path_max_width, path_truncate_mode)
+        return table.concat(parts, "\0")
+      end
+      return item
+    end, items)
+  end
+
   local sep = string.char(31)
   local sep_pattern = vim.pesc(sep)
-  local aligned_items = map_gsub(items, "%z", sep)
+  local aligned_items = map_gsub(display_items, "%z", sep)
   aligned_items = require("mini.align").align_strings(aligned_items, {
     justify_side = { "left", "right", "right" },
     merge_delimiter = { "", " ", "", " ", "" },
@@ -154,13 +218,13 @@ H.grep_ts_show = function(buf_id, items, query, ts_highlight_override)
 
   -- Check if TS highlighting is enabled (override > global > default true)
   local ts_enabled = ts_highlight_override
-  if ts_enabled == nil then ts_enabled = vim.g.minipick_iglob_ts_highlight end
+  if ts_enabled == nil then ts_enabled = vim.g.minipick_ts_highlight end
   if ts_enabled == nil then ts_enabled = true end
   if not ts_enabled then return end
 
   local cache = get_ts_cache()
   vim.api.nvim_buf_clear_namespace(buf_id, cache.ns, 0, -1)
-  local max_ts_items = vim.g.minipick_iglob_ts_max_items or 200
+  local max_ts_items = vim.g.minipick_max_ts_items or 200
   if #items > max_ts_items then return end
 
   local lines = vim.api.nvim_buf_get_lines(buf_id, 0, -1, false)
@@ -260,8 +324,12 @@ local function create_iglob_picker(MiniPick)
       local formatted_name
       if opts.source.name then formatted_name = opts.source.name and (opts.source.name):format(" %s ") or nil end
 
-      -- TS highlighting state (nil = use global setting)
-      local ts_highlight = nil
+      -- Show options (can be set via local_opts)
+      local show_opts = {
+        ts_highlight = local_opts.ts_highlight, -- nil = use global, false = disabled, true = enabled
+        path_max_width = local_opts.path_max_width, -- nil = use global or no truncation
+        path_truncate_mode = local_opts.path_truncate_mode, -- "head", "middle", "smart" (default)
+      }
 
       local function build_name_suffix()
         local parts = {}
@@ -272,7 +340,8 @@ local function create_iglob_picker(MiniPick)
         for key, enabled in pairs(flags.extra or {}) do
           if enabled then flag_parts[#flag_parts + 1] = key end
         end
-        if ts_highlight == false then flag_parts[#flag_parts + 1] = "no-ts" end
+        if show_opts.ts_highlight == false then flag_parts[#flag_parts + 1] = "no-ts" end
+        if show_opts.path_max_width then flag_parts[#flag_parts + 1] = "path:" .. show_opts.path_max_width end
         if #flag_parts > 0 then parts[#parts + 1] = table.concat(flag_parts, ", ") end
         return #parts == 0 and "" or (" | " .. table.concat(parts, " | "))
       end
@@ -285,13 +354,16 @@ local function create_iglob_picker(MiniPick)
 
       local function get_show_func()
         return function(buf_id, items, query)
-          H.grep_ts_show(buf_id, items, query, ts_highlight)
+          H.grep_ts_show(buf_id, items, query, show_opts)
         end
       end
 
       local name = build_name()
-      local default_source =
-        { name = name, show = get_show_func(), choose_marked = require("util.minipick_registry.trouble").trouble_choose_marked }
+      local default_source = {
+        name = name,
+        show = get_show_func(),
+        choose_marked = require("util.minipick_registry.trouble").trouble_choose_marked,
+      }
 
       opts = vim.tbl_deep_extend("force", { source = default_source }, opts or {})
       opts.source.name = default_source.name
@@ -367,9 +439,7 @@ local function create_iglob_picker(MiniPick)
 
         if flags.extra.dotall then
           -- Add (?s:.) after current query
-          if not query_str:find(vim.pesc(dotall_pattern), 1, true) then
-            query_str = query_str .. dotall_pattern
-          end
+          if not query_str:find(vim.pesc(dotall_pattern), 1, true) then query_str = query_str .. dotall_pattern end
         else
           -- Remove (?s:.) from query
           query_str = query_str:gsub(vim.pesc(dotall_pattern), "")
@@ -381,11 +451,26 @@ local function create_iglob_picker(MiniPick)
 
       local function toggle_ts_highlight()
         -- Cycle: nil (use global) -> false (disabled) -> nil
-        if ts_highlight == nil then
-          ts_highlight = false
+        if show_opts.ts_highlight == nil then
+          show_opts.ts_highlight = false
         else
-          ts_highlight = nil
+          show_opts.ts_highlight = nil
         end
+        MiniPick.set_picker_opts({ source = { name = build_name(), show = get_show_func() } })
+        MiniPick.set_picker_query(MiniPick.get_picker_query())
+      end
+
+      local function toggle_path_width()
+        -- Cycle: nil -> 60 -> 40 -> 80 -> nil
+        local widths = { nil, 60, 40, 80 }
+        local current_idx = 1
+        for i, w in ipairs(widths) do
+          if show_opts.path_max_width == w then
+            current_idx = i
+            break
+          end
+        end
+        show_opts.path_max_width = widths[(current_idx % #widths) + 1]
         MiniPick.set_picker_opts({ source = { name = build_name(), show = get_show_func() } })
         MiniPick.set_picker_query(MiniPick.get_picker_query())
       end
@@ -458,6 +543,7 @@ local function create_iglob_picker(MiniPick)
       --   alt-r: ruby type
       --   alt-f: filepath sort
       --   alt-y: toggle treesitter s(y)ntax highlighting
+      --   alt-z: toggle path truncation (cycles: off -> 60 -> 40 -> 80)
 
       local mappings = {
         add_glob = { char = "<C-o>", func = add_glob },
@@ -484,6 +570,7 @@ local function create_iglob_picker(MiniPick)
         toggle_type_ruby = { char = "<M-r>", func = toggle_extra_flag("type_ruby") },
         toggle_sort_path = { char = "<M-f>", func = toggle_extra_flag("sort_path") },
         toggle_ts_highlight = { char = "<M-y>", func = toggle_ts_highlight },
+        toggle_path_width = { char = "<M-z>", func = toggle_path_width },
       }
 
       opts = vim.tbl_deep_extend("force", opts or {}, { source = { items = {}, match = match }, mappings = mappings })

@@ -118,8 +118,9 @@ return {
       {
         "<leader>su",
         function()
-          local pick = get_picker()
-          pick.pick_grep(vim.fn.expand("<cword>"), { source = { cwd = pick.root_dir() } })
+          -- local pick = get_picker()
+          -- pick.pick_grep(vim.fn.expand("<cword>"), { source = { cwd = pick.root_dir() } })
+          get_picker().pick_grep(vim.fn.expand("<cword>"), {}, { source = { cwd = get_picker().root_dir() } })
         end,
         desc = "Word (Root Dir)",
         mode = "n",
@@ -127,26 +128,18 @@ return {
       {
         "<leader>su",
         function()
-          local pick = get_picker()
-          pick.pick_grep(pick.get_visual_selection(), { source = { cwd = pick.root_dir() } })
+          -- local pick = get_picker()
+          -- pick.pick_grep(pick.get_visual_selection(), { source = { cwd = pick.root_dir() } })
+          get_picker().pick_grep(nil, { source = { cwd = pick.root_dir() } })
         end,
         desc = "Selection (Root Dir)",
         mode = "v",
-      },
-      -- { "<leader>s<C-w>", function() pick_grep(vim.fn.expand("<cWORD>"), { source = { cwd = root_dir(), show = show_align_on_null } }) end, desc = "WORD (Root Dir)", mode = "n" },
-      {
-        "<leader>sx",
-        function()
-          get_picker().pick_grep_live({ source = { cwd = get_picker().root_dir() } })
-        end,
-        desc = "Grep (Native)",
-        mode = "n",
       },
       {
         "<leader>sw",
         function()
           local pick = get_picker()
-          pick.pick_grep(vim.fn.expand("<cword>"), { source = { cwd = pick.root_dir() } })
+          pick.pick_grep(vim.fn.expand("<cword>"), {}, { source = { cwd = pick.root_dir() } })
         end,
         desc = "Word (Root Dir)",
         mode = "n",
@@ -155,7 +148,7 @@ return {
         "<leader>sW",
         function()
           local pick = get_picker()
-          pick.pick_grep(vim.fn.expand("<cword>"), { source = { cwd = pick.cwd_dir() } })
+          pick.pick_grep(vim.fn.expand("<cword>"), {}, { source = { cwd = pick.cwd_dir() } })
         end,
         desc = "Word (cwd)",
         mode = "n",
@@ -164,7 +157,7 @@ return {
         "<leader>sw",
         function()
           local pick = get_picker()
-          pick.pick_grep(pick.get_visual_selection(), { source = { cwd = pick.root_dir() } })
+          pick.pick_grep(nil, { source = { cwd = pick.root_dir() } })
         end,
         desc = "Selection (Root Dir)",
         mode = "v",
@@ -173,29 +166,38 @@ return {
         "<leader>sW",
         function()
           local pick = get_picker()
-          pick.pick_grep(pick.get_visual_selection(), { source = { cwd = pick.cwd_dir() } })
+          pick.pick_grep(nil, { source = { cwd = pick.cwd_dir() } })
         end,
         desc = "Selection (cwd)",
         mode = "v",
       },
       {
+        "<leader>s<C-w>",
+        function()
+          local pick = get_picker()
+          pick.pick_grep(vim.fn.expand("<cWORD>"), { source = { cwd = pick.root_dir() } })
+        end,
+        desc = "WORD (Root Dir)",
+        mode = "n",
+      },
+      {
         "<leader>/",
         function()
-          get_picker().pick_grep_live({ source = { cwd = get_picker().root_dir() } })
+          get_picker().pick_grep_live({}, { source = { cwd = get_picker().root_dir() } })
         end,
         desc = "Grep (Root Dir)",
       },
       {
         "<leader>sg",
         function()
-          get_picker().pick_grep_live({ source = { cwd = get_picker().root_dir() } })
+          get_picker().pick_grep_live({}, { source = { cwd = get_picker().root_dir() } })
         end,
         desc = "Grep (Root Dir)",
       },
       {
         "<leader>sG",
         function()
-          get_picker().pick_grep_live({ source = { cwd = get_picker().cwd_dir() } })
+          get_picker().pick_grep_live({}, { source = { cwd = get_picker().cwd_dir() } })
         end,
         desc = "Grep (cwd)",
       },
@@ -203,21 +205,21 @@ return {
       {
         "<leader>s<M-l>",
         function()
-          get_picker().pick_grep_live({ source = { cwd = get_lazyvim_base_dir(), name = "LazyVim" } })
+          get_picker().pick_grep_live({}, { source = { cwd = get_lazyvim_base_dir(), name = "LazyVim" } })
         end,
         desc = "Grep LazyVim Files",
       },
       {
         "<leader>s<M-c>",
         function()
-          get_picker().pick_grep_live({ source = { cwd = vim.fn.stdpath("config"), name = "Config" } })
+          get_picker().pick_grep_live({}, { source = { cwd = vim.fn.stdpath("config"), name = "Config" } })
         end,
         desc = "Grep Config Files",
       },
       {
         "<leader>sp",
         function()
-          get_picker().pick_grep_live({ source = { cwd = get_picker().lazyvim_plugins_dir(), name = "Plugins" } })
+          get_picker().pick_grep_live({ ts_highlight = false }, { source = { cwd = get_picker().lazyvim_plugins_dir(), name = "Plugins" } })
         end,
         desc = "Grep Plugins",
       },
@@ -226,17 +228,25 @@ return {
         function()
           local path = get_picker().node_modules_dir()
           if not path then return end
-          get_picker().pick_grep_live({ source = { cwd = path, name = "Node Modules" } })
+          get_picker().pick_grep_live({ ts_highlight = false }, { source = { cwd = path, name = "Node Modules" } })
         end,
         desc = "Grep (node_modules)",
       },
       {
         "<leader>sF",
         function()
-          MiniPick.registry.rg_fixed({}, { source = { cwd = get_picker().root_dir() } })
+          get_picker().pick_grep_live({ flags = { "fixed_strings" } }, { source = { cwd = get_picker().root_dir() } })
         end,
         desc = "Grep (--fixed-strings)",
-        mode = "n",
+        mode = { "n" },
+      },
+      {
+        "<leader>sF",
+        function()
+          get_picker().pick_grep(nil, { flags = { "fixed_strings" } }, { source = { cwd = get_picker().root_dir() } })
+        end,
+        desc = "Grep (--fixed-strings)",
+        mode = { "v" },
       },
       {
         "<leader>s<C-m>",
@@ -245,7 +255,7 @@ return {
           if result then
             local path = result.path or result
             local display = result.display
-            get_picker().pick_grep_live({ source = { cwd = path, name = ("node_modules/%s"):format(display) } })
+            get_picker().pick_grep_live({}, { source = { cwd = path, name = ("node_modules/%s"):format(display) } })
           end
         end,
         desc = "node_modules subdir",
@@ -267,6 +277,13 @@ return {
       { "<leader>sA", function() require("mini.extra").pickers.treesitter() end, desc = "Treesitter Symbols" },
       { "<leader>sR", function() require("mini.pick").builtin.resume() end, desc = "Grep (Live)"},
       -- { "<leader>st", function() require("mini.pick").registry.grep_todo_keywords() end, desc = "Todo"},
+      {
+        "<leader>s<C-t>",
+        function()
+          get_picker().pick_files(get_picker().root_dir(), { fd_flags = { "today", "no_ignore" } })
+        end,
+        desc = "Today",
+      },
 
       -- Git
       { "<leader>ga", function() require("mini.extra").pickers.git_branches() end, desc = "Git Branches" },
@@ -295,7 +312,7 @@ return {
               { "gr", function() get_picker().pick_lsp2({ scope = "references"}) end, nowait = true, desc = "References" },
               { "gI", function() get_picker().pick_lsp2({ scope = "implementation"}) end, desc = "Goto Implementation" },
               { "gy", function() get_picker().pick_lsp2({ scope = "type_definition" }) end, desc = "Goto T[y]pe Definition" },
-              { "<leader>ss", function() get_picker().pick_lsp2({ scope = "document_symbol_live" }) end, desc = "LSP Symbols", has = "documentSymbol" },
+              { "<leader>ss", function() get_picker().pick_lsp2({ scope = "document_symbol_live" }, { hinted = { enable = true } }) end, desc = "LSP Symbols", has = "documentSymbol" },
               { "<leader>sS", function() get_picker().pick_lsp2({ scope = "workspace_symbol_live" }) end, desc = "Workspace Symbols", has = "workspace/symbols" },
               -- { "gai", function() Snacks.picker.lsp_incoming_calls() end, desc = "C[a]lls Incoming", has = "callHierarchy/incomingCalls" },
               -- { "gao", function() Snacks.picker.lsp_outgoing_calls() end, desc = "C[a]lls Outgoing", has = "callHierarchy/outgoingCalls" },

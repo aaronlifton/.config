@@ -135,6 +135,21 @@ return {
           move_start = "<C-g>",
           move_up = "<C-p>",
 
+          move_down_alt = {
+            char = "<C-j>",
+            func = function()
+              vim.api.nvim_input("<C-n>")
+            end,
+          },
+
+          -- NOTE: doesn't work for some reason
+          -- move_up_alt = {
+          --   char = "<C-k>",
+          --   func = function()
+          --     vim.api.nvim_input("<C-p>")
+          --   end,
+          -- },
+
           paste = "<C-r>",
 
           refine = "<C-Space>",
@@ -198,10 +213,9 @@ return {
 
       -- vim.ui.select = MiniPick.select
       require("util.minipick_registry.my_buffers").setup(MiniPick)
-      require("util.minipick_registry.iglob").setup(MiniPick)
-      require("util.minipick_registry.iglob_ts").setup(MiniPick)
+      require("util.minipick_registry.rg_live_grep").setup(MiniPick)
+      require("util.minipick_registry.rg_grep").setup(MiniPick)
       require("util.minipick_registry.fuzzy_files").setup(MiniPick)
-      -- require("util.minipick_registry.rg_live").setup(MiniPick)
       require("util.minipick_registry.smart").setup(MiniPick)
       require("util.minipick_registry.keymaps").setup(MiniPick)
       require("util.minipick_registry.bufferlines_ts").setup(MiniPick)
