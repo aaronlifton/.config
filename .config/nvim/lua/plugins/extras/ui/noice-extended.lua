@@ -17,6 +17,7 @@ local skip = {
       "Searching",
       "Processing",
       "semantic token",
+      "(0%)", -- Remove stuck lua_ls progress
     },
   },
 }

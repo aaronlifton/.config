@@ -30,6 +30,17 @@ end
 
 return {
   { import = "lazyvim.plugins.extras.ai.copilot" },
+  {
+    "nvim-lualine/lualine.nvim",
+    optional = true,
+    event = "VeryLazy",
+    opts = function(_, opts)
+      -- Remove duplicate copilot icon
+      -- /Users/$USER/.local/share/nvim/lazy/LazyVim/lua/lazyvim/plugins/extras/ai/sidekick.lua:26
+      -- /Users/$USER/.local/share/nvim/lazy/LazyVim/lua/lazyvim/plugins/extras/ai/copilot.lua:62
+      if opts.sections.lualine_x[2] then opts.sections.lualine_x.remove(2) end
+    end,
+  },
   -- { import = "lazyvim.plugins.extras.ai.copilot-chat" },
   {
     "zbirenbaum/copilot.lua",

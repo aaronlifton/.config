@@ -75,7 +75,6 @@ local experimental_features = {
         local ev = vim.v.event
         local is_search_cmd = (ev.cmdtype == "/") or (ev.cmdtype == "?")
         local cnt = vim.fn.searchcount().total
-
         if is_search_cmd and not ev.abort and (cnt > 1) then
           -- Allow CmdLineLeave-related chores to be completed before
           -- invoking Leap.
@@ -85,10 +84,9 @@ local experimental_features = {
             -- as `labels`, with n/N removed.
             local labels = require("leap").opts.safe_labels:gsub("[nN]", "")
             -- For `pattern` search, we never need to adjust conceallevel
-            -- (no user input).
-            local vim_opts = require("leap").opts.vim_opts
-            vim_opts["wo.conceallevel"] = nil
-
+            -- (no user input). We cannot merge `nil` from a table, but
+            -- using the option's current value has the same effect.
+            local vim_opts = { ["wo.conceallevel"] = vim.wo.conceallevel }
             require("leap").leap({
               pattern = vim.fn.getreg("/"), -- last search pattern
               windows = { vim.fn.win_getid() },
@@ -161,6 +159,8 @@ local experimental_features = {
           opts = {
             labels = "", -- force autojump
             safe_labels = vim.fn.mode(1):match("[no]") and "" or nil, -- [1]
+            -- NOTE: Skipping the safe_labels key is the same as this:
+            -- safe_labels = require("leap.opts").safe_labels, -- "sfnut/SFNLHMUGTZ?"
           },
         }
         return vim.tbl_deep_extend("keep", common_args, key_specific_args)

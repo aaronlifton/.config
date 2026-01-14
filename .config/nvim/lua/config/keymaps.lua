@@ -487,67 +487,29 @@ map({ "c", "i", "t" }, "<M-BS>", "<C-w>", { desc = "Delete Word" })
 -- map("n", "zF", ":norm z=1<cr>", { desc = "Choose first spelling suggestion" })
 map("n", "zF", "z=1<cr>", { noremap = true, desc = "Choose first spelling suggestion" })
 
--- Goto in vsplit
-map(
-  "n",
-  "<C-w><C-f>",
-  "<cmd>vsplit | lua vim.lsp.buf.definition()<cr>",
-  { desc = "Goto Definition (vsplit)", silent = true }
-)
-map(
-  "n",
-  "<C-w><C-y>",
-  "<cmd>vsplit | lua vim.lsp.buf.type_definition()<cr>",
-  { desc = "Goto Type Definition (vsplit)", silent = true }
-)
-map(
-  "n",
-  "<C-w><C-i>",
-  "<cmd>tab split | lua vim.lsp.buf.implementation()<cr>",
-  { desc = "Goto Implementation (vsplit)", silent = true }
-)
-
+-- Goto in vsplit (with auto-jump if single result)
+map("n", "<C-w><C-f>", function()
+  vim.cmd("vsplit")
+  vim.lsp.buf.definition({ on_list = Util.lsp.make_on_list() })
+end, { desc = "Goto Definition (vsplit)", silent = true })
+map("n", "<C-w><C-y>", function()
+  vim.cmd("vsplit")
+  vim.lsp.buf.type_definition({ on_list = Util.lsp.make_on_list() })
+end, { desc = "Goto Type Definition (vsplit)", silent = true })
 -- Goto in new tab
-map(
-  "n",
-  "<C-w>gt",
-  "<cmd>tab split | lua vim.lsp.buf.definition()<cr>",
-  { desc = "Goto Definition (tab)", silent = true }
-)
-map(
-  "n",
-  "<C-w>gy",
-  "<cmd>tab split | lua vim.lsp.buf.type_definition()<cr>",
-  { desc = "Goto Type Definition (tab)", silent = true }
-)
+map("n", "<C-w>gt", function()
+  vim.cmd("tab split")
+  vim.lsp.buf.definition({ on_list = Util.lsp.make_on_list() })
+end, { desc = "Goto Definition (tab)", silent = true })
+map("n", "<C-w>gy", function()
+  vim.cmd("tab split")
+  vim.lsp.buf.type_definition({ on_list = Util.lsp.make_on_list() })
+end, { desc = "Goto Type Definition (tab)", silent = true })
 
 map("n", "<C-w><C-i>", function()
-  local params = vim.lsp.util.make_position_params(0, "utf-8")
-  vim.lsp.buf_request(0, "textDocument/implementation", params, function(err, result, ctx, config)
-    if err or not result or vim.tbl_isempty(result) then
-      vim.notify("No implementations found", vim.log.levels.ERROR)
-      return
-    end
-
-    if #result == 1 then
-      -- Single implementation - open in vsplit
-      vim.cmd("vsplit")
-      vim.lsp.util.show_document(result[1], "utf-8", { focus = true })
-    else
-      local items = vim.lsp.util.locations_to_items(result, "utf-8")
-      vim.fn.setqflist(items)
-      -- Make a picker if more than 2?
-      -- local all_filepaths = vim
-      --   .iter(items)
-      --   :map(function(item)
-      --     return item.filename
-      --   end)
-      --   :join("\n")
-
-      vim.cmd("vsplit | cfirst | normal! zz")
-    end
-  end)
-end, { desc = "Goto implementation (vsplit)", silent = true })
+  vim.cmd("vsplit")
+  vim.lsp.buf.implementation({ on_list = Util.lsp.make_on_list() })
+end, { desc = "Goto Implementation (vsplit)", silent = true })
 
 -- map("n", "<leader>ct", function()
 --   vim.lsp.buf.typehierarchy("subtypes")
@@ -555,9 +517,6 @@ end, { desc = "Goto implementation (vsplit)", silent = true })
 -- map("n", "<leader>cT", function()
 --   vim.lsp.buf.typehierarchy("supertypes")
 -- end, { desc = "Show supertypes" })
-
--- see if can get used to <C-w>T instead of this
--- map("n", "<C-w><C-t>", "<C-w>T", { desc = "Break out into a new tab", remap = true })
 
 -- Goto file in vsplit
 -- map("n", "<C-w><C-v>", "vs | gf", { desc = "Goto File (vsplit)", silent = true })
