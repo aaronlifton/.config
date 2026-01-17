@@ -261,15 +261,6 @@ M.grep_ts_show = function(buf_id, items, query, show_opts)
   end
 end
 
-M.iglob_patterns = {
-  js_no_tests = "*.{js,ts,tsx} !*{test,spec}*",
-  js_tests = "*.{js,ts,tsx} **test**",
-  tests = "**{test,spec}**",
-  no_tests = "!**{test,spec}** !spec/**/* !**/test*/** !__tests__",
-  js_ts = "*.{js,ts,tsx}",
-  no_bundle = "!**{umd,cjs,esm}**",
-}
-
 function M.parse_query(raw)
   local search, iglob = raw:match("^(.-)%s+%-%-%s+(.*)$")
   if not search then return vim.trim(raw), {} end

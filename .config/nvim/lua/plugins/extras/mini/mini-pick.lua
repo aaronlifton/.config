@@ -257,17 +257,17 @@ return {
         end,
         desc = "Files (cwd)",
       },
-      {
-        "<leader>s<M-g>",
-        function()
-          local buf = vim.api.nvim_get_current_buf()
-          MiniPick.registry.iglob({}, {
-            source = { cwd = Snacks.git.get_root(Util.path.bufdir(buf)) },
-            show = show_align_on_null,
-          })
-        end,
-        desc = "Grep (Live, iglob)",
-      },
+      -- {
+      --   "<leader>s<M-g>",
+      --   function()
+      --     local buf = vim.api.nvim_get_current_buf()
+      --     MiniPick.registry.iglob({}, {
+      --       source = { cwd = Snacks.git.get_root(Util.path.bufdir(buf)) },
+      --       show = show_align_on_null,
+      --     })
+      --   end,
+      --   desc = "Grep (Live, iglob)",
+      -- },
       --stylua: ignore start
       { "<leader>s<C-r>", function() require("mini.pick").builtin.resume() end, desc = "Grep (Live)"},
       -- { "<leader>f<M-b>", function() require("mini.pick").builtin.buffers() end, desc = "Buffers"},

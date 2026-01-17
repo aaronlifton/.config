@@ -21,8 +21,7 @@ local function create_rg_live_grep_picker(MiniPick)
       end
 
       local globs = P.is_array_of(local_opts.globs, "string") and local_opts.globs or {}
-      local flags = { "hidden" }
-      if P.is_array_of(local_opts.flags, "string") then flags = vim.list_extend({}, local_opts.flags) end
+      local flags = FlagManager.resolve_rg_flags(P.is_array_of(local_opts.flags, "string") and local_opts.flags or nil)
       local custom_name = opts.source.name or "Grep live"
 
       -- Show options (can be set via local_opts)
@@ -179,7 +178,7 @@ local function create_rg_live_grep_picker(MiniPick)
 
       local function toggle_iglob_pattern(pattern_key)
         return function()
-          local pattern = Grep.iglob_patterns[pattern_key]
+          local pattern = FlagManager.iglob_patterns[pattern_key]
           if not FlagManager.toggle_glob_pattern(globs, pattern) then return end
           MiniPick.set_picker_opts({ source = { name = build_name() } })
           MiniPick.set_picker_query(MiniPick.get_picker_query())
@@ -208,7 +207,7 @@ local function create_rg_live_grep_picker(MiniPick)
       --   alt-y: toggle treesitter s(y)ntax highlighting
       --   alt-z: toggle path truncation (cycles: off -> 60 -> 40 -> 80)
 
-      local mappings = FlagManager.build_flag_mappings({
+      local mappings = FlagManager.build_rg_flag_mappings({
         add_glob = add_glob,
         remove_glob = remove_glob,
         toggle_no_ignore = toggle_no_ignore,

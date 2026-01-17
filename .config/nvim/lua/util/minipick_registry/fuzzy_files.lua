@@ -4,9 +4,10 @@ local M = {}
 local H = {}
 
 local FlagManager = require("util.minipick_registry.flag_manager")
+local FileTool = require("util.minipick_registry.file_tool")
 local P = require("util.minipick_registry.picker").H
 
-local excl_flags = { time = { "newer", "two_days", "today" } }
+local excl_flags = { time = { "week", "two_days", "today" } }
 
 local function get_path_cache()
   if H._path_cache ~= nil then return H._path_cache end
@@ -104,6 +105,8 @@ local function create_fuzzy_files_picker(MiniPick)
     opts.source = opts.source or {}
 
     local matcher = ((local_opts and local_opts.matcher) or (opts and opts.matcher) or "fzf")
+    local tool_key = (local_opts and local_opts.tool) or "fd"
+    local tool = FileTool.get(tool_key)
     local auto_opts = vim.tbl_deep_extend("force", { threshold = 20000 }, (local_opts and local_opts.auto) or {})
     local fzf_opts = vim.tbl_deep_extend("force", {}, (local_opts and local_opts.fzf) or {})
 
@@ -123,7 +126,12 @@ local function create_fuzzy_files_picker(MiniPick)
     -- State for toggleable options
     local excludes = vim.deepcopy((local_opts and local_opts.excludes) or {})
     -- Default: hidden files ON (matches typical usage)
-    local default_flags = vim.tbl_extend("force", { hidden = true }, (local_opts and local_opts.fd_flags) or {})
+    local default_flags = vim.tbl_extend(
+      "force",
+      { hidden = true },
+      (local_opts and local_opts.fd_flags) or {},
+      (local_opts and local_opts.tool_flags) or {}
+    )
     local flags
     if P.is_array_of(local_opts and local_opts.flags, "string") then
       flags = vim.list_extend({}, local_opts.flags)
@@ -133,6 +141,7 @@ local function create_fuzzy_files_picker(MiniPick)
         if enabled then table.insert(flags, key) end
       end
     end
+    flags = FileTool.filter_flags(tool, flags)
     local regex_mode = false
 
     local function build_name_suffix()
@@ -140,43 +149,18 @@ local function create_fuzzy_files_picker(MiniPick)
       if #excludes > 0 then parts[#parts + 1] = "excl:" .. #excludes end
       local flag_parts = {}
       for _, flag in ipairs(flags) do
-        flag_parts[#flag_parts + 1] = FlagManager.fd_flags[flag] or flag
+        flag_parts[#flag_parts + 1] = FileTool.flag_label(tool, flag)
       end
       if #flag_parts > 0 then parts[#parts + 1] = table.concat(flag_parts, ", ") end
       if regex_mode then parts[#parts + 1] = "regex" end
       return #parts == 0 and "" or (" | " .. table.concat(parts, " | "))
     end
 
+    local base_name = (opts.source and opts.source.name) or "Files"
     local function build_name()
       local suffix = build_name_suffix()
-      if opts.source and opts.source.name then
-        local custom_desc = local_opts.custom_desc or "fuzzy"
-        return ("%s (%s, %s%s)"):format(opts.source.name, custom_desc, matcher, suffix)
-      end
-      return ("Files (fuzzy, %s%s)"):format(matcher, suffix)
-    end
-
-    local function build_fd_command(pattern)
-      local cmd = { "fd", "--type", "f", "--color", "never", "--follow", "--exclude", ".git" }
-      -- Add flags (including --hidden if enabled)
-      for _, flag in ipairs(flags) do
-        if flag ~= "regex" then
-          local flag_value = FlagManager.fd_flags[flag] or flag
-          for _, part in ipairs(vim.split(flag_value, "%s+", { trimempty = true })) do
-            table.insert(cmd, part)
-          end
-        end
-      end
-      -- Add excludes
-      for _, _pattern in ipairs(excludes) do
-        table.insert(cmd, "--exclude")
-        table.insert(cmd, _pattern)
-      end
-      if pattern and pattern ~= "" then
-        table.insert(cmd, "--regex")
-        table.insert(cmd, pattern)
-      end
-      return cmd
+      local custom_desc = local_opts.custom_desc or "fuzzy"
+      return ("%s (%s, %s, %s%s)"):format(base_name, custom_desc, tool.key, matcher, suffix)
     end
 
     local name = build_name()
@@ -188,7 +172,12 @@ local function create_fuzzy_files_picker(MiniPick)
     local function refresh_items(pattern)
       ---@diagnostic disable-next-line: undefined-field
       pcall(vim.loop.process_kill, process)
-      local command = build_fd_command(pattern)
+      local command = tool.build_command({
+        pattern = pattern,
+        flags = flags,
+        excludes = excludes,
+        regex_mode = regex_mode,
+      })
       local current_query = MiniPick.get_picker_query() or {}
       set_items_opts = { do_match = #current_query > 0 }
       process = MiniPick.set_picker_items_from_cli(command, {
@@ -208,55 +197,18 @@ local function create_fuzzy_files_picker(MiniPick)
       end
     end
 
-    local function toggle_fd_exclude_patterns(pattern_key)
+    local function toggle_tool_exclude_patterns(pattern_key)
       return function()
-        local patterns = FlagManager.fd_exclude_patterns[pattern_key]
+        local patterns = FlagManager.file_exclude_patterns[pattern_key]
         if not patterns then return end
-        -- Check if all patterns are present
-        local all_present = true
-        for _, pattern in ipairs(patterns) do
-          local found = false
-          for _, e in ipairs(excludes) do
-            if e == pattern then
-              found = true
-              break
-            end
-          end
-          if not found then
-            all_present = false
-            break
-          end
-        end
-        if all_present then
-          -- Remove all patterns
-          for _, pattern in ipairs(patterns) do
-            for i = #excludes, 1, -1 do
-              if excludes[i] == pattern then
-                table.remove(excludes, i)
-                break
-              end
-            end
-          end
-        else
-          -- Add missing patterns
-          for _, pattern in ipairs(patterns) do
-            local found = false
-            for _, e in ipairs(excludes) do
-              if e == pattern then
-                found = true
-                break
-              end
-            end
-            if not found then table.insert(excludes, pattern) end
-          end
-        end
+        FlagManager.toggle_patterns(excludes, patterns)
         MiniPick.set_picker_opts({ source = { name = build_name() } })
         refresh_for_query()
         MiniPick.set_picker_query(MiniPick.get_picker_query() or {})
       end
     end
 
-    local function toggle_fd_flag(flag_key)
+    local function toggle_tool_flag(flag_key)
       return function()
         FlagManager.toggle_flag(flags, flag_key)
         MiniPick.set_picker_opts({ source = { name = build_name() } })
@@ -284,7 +236,21 @@ local function create_fuzzy_files_picker(MiniPick)
         MiniPick.set_picker_query(MiniPick.get_picker_query() or {})
       end
     end
+
+    local function cycle_flag(flag_keys, key)
+      return function()
+        FlagManager.cycle_flag(flags, flag_keys, excl_flags[key])
+        MiniPick.set_picker_opts({ source = { name = build_name() } })
+        refresh_for_query()
+        ---@diagnostic disable-next-line: param-type-mismatch
+        MiniPick.set_picker_query(MiniPick.get_picker_query() or {})
+      end
+    end
     local function toggle_regex_mode()
+      if not tool.supports.regex then
+        vim.notify("Regex mode is not supported by " .. tool.key)
+        return
+      end
       regex_mode = not regex_mode
       MiniPick.set_picker_opts({ source = { name = build_name() } })
       local prompt = table.concat(MiniPick.get_picker_query() or {})
@@ -305,32 +271,80 @@ local function create_fuzzy_files_picker(MiniPick)
     --   alt-r: ruby extension
     --   alt-j: js/ts extension
     --   alt-m: markdown extension
-    --   alt-n: newer (within 7 days)
+    --   alt-n: week (within 7 days)
     --   alt-t: today (within 1 day)
     --   alt-d: max depth 3
     --   alt-s: small files only (<100k)
     --   alt-p: regex match (fd regex) for the query
 
-    local mappings = {
-      -- Visibility
-      toggle_hidden = { char = "<M-h>", func = toggle_fd_flag("hidden") },
-      toggle_no_ignore = { char = "<M-i>", func = toggle_fd_flag("no_ignore") },
-      -- Exclude patterns
-      toggle_no_tests = { char = "<M-x>", func = toggle_fd_exclude_patterns("no_tests") },
-      -- Extension filters
-      toggle_ext_lua = { char = "<M-l>", func = toggle_fd_flag("ext_lua") },
-      toggle_ext_rb = { char = "<M-r>", func = toggle_fd_flag("ext_rb") },
-      toggle_ext_js = { char = "<M-j>", func = toggle_fd_flag("ext_js") },
-      toggle_ext_md = { char = "<M-m>", func = toggle_fd_flag("ext_md") },
-      -- Time filters
-      toggle_newer = { char = "<M-n>", func = toggle_excl_flag("newer", "time") },
-      toggle_two_days = { char = "<M-2>", func = toggle_excl_flag("two_days", "time") },
-      toggle_today = { char = "<M-t>", func = toggle_excl_flag("today", "time") },
-      -- Depth/size
-      toggle_max_depth = { char = "<M-d>", func = toggle_fd_flag("max_depth_3") },
-      toggle_small = { char = "<M-s>", func = toggle_fd_flag("small") },
-      toggle_regex = { char = "<M-p>", func = toggle_regex_mode },
-    }
+    local mappings = {}
+    local function add_mapping(key, entry, enabled)
+      if enabled then mappings[key] = entry end
+    end
+
+    -- Visibility
+    add_mapping(
+      "toggle_hidden",
+      { char = "<M-h>", func = toggle_tool_flag("hidden") },
+      FileTool.is_flag_supported(tool, "hidden")
+    )
+    add_mapping(
+      "toggle_no_ignore",
+      { char = "<M-i>", func = toggle_tool_flag("no_ignore") },
+      FileTool.is_flag_supported(tool, "no_ignore")
+    )
+    -- Exclude patterns
+    add_mapping(
+      "toggle_no_tests",
+      { char = "<M-x>", func = toggle_tool_exclude_patterns("no_tests") },
+      tool.supports.excludes
+    )
+    -- Extension filters
+    add_mapping(
+      "toggle_ext_lua",
+      { char = "<M-l>", func = toggle_tool_flag("ext_lua") },
+      FileTool.is_flag_supported(tool, "ext_lua")
+    )
+    add_mapping(
+      "toggle_ext_rb",
+      { char = "<M-r>", func = toggle_tool_flag("ext_rb") },
+      FileTool.is_flag_supported(tool, "ext_rb")
+    )
+    add_mapping(
+      "toggle_ext_js",
+      { char = "<M-j>", func = toggle_tool_flag("ext_js") },
+      FileTool.is_flag_supported(tool, "ext_js")
+    )
+    add_mapping(
+      "toggle_ext_md",
+      { char = "<M-m>", func = toggle_tool_flag("ext_md") },
+      FileTool.is_flag_supported(tool, "ext_md")
+    )
+    -- Time filters
+    add_mapping(
+      "toggle_week",
+      -- { char = "<M-n>", func = toggle_excl_flag("today", "time") },
+      { char = "<M-n>", func = cycle_flag({ "today", "two_days" }, "time") },
+      FileTool.is_flag_supported(tool, "week")
+    )
+    -- Cycle time
+    add_mapping(
+      "cycle_time",
+      { char = "<M-t>", func = cycle_flag({ "week", "two_days", "today" }, "time") },
+      FileTool.is_flag_supported(tool, "today")
+    )
+    -- Depth/size
+    add_mapping(
+      "toggle_max_depth",
+      { char = "<M-d>", func = toggle_tool_flag("max_depth_3") },
+      FileTool.is_flag_supported(tool, "max_depth_3")
+    )
+    add_mapping(
+      "toggle_small",
+      { char = "<M-s>", func = toggle_tool_flag("small") },
+      FileTool.is_flag_supported(tool, "small")
+    )
+    add_mapping("toggle_regex", { char = "<M-p>", func = toggle_regex_mode }, tool.supports.regex)
 
     local function show(buf_id, items, query)
       local path_max_width = local_opts.path_max_width or vim.g.minipick_path_max_width

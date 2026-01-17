@@ -13,8 +13,7 @@ local function create_rg_grep_picker(MiniPick)
     if tool == "fallback" or not P.is_executable(tool) then H.error("`rg_grep` needs non-fallback executable tool.") end
 
     local globs = P.is_array_of(local_opts.globs, "string") and local_opts.globs or {}
-    local flags = { "hidden" }
-    if P.is_array_of(local_opts.flags, "string") then flags = vim.list_extend({}, local_opts.flags) end
+    local flags = FlagManager.resolve_rg_flags(P.is_array_of(local_opts.flags, "string") and local_opts.flags or nil)
     local formatted_name
     if opts and opts.source and opts.source.name then
       formatted_name = opts.source.name and (opts.source.name):format(" %s ") or nil
@@ -132,20 +131,19 @@ local function create_rg_grep_picker(MiniPick)
       end
       show_opts.path_max_width = widths[(current_idx % #widths) + 1]
       MiniPick.set_picker_opts({ source = { name = build_name(), show = get_show_func() } })
-      -- refresh_items()
       MiniPick.set_picker_query(MiniPick.get_picker_query())
     end
 
     local function toggle_iglob_pattern(pattern_key)
       return function()
-        local pattern_value = Grep.iglob_patterns[pattern_key]
+        local pattern_value = FlagManager.iglob_patterns[pattern_key]
         if not FlagManager.toggle_glob_pattern(globs, pattern_value) then return end
         MiniPick.set_picker_opts({ source = { name = build_name() } })
         refresh_items()
       end
     end
 
-    local mappings = FlagManager.build_flag_mappings({
+    local mappings = FlagManager.build_rg_flag_mappings({
       add_glob = add_glob,
       remove_glob = remove_glob,
       toggle_no_ignore = toggle_no_ignore,

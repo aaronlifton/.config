@@ -1,7 +1,7 @@
 local M = {}
 
 -- Predefined fd exclude patterns
-M.fd_exclude_patterns = {
+M.file_exclude_patterns = {
   no_tests = { "spec/**/*", "**{__tests__,tests?}**", "{test,tests}/" },
 }
 
@@ -17,7 +17,7 @@ M.fd_flags = {
   ext_json = "-e json",
   ext_md = "-e md",
   -- Time filters
-  newer = "--changed-within 7d",
+  week = "--changed-within 7d",
   today = "--changed-within 1d",
   two_days = "--changed-within 2d",
   -- Depth limits
@@ -45,7 +45,17 @@ M.rg_flags = {
   no_ignore = "--no-ignore",
 }
 
-function M.flag_index(flags, flag)
+M.rg_iglob_patterns = {
+  js_no_tests = "*.{js,ts,tsx} !*{test,spec}*",
+  js_tests = "*.{js,ts,tsx} **test**",
+  tests = "**{test,spec}**",
+  no_tests = "!**{test,spec}** !spec/**/* !**/test*/** !__tests__",
+  js_ts = "*.{js,ts,tsx}",
+  no_bundle = "!**{umd,cjs,esm}**",
+}
+M.iglob_patterns = M.rg_iglob_patterns
+
+local function flag_index(flags, flag)
   for i, value in ipairs(flags) do
     if value == flag then return i end
   end
@@ -53,11 +63,11 @@ function M.flag_index(flags, flag)
 end
 
 function M.has_flag(flags, flag)
-  return M.flag_index(flags, flag) ~= nil
+  return flag_index(flags, flag) ~= nil
 end
 
 function M.toggle_flag(flags, flag)
-  local idx = M.flag_index(flags, flag)
+  local idx = flag_index(flags, flag)
   if idx then
     table.remove(flags, idx)
   else
@@ -68,11 +78,17 @@ end
 function M.toggle_glob_pattern(globs, pattern)
   if not pattern then return false end
   local pattern_parts = vim.split(pattern, "%s+", { trimempty = true })
+  return M.toggle_patterns(globs, pattern_parts)
+end
+
+function M.toggle_patterns(list, patterns)
+  if type(list) ~= "table" or type(patterns) ~= "table" then return false end
+
   local all_present = true
-  for _, part in ipairs(pattern_parts) do
+  for _, pattern in ipairs(patterns) do
     local found = false
-    for _, g in ipairs(globs) do
-      if g == part then
+    for _, item in ipairs(list) do
+      if item == pattern then
         found = true
         break
       end
@@ -84,31 +100,71 @@ function M.toggle_glob_pattern(globs, pattern)
   end
 
   if all_present then
-    for _, part in ipairs(pattern_parts) do
-      for i = #globs, 1, -1 do
-        if globs[i] == part then
-          table.remove(globs, i)
+    for _, pattern in ipairs(patterns) do
+      for i = #list, 1, -1 do
+        if list[i] == pattern then
+          table.remove(list, i)
           break
         end
       end
     end
   else
-    for _, part in ipairs(pattern_parts) do
+    for _, pattern in ipairs(patterns) do
       local found = false
-      for _, g in ipairs(globs) do
-        if g == part then
+      for _, item in ipairs(list) do
+        if item == pattern then
           found = true
           break
         end
       end
-      if not found then table.insert(globs, part) end
+      if not found then table.insert(list, pattern) end
     end
   end
 
   return true
 end
 
-function M.build_flag_mappings(opts)
+function M.filter_flags(flag_map, flags)
+  local filtered = {}
+  for _, flag in ipairs(flags or {}) do
+    if flag_map[flag] ~= nil then table.insert(filtered, flag) end
+  end
+  return filtered
+end
+
+function M.resolve_rg_flags(flags, defaults)
+  local resolved
+  if type(flags) == "table" and #flags > 0 then
+    resolved = vim.list_extend({}, flags)
+  else
+    resolved = vim.list_extend({}, defaults or { "hidden" })
+  end
+  return M.filter_flags(M.rg_flags, resolved)
+end
+
+function M.cycle_flag(flags, flag_keys, excl_flags)
+  if type(flags) ~= "table" or type(flag_keys) ~= "table" then return false end
+
+  local current_index
+  for i, flag_key in ipairs(flag_keys) do
+    if M.has_flag(flags, flag_key) then
+      current_index = i
+      break
+    end
+  end
+
+  if type(excl_flags) == "table" then
+    for _, flag_key in ipairs(excl_flags) do
+      if M.has_flag(flags, flag_key) then M.toggle_flag(flags, flag_key) end
+    end
+  end
+
+  local next_index = current_index and ((current_index % (#flag_keys + 1)) + 1) or 1
+  if next_index <= #flag_keys then M.toggle_flag(flags, flag_keys[next_index]) end
+  return true
+end
+
+function M.build_rg_flag_mappings(opts)
   return {
     add_glob = { char = "<C-o>", func = opts.add_glob },
     remove_glob = { char = "<C-k>", func = opts.remove_glob },
