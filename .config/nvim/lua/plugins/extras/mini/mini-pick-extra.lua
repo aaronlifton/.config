@@ -235,7 +235,9 @@ return {
       {
         "<leader>sF",
         function()
-          get_picker().pick_grep_live({ flags = { "fixed_strings" } }, { source = { cwd = get_picker().root_dir() } })
+          -- get_picker().pick_grep_live({ flags = { "fixed_strings" } }, { source = { cwd = get_picker().root_dir() } })
+
+          get_picker().pick_grep(vim.fn.expand("<cword>"), { flags = { "fixed_strings" } }, { source = { cwd = get_picker().root_dir() } })
         end,
         desc = "Grep (--fixed-strings)",
         mode = { "n" },
@@ -277,6 +279,7 @@ return {
       {
         "<leader>s<C-m>",
         function()
+          -- Grep ruby gem or node module dir, if current buf is a file inside of one
           local result = get_picker().node_module_subdir()
           if result then
             local path = result.path or result
@@ -284,7 +287,7 @@ return {
             get_picker().pick_grep_live({}, { source = { cwd = path, name = ("node_modules/%s"):format(display) } })
           end
         end,
-        desc = "node_modules subdir",
+        desc = "Module subdir",
       },
       { "<leader>sB", function() require("mini.extra").pickers.buf_lines({ scope = "all" }) end, desc = "Grep Buffers" },
       -- { "<leader>sb", function() require("mini.extra").pickers.buf_lines({ scope = "current" }) end, desc = "Lines" },
@@ -297,7 +300,7 @@ return {
       { "<leader>sd", function() require("mini.extra").pickers.diagnostic() end, desc = "Diagnostics" },
       { "<leader>sD", function() require("mini.extra").pickers.diagnostic({ scope = "current" }) end, desc = "Buffer Diagnostics" },
       { "<leader>sH", function() require("mini.extra").pickers.hl_groups() end, desc = "Search Highlight Groups" },
-      { "<leader>sh", function() require("mini.extra").pickers.help_tags() end, desc = "Search Highlight Groups" },
+      { "<leader>sh", function() require("mini.pick").builtin.help() end, desc = "Search Highlight Groups" },
       { "<leader>sk", function() require("mini.pick").registry.keymaps_callback() end, desc = "Keymaps" },
       { "<leader>sm", function() require("mini.extra").pickers.marks() end, desc = "Marks" },
       { "<leader>sA", function() require("mini.extra").pickers.treesitter() end, desc = "Treesitter Symbols" },

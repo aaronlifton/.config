@@ -1,17 +1,7 @@
 local M = {}
 
 local H = {}
-H.is_executable = function(tool)
-  if tool == "fallback" then return true end
-  return vim.fn.executable(tool) == 1
-end
-H.is_array_of = function(x, ref_type)
-  if not vim.tbl_islist(x) then return false end
-  for i = 1, #x do
-    if type(x[i]) ~= ref_type then return false end
-  end
-  return true
-end
+local P = require("util.minipick_registry.picker").H
 
 local FlagManager = require("util.minipick_registry.flag_manager")
 local Grep = require("util.minipick_registry.grep")
@@ -20,11 +10,11 @@ local function create_rg_grep_picker(MiniPick)
   return function(local_opts, opts)
     local_opts = vim.tbl_extend("force", { tool = "rg", pattern = nil, globs = {}, flags = {} }, local_opts or {})
     local tool = local_opts.tool
-    if tool == "fallback" or not H.is_executable(tool) then H.error("`rg_grep` needs non-fallback executable tool.") end
+    if tool == "fallback" or not P.is_executable(tool) then H.error("`rg_grep` needs non-fallback executable tool.") end
 
-    local globs = H.is_array_of(local_opts.globs, "string") and local_opts.globs or {}
+    local globs = P.is_array_of(local_opts.globs, "string") and local_opts.globs or {}
     local flags = { "hidden" }
-    if H.is_array_of(local_opts.flags, "string") then flags = vim.list_extend({}, local_opts.flags) end
+    if P.is_array_of(local_opts.flags, "string") then flags = vim.list_extend({}, local_opts.flags) end
     local formatted_name
     if opts and opts.source and opts.source.name then
       formatted_name = opts.source.name and (opts.source.name):format(" %s ") or nil
@@ -65,7 +55,6 @@ local function create_rg_grep_picker(MiniPick)
     end
 
     local pattern = type(local_opts.pattern) == "string" and local_opts.pattern
-    -- if not pattern or pattern == "" then return MiniPick.start(opts) end
 
     local name = build_name(pattern)
     local default_source = {

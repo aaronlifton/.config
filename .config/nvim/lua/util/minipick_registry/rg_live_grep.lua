@@ -3,39 +3,26 @@ local M = {}
 
 -- Helpers
 local H = {}
+local P = require("util.minipick_registry.picker").H
 
-H.is_executable = function(tool)
-  if tool == "fallback" then return true end
-  return vim.fn.executable(tool) == 1
-end
-H.is_array_of = function(x, ref_type)
-  if not vim.tbl_islist(x) then return false end
-  for i = 1, #x do
-    if type(x[i]) ~= ref_type then return false end
-  end
-  return true
-end
-H.get_config = function(config)
-  return vim.tbl_deep_extend("force", MiniPick.config, vim.b.minipick_config or {}, config or {})
-end
-H.full_path = function(path)
-  return (vim.fn.fnamemodify(path, ":p"):gsub("(.)/$", "%1"))
-end
 local FlagManager = require("util.minipick_registry.flag_manager")
 local Grep = require("util.minipick_registry.grep")
 
 local function create_rg_live_grep_picker(MiniPick)
   return function(local_opts, opts)
     local function rg_live(local_opts, opts)
-      local_opts = vim.tbl_extend("force", { tool = "rg", globs = {}, flags = {} }, local_opts or {})
+      local_opts = local_opts or {}
+      if local_opts.tool == nil then local_opts.tool = "rg" end
+      if local_opts.globs == nil then local_opts.globs = {} end
+      if local_opts.flags == nil then local_opts.flags = {} end
       local tool = local_opts.tool -- or H.grep_get_tool()
-      if tool == "fallback" or not H.is_executable(tool) then
+      if tool == "fallback" or not P.is_executable(tool) then
         H.error("`grep_live` needs non-fallback executable tool.")
       end
 
-      local globs = H.is_array_of(local_opts.globs, "string") and local_opts.globs or {}
+      local globs = P.is_array_of(local_opts.globs, "string") and local_opts.globs or {}
       local flags = { "hidden" }
-      if H.is_array_of(local_opts.flags, "string") then flags = vim.list_extend({}, local_opts.flags) end
+      if P.is_array_of(local_opts.flags, "string") then flags = vim.list_extend({}, local_opts.flags) end
       local custom_name = opts.source.name or "Grep live"
 
       -- Show options (can be set via local_opts)
@@ -79,7 +66,7 @@ local function create_rg_live_grep_picker(MiniPick)
       opts = vim.tbl_deep_extend("force", { source = default_source }, opts or {})
       opts.source.name = default_source.name
 
-      local cwd = H.full_path(opts.source.cwd or vim.fn.getcwd())
+      local cwd = P.full_path(opts.source.cwd or vim.fn.getcwd())
       local set_items_opts, spawn_opts = { do_match = false, querytick = MiniPick.get_querytick() }, { cwd = cwd }
       local process
       local match = function(_, _, query)

@@ -1,23 +1,8 @@
 local M = {}
 
 local H = {}
-H.is_executable = function(tool)
-  if tool == "fallback" then return true end
-  return vim.fn.executable(tool) == 1
-end
-H.is_array_of = function(x, ref_type)
-  if not vim.tbl_islist(x) then return false end
-  for i = 1, #x do
-    if type(x[i]) ~= ref_type then return false end
-  end
-  return true
-end
-H.get_config = function(config)
-  return vim.tbl_deep_extend("force", MiniPick.config, vim.b.minipick_config or {}, config or {})
-end
-H.full_path = function(path)
-  return (vim.fn.fnamemodify(path, ":p"):gsub("(.)/$", "%1"))
-end
+local P = require("util.minipick_registry.picker").H
+
 local function parse_query(raw)
   local search, iglob = raw:match("^(.-)%s+%-%-%s+(.*)$")
   if not search then return vim.trim(raw), {} end
@@ -47,9 +32,9 @@ H.default_show_with_icons = function(buf_id, items, query)
   items = map_gsub(items, "#|#", "\0")
 
   local tab_spaces = string.rep(" ", vim.o.tabstop)
-  local aligned_lines = vim.tbl_map(function(l)
-    return l:gsub("%z", "│"):gsub("[\r\n]", " "):gsub("\t", tab_spaces)
-  end, aligned_items)
+  -- local aligned_lines = vim.tbl_map(function(l)
+  --   return l:gsub("%z", "│"):gsub("[\r\n]", " "):gsub("\t", tab_spaces)
+  -- end, aligned_items)
 
   MiniPick.default_show(buf_id, items, query, { show_icons = true })
 end
@@ -83,11 +68,11 @@ local function create_iglob_picker(MiniPick)
     local function igrep_live(local_opts, opts)
       local_opts = vim.tbl_extend("force", { tool = "rg", globs = {}, flags = {} }, local_opts or {})
       local tool = local_opts.tool -- or H.grep_get_tool()
-      if tool == "fallback" or not H.is_executable(tool) then
+      if tool == "fallback" or not P.is_executable(tool) then
         H.error("`grep_live` needs non-fallback executable tool.")
       end
 
-      local globs = H.is_array_of(local_opts.globs, "string") and local_opts.globs or {}
+      local globs = P.is_array_of(local_opts.globs, "string") and local_opts.globs or {}
       local flags = {
         no_ignore = local_opts.flags.no_ignore == true,
         hidden = local_opts.flags.hidden == true,
@@ -103,7 +88,7 @@ local function create_iglob_picker(MiniPick)
         return #parts == 0 and "" or (" | " .. table.concat(parts, " | "))
       end
       local name_suffix = build_name_suffix()
-      local show = H.get_config().source.show or H.show_with_icons
+      local show = P.get_config().source.show or H.show_with_icons
       local function build_name()
         name_suffix = build_name_suffix()
         if formatted_name then return string.format("Grep live (%s%s) | %s", tool, name_suffix, formatted_name) end
@@ -115,7 +100,7 @@ local function create_iglob_picker(MiniPick)
       opts = vim.tbl_deep_extend("force", { source = default_source }, opts or {})
       opts.source.name = default_source.name
 
-      local cwd = H.full_path(opts.source.cwd or vim.fn.getcwd())
+      local cwd = P.full_path(opts.source.cwd or vim.fn.getcwd())
       local set_items_opts, spawn_opts = { do_match = false, querytick = H.querytick }, { cwd = cwd }
       local process
       local match = function(_, _, query)

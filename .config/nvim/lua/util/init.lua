@@ -120,4 +120,25 @@ function M.do_open(uri)
   return err
 end
 
+function format(items)
+  local hls = {}
+  local strs = {}
+  local is_str = false
+
+  for _, str in ipairs(items) do
+    if not is_str then
+      strs[#strs + 1] = str
+    else
+      hls[#hls + 1] = str
+    end
+    is_str = not is_str
+  end
+
+  output = {}
+  for i, str in ipairs(strs) do
+    output[#output + 1] = { str, hls[i] }
+  end
+  return output
+end
+
 return M

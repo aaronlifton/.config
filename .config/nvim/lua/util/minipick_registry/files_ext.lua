@@ -1,13 +1,6 @@
 local M = {}
 local H = {}
-
-H.get_config = function(config)
-  return vim.tbl_deep_extend("force", MiniPick.config, vim.b.minipick_config or {}, config or {})
-end
-
-H.full_path = function(path)
-  return (vim.fn.fnamemodify(path, ":p"):gsub("(.)/$", "%1"))
-end
+local P = require("util.minipick_registry.picker").H
 
 local FlagManager = require("util.minipick_registry.flag_manager")
 
@@ -30,10 +23,10 @@ end
 
 local function create_files_picker(MiniPick)
   return function(local_opts, opts)
-    local_opts = vim.tbl_deep_extend("force", { tool = nil }, local_opts or {})
-    local tool = "fd"
-    local show = H.get_config().source.show or H.show_with_icons
-    local default_opts = { source = { name = string.format("Files (%s)", tool), show = show } }
+    if not local_opts.tool then local_opts.tool = "fd" end
+
+    local show = P.get_config().source.show or H.show_with_icons
+    local default_opts = { source = { name = string.format("Files (%s)", local_opts.tool), show = show } }
     opts = vim.tbl_deep_extend("force", default_opts, opts or {})
 
     local flags = local_opts.flags or { "hidden" }

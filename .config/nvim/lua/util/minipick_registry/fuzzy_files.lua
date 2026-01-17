@@ -4,6 +4,9 @@ local M = {}
 local H = {}
 
 local FlagManager = require("util.minipick_registry.flag_manager")
+local P = require("util.minipick_registry.picker").H
+
+local excl_flags = { time = { "newer", "two_days", "today" } }
 
 local function get_path_cache()
   if H._path_cache ~= nil then return H._path_cache end
@@ -13,30 +16,18 @@ local function get_path_cache()
   return H._path_cache
 end
 
-H.is_array_of = function(x, ref_type)
-  if not vim.islist(x) then return false end
-  for i = 1, #x do
-    if type(x[i]) ~= ref_type then return false end
-  end
-  return true
-end
-
-local function hl_group_or(group, fallback)
-  if vim.fn.hlexists(group) == 1 then return group end
-  return fallback
-end
-
 local function is_hidden_path(path)
   if path:sub(1, 1) == "." then return true end
   return path:find("/%.") ~= nil
 end
 
+-- Inspired by ~/.local/share/nvim/lazy/snacks.nvim/lua/snacks/picker/format.lua:42
 local function highlight_path(buf_id, row, path, col_offset)
   if path == "" then return end
 
-  local base_hl = hl_group_or("SnacksPickerFile", "MiniPickNormal")
-  local dir_hl = hl_group_or("SnacksPickerDir", "MiniPickNormal")
-  if is_hidden_path(path) then base_hl = hl_group_or("SnacksPickerPathHidden", base_hl) end
+  local base_hl = P.hl_group_or("SnacksPickerFile", "MiniPickNormal")
+  local dir_hl = P.hl_group_or("SnacksPickerDir", "MiniPickNormal")
+  if is_hidden_path(path) then base_hl = P.hl_group_or("SnacksPickerPathHidden", base_hl) end
 
   local dir, base = path:match("^(.*)/([^/]+)$")
   local ext_opts = { hl_mode = "combine", priority = 120 }
@@ -102,7 +93,7 @@ local function truncate_path(path, max_width, mode)
   end
 end
 
-local function create_fuzzy_files_picker()
+local function create_fuzzy_files_picker(MiniPick)
   -- Example override:
   -- MiniPick.registry.fuzzy_files({
   --   matcher = "auto", -- "fzf" | "fzf_dp" | "auto"
@@ -110,17 +101,16 @@ local function create_fuzzy_files_picker()
   --   auto = { threshold = 20000 },
   -- }, {})
   return function(local_opts, opts)
-    local matcher = ((local_opts and local_opts.matcher) or (opts and opts.matcher) or "fzf")
-    local auto_opts = vim.tbl_deep_extend(
-      "force",
-      { threshold = 20000 },
-      (local_opts and local_opts.auto) or {},
-      (opts and opts.auto) or {}
-    )
-    local fzf_opts = vim.tbl_deep_extend("force", {}, (local_opts and local_opts.fzf) or {}, (opts and opts.fzf) or {})
+    opts.source = opts.source or {}
 
+    local matcher = ((local_opts and local_opts.matcher) or (opts and opts.matcher) or "fzf")
+    local auto_opts = vim.tbl_deep_extend("force", { threshold = 20000 }, (local_opts and local_opts.auto) or {})
+    local fzf_opts = vim.tbl_deep_extend("force", {}, (local_opts and local_opts.fzf) or {})
+
+    local last_regex_query
     local fzf = nil
     local dp = nil
+
     local function get_matcher(use_dp)
       if use_dp then
         if not dp then dp = require("util.minipick_registry.fzf_dp").new(fzf_opts) end
@@ -135,7 +125,7 @@ local function create_fuzzy_files_picker()
     -- Default: hidden files ON (matches typical usage)
     local default_flags = vim.tbl_extend("force", { hidden = true }, (local_opts and local_opts.fd_flags) or {})
     local flags
-    if H.is_array_of(local_opts and local_opts.flags, "string") then
+    if P.is_array_of(local_opts and local_opts.flags, "string") then
       flags = vim.list_extend({}, local_opts.flags)
     else
       flags = {}
@@ -166,18 +156,24 @@ local function create_fuzzy_files_picker()
       return ("Files (fuzzy, %s%s)"):format(matcher, suffix)
     end
 
-    local function build_fd_command()
+    local function build_fd_command(pattern)
       local cmd = { "fd", "--type", "f", "--color", "never", "--follow", "--exclude", ".git" }
       -- Add flags (including --hidden if enabled)
       for _, flag in ipairs(flags) do
-        local flag_value = FlagManager.fd_flags[flag] or flag
-        for _, part in ipairs(vim.split(flag_value, "%s+", { trimempty = true })) do
-          table.insert(cmd, part)
+        if flag ~= "regex" then
+          local flag_value = FlagManager.fd_flags[flag] or flag
+          for _, part in ipairs(vim.split(flag_value, "%s+", { trimempty = true })) do
+            table.insert(cmd, part)
+          end
         end
       end
       -- Add excludes
-      for _, pattern in ipairs(excludes) do
+      for _, _pattern in ipairs(excludes) do
         table.insert(cmd, "--exclude")
+        table.insert(cmd, _pattern)
+      end
+      if pattern and pattern ~= "" then
+        table.insert(cmd, "--regex")
         table.insert(cmd, pattern)
       end
       return cmd
@@ -189,14 +185,27 @@ local function create_fuzzy_files_picker()
     local set_items_opts = { do_match = false }
     local process
 
-    local function refresh_items()
+    local function refresh_items(pattern)
       ---@diagnostic disable-next-line: undefined-field
       pcall(vim.loop.process_kill, process)
-      local command = build_fd_command()
+      local command = build_fd_command(pattern)
+      local current_query = MiniPick.get_picker_query() or {}
+      set_items_opts = { do_match = #current_query > 0 }
       process = MiniPick.set_picker_items_from_cli(command, {
         set_items_opts = set_items_opts,
         spawn_opts = spawn_opts,
       })
+    end
+
+    local schedule_regex_refresh
+    local function refresh_for_query()
+      if regex_mode then
+        local prompt = table.concat(MiniPick.get_picker_query() or {})
+        last_regex_query = prompt
+        schedule_regex_refresh(prompt)
+      else
+        refresh_items()
+      end
     end
 
     local function toggle_fd_exclude_patterns(pattern_key)
@@ -242,7 +251,8 @@ local function create_fuzzy_files_picker()
           end
         end
         MiniPick.set_picker_opts({ source = { name = build_name() } })
-        refresh_items()
+        refresh_for_query()
+        MiniPick.set_picker_query(MiniPick.get_picker_query() or {})
       end
     end
 
@@ -250,12 +260,40 @@ local function create_fuzzy_files_picker()
       return function()
         FlagManager.toggle_flag(flags, flag_key)
         MiniPick.set_picker_opts({ source = { name = build_name() } })
-        refresh_items()
+        refresh_for_query()
+        ---@diagnostic disable-next-line: param-type-mismatch
+        MiniPick.set_picker_query(MiniPick.get_picker_query() or {})
+      end
+    end
+
+    local function toggle_excl_flag(flag_key, key)
+      return function()
+        local enabled = FlagManager.has_flag(flags, flag_key)
+        local excl = excl_flags[key] or {}
+        if enabled then
+          FlagManager.toggle_flag(flags, flag_key)
+        else
+          for _, other in ipairs(excl) do
+            if other ~= flag_key and FlagManager.has_flag(flags, other) then FlagManager.toggle_flag(flags, other) end
+          end
+          FlagManager.toggle_flag(flags, flag_key)
+        end
+        MiniPick.set_picker_opts({ source = { name = build_name() } })
+        refresh_for_query()
+        ---@diagnostic disable-next-line: param-type-mismatch
+        MiniPick.set_picker_query(MiniPick.get_picker_query() or {})
       end
     end
     local function toggle_regex_mode()
       regex_mode = not regex_mode
       MiniPick.set_picker_opts({ source = { name = build_name() } })
+      local prompt = table.concat(MiniPick.get_picker_query() or {})
+      if regex_mode then
+        last_regex_query = prompt
+        schedule_regex_refresh(prompt)
+      else
+        refresh_items()
+      end
       MiniPick.set_picker_query(MiniPick.get_picker_query() or {})
     end
 
@@ -271,7 +309,7 @@ local function create_fuzzy_files_picker()
     --   alt-t: today (within 1 day)
     --   alt-d: max depth 3
     --   alt-s: small files only (<100k)
-    --   alt-p: regex match (Vim regex) for the query
+    --   alt-p: regex match (fd regex) for the query
 
     local mappings = {
       -- Visibility
@@ -285,9 +323,9 @@ local function create_fuzzy_files_picker()
       toggle_ext_js = { char = "<M-j>", func = toggle_fd_flag("ext_js") },
       toggle_ext_md = { char = "<M-m>", func = toggle_fd_flag("ext_md") },
       -- Time filters
-      toggle_newer = { char = "<M-n>", func = toggle_fd_flag("newer") },
-      toggle_two_days = { char = "<M-2>", func = toggle_fd_flag("two_days") },
-      toggle_today = { char = "<M-t>", func = toggle_fd_flag("today") },
+      toggle_newer = { char = "<M-n>", func = toggle_excl_flag("newer", "time") },
+      toggle_two_days = { char = "<M-2>", func = toggle_excl_flag("two_days", "time") },
+      toggle_today = { char = "<M-t>", func = toggle_excl_flag("today", "time") },
       -- Depth/size
       toggle_max_depth = { char = "<M-d>", func = toggle_fd_flag("max_depth_3") },
       toggle_small = { char = "<M-s>", func = toggle_fd_flag("small") },
@@ -318,21 +356,33 @@ local function create_fuzzy_files_picker()
       end
     end
 
+    local debounce_ms = local_opts.regex_debounce_ms or vim.g.minipick_regex_debounce_ms or 80
+    local refresh_token = 0
+    schedule_regex_refresh = function(prompt)
+      refresh_token = refresh_token + 1
+      local token = refresh_token
+      if debounce_ms <= 0 then
+        refresh_items(prompt)
+        return
+      end
+      vim.defer_fn(function()
+        if not regex_mode then return end
+        if token ~= refresh_token then return end
+        if last_regex_query ~= prompt then return end
+        refresh_items(prompt)
+      end, debounce_ms)
+    end
+
     local default_match = function(stritems, indices, query)
       local prompt = table.concat(query)
-      if prompt == "" then return indices end
       if regex_mode then
-        local pattern = prompt
-        if not pattern:match("^\\\\v") then pattern = "\\v" .. pattern end
-        local ok, re = pcall(vim.regex, pattern)
-        if not ok or not re then return {} end
-        local result = {}
-        for _, index in ipairs(indices) do
-          local path = stritems[index]
-          if re:match_str(path) then table.insert(result, index) end
+        if last_regex_query ~= prompt then
+          last_regex_query = prompt
+          schedule_regex_refresh(prompt)
         end
-        return result
+        return indices
       end
+      if prompt == "" then return indices end
       local tokens = vim.split(prompt, "%s+", { trimempty = true })
       if #tokens == 0 then return indices end
 
@@ -367,19 +417,15 @@ local function create_fuzzy_files_picker()
       end, result)
     end
 
-    -- MiniPick.builtin.files
-    MiniPick.registry.files_ext(
-      local_opts,
-      vim.tbl_deep_extend("force", opts or {}, {
-        source = {
-          match = opts.source.match or default_match,
-          choose_marked = require("util.minipick_registry.trouble").trouble_choose_marked,
-          name = name,
-          show = show,
-        },
-        mappings = mappings,
-      })
-    )
+    if opts.source.match == nil then opts.source.match = default_match end
+
+    opts = vim.tbl_deep_extend("force", opts, {
+      choose_marked = require("util.minipick_registry.trouble").trouble_choose_marked,
+      source = { name = name, show = show },
+      mappings = mappings,
+    })
+
+    MiniPick.registry.files_ext(local_opts, opts)
   end
 end
 

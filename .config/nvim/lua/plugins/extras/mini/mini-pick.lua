@@ -208,7 +208,10 @@ return {
       require("util.minipick_registry.hints").setup({
         hinted = {
           -- virt_clues_pos = { "inline", "eol" },
-          chars = vim.split("adefhilmnorstu", ""),
+          -- chars = vim.split("adefhilmnorstu", ""),
+
+          -- Left-hand chars
+          chars = vim.split("asdfqwertg", ""),
         },
       })
 
@@ -217,9 +220,8 @@ return {
       require("util.minipick_registry.my_buffers").setup(MiniPick)
       require("util.minipick_registry.rg_live_grep").setup(MiniPick)
       require("util.minipick_registry.rg_grep").setup(MiniPick)
-      -- require("util.minipick_registry.fuzzy_files").setup(MiniPick)
-      require("util.minipick_registry.fuzzy_files2").setup(MiniPick)
-      require("util.minipick_registry.smart2").setup(MiniPick)
+      require("util.minipick_registry.fuzzy_files").setup(MiniPick)
+      require("util.minipick_registry.smart").setup(MiniPick)
       require("util.minipick_registry.keymaps").setup(MiniPick)
       require("util.minipick_registry.bufferlines_ts").setup(MiniPick)
 
