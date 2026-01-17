@@ -95,7 +95,6 @@ end
 return {
   {
     "nvim-mini/mini.pick",
-    optional = true,
     config = function()
       local MiniPick = require("mini.pick")
       require("util.minipick_registry.patches.move").apply()
@@ -213,13 +212,13 @@ return {
         },
       })
 
-      -- vim.ui.select = MiniPick.select
+      vim.ui.select = MiniPick.select
       require("util.minipick_registry.files_ext").setup(MiniPick)
       require("util.minipick_registry.my_buffers").setup(MiniPick)
       require("util.minipick_registry.rg_live_grep").setup(MiniPick)
       require("util.minipick_registry.rg_grep").setup(MiniPick)
-      require("util.minipick_registry.fuzzy_files").setup(MiniPick)
-      require("util.minipick_registry.smart").setup(MiniPick)
+      -- require("util.minipick_registry.fuzzy_files").setup(MiniPick)
+      require("util.minipick_registry.fuzzy_files2").setup(MiniPick)
       require("util.minipick_registry.smart2").setup(MiniPick)
       require("util.minipick_registry.keymaps").setup(MiniPick)
       require("util.minipick_registry.bufferlines_ts").setup(MiniPick)
@@ -232,65 +231,46 @@ return {
 
       vim.api.nvim_create_augroup("MiniPick", { clear = true })
     end,
+    -- init = function()
+    --   LazyVim.on_very_lazy(function()
+    --     vim.ui.select = function(...)
+    --       vim.ui.select = MiniPick.ui_select
+    --       require("lazy").load({ plugins = { "mini.pick" } })
+    --       return vim.ui.select(...)
+    --     end
+    --   end)
+    -- end,
     keys = {
-      -- { "<leader>f<M-f>", function()
-      --   local buf = vim.api.Root Dirnvim_get_current_buf()
-      --   require("mini.pick").builtin.files({}, { source = { cwd = Snacks.git.get_root(Util.path.bufdir(buf)) } })
-      -- end, desc = "Files (cwd)" },
-      -- { "<D-P>", function() require("mini.pick").builtin.files({}, { source = { cwd  = Snacks.git.get_root() } }) end, desc = "Files (Root Dir)" },
       {
         "<D-p>",
         function()
           local buf = vim.api.nvim_get_current_buf()
           local opts = { source = { cwd = Snacks.git.get_root(Util.path.bufdir(buf)) } }
-          MiniPick.registry.fuzzy_files({}, opts)
           MiniPick.registry.fuzzy_files({
             matcher = "auto", -- "fzf" | "fzf_dp" | "auto"
             auto = { threshold = 20000 },
+            -- fzf = { preset = "filename_bias" }
+            -- source = { cwd = Snacks.git.get_root(Util.path.bufdir(buf))
           }, opts)
-          -- MiniPick.registry.fuzzy_files(
-          --   { fzf = { preset = "filename_bias" } },
-          --   { source = { cwd = Snacks.git.get_root(Util.path.bufdir(buf)) } }
-          -- )
         end,
         desc = "Files (cwd)",
       },
-      --stylua: ignore start
-      -- { "<leader>s<M-g>", function()
-      --   local buf = vim.api.nvim_get_current_buf()
-      --   require("mini.pick").builtin.grep_live(
-      --     {},
-      --     {
-      --       source = { cwd = Snacks.git.get_root(Util.path.bufdir(buf)) },
-      --       show = show_align_on_null
-      --     }
-      --   )
-      -- end, desc = "Grep (cwd)"},
-      { "<leader>s<M-g>", function()
-        local buf = vim.api.nvim_get_current_buf()
-        MiniPick.registry.iglob(
-          {},
-          {
+      {
+        "<leader>s<M-g>",
+        function()
+          local buf = vim.api.nvim_get_current_buf()
+          MiniPick.registry.iglob({}, {
             source = { cwd = Snacks.git.get_root(Util.path.bufdir(buf)) },
-            show = show_align_on_null
-          }
-        )
-      end, desc = "Grep (Live, iglob)" },
+            show = show_align_on_null,
+          })
+        end,
+        desc = "Grep (Live, iglob)",
+      },
+      --stylua: ignore start
       { "<leader>s<C-r>", function() require("mini.pick").builtin.resume() end, desc = "Grep (Live)"},
       -- { "<leader>f<M-b>", function() require("mini.pick").builtin.buffers() end, desc = "Buffers"},
       { "<leader>,", function() MiniPick.registry.my_buffers() end, desc = "Buffers (recent)" },
-      { "<leader>fs", function() MiniPick.registry.smart2({ flags = { "two_days" } }) end, desc = "Mini Smart Picker" },
-      --stylua: ignore end
-
-      -- buffers
-      -- cli
-      -- files
-      -- grep
-      -- grep_live
-      -- help
-      -- resume
-
-      --stylua: ignore start
+      { "<leader>fs", function() MiniPick.registry.smart({ flags = { "two_days" } }) end, desc = "Mini Smart Picker" },
       -- { "<leader>Pb", function() MiniExtra.pickers.buf_lines() end, desc = "Buffer lines" },
       -- { "<leader>Pf", function() MiniExtra.pickers.explorer() end, desc = "Explorer" },
       -- { "<leader>PF", function() MiniExtra.pickers.git_files({ scope = "modified" }) end, desc = "Git files" },
@@ -303,7 +283,6 @@ return {
       -- { "<leader>Pg", function() MiniExtra.pickers.hl_groups() end, desc = "Hl groups" },
       -- { "<leader>Pk", function() MiniExtra.pickers.keymaps() end, desc = "Keymaps" },
       -- { "<leader>Pl", function() MiniExtra.pickers.list() end, desc = "List" },
-      -- -- Needs an explicit scope from a list of supported ones:
       -- -- "declaration" | "definition" | "document_symbol" | "implementation" | "references" | "type_definition" | "workspace_symbol"
       -- { "<leader>PL", function() MiniExtra.pickers.lsp("declaration") end, desc = "LSP" },
       -- { "<leader>Pm", function() MiniExtra.pickers.marks() end, desc = "Marks" },

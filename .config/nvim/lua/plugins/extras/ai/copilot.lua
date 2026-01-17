@@ -81,6 +81,7 @@ return {
       -- node needs to be symlinked to /usr/local/bin
       -- opts.copilot_node_command
 
+      opts.suggestion = { enabled = false }
       opts.filetypes = vim.tbl_extend("force", opts.filetypes, {
         mchat = false,
       })

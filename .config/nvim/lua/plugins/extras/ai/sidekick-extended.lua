@@ -2,6 +2,20 @@
 --   return require("sidekick.config").cli.prompts[prompt]
 -- end
 
+local state = {}
+
+local function timed_send(msg)
+  local timer = vim.uv.new_timer()
+  -- If sending consecutive files, add a space between them
+  local msg = state.sent[msg] and " " .. msg or msg
+
+  require("sidekick.cli").send({ msg = msg })
+  state.sent_file = true
+  timer:start(1000, 0, function()
+    state.sent_file = false
+  end)
+end
+
 return {
   { import = "lazyvim.plugins.extras.ai.sidekick" },
   {
@@ -42,15 +56,14 @@ return {
       { "<leader>a<C-c>", function() require("sidekick.cli").toggle({ name = "gemini", focus = true }) end, desc = "Sidekick Claude Toggle" },
 
       -- Sends
-      { "<leader>al", function() require("sidekick.cli").send({ msg = " {line}" }) end, desc = "Sidekick Send Line", mode = {"n", "v"} },
+      { "<leader>al", function() require("sidekick.cli").send({ msg = "{line}" }) end, desc = "Sidekick Send Line", mode = {"n", "v"} },
       { "<leader>ad", function()
         require("sidekick.cli").send({ msg = "Can you help me fix these diagnostics?\n{diagnostics_curline}" })
       end, desc = "Sidekick Send Diagnostics" },
       { "<leader>aD", function() require("sidekick.cli").send({ msg = "Can you help me fix the diagnostics in {file}?\n{diagnostics}" }) end, desc = "Sidekick Send Diagnostics" },
       { "<leader>ae", function() require("sidekick.cli").send({ msg = "Explain {this}" }) end, desc = "Sidekick Explain" },
       -- "avante: focus" uses <leader>aF 
-      { "<leader>af", function() require("sidekick.cli").send({ msg = " {file}" }) end, desc = "Sidekick Send File" },
-
+      { "<leader>af", function() require("sidekick.cli").send({ msg = "{file}" }) end, desc = "Sidekick Send File" },
       -- Git
       { "<leader>g<C-r>", function() require("sidekick.cli").send({ msg = "Can you review my changes?" }) end, desc = "Sidekick Review Changes" },
       -- stylua: ignore end

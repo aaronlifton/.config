@@ -123,7 +123,7 @@ return {
       -- opts.formatters_by_ft["javascript"] = { "eslint_d" }
       -- opts.formatters_by_ft["javascript"] = { "prettierd" }
       -- Format with LSP instead
-      opts.formatters_by_ft["javascript"] = {}
+      -- opts.formatters_by_ft["javascript"] = {}
     end,
   },
   {

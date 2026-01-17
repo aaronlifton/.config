@@ -148,9 +148,10 @@ return {
               },
             },
             auto_show = function(ctx)
-              return ctx.mode ~= "cmdline" or not vim.tbl_contains({ "/", "?" }, vim.fn.getcmdtype())
+              -- return ctx.mode ~= "cmdline" or not vim.tbl_contains({ "/", "?" }, vim.fn.getcmdtype())
+              return vim.fn.getcmdtype() == ":"
             end,
-            auto_show_delay_ms = 200,
+            -- auto_show_delay_ms = 200,
             direction_priority = function()
               local ctx = require("blink.cmp").get_context()
               local item = require("blink.cmp").get_selected_item()

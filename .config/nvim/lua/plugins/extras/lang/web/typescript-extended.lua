@@ -39,7 +39,7 @@ return {
         vtsls = {
           handlers = {
             -- The requires adds 004.357msec to startup time
-            ["textDocument/publishDiagnostics"] = require("util.lsp").publish_to_ts_error_translator,
+            -- ["textDocument/publishDiagnostics"] = require("util.lsp").publish_to_ts_error_translator,
           },
           -- https://github.com/yioneko/vtsls/blob/main/packages/service/configuration.schema.json
           settings = {

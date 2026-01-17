@@ -1,6 +1,10 @@
 return {
   "zbirenbaum/copilot.lua",
   opts = {
+    suggestion = {
+      enabled = false,
+      auto_trigger = false,
+    },
     -- LazyVim defaults:
     -- suggestion = {
     --   enabled = not vim.g.ai_cmp,
@@ -24,6 +28,6 @@ return {
     nes = {
       enabled = false,
     },
-    copilot_model = "grok-code-fast-1",
+    -- copilot_model = "grok-code-fast-1",
   },
 }

@@ -175,7 +175,6 @@ local function create_iglob_picker(MiniPick)
       }
 
       opts = vim.tbl_deep_extend("force", opts or {}, { source = { items = {}, match = match }, mappings = mappings })
-      vim.api.nvim_echo({ { vim.inspect(mappings), "Normal" } }, true, {})
       return MiniPick.start(opts)
     end
     return igrep_live(local_opts, opts)

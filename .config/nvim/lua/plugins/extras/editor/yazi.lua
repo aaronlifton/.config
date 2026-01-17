@@ -56,7 +56,7 @@ return {
       "Yazi toggle",
     },
     opts = {
-      open_for_directories = true,
+      open_for_directories = false,
       floating_window_scaling_factor = 0.8,
       -- when yazi is closed with no file chosen, change the Neovim working
       -- directory to the directory that yazi was in before it was closed. Defaults

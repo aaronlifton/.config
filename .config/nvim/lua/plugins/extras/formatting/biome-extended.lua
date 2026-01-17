@@ -51,7 +51,7 @@ return {
 
       opts.formatters = opts.formatters or {}
       opts.formatters.biome = {
-        -- require_cwd = biome_needs_config,
+        require_cwd = true,
       }
     end,
   },

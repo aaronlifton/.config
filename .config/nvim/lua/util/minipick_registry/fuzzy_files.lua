@@ -14,7 +14,7 @@ local function get_path_cache()
 end
 
 H.is_array_of = function(x, ref_type)
-  if not vim.tbl_islist(x) then return false end
+  if not vim.islist(x) then return false end
   for i = 1, #x do
     if type(x[i]) ~= ref_type then return false end
   end
@@ -143,6 +143,7 @@ local function create_fuzzy_files_picker()
         if enabled then table.insert(flags, key) end
       end
     end
+    local regex_mode = false
 
     local function build_name_suffix()
       local parts = {}
@@ -152,6 +153,7 @@ local function create_fuzzy_files_picker()
         flag_parts[#flag_parts + 1] = FlagManager.fd_flags[flag] or flag
       end
       if #flag_parts > 0 then parts[#parts + 1] = table.concat(flag_parts, ", ") end
+      if regex_mode then parts[#parts + 1] = "regex" end
       return #parts == 0 and "" or (" | " .. table.concat(parts, " | "))
     end
 
@@ -251,6 +253,11 @@ local function create_fuzzy_files_picker()
         refresh_items()
       end
     end
+    local function toggle_regex_mode()
+      regex_mode = not regex_mode
+      MiniPick.set_picker_opts({ source = { name = build_name() } })
+      MiniPick.set_picker_query(MiniPick.get_picker_query() or {})
+    end
 
     -- Mnemonics:
     --   alt-h: toggle hidden files
@@ -264,6 +271,7 @@ local function create_fuzzy_files_picker()
     --   alt-t: today (within 1 day)
     --   alt-d: max depth 3
     --   alt-s: small files only (<100k)
+    --   alt-p: regex match (Vim regex) for the query
 
     local mappings = {
       -- Visibility
@@ -283,6 +291,7 @@ local function create_fuzzy_files_picker()
       -- Depth/size
       toggle_max_depth = { char = "<M-d>", func = toggle_fd_flag("max_depth_3") },
       toggle_small = { char = "<M-s>", func = toggle_fd_flag("small") },
+      toggle_regex = { char = "<M-p>", func = toggle_regex_mode },
     }
 
     local function show(buf_id, items, query)
@@ -312,6 +321,18 @@ local function create_fuzzy_files_picker()
     local default_match = function(stritems, indices, query)
       local prompt = table.concat(query)
       if prompt == "" then return indices end
+      if regex_mode then
+        local pattern = prompt
+        if not pattern:match("^\\\\v") then pattern = "\\v" .. pattern end
+        local ok, re = pcall(vim.regex, pattern)
+        if not ok or not re then return {} end
+        local result = {}
+        for _, index in ipairs(indices) do
+          local path = stritems[index]
+          if re:match_str(path) then table.insert(result, index) end
+        end
+        return result
+      end
       local tokens = vim.split(prompt, "%s+", { trimempty = true })
       if #tokens == 0 then return indices end
 

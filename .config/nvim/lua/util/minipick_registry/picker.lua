@@ -18,7 +18,7 @@ function M.pick_files(cwd, local_opts, opts)
   local_opts = vim.tbl_extend("force", local_opts or {}, default_files_local_opts)
   opts = vim.tbl_deep_extend("force", { source = { cwd = cwd } }, opts or {})
   -- require("mini.pick").builtin.files({}, { source = { cwd = cwd } })
-  require("mini.pick").registry.fuzzy_files(local_opts, opts)
+  require("mini.pick").registry.fuzzy_files2(local_opts, opts)
 end
 
 function M.pick_grep(pattern, local_opts, opts)

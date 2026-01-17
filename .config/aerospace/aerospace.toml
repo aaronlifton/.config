@@ -143,7 +143,7 @@ ctrl-cmd-alt-shift-l = "focus --boundaries-action wrap-around-the-workspace righ
 # alt-j = '''exec-and-forget /bin/bash -lc "app=$(aerospace list-windows --focused --format %{app-bundle-id} 2>/dev/null); if [ \"$app\" = net.kovidgoyal.kitty ]; then /usr/bin/osascript -e 'tell application \"System Events\" to keystroke \"j\" using {option down}'; else aerospace focus --boundaries-action wrap-around-the-workspace down; fi"'''
 # alt-k = 'exec-and-forget /bin/bash -lc "app=$(aerospace list-windows --focused --format %{app-bundle-id} 2>/dev/null); if [ \"$app\" != net.kovidgoyal.kitty ]; then aerospace focus --boundaries-action wrap-around-the-workspace up; fi"'
 # alt-leftSquareBracket = "join-with right"
-alt-r = 'mode resize'
+# alt-r = 'mode resize'
 cmd-shift-alt-r = 'mode resize'
 # alt-rightSquareBracket = "join-with down"
 

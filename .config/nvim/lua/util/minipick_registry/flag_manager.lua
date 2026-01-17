@@ -25,6 +25,7 @@ M.fd_flags = {
   max_depth_5 = "--max-depth 5",
   -- Size filters
   small = "--size -100k", -- files < 100KB
+  regex = "--regex",
 }
 
 M.rg_flags = {

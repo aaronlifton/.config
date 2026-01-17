@@ -136,7 +136,8 @@ return {
         -- end,
         -- TODO: Convert this example for something useful; this just clones vif
         F = function()
-          local ts_utils = require("nvim-treesitter.ts_utils")
+          -- local ts_utils = require("nvim-treesitter.ts_utils")
+          local ts_utils = Util.treesitter
           local current_node = ts_utils.get_node_at_cursor()
 
           -- Traverse up the tree to find the function definition node

@@ -9,23 +9,25 @@ return {
   },
   {
     "stevearc/conform.nvim",
-    opts = {
-      formatters_by_ft = {
-        ["javascript"] = { "rustywind" },
-        ["javascriptreact"] = { "rustywind" },
-        ["typescript"] = { "rustywind" },
-        ["typescriptreact"] = { "rustywind" },
-        ["vue"] = { "rustywind" },
-        ["html"] = { "rustywind" },
-        ["astro"] = { "rustywind" },
-      },
-      formatters = {
+    opts = function(_, opts)
+      local formatters = { "rustywind" }
+      require("util.conform").add_formatters(opts, {
+        javascript = formatters,
+        javascriptreact = formatters,
+        typescript = formatters,
+        typescriptreact = formatters,
+        vue = formatters,
+        html = formatters,
+        eruby = formatters,
+        astro = formatters,
+      })
+      opts.formatters = vim.tbl_extend("force", opts.formatters, {
         rustywind = {
           condition = function(_, ctx)
             return vim.fs.find({ "tailwind.config.js" }, { path = ctx.filename, upward = true })[1]
           end,
         },
-      },
-    },
+      })
+    end,
   },
 }

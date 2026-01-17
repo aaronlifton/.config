@@ -52,18 +52,18 @@ return {
       formatters = {
         prettierd = {
           require_cwd = false,
-          env = {
-            PRETTIERD_DEFAULT_CONFIG = vim.fn.stdpath("config") .. "/rules/.prettierrc.json",
-          },
+          -- env = {
+          --   PRETTIERD_DEFAULT_CONFIG = vim.fn.stdpath("config") .. "/rules/.prettierrc.json",
+          -- },
         },
-        prettier = {
-          prepend_args = function(_, ctx)
-            local has_config = vim.fs.root(ctx.dirname, function(name, path)
-              if vim.tbl_contains(config_file_names, name) then return true end
-            end)
-            if not has_config then return { "--config", vim.fn.stdpath("config") .. "/rules/.prettierrc.json" } end
-          end,
-        },
+        -- prettier = {
+        -- prepend_args = function(_, ctx)
+        --   local has_config = vim.fs.root(ctx.dirname, function(name, path)
+        --     if vim.tbl_contains(config_file_names, name) then return true end
+        --   end)
+        --   if not has_config then return { "--config", vim.fn.stdpath("config") .. "/rules/.prettierrc.json" } end
+        -- end,
+        -- },
       },
     },
   },

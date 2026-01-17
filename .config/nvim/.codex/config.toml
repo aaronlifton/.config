@@ -1,6 +1,8 @@
 # See https://github.com/openai/codex/blob/main/docs/config.md
-sandbox_mode = "workspace_write"
-ask_for_approval = "untrusted"
+# Also https://github.com/openai/codex/blob/main/docs/config.md#feature-flags
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
 
-[tools]
-web_search = true
+[features]
+shell_snapshot = true
+web_search_request = true

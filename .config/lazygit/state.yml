@@ -1,6 +1,10 @@
 lastupdatecheck: 0
 recentrepos:
-    - /Users/aaron
+    - /Users/aaron/.local/share/nvim/lazy/noice.nvim
+    - /Users/aaron/.local/share/nvim/lazy/nvim-treesitter-textobjects
+    - /Users/aaron/.local/share/nvim/lazy/leap.nvim
+    - /Users/aaron/.local/share/nvim/lazy/better-escape.nvim
+    - /Users/aaron/.local/share/nvim/lazy/fzf-lua
     - /Users/aaron/.config/nvimdots
     - /Users/aaron/.local/share/nvim/lazy/neomodern.nvim
     - /Users/aaron/.config/nvim

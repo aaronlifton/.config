@@ -112,7 +112,7 @@ local function create_smart_picker()
 end
 
 M.setup = function(MiniPick)
-  MiniPick.registry.smart2 = create_smart_picker(MiniPick)
+  MiniPick.registry.smart = create_smart_picker(MiniPick)
 end
 
 return M

@@ -1,6 +1,5 @@
 {
   "extras": [
-    "lazyvim.plugins.extras.ai.copilot",
     "lazyvim.plugins.extras.coding.mini-surround",
     "lazyvim.plugins.extras.coding.yanky",
     "lazyvim.plugins.extras.dap.core",
@@ -16,7 +15,6 @@
     "lazyvim.plugins.extras.util.dot",
     "lazyvim.plugins.extras.util.startuptime",
     "plugins.extras.ai.avante",
-    "plugins.extras.ai.copilot-extended",
     "plugins.extras.ai.mcphub",
     "plugins.extras.ai.sidekick-extended",
     "plugins.extras.ai.yank-for-claude",
@@ -40,6 +38,7 @@
     "plugins.extras.editor.trouble-extended",
     "plugins.extras.editor.yazi",
     "plugins.extras.formatting.prettier-extended",
+    "plugins.extras.formatting.rustywind",
     "plugins.extras.formatting.trim_newlines",
     "plugins.extras.lang.bash",
     "plugins.extras.lang.clojure-extended",

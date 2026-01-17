@@ -86,7 +86,6 @@ local function find_last(haystack, needle)
 end
 
 M.ts_show = function(buf_id, items, query)
-  vim.api.nvim_echo({ { vim.inspect(items), "Normal" } }, true, {})
   local sep = string.char(31)
   local sep_pattern = vim.pesc(sep)
   local aligned_items = map_gsub(items, "%z", sep)
@@ -95,7 +94,6 @@ M.ts_show = function(buf_id, items, query)
     merge_delimiter = { "", " ", "", " ", "" },
     split_pattern = sep_pattern,
   })
-  vim.api.nvim_echo({ { vim.inspect(aligned_items), "Normal" } }, true, {})
   aligned_items = map_gsub(aligned_items, sep, "│")
 
   local tab_spaces = string.rep(" ", vim.o.tabstop)

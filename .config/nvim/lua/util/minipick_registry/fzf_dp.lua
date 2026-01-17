@@ -4,6 +4,7 @@ local M = {}
 
 local DEFAULT_CONSTANTS = {
   score_match = 16,
+  -- Example: f___zy
   score_gap_start = -3,
   score_gap_extension = -1,
   bonus_boundary = 8,
@@ -75,7 +76,9 @@ local function compute_bonus(constants, prev_class, curr_class)
   end
 
   -- camelCase transitions or letter->number transitions
-  if (prev_class == CHAR_LOWER and curr_class == CHAR_UPPER) or (prev_class ~= CHAR_NUMBER and curr_class == CHAR_NUMBER) then
+  if
+    (prev_class == CHAR_LOWER and curr_class == CHAR_UPPER) or (prev_class ~= CHAR_NUMBER and curr_class == CHAR_NUMBER)
+  then
     return constants.bonus_camel_123
   end
 
@@ -92,15 +95,11 @@ local function build_bonuses(str, constants, filename_bonus)
   local bonuses = {}
   local prev_class = CHAR_WHITE
   local last_sep = str:match("^.*()" .. vim.pesc(PATH_SEP))
-  if not last_sep and PATH_SEP ~= "/" then
-    last_sep = str:match("^.*()/")
-  end
+  if not last_sep and PATH_SEP ~= "/" then last_sep = str:match("^.*()/") end
   for i = 1, n do
     local class = CHAR_CLASS[str:byte(i)] or CHAR_NONWORD
     local bonus = compute_bonus(constants, prev_class, class)
-    if filename_bonus and last_sep and i > last_sep then
-      bonus = bonus + constants.bonus_no_path_sep
-    end
+    if filename_bonus and last_sep and i > last_sep then bonus = bonus + constants.bonus_no_path_sep end
     bonuses[i] = bonus
     prev_class = class
   end
@@ -112,9 +111,7 @@ end
 ---@param opts? {is_file?: boolean}
 ---@return number? score
 function Matcher:match_score(str, pattern, opts)
-  if pattern == "" then
-    return 0
-  end
+  if pattern == "" then return 0 end
 
   local hay = str
   local needle = pattern
@@ -155,9 +152,7 @@ function Matcher:match_score(str, pattern, opts)
       local schar = hay:sub(j, j)
       if pchar == schar then
         local match_bonus = constants.score_match + bonuses[j]
-        if i == 1 then
-          match_bonus = match_bonus + bonuses[j] * (constants.bonus_first_char_multiplier - 1)
-        end
+        if i == 1 then match_bonus = match_bonus + bonuses[j] * (constants.bonus_first_char_multiplier - 1) end
 
         local score_from_match = M[i - 1][j - 1] + match_bonus
         local score_from_consecutive = D[i - 1][j - 1] + match_bonus + constants.bonus_consecutive
@@ -172,9 +167,7 @@ function Matcher:match_score(str, pattern, opts)
   end
 
   local best = M[m][n]
-  if best <= neg_inf / 2 then
-    return
-  end
+  if best <= neg_inf / 2 then return end
   return best
 end
 

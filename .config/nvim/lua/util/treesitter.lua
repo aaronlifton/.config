@@ -97,4 +97,28 @@ M.get_cword_next_char = function()
   return vim.fn.strcharpart(next_char, 0, 1)
 end
 
+---@param root_lang_tree LanguageTree
+---@return TSNode?
+function M.get_node_at_cursor(root_lang_tree)
+  local cursor = vim.api.nvim_win_get_cursor(0)
+  local cursor_range = { cursor[1] - 1, cursor[2] }
+
+  ---@type TSNode?
+  local root
+  local line = cursor_range[1]
+  local col = cursor_range[2]
+
+  local lang_tree = root_lang_tree:language_for_range({ line, col, line, col })
+
+  for _, tree in pairs(lang_tree:trees()) do
+    root = tree:root()
+
+    if root and vim.treesitter.is_in_node_range(root, line, col) then break end
+  end
+
+  if not root then return end
+
+  return root:named_descendant_for_range(cursor_range[1], cursor_range[2], cursor_range[1], cursor_range[2])
+end
+
 return M

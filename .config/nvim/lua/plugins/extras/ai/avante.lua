@@ -97,6 +97,7 @@ return {
     version = false, -- set this to "*" if you want to always pull the latest change
     -- if you want to build from source then do `make BUILD_FROM_SOURCE=true`
     build = "make",
+    enabled = false,
 
     dependencies = {
       "stevearc/dressing.nvim",

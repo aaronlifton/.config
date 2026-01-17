@@ -18,7 +18,11 @@ return {
     opts = {
       servers = {
         emmet_language_server = {
-          filetypes = { "html", "javascript" },
+          filetypes = {
+            "html",
+            "eruby",
+            -- "javascript",
+          },
         },
         -- emmet_ls = {
         --   filetypes = {

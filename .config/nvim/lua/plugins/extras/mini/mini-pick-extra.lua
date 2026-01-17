@@ -87,8 +87,10 @@ return {
       {
         "<leader>fN",
         function()
+          -- Notification is handled by #node_modules_dir
           local path = get_picker().node_modules_dir()
           if not path then return end
+
           get_picker().pick_files(path)
         end,
         desc = "Files (node_modules)",
@@ -118,9 +120,8 @@ return {
       {
         "<leader>su",
         function()
-          -- local pick = get_picker()
-          -- pick.pick_grep(vim.fn.expand("<cword>"), { source = { cwd = pick.root_dir() } })
-          get_picker().pick_grep(vim.fn.expand("<cword>"), {}, { source = { cwd = get_picker().root_dir() } })
+          local pick = get_picker()
+          pick.pick_grep(vim.fn.expand("<cword>"), {}, { source = { cwd = pick.root_dir() } })
         end,
         desc = "Word (Root Dir)",
         mode = "n",
@@ -128,9 +129,8 @@ return {
       {
         "<leader>su",
         function()
-          -- local pick = get_picker()
-          -- pick.pick_grep(pick.get_visual_selection(), { source = { cwd = pick.root_dir() } })
-          get_picker().pick_grep(nil, { source = { cwd = pick.root_dir() } })
+          local pick = get_picker()
+          pick.pick_grep(nil, { source = { cwd = pick.root_dir() } })
         end,
         desc = "Selection (Root Dir)",
         mode = "v",
@@ -247,6 +247,32 @@ return {
         end,
         desc = "Grep (--fixed-strings)",
         mode = { "v" },
+      },
+      {
+        "<leader>s<M-r>",
+        function()
+          local gem = "ruby-lsp" -- rails
+          local function handle_output(stdout, code, stderr)
+            if code ~= 0 then
+              vim.api.nvim_echo({ { ("Error getting gem path: %s"):format(stderr), "Error" } }, true, {})
+              return
+            end
+            local path = stdout:match("^(.-)\n")
+            if not path or path == "" then
+              vim.api.nvim_echo({ { "Could not find ruby-lsp gem path", "Error" } }, true, {})
+              return
+            end
+            path = vim.fn.fnamemodify(path, ":h")
+            local gems_dir = vim.fn.fnamemodify(path, ":~:h:h")
+            get_picker().pick_grep_live({}, { source = { cwd = path, name = gems_dir } })
+          end
+
+          vim.system({ "bundle", "show", gem }, { text = true }, function(res)
+            vim.schedule(function()
+              handle_output(res.stdout, res.code, res.stderr)
+            end)
+          end)
+        end
       },
       {
         "<leader>s<C-m>",
