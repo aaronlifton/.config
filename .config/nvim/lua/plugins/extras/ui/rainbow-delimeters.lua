@@ -38,6 +38,7 @@ return {
         "log",
         "AvanteChat",
         "AvanteInput",
+        "minipick",
       },
       query = {
         [""] = "rainbow-delimiters",

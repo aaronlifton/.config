@@ -56,6 +56,7 @@ return {
   {
     "Olical/nfnl",
     ft = "fennel",
+    enabled = false,
     init = function()
       require("nfnl").setup({})
       require("fennel.init").init()

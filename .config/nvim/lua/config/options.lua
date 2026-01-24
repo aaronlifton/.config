@@ -83,6 +83,7 @@ g.minipick_ts_highlight = true
 g.minipick_path_max_width = 40
 g.minipick_path_truncate_mode = "smart"
 g.minipick_ff_path_max_width = nil
+-- g.minipick_rg_debounce_ms = 120
 -- g.minipick_ff_path_trunate_mode = "head"
 -- g.minipick_path_max_width = number (default: nil, no truncation)
 -- g.minipick_path_truncate_mode = "head"|"middle"|"smart" (default: "smart")

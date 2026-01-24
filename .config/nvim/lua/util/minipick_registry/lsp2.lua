@@ -5,6 +5,21 @@
 -- - Symbol scopes use MiniExtra-style icons/highlighting; non-symbol scopes use default show.
 local M = {}
 
+M.win = 0 -- current window
+M.tagstack = {
+  items = {}, -- list of tag items (empty here)
+  idx = 0, -- current position in the tagstack
+}
+
+local function push_tag()
+  local tag = {
+    tagname = vim.fn.expand("<cword>"),
+    from = { vim.fn.bufnr("%"), vim.fn.line("."), vim.fn.col("."), 0 },
+    -- optional: curidx / user_data
+  }
+  vim.fn.settagstack(0, { items = { tag } }, "t") -- "t" = push
+end
+
 local function create_lsp_picker(MiniPick)
   local ns_id = vim.api.nvim_create_namespace("minipick-lsp2")
   local allowed_scopes = {
@@ -66,7 +81,12 @@ local function create_lsp_picker(MiniPick)
   local dedupe_by_location = Util.lsp.dedupe_by_location
 
   local function pick_start(items, picker_opts, opts)
-    local source = vim.tbl_deep_extend("force", { items = items }, picker_opts.source or {})
+    local source = vim.tbl_deep_extend(
+      "force",
+      { items = items, choose_marked = require("util.minipick_registry.trouble").trouble_choose_marked },
+      picker_opts.source or {}
+    )
+
     local start_opts = vim.tbl_deep_extend("force", picker_opts, opts or {}, { source = source })
 
     return MiniPick.start(start_opts)
@@ -209,9 +229,7 @@ local function create_lsp_picker(MiniPick)
       end
       items = process(items)
 
-      if source == "definition" then
-        items = dedupe_by_location(items)
-      end
+      if source == "definition" then items = dedupe_by_location(items) end
 
       if #items == 1 then
         jump_to_item(items[1])
@@ -249,7 +267,11 @@ local function create_lsp_picker(MiniPick)
     local scope = validate_scope(local_opts.scope)
 
     local buf_lsp_opts, picker_opts, process_items = lsp_make_opts(scope, opts)
-    if scope == "references" then return vim.lsp.buf[scope](nil, buf_lsp_opts) end
+    if scope == "definition" then push_tag() end
+    if scope == "references" then
+      push_tag()
+      return vim.lsp.buf[scope](nil, buf_lsp_opts)
+    end
     if scope == "workspace_symbol" then
       local query = tostring(local_opts.symbol_query)
       return vim.lsp.buf[scope](query, buf_lsp_opts)
@@ -287,14 +309,23 @@ local function create_lsp_picker(MiniPick)
     end
     if scope == "document_symbol_live" then
       local requested = false
+      local client_requested = false
       picker_opts.source.match = function(stritems, inds, query)
         if not requested then
           requested = true
           local win_id = MiniPick.get_picker_state().windows.target
           local buf_id = vim.api.nvim_win_get_buf(win_id)
-          vim.api.nvim_buf_call(buf_id, function()
-            vim.lsp.buf.document_symbol(buf_lsp_opts)
-          end)
+          if not client_requested then
+            vim.api.nvim_buf_call(buf_id, function()
+              vim.lsp.buf.document_symbol(buf_lsp_opts)
+            end)
+            client_requested = true
+          end
+          -- local bufnr = vim.fn.bufnr()
+          -- local clients = vim.lsp.get_clients({ bufnr = bufnr })
+          -- for _, client in ipairs(clients) do
+          --   if client:supports_method("document_symbol", bufnr) then c = client end
+          -- end
         end
         return MiniPick.default_match(stritems, inds, query)
       end

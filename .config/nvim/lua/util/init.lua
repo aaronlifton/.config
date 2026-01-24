@@ -5,6 +5,7 @@
 ---@field bufferline util.bufferline
 ---@field colors util.colors
 ---@field debug util.debug
+---@field display util.display
 ---@field format util.format
 ---@field fzf util.fzf
 ---@field git util.git

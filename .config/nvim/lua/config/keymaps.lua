@@ -134,8 +134,13 @@ map("i", "<C-a>", "<Home>", { desc = "Start Of Line" })
 map("i", "<C-e>", "<End>", { desc = "End Of Line" })
 
 -- Move to beginning/end of line
-map({ "n", "x", "o" }, "<M-l>", "$", { desc = "Last Character of Line", noremap = true })
-map({ "n", "x", "o" }, "<M-h>", "_", { desc = "First character of Line" })
+if LazyVim.has_extra("editor.mini-move") then
+  map("o", "<M-l>", "$", { desc = "Last Character of Line", noremap = true })
+  map("o", "<M-h>", "_", { desc = "First character of Line" })
+else
+  map({ "n", "x", "o" }, "<M-l>", "$", { desc = "Last Character of Line", noremap = true })
+  map({ "n", "x", "o" }, "<M-h>", "_", { desc = "First character of Line" })
+end
 map({ "n", "x", "o" }, "<M-b>", "b", { desc = "Previous Word", noremap = true })
 map({ "n", "x", "o" }, "<M-w>", "w", { desc = "Next Word", noremap = true })
 
@@ -151,8 +156,8 @@ map({ "n", "x" }, "<C-c>", '"_ciw', { desc = "Change word without yanking" })
 -- map("n", "gT", "M", { desc = "Move to top of window", noremap = true })
 
 -- Enable delete to end of line in NUI inputs. Gets overriden by LSP keymap
--- otherwise.
-map("i", "<C-k>", "<C-o>D", { desc = "Delete to end of line", noremap = true })
+-- otherwise. NOTE: Get's overriden by blink.cmp (blink.cmp/…/blink/cmp/keymap/apply.lua)
+-- map("i", "<C-k>", "<C-o>D", { desc = "Delete to end of line", noremap = true })
 
 -- Deleting without yanking empty line
 map("n", "dd", function()
@@ -377,6 +382,10 @@ vim.api.nvim_create_user_command("LazygitYadm", function()
 end, { desc = "Lazygit (YADM)" })
 map("n", "<leader>g<M-y>", ":LazygitYadm<CR>", { desc = "Lazygit (YADM)" })
 
+map("n", "<leader>s<M-m>", function()
+  Util.ai.mgrep()
+end, { desc = "Mgrep" })
+
 -- map({"n", "x" }, "<leader>g<M-f>", function()
 --   vim.ui.select(require("util.git").mru_branches(), { prompt = "Branch: " }, function(branch)
 --     Snacks.gitbrowse({
@@ -390,8 +399,11 @@ map("n", "<leader>g<M-y>", ":LazygitYadm<CR>", { desc = "Lazygit (YADM)" })
 
 -- Terminals
 map("n", "<leader>fT", function()
+  local bufpath = Util.path.bufpath()
+  if not bufpath then return end
+
   Snacks.terminal(nil, {
-    cwd = vim.fn.fnamemodify(Util.path.bufpath(), ":h"),
+    cwd = vim.fn.fnamemodify(bufpath, ":h"),
     win = { position = "float", border = "rounded", backdrop = 60, width = 0.5, height = 0.5 },
   })
 end, { desc = "Terminal (float)" })
@@ -443,20 +455,20 @@ map("n", "zV", function()
 end, { desc = "Add to Vale dictionary" })
 
 -- Git modified date
-map("n", "<leader>gT", function()
-  local filename = vim.fn.expand("%")
-  local modified_date = vim.fn.getftime(filename)
-  local modified_date_str = vim.fn.strftime("%c", modified_date)
-  --- @type string
-  local date
-  if git_util.is_git_repo() then
-    local commit_date = vim.fn.system("git log -1 --format=%cd --date=unix " .. filename)
-    local commit_date_str = vim.fn.strftime("%c", commit_date)
-    if commit_date ~= "" then date = commit_date_str .. " (Commit Time)" end
-  end
-  date = date or modified_date_str .. " (Modified Time)"
-  vim.api.nvim_echo({ { date, "Title" } }, true, {})
-end, { desc = "Last Modified" })
+-- map("n", "<leader>gT", function()
+--   local filename = vim.fn.expand("%")
+--   local modified_date = vim.fn.getftime(filename)
+--   local modified_date_str = vim.fn.strftime("%c", modified_date)
+--   --- @type string
+--   local date
+--   if git_util.is_git_repo() then
+--     local commit_date = vim.fn.system("git log -1 --format=%cd --date=unix " .. filename)
+--     local commit_date_str = vim.fn.strftime("%c", commit_date)
+--     if commit_date ~= "" then date = commit_date_str .. " (Commit Time)" end
+--   end
+--   date = date or modified_date_str .. " (Modified Time)"
+--   vim.api.nvim_echo({ { date, "Title" } }, true, {})
+-- end, { desc = "Last Modified" })
 
 map("n", "dm", function()
   local cur_line = vim.fn.line(".")
@@ -496,6 +508,10 @@ map("n", "<C-w><C-y>", function()
   vim.cmd("vsplit")
   vim.lsp.buf.type_definition({ on_list = Util.lsp.make_on_list() })
 end, { desc = "Goto Type Definition (vsplit)", silent = true })
+map("n", "<C-w><C-s>", function()
+  vim.cmd("sp")
+  vim.lsp.buf.type_definition({ on_list = Util.lsp.make_on_list() })
+end, { desc = "Goto Type Definition (split)", silent = true })
 -- Goto in new tab
 map("n", "<C-w>gt", function()
   vim.cmd("tab split")
@@ -629,7 +645,7 @@ map("n", "<leader>x1", function()
 end, { desc = "Jump to item 1" })
 
 -- Custom finders
-local T = require("util.fzf.finders")
+-- local T = require("util.fzf.finders")
 -- map("n", "<leader>s<M-l>", function()
 --   T.grep_lazyvim_files()
 -- end, { desc = "Grep lazyvim files" })
@@ -708,10 +724,33 @@ end, { desc = "Open github url from current path" })
 --   vim.cmd([[exe "normal gza]f]a(\<esc>l" | startinsert]])
 -- end, { desc = "Convert to markdown url" })
 
+map("v", "g<C-o>", function()
+  local _, range = Util.selection.get_visual_selection()
+  if not range then return end
+
+  local start_line = range.start.line
+  local end_line = range["end"].line
+
+  local keystrokes = vim.fn.input("Operation: ")
+  if #keystrokes == 0 then return end
+
+  local cmd = ("%s,%snorm %s"):format(start_line, end_line, keystrokes)
+
+  -- Exit visual mode
+  vim.fn.feedkeys(":", "nx")
+  vim.cmd(cmd)
+
+  vim.notify(cmd, "info", { title = "Normal command" })
+end, { desc = "Linewise normal cmd" })
+
 -- Overrides g<C-h> (Blockwise select mode)
 map("n", "g<C-h>", function()
-  local cword = vim.fn.expand("<cword>")
-  vim.cmd("help " .. cword)
+  if vim.bo.ft == "rust" then
+    vim.cmd(":RustLsp openDocs")
+  else
+    local cword = vim.fn.expand("<cword>")
+    vim.cmd("help " .. cword)
+  end
 end, { desc = "Open help file" })
 
 -- Testing
@@ -774,7 +813,7 @@ end, { expr = true, desc = "Convert to snake case" })
 
 map("n", "<leader>14", function()
   Util.win.filetype()
-end, { desc = "Copy file line to clipboard" })
+end, { desc = "Filetype" })
 
 map("n", "<leader>15", function()
   local current_file = vim.fn.expand("%:p")
@@ -796,10 +835,6 @@ end, { desc = "CD to current file directory" })
 --   require("tiny-code-action").code_action({})
 -- end, { noremap = true, silent = true })
 --
-map("n", "<leader>16", function()
-  local hyper_keys_path = "/Users/alifton/.hammerspoon/hyper_apps.lua"
-  vim.cmd("e " .. hyper_keys_path)
-end, { desc = "edit .hammerspoon/hyper_apps.lua", noremap = true, silent = true })
 
 map("n", "<leader>ayC", function()
   require("util.llm_context").codex.yank_line_with_diagnostics()

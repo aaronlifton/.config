@@ -29,7 +29,7 @@ function M.pick(kind)
 end
 
 return {
-  { import = "lazyvim.plugins.extras.ai.copilot" },
+  -- { import = "lazyvim.plugins.extras.ai.copilot" },
   {
     "nvim-lualine/lualine.nvim",
     optional = true,
@@ -71,14 +71,9 @@ return {
       --   -- It is recommended to disable copilot.lua's suggestion and panel modules, as they can interfere with completions properly appearing in copilot-cmp. To do so, simply place the following in your copilot.lua config:
       --   opts.panel = { enabled = false }
       --   if panel_enabled then opts.panel = { enabled = true, auto_refresh = true } end
-      --   -- opts.panel = { enabled = true, auto_refresh = true }
-      --   -- opts.cmp = {
-      --   --   enabled = true,
-      --   --   method = "getCompletionsCycling",
-      --   -- },
       -- end
 
-      -- node needs to be symlinked to /usr/local/bin
+      -- node needs to be symlinked to /usr/local/bin on OSX
       -- opts.copilot_node_command
 
       opts.suggestion = { enabled = false }

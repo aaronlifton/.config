@@ -31,12 +31,10 @@ local function create_my_buffers(MiniPick)
       MiniPick.default_show(buf_id, items_to_show, query, { show_icons = true })
     end
 
-    local buffer_hints = vim.split("abcdefg", "")
-    local hinted = { enable = true, use_autosubmit = true, chars = buffer_hints }
     local opts = {
       source = { name = "Buffers", items = items, show = show },
       mappings = buffer_mappings,
-      hinted = hinted,
+      hinted = { enable = true, use_autosubmit = true },
     }
     return MiniPick.start(opts)
   end

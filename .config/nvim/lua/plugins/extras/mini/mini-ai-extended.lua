@@ -30,19 +30,18 @@ local line_textobj = function()
   end
 end
 
-local custom_mappings = {
-  { "C", desc = "comment" },
-  { "k", desc = "key, assignment" },
-  { "v", desc = "value, assignment rhs, return" },
-  { "N", desc = "number" },
-  { "L", desc = "line" },
-  { "D", desc = "diagnostic" },
-  { "E", desc = "diagnostic (error)" },
-  { "p", desc = "paragraph" },
-  { "S", desc = "sentence" },
-  { "W", desc = "word" },
-  { "h", desc = "hunk" },
-}
+-- Custom mappings
+-- C = comment
+-- k = key, assignment
+-- v = value, assignment rhs, return
+-- N = number
+-- L = line
+-- D = diagnostic
+-- E = diagnostic (error)
+-- p = paragraph
+-- S = sentence
+-- W = word
+-- h = hunk
 
 return {
   {
@@ -134,11 +133,15 @@ return {
         --   end
         --   return res
         -- end,
-        -- TODO: Convert this example for something useful; this just clones vif
+        -- NOTE:This is like vaf, but selects the line above and below the textobject
         F = function()
           -- local ts_utils = require("nvim-treesitter.ts_utils")
           local ts_utils = Util.treesitter
-          local current_node = ts_utils.get_node_at_cursor()
+          local buf = vim.api.nvim_get_current_buf()
+          local root_lang_tree = vim.treesitter.get_parser(buf)
+          if not root_lang_tree then return end
+
+          local current_node = ts_utils.get_node_at_cursor(root_lang_tree)
 
           -- Traverse up the tree to find the function definition node
           while current_node and current_node:type() ~= "function_definition" do
@@ -164,26 +167,30 @@ return {
 
           -- Get the first node inside the block
           local first_child = body_node:named_child(0)
-          local first_child_row, first_child_col = first_child:range()
+          local _, first_child_col = first_child:range()
 
           -- Get the first and last lines of the function body
-          local first_line = vim.api.nvim_buf_get_lines(bufnr, start_row, start_row + 1, false)[1]
+          -- local first_line = vim.api.nvim_buf_get_lines(bufnr, start_row, start_row + 1, false)[1]
           local last_line = vim.api.nvim_buf_get_lines(bufnr, end_row, end_row + 1, false)[1]
 
-          local debugvars = {
-            start_row = start_row,
-            start_col = start_col,
-            end_row = end_row,
-            end_col = end_col,
-            first_child_col = first_child_col,
-            last_line_length = #last_line,
-          }
-          vim.api.nvim_echo({ { vim.inspect(debugvars), "Normal" } }, true, {})
+          -- local debugvars = {
+          --   start_row = start_row,
+          --   start_col = start_col,
+          --   end_row = end_row,
+          --   end_col = end_col,
+          --   first_child_col = first_child_col,
+          --   last_line_length = #last_line,
+          -- }
+          -- vim.api.nvim_echo({ { vim.inspect(debugvars), "Normal" } }, true, {})
 
           -- Adjust start and end positions with correct column positions
           -- 'from' starts at first character, 'to' ends at last character
-          local from = { line = start_row + 1, col = first_child_col + 1 }
-          local to = { line = end_row + 1, col = #last_line }
+          -- local from = { line = start_row + 1, col = first_child_col + 1 }
+          -- local to = { line = end_row + 1, col = #last_line }
+
+          -- Add a line above and below the node range
+          local from = { line = start_row - 1, col = first_child_col - 1 }
+          local to = { line = end_row + 3, col = #last_line }
 
           return { from = from, to = to }
         end,

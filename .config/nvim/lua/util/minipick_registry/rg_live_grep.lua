@@ -1,228 +1,126 @@
--- iglob treesitter picker
+-- iglob treesitter pickerG
 local M = {}
 
 -- Helpers
 local H = {}
 local P = require("util.minipick_registry.picker").H
 
-local FlagManager = require("util.minipick_registry.flag_manager")
+local FlagManager = require("util.flag_manager")
 local Grep = require("util.minipick_registry.grep")
+local GrepExt = require("util.minipick_registry.grep_ext")
+local SnacksUtil = require("snacks.util")
 
 local function create_rg_live_grep_picker(MiniPick)
   return function(local_opts, opts)
-    local function rg_live(local_opts, opts)
-      local_opts = local_opts or {}
-      if local_opts.tool == nil then local_opts.tool = "rg" end
-      if local_opts.globs == nil then local_opts.globs = {} end
-      if local_opts.flags == nil then local_opts.flags = {} end
-      local tool = local_opts.tool -- or H.grep_get_tool()
-      if tool == "fallback" or not P.is_executable(tool) then
-        H.error("`grep_live` needs non-fallback executable tool.")
-      end
-
-      local globs = P.is_array_of(local_opts.globs, "string") and local_opts.globs or {}
-      local flags = FlagManager.resolve_rg_flags(P.is_array_of(local_opts.flags, "string") and local_opts.flags or nil)
-      local custom_name = opts.source.name or "Grep live"
-
-      -- Show options (can be set via local_opts)
-      local show_opts = {
-        ts_highlight = local_opts.ts_highlight, -- nil = use global, false = disabled, true = enabled
-        path_max_width = local_opts.path_max_width, -- nil = use global or no truncation
-        path_truncate_mode = local_opts.path_truncate_mode, -- "head", "middle", "smart" (default)
-      }
-
-      local function build_name_suffix()
-        local parts = {}
-        if #globs > 0 then parts[#parts + 1] = table.concat(globs, ", ") end
-        local flag_parts = {}
-        for _, flag in ipairs(flags) do
-          flag_parts[#flag_parts + 1] = FlagManager.rg_flags[flag] or flag
-        end
-        if show_opts.ts_highlight == false then flag_parts[#flag_parts + 1] = "no-ts" end
-        if show_opts.path_max_width then flag_parts[#flag_parts + 1] = "path:" .. show_opts.path_max_width end
-        if #flag_parts > 0 then parts[#parts + 1] = table.concat(flag_parts, ", ") end
-        return #parts == 0 and "" or (" | " .. table.concat(parts, " | "))
-      end
-
-      local function build_name()
-        local name_suffix = build_name_suffix()
-        return string.format("%s (%s%s)", custom_name, tool, name_suffix)
-      end
-
-      local function get_show_func()
-        return function(buf_id, items, query)
-          Grep.grep_ts_show(buf_id, items, query, show_opts)
-        end
-      end
-
-      local name = build_name()
-      local default_source = {
-        name = name,
-        show = get_show_func(),
-        choose_marked = require("util.minipick_registry.trouble").trouble_choose_marked,
-      }
-
-      opts = vim.tbl_deep_extend("force", { source = default_source }, opts or {})
-      opts.source.name = default_source.name
-
-      local cwd = P.full_path(opts.source.cwd or vim.fn.getcwd())
-      local set_items_opts, spawn_opts = { do_match = false, querytick = MiniPick.get_querytick() }, { cwd = cwd }
-      local process
-      local match = function(_, _, query)
-        ---@diagnostic disable-next-line: undefined-field
-        pcall(vim.loop.process_kill, process)
-
-        local querytick = MiniPick.get_querytick()
-        if querytick == set_items_opts.querytick then return end
-        local preset_pattern = type(local_opts.pattern) == "string" and local_opts.pattern or nil
-        if not preset_pattern and #query == 0 then return MiniPick.set_picker_items({}, set_items_opts) end
-
-        set_items_opts.querytick = querytick
-
-        local full_query = preset_pattern or table.concat(query)
-        local search_pattern, iglob_patterns = Grep.parse_query(full_query)
-
-        if search_pattern == "" then return MiniPick.set_picker_items({}, set_items_opts) end
-
-        local all_globs = vim.list_extend(vim.list_extend({}, iglob_patterns), globs)
-
-        local command = Grep.grep_get_command(search_pattern, all_globs, flags)
-
-        process = MiniPick.set_picker_items_from_cli(command, {
-          set_items_opts = set_items_opts,
-          spawn_opts = spawn_opts,
-        })
-      end
-
-      local add_glob = function()
-        local ok, glob = pcall(vim.fn.input, "iglob pattern: ")
-        if ok then table.insert(globs, glob) end
-        MiniPick.set_picker_opts({ source = { name = build_name() } })
-        MiniPick.set_picker_query(MiniPick.get_picker_query())
-      end
-
-      local remove_glob = function()
-        if #globs > 0 then
-          table.remove(globs)
-          MiniPick.set_picker_opts({ source = { name = build_name() } })
-          MiniPick.set_picker_query(MiniPick.get_picker_query())
-        end
-      end
-
-      local toggle_no_ignore = function()
-        FlagManager.toggle_flag(flags, "no_ignore")
-        MiniPick.set_picker_opts({ source = { name = build_name() } })
-        MiniPick.set_picker_query(MiniPick.get_picker_query())
-      end
-
-      local toggle_hidden = function()
-        FlagManager.toggle_flag(flags, "hidden")
-        MiniPick.set_picker_opts({ source = { name = build_name() } })
-        MiniPick.set_picker_query(MiniPick.get_picker_query())
-      end
-
-      local function toggle_extra_flag(flag_key)
-        return function()
-          FlagManager.toggle_flag(flags, flag_key)
-          MiniPick.set_picker_opts({ source = { name = build_name() } })
-          MiniPick.set_picker_query(MiniPick.get_picker_query())
-        end
-      end
-
-      local function toggle_dotall()
-        -- local dotall_pattern = "(?s)."
-        -- local dotall_pattern = "(?s:.)"
-        local dotall_pattern = ".*\\n(?s:.).*"
-        FlagManager.toggle_flag(flags, "dotall")
-        local dotall_enabled = FlagManager.has_flag(flags, "dotall")
-        local query = MiniPick.get_picker_query()
-        local query_str = table.concat(query)
-
-        if dotall_enabled then
-          -- Add (?s:.) after current query
-          if not query_str:find(vim.pesc(dotall_pattern), 1, true) then query_str = query_str .. dotall_pattern end
-        else
-          -- Remove (?s:.) from query
-          query_str = query_str:gsub(vim.pesc(dotall_pattern), "")
-        end
-
-        MiniPick.set_picker_opts({ source = { name = build_name() } })
-        MiniPick.set_picker_query(vim.split(query_str, ""))
-      end
-
-      local function toggle_ts_highlight()
-        -- Cycle: nil (use global) -> false (disabled) -> nil
-        if show_opts.ts_highlight == nil then
-          show_opts.ts_highlight = false
-        else
-          show_opts.ts_highlight = nil
-        end
-        MiniPick.set_picker_opts({ source = { name = build_name(), show = get_show_func() } })
-        MiniPick.set_picker_query(MiniPick.get_picker_query())
-      end
-
-      local function toggle_path_width()
-        -- Cycle: nil -> 60 -> 40 -> 80 -> nil
-        local widths = { nil, 60, 40, 80 }
-        local current_idx = 1
-        for i, w in ipairs(widths) do
-          if show_opts.path_max_width == w then
-            current_idx = i
-            break
-          end
-        end
-        show_opts.path_max_width = widths[(current_idx % #widths) + 1]
-        MiniPick.set_picker_opts({ source = { name = build_name(), show = get_show_func() } })
-        MiniPick.set_picker_query(MiniPick.get_picker_query())
-      end
-
-      local function toggle_iglob_pattern(pattern_key)
-        return function()
-          local pattern = FlagManager.iglob_patterns[pattern_key]
-          if not FlagManager.toggle_glob_pattern(globs, pattern) then return end
-          MiniPick.set_picker_opts({ source = { name = build_name() } })
-          MiniPick.set_picker_query(MiniPick.get_picker_query())
-        end
-      end
-
-      -- Mnemonics (from fzf-extended.lua):
-      --   alt-j: js/ts (non-tests)
-      --   alt-o: only js/ts tests
-      --   alt-t: tests/specs
-      --   alt-x: e(x)clude (all except tests/specs)
-      --   alt-s: scripts (js/ts)
-      --   alt-m: exclude bundle modules (umd/cjs/esm)
-      --   alt-c: conf type
-      --   alt-w: web type
-      ------------------------------------------------
-      --   alt-g: glob case-insensitive
-      --   alt-k: context (2 lines)
-      --   alt-n: max count (1 per file)
-      --   alt-d: max depth (3)
-      --   alt-p: pcre2
-      --   alt-u: unrestricted (rg -U)
-      --   alt-l: lua type
-      --   alt-r: ruby type
-      --   alt-f: filepath sort
-      --   alt-y: toggle treesitter s(y)ntax highlighting
-      --   alt-z: toggle path truncation (cycles: off -> 60 -> 40 -> 80)
-
-      local mappings = FlagManager.build_rg_flag_mappings({
-        add_glob = add_glob,
-        remove_glob = remove_glob,
-        toggle_no_ignore = toggle_no_ignore,
-        toggle_hidden = toggle_hidden,
-        toggle_iglob_pattern = toggle_iglob_pattern,
-        toggle_extra_flag = toggle_extra_flag,
-        toggle_dotall = toggle_dotall,
-        toggle_ts_highlight = toggle_ts_highlight,
-        toggle_path_width = toggle_path_width,
-      })
-
-      opts = vim.tbl_deep_extend("force", opts or {}, { source = { items = {}, match = match }, mappings = mappings })
-      return MiniPick.start(opts)
+    local_opts = local_opts or {}
+    if local_opts.tool == nil then local_opts.tool = "rg" end
+    if local_opts.globs == nil then local_opts.globs = {} end
+    if local_opts.flags == nil then local_opts.flags = {} end
+    local tool = local_opts.tool -- or H.grep_get_tool()
+    if tool == "fallback" or not P.is_executable(tool) then
+      H.error("`grep_live` needs non-fallback executable tool.")
     end
-    return rg_live(local_opts, opts)
+
+    local globs = P.is_array_of(local_opts.globs, "string") and local_opts.globs or {}
+    local flags = FlagManager.resolve_rg_flags(P.is_array_of(local_opts.flags, "string") and local_opts.flags or nil)
+    local custom_name = opts.source.name or "Grep live"
+
+    -- Show options (can be set via local_opts)
+    local show_opts = {
+      ts_highlight = local_opts.ts_highlight, -- nil = use global, false = disabled, true = enabled
+      path_max_width = local_opts.path_max_width, -- nil = use global or no truncation
+      path_truncate_mode = local_opts.path_truncate_mode, -- "head", "middle", "smart" (default)
+    }
+
+    local function build_name_suffix()
+      return GrepExt.build_rg_name_suffix(globs, flags, show_opts)
+    end
+
+    local function build_name()
+      local name_suffix = build_name_suffix()
+      return string.format("%s (%s%s)", custom_name, tool, name_suffix)
+    end
+
+    local function get_show_func()
+      return function(buf_id, items, query)
+        Grep.grep_ts_show(buf_id, items, query, show_opts)
+      end
+    end
+
+    local name = build_name()
+    local default_source = {
+      name = name,
+      show = get_show_func(),
+      choose_marked = require("util.minipick_registry.trouble").trouble_choose_marked,
+    }
+
+    opts = vim.tbl_deep_extend("force", { source = default_source }, opts or {})
+    opts.source.name = default_source.name
+
+    local cwd = P.full_path(opts.source.cwd or vim.fn.getcwd())
+    -- Querytick is set inside of `match` instead of here so stale processes
+    -- can't reuse the latest querytick.
+    local spawn_opts = { cwd = cwd }
+    local process
+    local function do_match(_, _, query)
+      ---@diagnostic disable-next-line: undefined-field
+      pcall(vim.loop.process_kill, process)
+
+      local querytick = MiniPick.get_querytick()
+      local set_items_opts = { do_match = false, querytick = querytick }
+      if #query == 0 then return MiniPick.set_picker_items({}, set_items_opts) end
+
+      local search_pattern, iglob_patterns = Grep.parse_query(table.concat(query))
+
+      if search_pattern == "" then return MiniPick.set_picker_items({}, set_items_opts) end
+
+      local all_globs = vim.list_extend(vim.list_extend({}, iglob_patterns), globs)
+
+      local command = Grep.grep_get_command(search_pattern, all_globs, flags)
+
+      process = MiniPick.set_picker_items_from_cli(command, {
+        -- This waits for the latest process to complete
+        -- postprocess = function(items)
+        --   if querytick ~= MiniPick.get_querytick() then return {} end
+        --   return items
+        -- end,
+        set_items_opts = set_items_opts,
+        spawn_opts = spawn_opts,
+      })
+    end
+
+    local throttled_match
+    do
+      local last_args
+      local function run()
+        if not last_args then return end
+        do_match(unpack(last_args))
+      end
+      local throttled = SnacksUtil.throttle(run, { ms = local_opts.throttle_ms or 20 })
+      throttled_match = function(...)
+        last_args = { ... }
+        throttled()
+      end
+    end
+
+    local mappings = GrepExt.build_rg_mappings(MiniPick, {
+      globs = globs,
+      flags = flags,
+      show_opts = show_opts,
+      build_name = build_name,
+      get_show_func = get_show_func,
+      default_behavior = { sync_query = true },
+      show_behavior = { sync_query = true },
+    })
+
+    opts = vim.tbl_deep_extend(
+      "force",
+      opts or {},
+      { source = { items = {}, match = throttled_match }, mappings = mappings }
+    )
+    -- opts.source.preview = require("util.minipick_registry.preview").preview
+    -- vim.api.nvim_echo({ { "rg grep live\n", "Title" }, { vim.inspect(opts.source.cwd), "Normal" } }, true, {})
+    return MiniPick.start(opts)
   end
 end
 

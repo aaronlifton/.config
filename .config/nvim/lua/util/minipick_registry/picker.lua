@@ -42,7 +42,8 @@ function M.pick_files(cwd, local_opts, opts)
 
   opts = opts or {}
   opts.source = opts.source or {}
-  if opts.source.cwd == nil then opts.source.cwd = cwd end
+  opts.source.cwd = opts.source.cwd or cwd or LazyVim.root()
+
   require("mini.pick").registry.fuzzy_files(local_opts, opts)
 end
 
@@ -52,6 +53,8 @@ function M.pick_grep(pattern, local_opts, opts)
 
   local_opts = local_opts or {}
   opts = opts or {}
+  opts.source = opts.source or {}
+  opts.source.cwd = opts.source.cwd or LazyVim.root()
   local_opts.pattern = pattern
 
   local MiniPick = require("mini.pick")
@@ -61,8 +64,21 @@ end
 function M.pick_grep_live(local_opts, opts)
   local_opts = local_opts or {}
   opts = opts or {}
+  opts = vim.tbl_deep_extend("force", { source = { cwd = nil }, hinted = { enable = false } }, opts)
 
-  opts = vim.tbl_deep_extend("force", opts, { hinted = { enable = false } })
+  local path = vim.api.nvim_buf_get_name(0)
+  local mason_package_dir = ("/Users/%s/.local/share/nvim/mason/packages"):format(vim.env.USER)
+  local mise_gem_dir = ("/Users/%s/"):format(vim.env.USER)
+    .. ".local/share/mise/installs/ruby/%d+%.%d+%.%d+/lib/ruby/gems/%d+%.%d+%.%d+/gems"
+
+  if path:match(mason_package_dir) then
+    local gem_root = path:match(mason_package_dir .. "/ruby%-lsp/gems/[^/]+")
+    if gem_root then opts.source.cwd = gem_root end
+  elseif path:match(mise_gem_dir) then
+    local gem_root = path:match(mise_gem_dir .. "/[^/]+")
+    if gem_root then opts.source.cwd = gem_root end
+  end
+  if not opts.source.cwd then opts.source.cwd = LazyVim.root() end
 
   local MiniPick = require("mini.pick")
   MiniPick.registry.rg_live_grep(local_opts, opts)
@@ -97,17 +113,13 @@ function M.get_visual_selection()
 end
 
 -- Dirs ------------------------------------------------------------------------
-function M.root_dir()
-  local buf = vim.api.nvim_get_current_buf()
-  return Snacks.git.get_root(Util.path.bufdir(buf))
-end
 
 function M.cwd_dir()
   return vim.fn.getcwd()
 end
 
 function M.node_modules_dir()
-  local path = vim.fs.joinpath(M.root_dir(), "node_modules")
+  local path = vim.fs.joinpath(LazyVim.root(), "node_modules")
   if vim.fn.isdirectory(path) == 0 then
     vim.notify("node_modules directory not found: " .. path, vim.log.levels.WARN)
     return nil

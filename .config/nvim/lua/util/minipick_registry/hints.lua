@@ -29,8 +29,9 @@ end
 PickHinted.config = {
   hinted = {
     enable = false, -- opt-in
-    chars = vim.split("abcdefghijklmnopqrstuvwxyz", ""),
-    virt_clues_pos = { "eol" }, -- or { "inline", "eol" }, { "eol "}
+    -- Inspired by fzf
+    chars = vim.split("asdfhjklqwertyuiopzxcvbnm1234567890", ""),
+    virt_clues_pos = { "inline" }, -- or { "inline", "eol" }, { "eol "}
     use_autosubmit = false, -- if possible, use autosubmit
   },
 }
@@ -41,6 +42,7 @@ H.default_config = vim.deepcopy(PickHinted.config)
 H.ns_id = { hinted = vim.api.nvim_create_namespace("PickHinted") }
 H.keys = {
   cr = vim.api.nvim_replace_termcodes("<CR>", true, true, true),
+  tab = vim.api.nvim_replace_termcodes("<Tab>", true, true, true),
 }
 
 H.is_list_of = function(x, x_name, type_to_test)
@@ -126,7 +128,7 @@ H.make_override_match = function(match, ctx, picker_opts)
     if not hinted_index or hinted_index > ctx.max_hints then return match(stritems, inds, query, opts) end
 
     -- Valid hint
-    stritems[hinted_index] = string.format("%s%s", char, stritems[hinted_index]) -- ensure item is matched
+    stritems[hinted_index] = string.format("%s%s  ", char, stritems[hinted_index]) -- ensure item is matched
     local result = match(stritems, inds, query, opts)
     local matches = MiniPick.get_picker_matches() or {} -- ensure item is current
     if hinted_index ~= matches.current_ind then MiniPick.set_picker_match_inds({ hinted_index }, "current") end
@@ -139,7 +141,12 @@ H.add_hints = function(buf_id, max_hints, do_autosubmit, picker_opts)
   local hl = do_autosubmit and "MiniPickMatchRanges" or "Comment"
   for i, hint in ipairs(picker_opts.hinted.chars) do
     if i > max_hints then break end
-    local virt_text = { { string.format("[%s]", hint), hl } }
+    local virt_text
+    if picker_opts.hinted.virt_clues_pos[1] == "inline" then
+      virt_text = { { string.format("%s ", hint), hl } }
+    else
+      virt_text = { { string.format("[%s]", hint), hl } }
+    end
     local extmark_opts = { hl_mode = "combine", priority = 200, virt_text = virt_text }
 
     -- Add hint to start or end of line, or both:
@@ -157,7 +164,9 @@ H.init_show_ctx = function(items, ctx, picker_opts)
   local result = {}
   result.first_item = items[1] or {}
   result.do_autosubmit = ctx.use_autosubmit and #all_items == ctx.max_hints
+  result.do_autopreview = ctx.use_autopreview and #all_items == ctx.max_hints
   result.did_autosubmit = false
+  result.did_autopreview = false
 
   return result
 end
@@ -175,6 +184,8 @@ H.make_override_show = function(show, ctx, picker_opts)
       if #query == 0 and show_ctx.first_item == items[1] then
         -- Only add hints when query is empty and window is not scrolled
         H.add_hints(buf_id, ctx.max_hints, show_ctx.do_autosubmit, picker_opts)
+      elseif show_ctx.do_autopreview then
+        H.add_hints(buf_id, ctx.max_hints, show_ctx.do_autosubmit, picker_opts)
       end
       return
     end
@@ -184,6 +195,12 @@ H.make_override_show = function(show, ctx, picker_opts)
       if not show_ctx.did_autosubmit then
         show_ctx.did_autosubmit = true
         vim.api.nvim_feedkeys(H.keys.cr, "n", true)
+      end
+      return
+    elseif show_ctx.do_autopreview then -- autosubmit
+      if not show_ctx.did_autosubmit then
+        show_ctx.did_autosubmit = true
+        vim.api.nvim_feedkeys(H.keys.tab, "n", true)
       end
       return
     end

@@ -23,6 +23,12 @@ return {
     config = {
       nes = {
         enabled = false,
+        trigger = { events = {} },
+      },
+      copilot = {
+        status = {
+          enabled = false,
+        },
       },
     },
     keys = {
@@ -59,8 +65,15 @@ return {
       { "<leader>al", function() require("sidekick.cli").send({ msg = "{line}" }) end, desc = "Sidekick Send Line", mode = {"n", "v"} },
       { "<leader>ad", function()
         require("sidekick.cli").send({ msg = "Can you help me fix these diagnostics?\n{diagnostics_curline}" })
-      end, desc = "Sidekick Send Diagnostics" },
+      end, desc = "Sidekick Send Diagnostics (Current Line)" },
       { "<leader>aD", function() require("sidekick.cli").send({ msg = "Can you help me fix the diagnostics in {file}?\n{diagnostics}" }) end, desc = "Sidekick Send Diagnostics" },
+      { "<leader>ah", function()
+        local buf = vim.api.nvim_get_current_buf()
+        local ft = vim.filetype.match({ buf = buf })
+        local lang = vim.treesitter.language.get_lang(ft)
+        local msg = ("How do I go about solving this myself? I'm trying to learn %s.\n{diagnostics_curline}"):format(lang)
+        require("sidekick.cli").send({ msg = msg })
+      end, desc = "Sidekick Help" },
       { "<leader>ae", function() require("sidekick.cli").send({ msg = "Explain {this}" }) end, desc = "Sidekick Explain" },
       -- "avante: focus" uses <leader>aF 
       { "<leader>af", function() require("sidekick.cli").send({ msg = "{file}" }) end, desc = "Sidekick Send File" },

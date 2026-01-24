@@ -139,7 +139,8 @@ return {
             { icon = " ", key = "f", desc = "Find File", action = ":lua Snacks.dashboard.pick('files')" },
             { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
             { icon = " ", key = "g", desc = "Find Text", action = ":lua Snacks.dashboard.pick('live_grep')" },
-            { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
+            -- { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
+            { icon = " ", key = "r", desc = "Recent Files", action = ":lua require('mini.extra').pickers.visit_paths()" },
             { icon = " ", key = "c", desc = "Config", action = ":lua Snacks.dashboard.pick('files', { cwd = vim.fn.stdpath('config') })" },
             -- { icon = " ", key = "a", desc = "Chat with AI", action = ":ene | Mchat gemini:flash-2.5" },
             { icon = " ", key = "s", desc = "Restore Session", section = "session" },
@@ -148,10 +149,6 @@ return {
             { icon = " ", key = "q", desc = "Quit", action = ":qa" },
           },
         },
-        pick = function(cmd, opts)
-          vim.api.nvim_echo({ { vim.inspect({ cmd = cmd, opts = opts }), "Normal" } }, true, {})
-          return true
-        end,
       },
     },
     keys = {
@@ -195,7 +192,7 @@ return {
       -- { "<leader>un", function() Snacks.notifier.hide() end, desc = "Dismiss All Notifications" },
       -- { "<leader>u<C-c>", function() Snacks.picker.colorschemes() end, desc = "Colorschemes" },
       -- Search
-      { "<leader>s<C-b>", function() Snacks.picker.lines() end, desc = "Lines" },
+      -- { "<leader>s<C-b>", function() Snacks.picker.lines() end, desc = "Lines" },
       { "<leader>sB", function() Snacks.picker.grep_buffers() end, desc = "Grep Buffers" },
       { '<leader>s"', function() Snacks.picker.registers() end, desc = "Registers" },
       { "<leader>sd", function() Snacks.picker.diagnostics() end, desc = "Diagnostics" },
@@ -207,7 +204,7 @@ return {
       -- { '<leader>s/', function() Snacks.picker.search_history() end, desc = "Search History" },
       -- { "<leader>sc", function() Snacks.picker.command_history() end, desc = "Command History" },
       -- { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History" },
-      { "<leader>s<C-g>", function() Snacks.picker.grep({
+      { "<leader>s<M-g>", function() Snacks.picker.grep({
         exclude = { "**/dist/**.js*", "*{-,.}min.js" },
       })
       end, desc = "Grep" },
@@ -237,6 +234,8 @@ return {
       { "<leader>gI", function() Snacks.picker.gh_issue({ state = "all" }) end, desc = "GitHub Issues (all)" },
       { "<leader>gp", function() Snacks.picker.gh_pr() end, desc = "GitHub Pull Requests (open)" },
       { "<leader>gP", function() Snacks.picker.gh_pr({ state = "all" }) end, desc = "GitHub Pull Requests (all)" },
+      -- { "<leader>gs", function() Snacks.picker.git_status() end, desc = "Git Status" },
+      -- { "<leader>gS", function() Snacks.picker.git_stash() end, desc = "Git Stash" },
     },
   },
   {

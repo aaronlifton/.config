@@ -143,14 +143,18 @@ return {
         ruby_lsp = {
           init_options = {
             -- bundleGemfile = ".ruby-lsp/Gemfile",
-            formatter = "rubyfmt",
+            -- formatter = "rubyfmt",
+            -- cmd = { vim.fn.expand("~/.local/share/mise/shims/ruby-lsp") },
+            -- cmd = { "mise x -- ruby-lsp" },
+            cmd = { "mise exec -- ruby-lsp" },
+            mason = false,
+            rubyVersionManager = {
+              identifier = "mise",
+              -- miseExecutablePath = "",
+            },
           },
           -- useBundler = true,
-          -- mason = false,
           -- cmd = { "bundle", "exec", "ruby-lsp" },
-          -- cmd = { "/Users/alifton/.asdf/installs/ruby/3.3.2/lib/ruby/gems/3.3.0/gems/ruby-lsp-0.22.1/exe/ruby-lsp-launcher", },
-          -- cmd = { "/Users/alifton/.asdf/installs/ruby/3.3.2/bin/ruby-lsp" },
-          -- cmd = { vim.fn.expand("~/.local/share/mise/installs/ruby/3.4.8/bin/ruby-lsp ") },
           -- flags = {
           --   debounce_text_changes = 150,
           -- },

@@ -58,14 +58,20 @@ return {
 
       if LazyVim.has_extra("editor.neo-tree") then opts.keys["e"] = toggle_auto_expand_width end
 
-      opts.right = {
-        {
-          title = "Outline",
-          ft = "grapple",
-          open = "AerialToggle",
-          size = {
-            width = 0.13,
-          },
+      -- opts.right[#opts.right + 1] = {
+      --   title = "Outline",
+      --   ft = "grapple",
+      --   open = "AerialToggle",
+      --   size = {
+      --     width = 0.13,
+      --   },
+      -- }
+
+      opts.left[#opts.left + 1] = {
+        title = "Grapple",
+        ft = "grapple",
+        size = {
+          width = 0.13,
         },
       }
 

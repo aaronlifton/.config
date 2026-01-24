@@ -74,11 +74,90 @@ end
 
 local function language_lookup(languages)
   local new_langauges = {}
+  local function devdocs_installed()
+    if LazyVim and LazyVim.opts then
+      local ok, opts = pcall(LazyVim.opts, "nvim-devdocs")
+      if ok and opts and type(opts.ensure_installed) == "table" then return opts.ensure_installed end
+    end
+    return {}
+  end
+
+  local function parse_version(version)
+    local parts = {}
+    for part in version:gmatch("%d+") do
+      parts[#parts + 1] = tonumber(part)
+    end
+    return parts
+  end
+
+  local function is_newer(a, b)
+    if not b then return true end
+    local max_len = math.max(#a, #b)
+    for i = 1, max_len do
+      local left = a[i] or 0
+      local right = b[i] or 0
+      if left ~= right then return left > right end
+    end
+    return false
+  end
+
+  local latest_doc_cache = {}
+
+  local function latest_doc(prefix)
+    if latest_doc_cache[prefix] then return latest_doc_cache[prefix] end
+
+    local ensure_installed = devdocs_installed()
+    local best_item, best_version
+    for _, item in ipairs(ensure_installed) do
+      if prefix == "javascript" then
+        if item == "javascript" and not best_item then best_item = item end
+        if item:match("^javascript%-") then
+          local version = item:sub(#prefix + 2)
+          local parsed = parse_version(version)
+          if is_newer(parsed, best_version) then
+            best_item = item
+            best_version = parsed
+          end
+        end
+      elseif item:match("^" .. prefix .. "%-") then
+        local version = item:sub(#prefix + 2)
+        local parsed = parse_version(version)
+        if is_newer(parsed, best_version) then
+          best_item = item
+          best_version = parsed
+        end
+      end
+    end
+
+    latest_doc_cache[prefix] = best_item
+    return best_item
+  end
+
+  local function detect_ruby_version()
+    local output = vim.fn.system("ruby -v")
+    if vim.v.shell_error ~= 0 then return nil end
+    return output:match("ruby%s+([0-9]+%.[0-9]+%.[0-9]+)")
+  end
+
+  local function detect_rails_version()
+    local ok, gems = pcall(require, "util.ruby.gems")
+    if not ok then return nil end
+    local version = gems.gem_version("rails")
+    if not version then return nil end
+    version = vim.fn.trim(version)
+    if version == "" then return nil end
+    return version:match("([0-9]+%.[0-9]+%.[0-9]+)")
+  end
+
   for _, lang in ipairs(languages) do
-    if lang == "lua" then return { "lua-5.4" } end
-    if lang == "javascript" then return { "javascript", "jest" } end
-    if lang == "ruby" then return { "ruby-3.3", "rails-7.0" } end
-    if lang == "python" then return { "python-3.13", "python-3.14" } end
+    if lang == "lua" then return { latest_doc("lua") or "lua-5.4" } end
+    if lang == "javascript" then return { latest_doc("javascript") or "javascript", "jest" } end
+    if lang == "ruby" or lang == "eruby" then
+      -- local ruby_version = detect_ruby_version() or latest_doc("ruby")
+      -- local rails_version = detect_rails_version() or latest_doc("rails")
+      return { "ruby-3.4", "rails-8.0" }
+    end
+    if lang == "python" then return { latest_doc("python") or "python-3.14" } end
   end
   return vim.iter(new_langauges):flatten():totable()
 end
@@ -89,7 +168,8 @@ local function parse_languages(languages)
     if type(languages) == "string" then languages = { languages } end
     languages = language_lookup(languages)
   else
-    languages = { "lua-5.4", "jest", "javascript", "ruby-3.3", "python-3.14" }
+    languages =
+      { latest_doc("lua"), "jest", "javascript", latest_doc("ruby"), latest_doc("rails"), latest_doc("python") }
   end
   return languages
 end
@@ -266,6 +346,7 @@ end
 function M.open_async(opts)
   opts = opts or {}
   local languages = parse_languages(opts.languages)
+  vim.notify(vim.inspect(languages))
 
   local contents = function(cb)
     local function add_entry(x, co, opts)

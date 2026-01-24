@@ -67,30 +67,11 @@ return {
         grep_in_directory = "fzf-lua",
         grep_in_selected_files = "fzf-lua",
         resolve_relative_path_application = "grealpath",
+        picker_add_copy_relative_path_action = "snacks.picker",
         resolve_relative_path_implementation = function(args, get_relative_path)
-          -- Resolve relative paths from the current Neovim cwd while offering a few
-          -- fun alternate renderings (Markdown links, GitHub URLs).
+          -- Resolve from the current Neovim cwd and optionally render markdown/GitHub URLs.
           local cwd = vim.fn.getcwd()
-          local cwd_abs = vim.fn.fnamemodify(cwd, ":p")
           local selected_abs_path = vim.fn.fnamemodify(args.selected_file, ":p")
-
-          local function is_within_dir(path, dir)
-            local normalized_dir = dir:gsub("/+$", "")
-            local normalized_path = path:gsub("/+$", "")
-            if normalized_path == normalized_dir then return true end
-            return vim.startswith(normalized_path, normalized_dir .. "/")
-          end
-
-          local function default_fallback()
-            return get_relative_path(args)
-          end
-
-          if not is_within_dir(selected_abs_path, cwd_abs) then
-            -- Fall back to the configured resolver (grealpath) when the target
-            -- file does not live inside the current working directory.
-            return default_fallback()
-          end
-
           local relative_from_cwd = get_relative_path({
             selected_file = args.selected_file,
             source_dir = cwd,
@@ -101,25 +82,22 @@ return {
             if vim.bo.filetype == "markdown" then
               mode = "markdown"
             else
-              -- use "plain" for non-markdown files
               mode = "plain"
             end
           end
 
           local resolvers = require("util.yazi.resolvers")
-
           local Resolver = resolvers[mode]
           if Resolver == nil then
             vim.notify(
-              string.format("Yazi resolver mode '%s' not found, falling back to default", mode),
+              string.format("Yazi resolver mode '%s' not found, falling back to plain", mode),
               vim.log.levels.WARN,
               { title = "Yazi" }
             )
-
             return relative_from_cwd
-          else
-            return Resolver.resolve(selected_abs_path, relative_from_cwd)
           end
+
+          return Resolver.resolve(selected_abs_path, relative_from_cwd)
         end,
       },
       keymaps = {
@@ -153,22 +131,10 @@ return {
     },
     -- 👇 if you use `open_for_directories=true`, this is recommended
     init = function()
-      -- mark netrw as loaded sinito it's not loaded at all
+      -- mark netrw as loaded since it wont be loaded at all
       vim.g.loaded_netrwPlugin = 1
     end,
   },
-  -- {
-  --   "nvim-neo-tree/neo-tree.nvim",
-  --   opts = {
-  --     filesystem = {
-  --       hijack_netrw_behavior = "disabled",
-  --     },
-  --   },
-  -- },
-  -- {
-  --   "nvim-neo-tree/neo-tree.nvim",
-  --   enabled = false,
-  -- },
   {
     "folke/edgy.nvim",
     optional = true,
@@ -205,20 +171,41 @@ return {
       }
       table.insert(opts.left, yazi_view)
       for _, pos in ipairs({ "top", "bottom", "left", "right" }) do
-        opts[pos] = opts[pos] or {} ---@type (Edgy.View.Opts|string)[]
-        local snacks_terminal_view = { --- @type (Edgy.View.Opts)
-          ft = "snacks_terminal",
-          size = { height = 0.4 },
-          title = "%{b:snacks_terminal.id}: %{b:term_title}",
-          filter = function(_buf, win)
-            return vim.w[win].snacks_win
-              and vim.w[win].snacks_win.position == pos
-              and vim.w[win].snacks_win.relative == "editor"
-              and not vim.w[win].trouble_preview
-          end,
-        }
-        table.insert(opts[pos], snacks_terminal_view)
+        for _, opts in ipairs(opts[pos]) do
+          if opts.ft == "snacks_terminal" then opts.size.height = 0.3 end
+        end
       end
     end,
   },
+  {
+    "folke/snacks.nvim",
+    priority = 1000,
+    lazy = false,
+    ---@type snacks.Config
+    opts = {
+      picker = {
+        win = {
+          input = {
+            keys = {
+              ["<C-y>"] = { "yazi_copy_relative_path", mode = { "n", "i" } },
+              -- 👆🏻 add this and customize the keybinding to suit your needs
+            },
+          },
+        },
+      },
+    },
+  },
+  -- If using neo-tree too:
+  -- {
+  --   "nvim-neo-tree/neo-tree.nvim",
+  --   opts = {
+  --     filesystem = {
+  --       hijack_netrw_behavior = "disabled",
+  --     },
+  --   },
+  -- },
+  -- {
+  --   "nvim-neo-tree/neo-tree.nvim",
+  --   enabled = false,
+  -- },
 }

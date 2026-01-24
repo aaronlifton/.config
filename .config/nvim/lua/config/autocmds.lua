@@ -267,13 +267,13 @@ vim.filetype.add({
   },
 })
 vim.api.nvim_create_autocmd({ "FileType" }, {
-  group = vim.api.nvim_create_augroup("snacks_bigfile", { clear = true }),
-  pattern = "bigfile",
+  group = vim.api.nvim_create_augroup("starlark_ft", { clear = true }),
+  pattern = "*.lark",
   callback = function(ev)
     -- vim.opt_local:set("syntax", "starlark")
     vim.bo[ev.buf].syntax = "starlark"
   end,
-}) --
+})
 
 -- NOTE: what is this:?
 -- Clear the quickfix window keymap set on BufEnter
@@ -342,9 +342,8 @@ ac({ "FileType" }, {
   end,
 })
 
--- Modified from snacks.bigfile
--- TODO: see if it's worth to copy anhd extend snacks.bigfile instead of
--- keeping a filename list.
+-- NOTE: Modified from snacks.bigfile
+-- TODO: see if it's worth to copy and extend snacks.bigfile instead of keeping a filename list.
 local bigfiles = { "common.json" }
 ac({ "BufRead" }, {
   callback = function(ctx)
@@ -359,6 +358,8 @@ ac({ "BufRead" }, {
         -- vim.bo[args.buf].filetype = "bigfile"
         if vim.fn.exists(":NoMatchParen") ~= 0 then vim.cmd([[NoMatchParen]]) end
         Snacks.util.wo(0, { foldmethod = "manual", statuscolumn = "", conceallevel = 0 })
+        -- vim.keymap.set("n", "s", "", { desc = "Leap disabled" })
+        vim.api.nvim_buf_set_keymap(ctx.buf, "n", "s", "", { desc = "Leap disabled" })
         vim.b.minianimate_disable = true
         vim.schedule(function()
           if vim.api.nvim_buf_is_valid(ctx.buf) then vim.bo[ctx.buf].syntax = ctx.ft end

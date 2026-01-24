@@ -136,7 +136,7 @@ cmd-right = "focus --boundaries-action wrap-around-the-workspace right"
 # alt-l = "focus --boundaries-action wrap-around-the-workspace right"
 
 # Use caps-lock binding so alt-hjkl work in nvim
-ctrl-cmd-alt-shift-h = "focus --boundaries-action wrap-around-the-workspace left"
+# ctrl-cmd-alt-shift-h = "focus --boundaries-action wrap-around-the-workspace left"
 ctrl-cmd-alt-shift-j = "focus --boundaries-action wrap-around-the-workspace down"
 ctrl-cmd-alt-shift-k = "focus --boundaries-action wrap-around-the-workspace up"
 ctrl-cmd-alt-shift-l = "focus --boundaries-action wrap-around-the-workspace right"

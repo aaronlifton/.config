@@ -17,7 +17,7 @@ return {
       { "<leader>fR", false },
       { "<leader>fr", false },
       { "<leader>s/", false },
-      { "<leader>s<C-b>", false },
+      -- { "<leader>s<C-b>", false },
       { "<leader>sB", false },
       { "<leader>sC", false },
       { "<leader>sD", false },
@@ -69,7 +69,7 @@ return {
       { "<leader>su", false, mode = { "v" } },
       { "<leader>sw", false },
       { "<leader>sw", false, mode = { "v" } },
-      { "<leader>sx", false },
+      -- { "<leader>sx", false },
     },
   },
   {
@@ -80,9 +80,8 @@ return {
       { "<leader>s<C-r>", false },
       { "<leader>s<M-g>", false },
       { "<leader>s<C-r>", false },
-      { "<leader>s<C-r>", false },
-      { "<leader><space>", function() get_picker().pick_files(get_picker().root_dir()) end, desc = "Find Files (Root Dir)" },
-      { "<leader>ff", function() get_picker().pick_files(get_picker().root_dir()) end, desc = "Find Files (Root Dir)" },
+      { "<leader><space>", function() get_picker().pick_files() end, desc = "Find Files (Root Dir)" },
+      { "<leader>ff", function() get_picker().pick_files() end, desc = "Find Files (Root Dir)" },
       { "<leader>fF", function() get_picker().pick_files(get_picker().cwd_dir()) end, desc = "Find Files (cwd)" },
       {
         "<leader>fN",
@@ -121,25 +120,34 @@ return {
         "<leader>su",
         function()
           local pick = get_picker()
-          pick.pick_grep(vim.fn.expand("<cword>"), {}, { source = { cwd = pick.root_dir() } })
+          pick.pick_grep(vim.fn.expand("<cword>"))
         end,
-        desc = "Word (Root Dir)",
+        desc = "Word",
         mode = "n",
       },
       {
         "<leader>su",
         function()
           local pick = get_picker()
-          pick.pick_grep(nil, { source = { cwd = pick.root_dir() } })
+          pick.pick_grep()
         end,
-        desc = "Selection (Root Dir)",
+        desc = "Visual selection or word (Root Dir)",
+        mode = "v",
+      },
+      {
+        "<leader>su",
+        function()
+          local pick = get_picker()
+          pick.pick_grep()
+        end,
+        desc = "Visual selection or word (cwd)",
         mode = "v",
       },
       {
         "<leader>sw",
         function()
           local pick = get_picker()
-          pick.pick_grep(vim.fn.expand("<cword>"), {}, { source = { cwd = pick.root_dir() } })
+          pick.pick_grep(vim.fn.expand("<cword>"))
         end,
         desc = "Word (Root Dir)",
         mode = "n",
@@ -148,7 +156,7 @@ return {
         "<leader>sW",
         function()
           local pick = get_picker()
-          pick.pick_grep(vim.fn.expand("<cword>"), {}, { source = { cwd = pick.cwd_dir() } })
+          pick.pick_grep(vim.fn.expand("<cword>"), nil, { source = { cwd = pick.cwd_dir() } })
         end,
         desc = "Word (cwd)",
         mode = "n",
@@ -157,7 +165,7 @@ return {
         "<leader>sw",
         function()
           local pick = get_picker()
-          pick.pick_grep(nil, { source = { cwd = pick.root_dir() } })
+          pick.pick_grep()
         end,
         desc = "Selection (Root Dir)",
         mode = "v",
@@ -166,7 +174,7 @@ return {
         "<leader>sW",
         function()
           local pick = get_picker()
-          pick.pick_grep(nil, { source = { cwd = pick.cwd_dir() } })
+          pick.pick_grep(nil, nil, { source = { cwd = pick.cwd_dir() } })
         end,
         desc = "Selection (cwd)",
         mode = "v",
@@ -175,7 +183,7 @@ return {
         "<leader>s<C-w>",
         function()
           local pick = get_picker()
-          pick.pick_grep(vim.fn.expand("<cWORD>"), { source = { cwd = pick.root_dir() } })
+          pick.pick_grep(vim.fn.expand("<cWORD>"))
         end,
         desc = "WORD (Root Dir)",
         mode = "n",
@@ -183,14 +191,14 @@ return {
       {
         "<leader>/",
         function()
-          get_picker().pick_grep_live({}, { source = { cwd = get_picker().root_dir() } })
+          get_picker().pick_grep_live()
         end,
         desc = "Grep (Root Dir)",
       },
       {
         "<leader>sg",
         function()
-          get_picker().pick_grep_live({}, { source = { cwd = get_picker().root_dir() } })
+          get_picker().pick_grep_live()
         end,
         desc = "Grep (Root Dir)",
       },
@@ -201,7 +209,7 @@ return {
         end,
         desc = "Grep (cwd)",
       },
-      { "<leader>sP", function() MiniPick.registry.rg_pcre2({}, { source = { cwd = get_picker().root_dir() } }) end, desc = "Grep (--pcre2)" },
+      -- { "<leader>sP", function() MiniPick.registry.rg_pcre2({}, { source = { cwd = get_picker().root_dir() } }) end, desc = "Grep (--pcre2)" },
       {
         "<leader>s<M-l>",
         function()
@@ -235,9 +243,7 @@ return {
       {
         "<leader>sF",
         function()
-          -- get_picker().pick_grep_live({ flags = { "fixed_strings" } }, { source = { cwd = get_picker().root_dir() } })
-
-          get_picker().pick_grep(vim.fn.expand("<cword>"), { flags = { "fixed_strings" } }, { source = { cwd = get_picker().root_dir() } })
+          get_picker().pick_grep(vim.fn.expand("<cword>"), { flags = { "fixed_strings" } })
         end,
         desc = "Grep (--fixed-strings)",
         mode = { "n" },
@@ -245,7 +251,7 @@ return {
       {
         "<leader>sF",
         function()
-          get_picker().pick_grep(nil, { flags = { "fixed_strings" } }, { source = { cwd = get_picker().root_dir() } })
+          get_picker().pick_grep(nil, { flags = { "fixed_strings" } })
         end,
         desc = "Grep (--fixed-strings)",
         mode = { "v" },
@@ -292,13 +298,21 @@ return {
       { "<leader>sB", function() require("mini.extra").pickers.buf_lines({ scope = "all" }) end, desc = "Grep Buffers" },
       -- { "<leader>sb", function() require("mini.extra").pickers.buf_lines({ scope = "current" }) end, desc = "Lines" },
       { "<leader>sb", function() MiniPick.registry.bufferlines_ts({ scope = "current" }) end, desc = "Lines" },
+      -- { "<leader>sb", function()
+      --   MiniPick.registry.bufferlines_ts({ scope = "current" })
+      --   local lines, _ = Util.selection.get_visual_selection()
+      --   vim.schedule_wrap(function()
+      --     MiniPick.set_picker_query(vim.split(lines, "n"))
+      --   end)
+      -- end, desc = "Lines", mode = {"v"} },
+
       { '<leader>s"', function() require("mini.extra").pickers.registers() end, desc = "Registers" },
       { "<leader>s/", function() require("mini.extra").pickers.history({ scope = "/" }, { hinted = { enable = true } }) end, desc = "Search History" },
       { "<leader>:", function() require("mini.extra").pickers.history({ scope = ":" }, { hinted = { enable = true } }) end, desc = "Command History" },
       { "<leader>sc", function() require("mini.extra").pickers.history({ scope = ":" }, { hinted = { enable = true } }) end, desc = "Command History" },
       { "<leader>sC", function() require("mini.extra").pickers.commands() end, desc = "Commands" },
-      { "<leader>sd", function() require("mini.extra").pickers.diagnostic() end, desc = "Diagnostics" },
-      { "<leader>sD", function() require("mini.extra").pickers.diagnostic({ scope = "current" }) end, desc = "Buffer Diagnostics" },
+      { "<leader>sD", function() require("mini.extra").pickers.diagnostic() end, desc = "Diagnostics" },
+      { "<leader>sd", function() require("mini.extra").pickers.diagnostic({ scope = "current" }) end, desc = "Buffer Diagnostics" },
       { "<leader>sH", function() require("mini.extra").pickers.hl_groups() end, desc = "Search Highlight Groups" },
       { "<leader>sh", function() require("mini.pick").builtin.help() end, desc = "Search Highlight Groups" },
       { "<leader>sk", function() require("mini.pick").registry.keymaps_callback() end, desc = "Keymaps" },
@@ -309,23 +323,23 @@ return {
       {
         "<leader>s<C-t>",
         function()
-          get_picker().pick_files(get_picker().root_dir(), { fd_flags = { "today", "no_ignore" } })
+          get_picker().pick_files(nil, { fd_flags = { "today", "no_ignore" }, source = { name = "Today" } })
         end,
         desc = "Today",
       },
 
       -- Git
-      { "<leader>ga", function() require("mini.extra").pickers.git_branches() end, desc = "Git Branches" },
+      -- { "<leader>ga", function() require("mini.extra").pickers.git_branches() end, desc = "Git Branches" },
       -- { "<leader>gA", function() require("mini.extra").pickers.git_branches({ scope = "remote"}) end, desc = "Branches" },
       { "<leader>gc", function() require("mini.extra").pickers.git_commits() end, desc = "Commits" },
-      { "<leader>fr", function() require("mini.extra").pickers.oldfiles({}, { hinted = { enable = true } }) end, desc = "Recent" },
-      { "<leader>fR", function() require("mini.extra").pickers.oldfiles({ current_dir = true }, { hinted = { enable = true, use_autosubmit = true } }) end, desc = "Recent (cwd)" },
+      { "<leader>fr", function() require("mini.extra").pickers.visit_paths() end, desc = "Visit paths" },
+      { "<leader>fR", function() require("mini.extra").pickers.oldfiles({}, { hinted = { enable = true, use_autosubmit = true } }) end, desc = "Recent" },
+      -- { "<leader>fR", function() require("mini.extra").pickers.oldfiles({ current_dir = true }, { hinted = { enable = true, use_autosubmit = true } }) end, desc = "Recent (cwd)" },
       { "z=", function() require("mini.extra").pickers.spellsuggest() end, desc = "Spelling Suggestions" },
-      { "<leader>fj", function() require("mini.extra").pickers.visit_paths() end, desc = "Visit paths" },
       -- { "<leader>sJ", function() require("mini.extra").pickers.visit_labels() end, desc = "Visit labels" },
       { "<leader>fg", function() require("mini.extra").pickers.git_files() end, desc = "Files" },
-      { "<leader>gs", function() require("mini.extra").pickers.git_hunks({scope = "unstaged"}) end, desc = "Git Diff" },
-      { "<leader>gS", function() require("mini.extra").pickers.git_hunks({scope = "staged"}) end, desc = "Git Diff (Staged)" },
+      -- { "<leader>gs", function() require("mini.extra").pickers.git_hunks({scope = "unstaged"}) end, desc = "Git Diff" },
+      -- { "<leader>gS", function() require("mini.extra").pickers.git_hunks({scope = "staged"}) end, desc = "Git Diff (Staged)" },
       -- stylua: ignore end
     },
   },

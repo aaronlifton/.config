@@ -45,7 +45,7 @@ return {
     optional = true,
     event = { "InsertEnter", "CmdlineEnter" },
     opts = function(_, opts)
-      setup_hide_blink_on_copilot_suggestion_autocmds()
+      if LazyVim.has_extra("ai.copilot") then setup_hide_blink_on_copilot_suggestion_autocmds() end
 
       local new_opts = vim.tbl_deep_extend("force", {}, opts, {
         keymap = {
@@ -56,7 +56,6 @@ return {
           -- Testing
           ["<C-u>"] = { "scroll_signature_up", "fallback" },
           ["<C-d>"] = { "scroll_signature_down", "fallback" },
-          -- Supertab
           ["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
           -- LazyVim implements this:
           -- ["<Tab>"] = {
@@ -65,6 +64,7 @@ return {
           --   LazyVim.cmp.map({ "snippet_forward", "ai_nes", "ai_accept" }),
           --   "fallback",
           -- },
+          -- Supertab
           ["<Tab>"] = {
             "snippet_forward",
             function() -- sidekick next edit suggestion
@@ -118,7 +118,7 @@ return {
           implementation = "prefer_rust_with_warning",
           sorts = {
             -- depriprotize_lsp('emmet_ls'),
-            "exact",
+            "exact", -- Added "exact"
             -- defaults
             "score",
             "sort_text",

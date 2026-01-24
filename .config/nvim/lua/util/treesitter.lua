@@ -1,8 +1,6 @@
 ---@class util.treesitter
 local M = {}
 
-local ts_utils = require("nvim-treesitter.ts_utils")
-
 function M.get_node_text(node, source, opts)
   if not node then return "" end
 
@@ -17,10 +15,6 @@ function M.ancestor(node, depth)
   end
 
   return node
-end
-
-function M.node_at_cursor()
-  require("nvim-treesitter.ts_utils").get_node_at_cursor()
 end
 
 --- Usage:
@@ -48,13 +42,13 @@ end
 --- Get the text of the previous sibling node
 --- Usage require("util.treesitter").prev_sibling_text(require("nvim-treesitter.ts_utils").get_node_at_cursor(), 2)
 ---@param node TSNode The current node
----@param types? string[] Optional list of node types to filter by
+---@param depth integer The max depth of the sibling nodes to search
 ---@return string The text of the previous sibling or empty string if none exists
 function M.prev_sibling_text(node, depth)
   if not node then return "" end
   depth = depth or 1
 
-  local current = node
+  local current = node --[[@as TSNode?]]
   while depth > 0 and current do
     current = current:prev_sibling()
     depth = depth - 1
@@ -80,24 +74,47 @@ end
 M.parent_node_type_at_position = function(win, line, col)
   local buf = vim.api.nvim_win_get_buf(win)
   local root_lang_tree = require("nvim-treesitter.parsers").get_parser(buf)
-  local root = ts_utils.get_root_for_position(line, col, root_lang_tree)
+  local root = M.get_root_for_position(line, col, root_lang_tree)
   local cursor = vim.api.nvim_win_get_cursor(win)
   local cursor_range = { cursor[1] - 1, cursor[2] }
+  if not root then return end
+
   local descendant = root:named_descendant_for_range(cursor_range[1], cursor_range[2], cursor_range[1], cursor_range[2])
+  if not descendant then return end
+
   local parent = descendant:parent()
+  if not parent then return end
+
   return parent:type()
 end
 
 M.get_cword_next_char = function()
-  local cursor = vim.api.nvim_win_get_cursor(0)
   local current_line = vim.api.nvim_get_current_line()
   local cword = vim.fn.expand("<cword>")
-  local start_col, end_col = string.find(current_line, cword)
+  local _, end_col = string.find(current_line, cword)
+  if not end_col then return end
+
   local next_char = vim.fn.strcharpart(current_line, end_col, end_col)
   return vim.fn.strcharpart(next_char, 0, 1)
 end
 
----@param root_lang_tree LanguageTree
+-- Credit to `nvim-treesitter`, where this was adapted from
+--- Get the root of the given tree for a given row & column position
+---@param row integer 0-indexed row position
+---@param col integer 0-indexec column position
+---@param root_lang_tree vim.treesitter.LanguageTree
+M.get_root_for_position = function(row, col, root_lang_tree)
+  local lang_tree = root_lang_tree:language_for_range({ row, col, row, col })
+
+  for _, tree in pairs(lang_tree:trees()) do
+    local root = tree:root()
+    if root and vim.treesitter.is_in_node_range(root, row, col) then return root, tree, lang_tree end
+  end
+
+  return nil, nil, lang_tree
+end
+
+---@param root_lang_tree vim.treesitter.LanguageTree
 ---@return TSNode?
 function M.get_node_at_cursor(root_lang_tree)
   local cursor = vim.api.nvim_win_get_cursor(0)

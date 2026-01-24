@@ -205,17 +205,8 @@ return {
       })
 
       -- require("util.minipick_registry.patches.move").apply()
-      require("util.minipick_registry.hints").setup({
-        hinted = {
-          -- virt_clues_pos = { "inline", "eol" },
-          -- chars = vim.split("adefhilmnorstu", ""),
+      require("util.minipick_registry.hints").setup({})
 
-          -- Left-hand chars
-          chars = vim.split("asdfqwertg", ""),
-        },
-      })
-
-      vim.ui.select = MiniPick.select
       require("util.minipick_registry.files_ext").setup(MiniPick)
       require("util.minipick_registry.my_buffers").setup(MiniPick)
       require("util.minipick_registry.rg_live_grep").setup(MiniPick)
@@ -224,6 +215,7 @@ return {
       require("util.minipick_registry.smart").setup(MiniPick)
       require("util.minipick_registry.keymaps").setup(MiniPick)
       require("util.minipick_registry.bufferlines_ts").setup(MiniPick)
+      require("util.minipick_registry.mgrep").setup(MiniPick)
 
       MiniPick.registry.grep_todo_keywords = function(local_opts)
         local_opts = local_opts or {}
@@ -233,15 +225,15 @@ return {
 
       vim.api.nvim_create_augroup("MiniPick", { clear = true })
     end,
-    -- init = function()
-    --   LazyVim.on_very_lazy(function()
-    --     vim.ui.select = function(...)
-    --       vim.ui.select = MiniPick.ui_select
-    --       require("lazy").load({ plugins = { "mini.pick" } })
-    --       return vim.ui.select(...)
-    --     end
-    --   end)
-    -- end,
+    init = function()
+      LazyVim.on_very_lazy(function()
+        vim.ui.select = function(...)
+          vim.ui.select = MiniPick.ui_select
+          require("lazy").load({ plugins = { "mini.pick" } })
+          return vim.ui.select(...)
+        end
+      end)
+    end,
     keys = {
       {
         "<D-p>",

@@ -5,6 +5,8 @@ local toggle_flag = function(flag)
   end
 end
 
+local rg_iglob_patterns = require("util.flag_manager").rg_iglob_patterns
+
 local toggle_flags = function(flags)
   return function(_, opts)
     local actions = require("fzf-lua.actions")
@@ -121,11 +123,23 @@ local file_opts = {
     --   alt-l: lua
     --   alt-r: ruby
     --   alt-n: newer
+    --   alt-J: js/ts
+    --   alt-M: md
+    --   alt-I: json
+    --   alt-W: week
+    --   alt-T: today
+    --   alt-G: regex
 
     ["alt-x"] = toggle_fd_exclude_patterns({ "spec/**/*", "**{__tests__,tests?}**", "{test,tests}/" }),
     ["alt-l"] = toggle_flag("-e lua"),
     ["alt-r"] = toggle_flag("-e rb"),
     ["alt-n"] = toggle_flag("--newer 7day"),
+    ["alt-J"] = toggle_flag("-e js -e ts -e tsx -e jsx"),
+    ["alt-M"] = toggle_flag("-e md"),
+    ["alt-I"] = toggle_flag("-e json"),
+    ["alt-W"] = toggle_flag("--changed-within 7d"),
+    ["alt-T"] = toggle_flag("--changed-within 1d"),
+    ["alt-G"] = toggle_flag("--regex"),
   },
 }
 
@@ -174,16 +188,19 @@ local live_grep_opts = {
     --   alt-l: lua type
     --   alt-r: ruby type
     --   alt-f: filepath sort
+    --   alt-P: python type
+    --   alt-J: js type
+    --   alt-M: md type
 
-    ["alt-j"] = toggle_iglob("*.{js,ts,tsx} !*{test,spec}*"),
-    ["alt-o"] = toggle_iglob("*.{js,ts,tsx} **test**"),
-    ["alt-t"] = toggle_iglob("**{test,spec}**"),
-    ["alt-x"] = toggle_iglob("!**{test,spec}** !spec/**/* !**/test*/** !__tests__"),
-    ["alt-s"] = toggle_iglob("*.{js,ts,tsx}"),
-    ["alt-m"] = toggle_iglob("!**{umd,cjs,esm}**"),
+    ["alt-j"] = toggle_iglob(rg_iglob_patterns.js_no_tests),
+    ["alt-o"] = toggle_iglob(rg_iglob_patterns.js_tests),
+    ["alt-t"] = toggle_iglob(rg_iglob_patterns.tests),
+    ["alt-x"] = toggle_iglob(rg_iglob_patterns.no_tests),
+    ["alt-s"] = toggle_iglob(rg_iglob_patterns.js_ts),
+    ["alt-m"] = toggle_iglob(rg_iglob_patterns.no_bundle),
     ["alt-c"] = toggle_flags({ "--type-add 'conf:*.{toml,yaml,yml,ini,json}'", "-t conf" }),
     ["alt-w"] = toggle_flags({ "--type-add 'web:*.{js,ts,tsx,css,scss,html,vue,svelte}'", "-t web" }),
-    ["alt-g"] = toggle_flag("--glob-case-insensitive"),
+    -- ["alt-g"] = toggle_flag("--glob-case-insensitive"),
     ["alt-k"] = toggle_flag("--context 2"),
     ["alt-n"] = toggle_flag("--max-count 1"),
     ["alt-d"] = toggle_flag("--max-depth 3"),
@@ -191,6 +208,9 @@ local live_grep_opts = {
     ["alt-u"] = toggle_flag("-U"), -- dotall (?s:.) ; regular (?-s:.)
     ["alt-l"] = toggle_flag("-t lua"),
     ["alt-r"] = toggle_flag("-t ruby"),
+    ["alt-P"] = toggle_flag("-t python"),
+    ["alt-J"] = toggle_flag("-t js"),
+    ["alt-M"] = toggle_flag("-t markdown"),
     ["alt-f"] = toggle_flag("--sort path"),
     -- ["alt-c"] = toggle_flag("--sortr=modified"),
 
@@ -341,6 +361,7 @@ return {
       { "<leader>sW", function() pick("grep_cword", vim.tbl_extend("force", live_grep_opts, { rg_glob = false, git_icons = true, root = false })) end, desc = "Word (cwd)", mode = "n" },
       { "<leader>sw", function() pick("grep_visual", vim.tbl_extend("force", live_grep_opts, { rg_glob = false })) end, desc = "Selection (Root Dir)", mode = "v" },
       { "<leader>sW", function() pick("grep_visual", vim.tbl_extend("force", live_grep_opts, { rg_glob = false, root = false })) end, desc = "Selection (cwd)", mode = "v" },
+      { "<leader>s<C-b>", function() pick("lines", { rg_glob = true, git_icons = true }) end, desc = "Buffer (Live Grep)", mode = "n" },
       -- { "<leader>sB", "<cmd>lua LazyVim.pick('lgrep_curbuf')()<CR>", desc = "Buffer (Live Grep)", mode = "n" },
       { "<leader>sg", function() pick("live_grep_glob", live_grep_opts_with_reset) end, desc = "Grep (Root Dir)" },
       { "<leader>s<C-g>", function() pick("live_grep_glob", live_grep_opts_with_reset) end, desc = "Grep (Root Dir)" },
@@ -352,27 +373,21 @@ return {
       -- { "<leader>fz", function() require("util.fzf.zoxide").fzf_zoxide() end, desc = "Zoxide"},
       { "<leader>fz", function() require("util.fzf.zoxide").fzf_zoxide_async() end, desc = "Zoxide"},
       { "<leader>sL", "<cmd>FzfLua lsp_finder<cr>", desc = "LSP Finder" },
-      -- { "<leader>ga", "<cmd>FzfLua git_branches<cr>", desc = "Git Branches" },
+      { "<leader>ga", "<cmd>FzfLua git_branches<cr>", desc = "Git Branches" },
+      { "<leader>gc", "<cmd>FzfLua git_commits<cr>", desc = "Git Branches" },
       { "<leader>gr", "<cmd>FzfLua git_branches<cr>", desc = "Branches" },
       { "<leader>sA", "<cmd>FzfLua treesitter<cr>", desc = "Treesiter Symbols" },
       { "<leader>sh", "<cmd>FzfLua helptags<cr>", desc = "Help Tags" },
-      -- { "<leader>sX", "<cmd>FzfLua treesitter<cr>", desc = "Treesiter Symbols" },
+      -- { "<leader>sA", "<cmd>FzfLua treesitter<cr>", desc = "Treesiter Symbols" },
       -- { "<leader><C-s>", "<cmd>FzfLua spell_suggest<cr>", desc = "Spelling" },
       -- Disabled in favor of Snacks.picker (syntax highlighting, etc.)
       { "<leader>sm", false },
-      -- stylua: ignore end
       {
         "<leader>sF",
-        function()
-          pick("live_grep", {
-            no_esc = false,
-            rg_opts = "--fixed-strings --column --line-number --no-heading --color=always --smart-case --max-columns=4096 -e",
-          })
-        end,
+        function() pick("live_grep", { no_esc = false, rg_opts = ("--fixed-strings %s -e"):format(default_grep_rg_opts) }) end,
         desc = "Grep (--fixed-strings)",
         mode = "n",
       },
-      -- stylua: ignore start
       { "<leader>mt", function() require("util.fzf.grapple").open() end, desc = "Marks (Fzf)" },
       { "<leader>s<C-d>", function() require("util.fzf.devdocs").open_async({ languages = vim.bo.filetype }) end, desc = "Devdocs" },
       -- stylua: ignore end

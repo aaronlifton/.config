@@ -16,15 +16,16 @@ return {
       "DevdocsUpdate",
       "DevdocsUpdateAll",
     },
-    -- Only needed when installing docs via `nvim --headless +"DevdocsInstall"`
-    -- dependencies = {
-    --   "nvim-telescope/telescope.nvim",
-    -- },
+    -- Needed when installing docs -- via `nvim --headless +"DevdocsInstall"`
+    dependencies = {
+      "nvim-telescope/telescope.nvim",
+    },
     keys = {
       { "<leader>sE", "<cmd>DevdocsOpen<cr>", desc = "Devdocs" },
       { "<leader>se", "<cmd>DevdocsOpenCurrent<cr>", desc = "Devdocs Current" },
       { "<leader>se", "<cmd>DevdocsOpenCurrent<cr>", desc = "Devdocs Current" },
     },
+    opts_extend = { "ensure_installed" },
     opts = {
       dir_path = vim.fn.stdpath("data") .. "/devdocs", -- installation directory
       telescope = {}, -- passed to the telescope picker
@@ -47,8 +48,10 @@ return {
       ensure_installed = {
         "jest",
         "react",
-        "rails-7.1",
+        "rails-7.2",
+        "rails-8.1.2",
         "ruby-3.3",
+        "ruby-3.4.8",
         "javascript",
         "typescript",
         "lua-5.4",
@@ -56,6 +59,7 @@ return {
         "git",
         "npm",
         "node",
+        "python-3.14.0",
       },
     },
   },

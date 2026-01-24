@@ -41,6 +41,8 @@ local function preview_location(location, context)
   local opts = {}
 
   local contents = vim.api.nvim_buf_get_lines(bufnr, range.start.line, range["end"].line + 1, false)
+  -- local path = uri:gsub("^file://", "")
+  -- table.insert(contents, 1, Util.display.truncate_path(path, 120, "smart"))
   local filetype = vim.bo[bufnr].filetype
   local preview_buf, preview_win = vim.lsp.util.open_floating_preview(contents, filetype, opts)
   vim.bo[preview_buf].filetype = filetype
@@ -113,7 +115,7 @@ local function peek_definition_code(query_string, query_group, lsp_request, cont
 
   lsp_request = lsp_request or "textDocument/definition"
   if vim.tbl_contains(vim.api.nvim_list_wins(), floating_win) then
-    assert(floating_win, "The floaing window for peeking is not open")
+    assert(floating_win, "The floating window for peeking is not open")
     vim.api.nvim_set_current_win(floating_win)
   else
     local params = vim.lsp.util.make_position_params(0, "utf-16")

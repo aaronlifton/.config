@@ -1,6 +1,6 @@
 local M = {}
 
-local FlagManager = require("util.minipick_registry.flag_manager")
+local FlagManager = require("util.flag_manager")
 
 local function map_gsub(items, pattern, replacement)
   return vim.tbl_map(function(item)
@@ -282,6 +282,8 @@ function M.grep_get_command(pattern, globs, flags)
     "--field-match-separator",
     "\\x00",
     "--color=never",
+    "--max-columns=4096",
+    -- [[-g '!**/dist/**.js*' -g '!*{-,.}min.js']],
   }
   if flags then
     for _, flag in ipairs(flags) do
@@ -297,7 +299,7 @@ function M.grep_get_command(pattern, globs, flags)
     table.insert(res, g)
   end
   local case = vim.o.ignorecase and (vim.o.smartcase and "smart-case" or "ignore-case") or "case-sensitive"
-  vim.list_extend(res, { "--" .. case, "--", pattern })
+  vim.list_extend(res, { "--" .. case, "-e", pattern })
   return res
 end
 

@@ -3,8 +3,9 @@ local M = {}
 local H = {}
 local P = require("util.minipick_registry.picker").H
 
-local FlagManager = require("util.minipick_registry.flag_manager")
+local FlagManager = require("util.flag_manager")
 local Grep = require("util.minipick_registry.grep")
+local GrepExt = require("util.minipick_registry.grep_ext")
 
 local function create_rg_grep_picker(MiniPick)
   return function(local_opts, opts)
@@ -27,16 +28,7 @@ local function create_rg_grep_picker(MiniPick)
     }
 
     local function build_name_suffix()
-      local parts = {}
-      if #globs > 0 then parts[#parts + 1] = table.concat(globs, ", ") end
-      local flag_parts = {}
-      for _, flag in ipairs(flags) do
-        flag_parts[#flag_parts + 1] = FlagManager.rg_flags[flag] or flag
-      end
-      if show_opts.ts_highlight == false then flag_parts[#flag_parts + 1] = "no-ts" end
-      if show_opts.path_max_width then flag_parts[#flag_parts + 1] = "path:" .. show_opts.path_max_width end
-      if #flag_parts > 0 then parts[#parts + 1] = table.concat(flag_parts, ", ") end
-      return #parts == 0 and "" or (" | " .. table.concat(parts, " | "))
+      return GrepExt.build_rg_name_suffix(globs, flags, show_opts)
     end
 
     local function build_name(pattern)
@@ -70,92 +62,43 @@ local function create_rg_grep_picker(MiniPick)
       MiniPick.set_picker_items_from_cli(command, { set_items_opts = { do_match = false } })
     end
 
-    local function add_glob()
-      local ok, glob = pcall(vim.fn.input, "iglob pattern: ")
-      if ok then table.insert(globs, glob) end
-      MiniPick.set_picker_opts({ source = { name = build_name() } })
-      refresh_items()
-    end
-
-    local function remove_glob()
-      if #globs > 0 then
-        table.remove(globs)
-        MiniPick.set_picker_opts({ source = { name = build_name() } })
-        refresh_items()
-      end
-    end
-
-    local function toggle_no_ignore()
-      FlagManager.toggle_flag(flags, "no_ignore")
-      MiniPick.set_picker_opts({ source = { name = build_name() } })
-      refresh_items()
-    end
-
-    local function toggle_hidden()
-      FlagManager.toggle_flag(flags, "hidden")
-      MiniPick.set_picker_opts({ source = { name = build_name() } })
-      refresh_items()
-    end
-
-    local function toggle_extra_flag(flag_key)
-      return function()
-        FlagManager.toggle_flag(flags, flag_key)
-        MiniPick.set_picker_opts({ source = { name = build_name() } })
-        refresh_items()
-      end
-    end
-
-    local function toggle_dotall()
-      FlagManager.toggle_flag(flags, "dotall")
-      MiniPick.set_picker_opts({ source = { name = build_name() } })
-      refresh_items()
-    end
-
-    local function toggle_ts_highlight()
-      if show_opts.ts_highlight == nil then
-        show_opts.ts_highlight = false
-      else
-        show_opts.ts_highlight = nil
-      end
-      MiniPick.set_picker_opts({ source = { name = build_name(), show = get_show_func() } })
-    end
-
-    local function toggle_path_width()
-      local widths = { nil, 60, 40, 80 }
-      local current_idx = 1
-      for i, w in ipairs(widths) do
-        if show_opts.path_max_width == w then
-          current_idx = i
-          break
-        end
-      end
-      show_opts.path_max_width = widths[(current_idx % #widths) + 1]
-      MiniPick.set_picker_opts({ source = { name = build_name(), show = get_show_func() } })
+    -- local function toggle_dotall()
+    --   FlagManager.toggle_flag(flags, "dotall")
+    --   MiniPick.set_picker_opts({ source = { name = build_name() } })
+    --   refresh_items()
+    -- end
+    local function sync_query()
       MiniPick.set_picker_query(MiniPick.get_picker_query())
     end
 
-    local function toggle_iglob_pattern(pattern_key)
-      return function()
-        local pattern_value = FlagManager.iglob_patterns[pattern_key]
-        if not FlagManager.toggle_glob_pattern(globs, pattern_value) then return end
-        MiniPick.set_picker_opts({ source = { name = build_name() } })
-        refresh_items()
-      end
-    end
-
-    local mappings = FlagManager.build_rg_flag_mappings({
-      add_glob = add_glob,
-      remove_glob = remove_glob,
-      toggle_no_ignore = toggle_no_ignore,
-      toggle_hidden = toggle_hidden,
-      toggle_iglob_pattern = toggle_iglob_pattern,
-      toggle_extra_flag = toggle_extra_flag,
-      toggle_dotall = toggle_dotall,
-      toggle_ts_highlight = toggle_ts_highlight,
-      toggle_path_width = toggle_path_width,
+    local mappings = GrepExt.build_rg_mappings(MiniPick, {
+      globs = globs,
+      flags = flags,
+      show_opts = show_opts,
+      build_name = function()
+        return build_name(pattern)
+      end,
+      get_show_func = get_show_func,
+      refresh = refresh_items,
+      sync_query = sync_query,
+      default_behavior = { refresh = true },
+      show_behavior = { refresh = false, sync_query = true },
     })
 
+    -- local mappings = FlagManager.build_rg_flag_mappings({
+    --   add_glob = common_handlers.add_glob,
+    --   remove_glob = common_handlers.remove_glob,
+    --   toggle_no_ignore = common_handlers.toggle_no_ignore,
+    --   toggle_hidden = common_handlers.toggle_hidden,
+    --   toggle_iglob_pattern = common_handlers.toggle_iglob_pattern,
+    --   toggle_extra_flag = common_handlers.toggle_extra_flag,
+    --   toggle_dotall = toggle_dotall,
+    --   toggle_ts_highlight = common_handlers.toggle_ts_highlight,
+    --   toggle_path_width = common_handlers.toggle_path_width,
+    -- })
+
     opts = vim.tbl_deep_extend("force", opts or {}, { mappings = mappings })
+    -- vim.api.nvim_echo({ { "rg grep\n", "Title" }, { vim.inspect(opts.source.cwd), "Normal" } }, true, {})
     MiniPick.builtin.cli({ command = Grep.grep_get_command(pattern, globs, flags) }, opts)
   end
 end

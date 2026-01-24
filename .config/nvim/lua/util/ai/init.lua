@@ -24,4 +24,14 @@ function M.toggle(toggle, type, prompt)
   end
 end
 
+function M.mgrep()
+  local query = vim.fn.input("Query: ")
+  local args = { "mgrep", "--web", "--answer", ('"%s"'):format(query) }
+  -- Snacks.terminal({ "mgrep", "--web", "--answer", ('"%s"'):format(query) }, { auto_close = false })
+  vim.cmd((":vs | term %s"):format(vim.fn.join(args, " ")))
+  local buf = vim.api.nvim_get_current_buf()
+  vim.bo.bufhidden = "wipe"
+  vim.bo.swapfile = false
+end
+
 return M
