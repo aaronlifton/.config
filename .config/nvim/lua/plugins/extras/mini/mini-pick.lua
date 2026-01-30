@@ -93,6 +93,8 @@ local function show_align_on_null(buf_id, items, query, opts)
 end
 
 return {
+  -- { import = "plugins.extras.mini.mini-fuzzy" },
+  { import = "plugins.extras.mini.mini-visits" },
   {
     "nvim-mini/mini.pick",
     config = function()

@@ -17,6 +17,7 @@
 ---@field model util.model
 ---@field nui util.nui
 ---@field path util.path
+---@field picker util.picker
 ---@field selection util.selection
 ---@field sidekick util.sidekick
 ---@field snacks util.snacks

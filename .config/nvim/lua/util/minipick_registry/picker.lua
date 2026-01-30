@@ -120,28 +120,8 @@ function M.cwd_dir()
   return vim.fn.getcwd()
 end
 
-function M.node_modules_dir()
-  local path = vim.fs.joinpath(LazyVim.root(), "node_modules")
-  if vim.fn.isdirectory(path) == 0 then
-    vim.notify("node_modules directory not found: " .. path, vim.log.levels.WARN)
-    return nil
-  end
-  return path
-end
-
 function M.lazyvim_plugins_dir()
   return vim.fn.fnamemodify(get_lazyvim_base_dir(), ":h")
-end
-
-function M.node_module_subdir()
-  local cwd = vim.fn.expand("%:p:h")
-  local start = string.find(cwd, "node_modules/")
-  if start then
-    local display = vim.fn.fnamemodify(cwd, ":t")
-    return { path = cwd, display = display }
-  end
-  vim.api.nvim_echo({ { "Not a path within a node_modules folder", "Normal" } }, false, {})
-  return nil
 end
 
 function M.ruby_gem_subdir()

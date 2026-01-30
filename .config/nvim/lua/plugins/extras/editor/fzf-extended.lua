@@ -47,8 +47,6 @@ end
 
 local function toggle_file_ignore_pattern(pattern)
   return function(_, opts)
-    -- vim.api.nvim_echo({ { vim.inspect(opts), "Normal" } }, true, {})
-
     local o = vim.tbl_deep_extend("keep", { resume = true }, opts.__call_opts)
     o.file_ignore_patterns = o.file_ignore_patterns or {}
     local found
@@ -140,6 +138,7 @@ local file_opts = {
     ["alt-W"] = toggle_flag("--changed-within 7d"),
     ["alt-T"] = toggle_flag("--changed-within 1d"),
     ["alt-G"] = toggle_flag("--regex"),
+    -- ["alt-f"] = toggle_flag("--fixed-strings"),
   },
 }
 
@@ -295,6 +294,10 @@ return {
       config.defaults.actions.files["ctrl-t"] = require("util.fzf.actions").add_selected
 
       return vim.tbl_extend("force", opts, {
+        -- fzf_bin = "sk",
+        -- Padding can help kitty term users with double-width icon rendering
+        file_icon_padding = "",
+        --
         git = {
           branches = {
             -- cmd = "git branch --all --color=always --sort=-committerdate",
@@ -365,10 +368,10 @@ return {
       { "<leader>sW", function() pick("grep_cword", vim.tbl_extend("force", live_grep_opts, { rg_glob = false, git_icons = true, root = false })) end, desc = "Word (cwd)", mode = "n" },
       { "<leader>sw", function() pick("grep_visual", vim.tbl_extend("force", live_grep_opts, { rg_glob = false })) end, desc = "Selection (Root Dir)", mode = "v" },
       { "<leader>sW", function() pick("grep_visual", vim.tbl_extend("force", live_grep_opts, { rg_glob = false, root = false })) end, desc = "Selection (cwd)", mode = "v" },
-      { "<leader>s<C-b>", function() pick("lines", { rg_glob = true, git_icons = true }) end, desc = "Buffer (Live Grep)", mode = "n" },
       -- Switch around LazyVim bindings
       { "<leader>sb", "<cmd>FzfLua lgrep_curbuf<CR>", desc = "Buffer (Live Grep)", mode = "n" },
-      { "<leader>sB", "<cmd>FzfLua lines<cr>", desc = "Buffer Lines" },
+      { "<leader>sB", "<cmd>FzfLua lines rg_glob=true git_icons=true<cr>", desc = "Buffer Lines" },
+      -- { "<leader>sB", function() pick("lines", { rg_glob = true, git_icons = true }) end, desc = "Buffer (Live Grep)", mode = "n" },
       { "<leader>sg", function() pick("live_grep_glob", live_grep_opts_with_reset) end, desc = "Grep (Root Dir)" },
       { "<leader>s<C-g>", function() pick("live_grep_glob", live_grep_opts_with_reset) end, desc = "Grep (Root Dir)" },
       { "<leader>sG", function() pick("live_grep_glob", vim.tbl_extend("force", live_grep_opts_with_reset, { root = false })) end, desc = "Grep (cwd)" },

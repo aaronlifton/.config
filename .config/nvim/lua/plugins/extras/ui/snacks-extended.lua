@@ -1,6 +1,7 @@
 ---@class snacks.picker.Config
 ---@field regex boolean
 ---@field glob string[]
+local scroll_count = 0
 
 return {
   {
@@ -59,6 +60,14 @@ return {
           },
         },
       },
+      sources = {
+        keymaps = {
+          actions = {
+            ["<CR>"] = { "edit_vsplit", mode = { "i", "n" } },
+            ["<C-v>"] = { "edit_vsplit", mode = { "i", "n" } },
+          },
+        },
+      },
       picker = {
         previewers = {
           git = {
@@ -71,11 +80,20 @@ return {
         win = {
           input = {
             keys = {
+              -- to close the picker on ESC instead of going to normal mode,
+              -- add the following keymap to your config
+              -- ["<Esc>"] = { "close", mode = { "n", "i" } },
+              ["<C-d>"] = { "list_scroll_down2", mode = { "i", "n" } },
+              ["<C-u>"] = { "list_scroll_up2", mode = { "i", "n" } },
               ["<a-c>"] = {
                 "toggle_cwd",
                 mode = { "n", "i" },
               },
+              -- Check defaults ~/.local/share/nvim/lazy/snacks.nvim/lua/snacks/picker/config/defaults.lua:226
               ["<M-s>"] = { "leap", mode = { "n", "i" } },
+              ["<C-x>"] = { "leap", mode = { "n", "i" } },
+              -- Make same as fzf keymap
+              ["<C-e>"] = { "toggle_live", mode = { "i", "n" } },
               -- Flag bindings
               -- ["<M-j>"] = { "toggle_js_ts", mode = { "n", "i" } },
               ["<M-j>"] = { "toggle_js_no_tests", mode = { "n", "i" } },
@@ -84,13 +102,16 @@ return {
               ["<M-x>"] = { "toggle_no_tests", mode = { "n", "i" } },
               ["<M-c>"] = { "toggle_type_conf", mode = { "n", "i" } },
               ["<M-W>"] = { "toggle_type_web", mode = { "n", "i" } },
-              ["<M-f>"] = { "toggle_fixed_strings", mode = { "n", "i" } },
+              -- Overrides toggle_follow
+              ["<M-f>"] = { "toggle_regex", mode = { "i", "n" } },
               ["<M-u>"] = { "toggle_dotall", mode = { "n", "i" } },
               ["<M-l>"] = { "toggle_type_lua", mode = { "n", "i" } },
               ["<M-r>"] = { "toggle_type_ruby", mode = { "n", "i" } },
               ["<M-P>"] = { "toggle_type_python", mode = { "n", "i" } },
               ["<M-J>"] = { "toggle_type_js", mode = { "n", "i" } },
+              -- Overrides toggle_maximize
               ["<M-m>"] = { "toggle_type_md", mode = { "n", "i" } },
+              ["<F7>"] = { "toggle_maximize", mode = { "i", "n" } },
               -- ["<c-u>"] = { "preview_scroll_up", mode = { "i", "n" } },
               -- ["<a-j>"] = { "list_scroll_down", mode = { "i", "n" } },
               -- ["<c-d>"] = { "preview_scroll_down", mode = { "i", "n" } },
@@ -99,13 +120,13 @@ return {
           },
         },
         actions = {
+          ---@param picker snacks.Picker
           leap = function(picker)
             local all_wins = vim.api.nvim_list_wins()
             local wins = vim.tbl_filter(function(win)
               return vim.bo[vim.api.nvim_win_get_buf(win)].filetype == "snacks_picker_list"
             end, all_wins)
 
-            -- TODO: use lower case keys as labels
             require("leap").leap({
               target_windows = wins,
               action = function(target)
@@ -114,7 +135,28 @@ return {
               end,
               pattern = "\\%>0v\\%<2v.",
               inclusive = false,
+              opts = {
+                safe_labels = "",
+                labels = "asdfhjklqwertyuiopzxcvbnm1234567890" .. "ASDFHJKLQWERTYUIOPZXCVBNM", -- "-=[];';,./"
+              },
             })
+          end,
+          ---@param p snacks.Picker
+          list_scroll_down2 = function(p)
+            local target = math.min(p.list.cursor + 24, p.list:count())
+            p.list:move(target, true, true)
+          end,
+          ---@param p snacks.Picker
+          list_scroll_up2 = function(p)
+            local target = math.max(p.list.cursor - 24, 1)
+            p.list:move(target, true, true)
+          end,
+          ---@param p snacks.Picker
+          list_center = function(p)
+            local height = p.list.state.height or p.list:height()
+            local middle = math.floor((height + 1) / 2)
+            local cursor = p.list.cursor
+            p.list:view(cursor, cursor - middle + 1)
           end,
           ---@param p snacks.Picker
           toggle_js_no_tests = function(p)
@@ -136,41 +178,42 @@ return {
             Util.snacks.actions.toggle_iglob("no_bundle", p)
           end,
           toggle_type_conf = function(p)
-            Util.snacks.actions.toggle_ft("type_conf", p)
+            Util.snacks.actions.toggle_flag("type_conf", p)
           end,
           toggle_type_web = function(p)
-            Util.snacks.actions.toggle_ft("type_web", p)
+            Util.snacks.actions.toggle_flag("type_web", p)
           end,
           toggle_context = function(p)
             Util.snacks.actions.toggle_flag("context", p)
           end,
           ---@param p snacks.Picker
-          toggle_fixed_strings = function(p)
-            ---@diagnostic disable-next-line: inject-field
-            if p.opts.regex then
-              p.opts.regex = false
-            else
-              p.opts.regex = true
-            end
-            p:refresh()
-          end,
+          -- toggle_fixed_strings = function(p)
+          --   ---@diagnostic disable-next-line: inject-field
+          --   if p.opts.regex then
+          --     p.opts.regex = false
+          --   else
+          --     p.opts.regex = true
+          --   end
+          --   p:refresh()
+          -- end,
           toggle_dotall = function(p)
             Util.snacks.actions.toggle_flag("dotall", p)
           end,
           toggle_type_lua = function(p)
-            Util.snacks.actions.toggle_ft("type_lua", p)
+            Util.snacks.actions.toggle_ft("lua", p)
           end,
           toggle_type_ruby = function(p)
-            Util.snacks.actions.toggle_ft("type_ruby", p)
+            Util.snacks.actions.toggle_ft("ruby", p)
           end,
           toggle_type_python = function(p)
-            Util.snacks.actions.toggle_ft("type_python", p)
+            Util.snacks.actions.toggle_ft("python", p)
           end,
           toggle_type_js = function(p)
-            Util.snacks.actions.toggle_ft("type_js", p)
+            Util.snacks.actions.toggle_ft({ "js", "ts" }, p)
           end,
+          ---@param p snacks.Picker
           toggle_type_md = function(p)
-            Util.snacks.actions.toggle_ft("type_md", p)
+            Util.snacks.actions.toggle_ft("markdown", p)
           end,
         },
         layouts = {
@@ -233,7 +276,8 @@ return {
             { icon = " ", key = "n", desc = "New File", action = ":ene | startinsert" },
             { icon = " ", key = "g", desc = "Find Text", action = ":lua Snacks.dashboard.pick('live_grep')" },
             -- { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.dashboard.pick('oldfiles')" },
-            { icon = " ", key = "r", desc = "Recent Files", action = ":lua require('mini.extra').pickers.visit_paths()" },
+            -- { icon = " ", key = "r", desc = "Recent Files", action = ":lua require('mini.extra').pickers.visit_paths()" },
+            { icon = " ", key = "r", desc = "Recent Files", action = ":lua Snacks.picker.recent()" },
             { icon = " ", key = "c", desc = "Config", action = ":lua Snacks.dashboard.pick('files', { cwd = vim.fn.stdpath('config') })" },
             -- { icon = " ", key = "a", desc = "Chat with AI", action = ":ene | Mchat gemini:flash-2.5" },
             { icon = " ", key = "s", desc = "Restore Session", section = "session" },

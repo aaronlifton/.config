@@ -26,8 +26,8 @@
     "plugins.extras.coding.treesitter.sibling-swap",
     "plugins.extras.coding.treesitter.treesitter-extended",
     "plugins.extras.coding.treesitter.treesj",
+    "plugins.extras.editor.snacks-picker-extended",
     "plugins.extras.editor.docs.devdocs",
-    "plugins.extras.editor.fzf-extended",
     "plugins.extras.editor.git.blame",
     "plugins.extras.editor.git.diffview",
     "plugins.extras.editor.git.git-conflict",
@@ -68,11 +68,7 @@
     "plugins.extras.mini.mini-ai-extended",
     "plugins.extras.mini.mini-align",
     "plugins.extras.mini.mini-diff-extended",
-    "plugins.extras.mini.mini-fuzzy",
-    "plugins.extras.mini.mini-pick",
-    "plugins.extras.mini.mini-pick-extra",
     "plugins.extras.mini.mini-surround-extended",
-    "plugins.extras.mini.mini-visits",
     "plugins.extras.syntax.kitty",
     "plugins.extras.syntax.tridactyl",
     "plugins.extras.ui.bufferline-extended",
@@ -92,8 +88,7 @@
     "plugins.extras.ui.which-key-extended",
     "plugins.extras.util.better-escape",
     "plugins.extras.util.persistence-extended",
-    "plugins.extras.util.smart-splits",
-    "plugins.extras.util.wakatime"
+    "plugins.extras.util.smart-splits"
   ],
   "install_version": 7,
   "news": {

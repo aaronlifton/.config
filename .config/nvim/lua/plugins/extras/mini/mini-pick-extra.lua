@@ -58,17 +58,14 @@ return {
       { "<leader>sP", false },
       { "<leader>sR", false },
       { "<leader>sW", false },
-      -- { "<leader>sb", false },
       { "<leader>sc", false },
       { "<leader>sg", false },
       { "<leader>sh", false },
-      { "<leader>sj", false },
       { "<leader>sp", false },
       { "<leader>su", false },
       { "<leader>su", false, mode = { "v" } },
       { "<leader>sw", false },
       { "<leader>sw", false, mode = { "v" } },
-      -- { "<leader>sx", false },
     },
   },
   {
@@ -86,7 +83,7 @@ return {
         "<leader>fN",
         function()
           -- Notification is handled by #node_modules_dir
-          local path = get_picker().node_modules_dir()
+          local path = Util.picker.node_modules_dir()
           if not path then return end
 
           get_picker().pick_files(path)
@@ -233,7 +230,7 @@ return {
       {
         "<leader>sN",
         function()
-          local path = get_picker().node_modules_dir()
+          local path = Util.picker.node_modules_dir()
           if not path then return end
           get_picker().pick_grep_live({ ts_highlight = false }, { source = { cwd = path, name = "Node Modules" } })
         end,
@@ -285,7 +282,7 @@ return {
         "<leader>s<C-m>",
         function()
           -- Grep ruby gem or node module dir, if current buf is a file inside of one
-          local result = get_picker().node_module_subdir()
+          local result = Util.picker.node_module_subdir()
           if result then
             local path = result.path or result
             local display = result.display
