@@ -125,15 +125,25 @@ on = "A"
 run = "create --dir"
 desc = "Create a dir"
 
+# [[mgr.prepend_keymap]]
+# on = "H"
+# desc = "Switch to the previous tab"
+# run = "tab_switch -1 --relative"
+#
+# [[mgr.prepend_keymap]]
+# on = "L"
+# run = "tab_switch 1 --relative"
+# desc = "Switch to the next tab"
+
 [[mgr.prepend_keymap]]
 on = "H"
-desc = "Switch to the previous tab"
-run = "tab_switch -1 --relative"
+run = "back"
+desc = "Go back to the previous directory"
 
 [[mgr.prepend_keymap]]
 on = "L"
-run = "tab_switch 1 --relative"
-desc = "Switch to the next tab"
+run = "forward"
+desc = "Go forward to the next directory"
 
 [[mgr.prepend_keymap]]
 on = "<"
@@ -194,72 +204,77 @@ desc = "Root of Git Repo"
 [[mgr.append_keymap]]
 on = ["g", "C"]
 run = "cd ~/Code"
-desc = "Go to the code directory"
+desc = "Go to Code directory"
+
+[[mgr.append_keymap]]
+on = ["g", "o"]
+run = "cd ~/Vaults/PersonalBrain"
+desc = "Go to Obsidian Vault directory"
 
 [[mgr.append_keymap]]
 on = ["g", "n", "p"]
 run = "cd ~/.local/share/nvim/lazy"
-desc = "Go to the nvim plugins directory"
+desc = "Go to nvim plugins directory"
 
 [[mgr.append_keymap]]
 on = ["g", ".", "n", "a"]
 run = "cd ~/.config/astronvim"
-desc = "Go to the astronvim directory"
+desc = "Go to astronvim directory"
 
 [[mgr.append_keymap]]
 on = ["g", ".", "n"]
 run = "cd ~/.config/nvim"
-desc = "Go to the nvim directory"
+desc = "Go to nvim directory"
 
 [[mgr.append_keymap]]
 on = ["g", ".", "h"]
 run = "cd ~/.config/helix"
-desc = "Go to the helix directory"
+desc = "Go to helix directory"
 
 [[mgr.append_keymap]]
 on = ["g", ".", "f"]
 run = "cd ~/.config/fish"
-desc = "Go to the fish directory"
+desc = "Go to fish directory"
 
 [[mgr.append_keymap]]
 on = ["g", ".", "k"]
 run = "cd ~/.config/kitty"
-desc = "Go to the kitty directory"
+desc = "Go to kitty directory"
 
 [[mgr.append_keymap]]
 on = ["g", ".", "a"]
 run = "cd ~/.config/alacritty"
-desc = "Go to the alacritty directory"
+desc = "Go to alacritty directory"
 
 [[mgr.append_keymap]]
 on = ["g", ".", "y"]
 run = "cd ~/.config/yazi"
-desc = "Go to the yazi directory"
+desc = "Go to yazi directory"
 
 [[mgr.append_keymap]]
 on = ["g", ".", "g"]
 run = "cd ~/.config/ghostty"
-desc = "Go to the ghostty directory"
+desc = "Go to ghostty directory"
 
 [[mgr.append_keymap]]
 on = ["g", "b"]
 run = "cd ~/.local/bin"
-desc = "Go to the local bin directory"
+desc = "Go to local bin directory"
 
 [[mgr.append_keymap]]
 on = ["g", "I", "h"]
 run = "cd '/Users/aaron/Library/Mobile Documents/'"
-desc = "Go to the iCloud Drive directory"
+desc = "Go to iCloud Drive directory"
 
 [[mgr.append_keymap]]
 on = ["g", "I", "b"]
 run = "cd '/Users/aaron/Library/Mobile Documents/com~apple~CloudDocs/Books'"
-desc = "Go to the iCloud Books directory"
+desc = "Go to iCloud Books directory"
 
 [[mgr.append_keymap]]
 on = ["g", "i", "m"]
 run = "cd ~/Code/dotfiles/Matt-FTW-dotfiles/.config/"
-desc = "Go to the Matt-FTW directory"
+desc = "Go to Matt-FTW directory"
 
 [[input.prepend_keymap]]
 on = ["<Esc>"]
