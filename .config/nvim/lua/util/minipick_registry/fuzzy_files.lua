@@ -201,7 +201,6 @@ local function create_fuzzy_files_picker(MiniPick)
         char = "<M-l>",
         enabled = FileTool.is_flag_supported(tool, "ext_lua"),
         action = function()
-          vim.notify("here")
           FlagManager.toggle_flag(state.flags, "ext_lua")
         end,
       },

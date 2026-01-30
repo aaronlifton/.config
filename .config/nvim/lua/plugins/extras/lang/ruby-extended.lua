@@ -5,71 +5,10 @@ LazyVim.on_very_lazy(function()
   vim.treesitter.language.register("yaml", "yml")
 end)
 
-local has_rubocop_config = function()
-  local buf = vim.api.nvim_get_current_buf()
-  local filename = vim.api.nvim_buf_get_name(buf)
-  return vim.fs.find(".rubocop.yml", { path = filename, upward = true })
-end
-
-local use_rubyfmt = true
 local use_ruby_lsp_rubocop = true
 local add_ruby_deps_command = false
-
--- https://github.com/Shopify/ruby-lsp/blob/4f7ce060de3257c35028ccb70e1854da952cdb95/vscode/package.json#L231
-local enabledFeatures = {
-  "codeActions",
-  -- "codeLens", -- adds "Run/Debug Test" lenses and ruby-lsp-rails "Go to Controller Action Route"
-  "completion",
-  "definition",
-  -- "diagnostics", -- doesn't support custom Rubocop config
-  "documentHighlights",
-  "documentLink",
-  "documentSymbols",
-  "foldingRanges",
-  -- "formatting", -- doesn't support custom Rubocop config
-  "hover",
-  "inlayHint",
-  -- "onTypeFormatting", -- replacement for endwise
-  "selectionRanges",
-  "semanticHighlighting",
-  "signatureHelp",
-  "typeHierarchy",
-  "workspaceSymbol",
-}
-local excludedGems = {
-  "libv8-node",
-  "google-api-client",
-  "grpc",
-  "mini_racer",
-  "nokogiri",
-  "brakeman",
-  "rbtrace",
-  "faker",
-  "aws-sdk-s3",
-  "google-protobuf",
-  "google-cloud-pubsub",
-  "rubocop",
-  "google-iam",
-  "caxlsx",
-  "rubycritic",
-  "rubocop-ast",
-  "rubocop-capybara",
-  "rubocop-faker",
-  "rubocop-performance",
-  "rubocop-rails",
-  "rubocop-rake",
-  "rubocop-rspec",
-  "rubocop-thread_safety",
-}
-if use_ruby_lsp_rubocop then
-  -- Without these 2 features, the initialization options 'linters' and
-  -- 'formatters' are ignored.
-  vim.list_extend(enabledFeatures, {
-    "diagnostics",
-    -- "formatting",
-    -- "onTypeFormatting",
-  })
-end
+local lsp = vim.g.lazyvim_ruby_lsp or "ruby_lsp"
+local formatter = vim.g.lazyvim_ruby_formatter or "rubocop"
 
 return {
   {
@@ -138,133 +77,26 @@ return {
     optional = true,
     ---@class PluginLspOpts
     opts = {
-      ---@type lspconfig.options
+      ---@type table<string, lazyvim.lsp.Config|boolean>
       servers = {
         ruby_lsp = {
+          enabled = lsp == "ruby_lsp",
+          mason = false,
+          -- cmd = { "mise", "exec", "--", "bundle", "exec", "ruby-lsp" },
+          -- cmd = { "mise", "exec", "--", "ruby-lsp" },
+          cmd = { "mise", "x", "--", "ruby-lsp" },
+          -- bundleGemfile = ".ruby-lsp/Gemfile",
+          experimentalFeaturesEnabled = false,
+          -- https://shopify.github.io/ruby-lsp/editors.html#all-initialization-options
           init_options = {
-            -- bundleGemfile = ".ruby-lsp/Gemfile",
             -- formatter = "rubyfmt",
-            -- cmd = { vim.fn.expand("~/.local/share/mise/shims/ruby-lsp") },
-            -- cmd = { "mise x -- ruby-lsp" },
-            cmd = { "mise exec -- ruby-lsp" },
-            mason = false,
-            rubyVersionManager = {
-              identifier = "mise",
-              -- miseExecutablePath = "",
+            -- https://github.com/search?q=path%3A**%2Fnvim%2F**%2F*.lua+excludedGems&type=code
+            addonSettings = {
+              ["Ruby LSP Rails"] = {
+                enablePendingMigrationsPrompt = false,
+              },
             },
           },
-          -- useBundler = true,
-          -- cmd = { "bundle", "exec", "ruby-lsp" },
-          -- flags = {
-          --   debounce_text_changes = 150,
-          -- },
-          -- -- NOTE: https://shopify.github.io/ruby-lsp/editors.html#all-initialization-options
-          -- init_options = {
-          --   enabledFeatures = enabledFeatures,
-          --   experimentalFeaturesEnabled = true,
-          --   -- featuresConfiguration = {
-          --   --   inlayHints = {
-          --   --     implicitHashValue = true,
-          --   --     implicitRescue = true,
-          --   --   },
-          --   -- },
-          --   -- https://github.com/search?q=path%3A**%2Fnvim%2F**%2F*.lua+excludedGems&type=code
-          --   -- indexing = {
-          --   --   -- __mocks__/
-          --   --   -- app/
-          --   --   -- config/
-          --   --   -- db/
-          --   --   -- git_hooks/
-          --   --   -- k8s/
-          --   --   -- lib/
-          --   --   -- log/
-          --   --   -- public/
-          --   --   -- script/
-          --   --   -- spec/
-          --   --   -- swagger/
-          --   --   -- test/
-          --   --   -- tmp/
-          --   --   -- vendor/
-          --   --   -- includedPatterns = { "**/bin/**/*" },,
-          --   --   excludedPatterns = {
-          --   --     -- "**/test/**/*.rb",
-          --   --     -- "**/spec/**/*.rb",
-          --   --     -- "**/db/**/*.rb",
-          --   --     -- "**/vendor/**/*.rb",
-          --   --     -- "**/activerecord-*/examples/**/*.rb",
-          --   --     --
-          --   --     "__mocks__/**",
-          --   --     -- "app/**",
-          --   --     "config/**",
-          --   --     "db/**",
-          --   --     "git_hooks/**",
-          --   --     "k8s/**",
-          --   --     "lib/**",
-          --   --     "log/**",
-          --   --     "public/**",
-          --   --     "script/**",
-          --   --     -- "spec/**",
-          --   --     -- Spec sub-folders
-          --   --     "spec/controllers/**",
-          --   --     "spec/db/**",
-          --   --     "spec/decorators/**",
-          --   --     "spec/deprecations/**",
-          --   --     "spec/emails/**",
-          --   --     "spec/factories/**",
-          --   --     "spec/fixtures/**",
-          --   --     "spec/helpers/**",
-          --   --     "spec/http_services/**",
-          --   --     "spec/integration/**",
-          --   --     "spec/legacy_policies/**",
-          --   --     "spec/lib/**",
-          --   --     "spec/mailers/**",
-          --   --     "spec/models/**",
-          --   --     "spec/modules/**",
-          --   --     "spec/policies/**",
-          --   --     "spec/presenters/**",
-          --   --     "spec/queries/**",
-          --   --     "spec/resources/**",
-          --   --     "spec/routes/**",
-          --   --     "spec/services/**",
-          --   --     "spec/shared_contexts/**",
-          --   --     "spec/support/**",
-          --   --     "spec/tasks/**",
-          --   --     "spec/validators/**",
-          --   --     "spec/values/**",
-          --   --     "spec/vendor/**",
-          --   --     "spec/vendors/**",
-          --   --     "spec/workers/**",
-          --   --     -- /Spec sub-folders
-          --   --     "swagger/**",
-          --   --     "test/**",
-          --   --     "tmp/**",
-          --   --     "vendor/**",
-          --   --     -- App
-          --   --     "app/assets/**",
-          --   --     -- "app/controllers/**",
-          --   --     "app/decorators/**",
-          --   --     "app/emails/**",
-          --   --     "app/helpers/**",
-          --   --     "app/http_services/**",
-          --   --     "app/jobs/**",
-          --   --     "app/legacy_policies/**",
-          --   --     -- "app/lib/**",
-          --   --     "app/mailers/**",
-          --   --     -- "app/models/**",
-          --   --     -- "app/policies/**",
-          --   --     -- "app/presenters/**",
-          --   --     -- "app/queries/**",
-          --   --     -- "app/services/**",
-          --   --     -- "app/values/**",
-          --   --     -- "app/views/**",
-          --   --     -- "app/workers/**"
-          --   --   },
-          --   --   excludedGems = excludedGems,
-          --   --   -- excludedMagicComments = { "compiled:true" },
-          --   -- },
-          --   -- bundleGemfile = ".ruby-lsp/Gemfile",
-          --   linters = use_ruby_lsp_rubocop and { "rubocop" } or {},
-          -- },
           -- on_new_config = function(new_config)
           --   -- ruby-lsp-rubyfmt needs formatter to be set to rubyfmt
           --   -- https://github.com/jscharf/ruby-lsp-rubyfmt/blob/b28e16e9b847f70dc1ee2012296fda92cb30e7f5/README.md?plain=1#L41
@@ -277,20 +109,26 @@ return {
           -- end,
         },
         solargraph = {
-          enabled = false,
+          enabled = lsp == "solargraph",
+          -- on_new_config = function(new_config)
+          --   new_config.enabled = not require("util.ruby.gems").in_bundle("ruby-lsp")
+          -- end,
+        },
+        -- NOTE: prefer configuration from LazyVim
+        -- NOTE: Need to re-disable since this config overrides LazyVim/lua/lazyvim/plugins/extras/lang/ruby.lua
+        rubocop = {
+          -- Disabled since rubocop diagnostics come from either ruby-lsp or nvim-lint
+          enabled = formatter == "rubocop" and lsp ~= "solargraph",
           on_new_config = function(new_config)
-            new_config.enabled = not require("util.ruby.gems").in_bundle("ruby-lsp")
+            -- If rubocop is in the Gemfile, it will be used as the formatter for ruby-lsp
+            new_config.enabled = not require("util.ruby.gems").in_bundle("rubocop")
           end,
         },
-        rubocop = {
-          -- NOTE: already disabled in LazyVim/lua/lazyvim/plugins/extras/lang/ruby.lua
-          -- Disabled since rubocop diagnostics come from either ruby-lsp or nvim-lint
-          enabled = false,
-        },
         standardrb = {
-          enabled = false,
+          enabled = formatter == "standardrb",
           on_new_config = function(new_config)
-            new_config.enabled = require("util.ruby.gems").in_bundle("standard")
+            -- If standard is in the Gemfile, it will be used as the formatter for ruby-lsp
+            new_config.enabled = not require("util.ruby.gems").in_bundle("standard")
           end,
         },
         sorbet = {
@@ -333,37 +171,16 @@ return {
     optional = true,
     opts = {
       linters_by_ft = {
-        ruby = { "rubocop" },
+        -- NOTE: prefer Rubocop LSP
+        -- ruby = { "rubocop" },
         eruby = { "erb_lint" },
       },
       linters = {
-        rubocop = {
-          -- cmd = "bundle",
-          -- args = {
-          --   "exec",
-          --   "rubocop",
-          --   "--format",
-          --   "json",
-          --   "--force-exclusion",
-          --   "--server",
-          --   "--stdin",
-          --   function()
-          --     return vim.api.nvim_buf_get_name(0)
-          --   end,
-          -- },
-          -- prepend_args = function()
-          --   local hostname = require("util.system").hostname()
-          --   if hostname == "ali-d7jf7y.local" then
-          --     return {
-          --       "-c",
-          --       ".rubocop_ci.yml",
-          --     }
-          --   end
-          -- end,
-          condition = function(ctx)
-            return not use_ruby_lsp_rubocop and require("util.ruby.gems").has_rubocop()
-          end,
-        },
+        -- rubocop = {
+        --   condition = function(ctx)
+        --     return not use_ruby_lsp_rubocop and require("util.ruby.gems").has_rubocop()
+        --   end,
+        -- },
         standardrb = {
           condition = function(ctx)
             return require("util.ruby.gems").in_bundle("standard")
@@ -399,17 +216,6 @@ return {
           --   "$FILENAME",
           -- },
           --
-          prepend_args = function()
-            local hostname = require("util.system").hostname()
-            if hostname == "ali-d7jf7y.local" then
-              return {
-                "-c",
-                ".rubocop_ci.yml",
-                "--force-exclusion",
-                -- "-A"
-              }
-            end
-          end,
           condition = function(ctx)
             -- Determine if buffer has ruby-lsp:
             -- local lsp_clients =
@@ -417,13 +223,13 @@ return {
             -- local has_lsp_formatter = not vim.tbl_isempty(lsp_clients)
 
             -- Ruby LSP contains rubocop diagnostics itself
-            return vim.b.disable_lsp_format
-              or (not use_ruby_lsp_rubocop and not use_rubyfmt and require("util.ruby.gems").has_rubocop())
+            return not use_ruby_lsp_rubocop and require("util.ruby.gems").has_rubocop()
           end,
         },
         rubyfmt = {
           condition = function(ctx)
-            return use_rubyfmt and require("util.ruby.gems").in_bundle("ruby-lsp-rubyfmt")
+            return false
+            -- return require("util.ruby.gems").in_bundle("ruby-lsp-rubyfmt")
             -- or not vim.fs.find(".rubocop.yml", { path = ctx.filename, upward = true })
           end,
         },

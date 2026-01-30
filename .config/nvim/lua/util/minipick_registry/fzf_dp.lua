@@ -15,9 +15,21 @@ local DEFAULT_CONSTANTS = {
   bonus_no_path_sep = 6,
   bonus_boundary_white = 10,
   bonus_boundary_delimiter = 9,
+  bonus_root_file = 6,
 }
 
 local PATH_SEP = package.config:sub(1, 1)
+local function is_lock_file(path)
+  local name = path
+  local last_sep = path:match("^.*()[/\\]")
+  if last_sep then name = path:sub(last_sep + 1) end
+  if name == "" then return false end
+  return name:lower():match("%.lock$") ~= nil
+end
+
+local function is_root_file(path)
+  return not path:find("[/\\]")
+end
 
 -- ASCII char classes (simplified); adapt as needed:
 local CHAR_WHITE = 0
@@ -57,6 +69,7 @@ function Matcher.new(opts)
     ignorecase = true,
     smartcase = true,
     filename_bonus = true,
+    root_file_bonus = true,
     constants = {},
   }, opts or {})
   self.constants = vim.tbl_deep_extend("force", {}, DEFAULT_CONSTANTS, self.opts.constants or {})
@@ -96,10 +109,14 @@ local function build_bonuses(str, constants, filename_bonus)
   local prev_class = CHAR_WHITE
   local last_sep = str:match("^.*()" .. vim.pesc(PATH_SEP))
   if not last_sep and PATH_SEP ~= "/" then last_sep = str:match("^.*()/") end
+  if filename_bonus and not last_sep then last_sep = 0 end
   for i = 1, n do
     local class = CHAR_CLASS[str:byte(i)] or CHAR_NONWORD
     local bonus = compute_bonus(constants, prev_class, class)
-    if filename_bonus and last_sep and i > last_sep then bonus = bonus + constants.bonus_no_path_sep end
+    if filename_bonus and last_sep ~= nil and i > last_sep then
+      -- if filename_bonus and last_sep and i > last_sep  then
+      bonus = bonus + constants.bonus_no_path_sep
+    end
     bonuses[i] = bonus
     prev_class = class
   end
@@ -168,6 +185,9 @@ function Matcher:match_score(str, pattern, opts)
 
   local best = M[m][n]
   if best <= neg_inf / 2 then return end
+  if self.opts.root_file_bonus and (opts == nil or opts.is_file ~= false) then
+    if is_root_file(str) then best = best + constants.bonus_root_file end
+  end
   return best
 end
 

@@ -67,6 +67,9 @@ local function create_rg_live_grep_picker(MiniPick)
       pcall(vim.loop.process_kill, process)
 
       local querytick = MiniPick.get_querytick()
+      -- if `do_match` is true, the displayed line (which includes filename + text)
+      -- is matched, so an item that matches in both filename and text gets a
+      -- higher score and bubbles to the top.
       local set_items_opts = { do_match = false, querytick = querytick }
       if #query == 0 then return MiniPick.set_picker_items({}, set_items_opts) end
 
@@ -119,7 +122,6 @@ local function create_rg_live_grep_picker(MiniPick)
       { source = { items = {}, match = throttled_match }, mappings = mappings }
     )
     -- opts.source.preview = require("util.minipick_registry.preview").preview
-    -- vim.api.nvim_echo({ { "rg grep live\n", "Title" }, { vim.inspect(opts.source.cwd), "Normal" } }, true, {})
     return MiniPick.start(opts)
   end
 end

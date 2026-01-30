@@ -1,3 +1,5 @@
+if not vim.g.vscode or not vim.env.CURSOR then return end
+
 vim.notify("Cursor settings loaded", vim.log.levels.INFO)
 vim.g.mapleader = " "
 

@@ -69,7 +69,8 @@ g.dprint_needs_config = true
 g.lazyvim_cmp = "blink.cmp"
 g.cmp_widths = { abbr = 80, menu = 30 }
 g.lazyvim_ruby_lsp = "ruby_lsp" -- "ruby_lsp", "solargraph"
-g.lazyvim_ruby_formatter = "rubocop"
+-- g.lazyvim_ruby_formatter = "rubocop"
+g.lazyvim_ruby_formatter = "standardrb"
 g.lazyvim_eslint_auto_format = true
 g.lazyvim_prettier_needs_config = true
 g.ai_cmp = true

@@ -344,9 +344,13 @@ return {
       -- This is handled by mini.pick instead
       { "<leader>,", false },
       { "<leader>sk", false },
-      { "<leader>sd", false },
-      { "<leader>sD", false },
+      -- { "<leader>sd", false },
+      -- { "<leader>sD", false },
       { "<leader>gd", false },
+      { '<leader>s"', false }, -- Prefer snacks.picker register picker
+      -- Switch around LazyVim bindings
+      { "<leader>sd", "<cmd>FzfLua diagnostics_document<cr>", desc = "Buffer Diagnostics" },
+      { "<leader>sD", "<cmd>FzfLua diagnostics_workspace<cr>", desc = "Diagnostics" },
 
       -- stylua: ignore start
       { "<leader><space>", function() pick("files", vim.tbl_extend("force", file_opts, { git_icons = false, fd_opts = fd_opts })) end, desc = "Find Files (Root Dir)" },
@@ -362,7 +366,9 @@ return {
       { "<leader>sw", function() pick("grep_visual", vim.tbl_extend("force", live_grep_opts, { rg_glob = false })) end, desc = "Selection (Root Dir)", mode = "v" },
       { "<leader>sW", function() pick("grep_visual", vim.tbl_extend("force", live_grep_opts, { rg_glob = false, root = false })) end, desc = "Selection (cwd)", mode = "v" },
       { "<leader>s<C-b>", function() pick("lines", { rg_glob = true, git_icons = true }) end, desc = "Buffer (Live Grep)", mode = "n" },
-      -- { "<leader>sB", "<cmd>lua LazyVim.pick('lgrep_curbuf')()<CR>", desc = "Buffer (Live Grep)", mode = "n" },
+      -- Switch around LazyVim bindings
+      { "<leader>sb", "<cmd>FzfLua lgrep_curbuf<CR>", desc = "Buffer (Live Grep)", mode = "n" },
+      { "<leader>sB", "<cmd>FzfLua lines<cr>", desc = "Buffer Lines" },
       { "<leader>sg", function() pick("live_grep_glob", live_grep_opts_with_reset) end, desc = "Grep (Root Dir)" },
       { "<leader>s<C-g>", function() pick("live_grep_glob", live_grep_opts_with_reset) end, desc = "Grep (Root Dir)" },
       { "<leader>sG", function() pick("live_grep_glob", vim.tbl_extend("force", live_grep_opts_with_reset, { root = false })) end, desc = "Grep (cwd)" },

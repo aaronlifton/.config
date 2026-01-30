@@ -134,6 +134,9 @@
   ds = -c diff.external=difft show --ext-diff
   # `git diff` with difftastic.
   dft = -c diff.external=difft diff
+  lso = "ls-files --others --exclude-standard"
+  lss = "diff --name-only --cached"
+  lsu = "diff --name-only"
 
 [color "diff-highlight"]
 	oldNormal = red bold
@@ -158,7 +161,7 @@
 [core]
   editor = nvim
   pager = delta
-	excludesfile = /Users/alifton/.gitignore_global
+	excludesfile = /Users/aaron/.gitignore_global
   ; excludesfile = ~/.config/git/ignore
 [interactive]
 	; diffFilter = diff-so-fancy --patch

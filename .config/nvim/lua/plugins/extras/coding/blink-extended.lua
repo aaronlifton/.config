@@ -20,9 +20,11 @@ local function setup_hide_blink_on_copilot_suggestion_autocmds()
   })
 end
 
-local function depriprotize_lsp(name, a, b)
-  if (a.client_name == nil or b.client_name == nil) or (a.client_name == b.client_name) then return end
-  return b.client_name == name
+local function deprioritize_lsp(name)
+  return function(a, b)
+    if (a.client_name == nil or b.client_name == nil) or (a.client_name == b.client_name) then return end
+    return b.client_name == name
+  end
 end
 
 return {
@@ -117,61 +119,66 @@ return {
           -- implementation = 'lua',
           implementation = "prefer_rust_with_warning",
           sorts = {
-            -- depriprotize_lsp('emmet_ls'),
+            -- deprioritize_lsp("emmet_language_server"),
             "exact", -- Added "exact"
-            -- defaults
             "score",
+            "kind", -- Moved kind below score to help match variables since functions come first
+            -- defaults
             "sort_text",
           },
         },
         completion = {
           menu = {
             -- border = "rounded",
-            border = "single",
+            -- border = "single", -- Old border
             -- winhighlight = "Normal:BlinkCmpDoc,FloatBorder:BlinkCmpDocBorder,CursorLine:BlinkCmpDocCursorLine,Search:None",
-            winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel,Search:None",
-            draw = {
-              padding = 2,
-              columns = {
-                { "item_idx", "kind_icon", "kind" },
-                { "label", "label_description", gap = 1 },
-              },
-              -- To right-align the kind label https://github.com/Saghen/blink.cmp/pull/245#issuecomment-2463659508
-              components = {
-                -- kind_icon = { width = { fill = true } },
-                item_idx = {
-                  text = function(ctx)
-                    return ctx.idx == 10 and "0" or ctx.idx >= 10 and " " or tostring(ctx.idx) .. " "
-                  end,
-                  highlight = "BlinkCmpItemIdx", -- optional, only if you want to change its color
-                },
-              },
-            },
-            auto_show = function(ctx)
-              -- return ctx.mode ~= "cmdline" or not vim.tbl_contains({ "/", "?" }, vim.fn.getcmdtype())
-              return vim.fn.getcmdtype() == ":"
-            end,
+            -- winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder,CursorLine:PmenuSel,Search:None",
+            -- From blink.cmp source
+            -- winhighlight = "Normal:BlinkCmpMenu,FloatBorder:BlinkCmpMenuBorder,CursorLine:BlinkCmpMenuSelection,Search:None",
+            -- draw = {
+            --   padding = 2,
+            --   columns = {
+            --     { "item_idx", "kind_icon", "kind" },
+            --     { "label", "label_description", gap = 1 },
+            --   },
+            --   -- To right-align the kind label https://github.com/Saghen/blink.cmp/pull/245#issuecomment-2463659508
+            --   components = {
+            --     -- kind_icon = { width = { fill = true } },
+            --     item_idx = {
+            --       text = function(ctx)
+            --         return ctx.idx == 10 and "0" or ctx.idx >= 10 and " " or tostring(ctx.idx) .. " "
+            --       end,
+            --       highlight = "BlinkCmpItemIdx", -- optional, only if you want to change its color
+            --     },
+            --   },
+            -- },
+            -- Already in LazyVim
+            -- auto_show = function(ctx)
+            --   -- return ctx.mode ~= "cmdline" or not vim.tbl_contains({ "/", "?" }, vim.fn.getcmdtype())
+            --   return vim.fn.getcmdtype() == ":"
+            -- end,
             -- auto_show_delay_ms = 200,
-            direction_priority = function()
-              local ctx = require("blink.cmp").get_context()
-              local item = require("blink.cmp").get_selected_item()
-              if ctx == nil or item == nil then return { "s", "n" } end
-
-              local item_text = item.textEdit ~= nil and item.textEdit.newText or item.insertText or item.label
-              local is_multi_line = item_text:find("\n") ~= nil
-
-              -- after showing the menu upwards, we want to maintain that direction
-              -- until we re-open the menu, so store the context id in a global variable
-              if is_multi_line or vim.g.blink_cmp_upwards_ctx_id == ctx.id then
-                vim.g.blink_cmp_upwards_ctx_id = ctx.id
-                return { "n", "s" }
-              end
-              return { "s", "n" }
-            end,
+            -- Didn't like
+            -- direction_priority = function()
+            --   local ctx = require("blink.cmp").get_context()
+            --   local item = require("blink.cmp").get_selected_item()
+            --   if ctx == nil or item == nil then return { "s", "n" } end
+            --
+            --   local item_text = item.textEdit ~= nil and item.textEdit.newText or item.insertText or item.label
+            --   local is_multi_line = item_text:find("\n") ~= nil
+            --
+            --   -- after showing the menu upwards, we want to maintain that direction
+            --   -- until we re-open the menu, so store the context id in a global variable
+            --   if is_multi_line or vim.g.blink_cmp_upwards_ctx_id == ctx.id then
+            --     vim.g.blink_cmp_upwards_ctx_id = ctx.id
+            --     return { "n", "s" }
+            --   end
+            --   return { "s", "n" }
+            -- end,
           },
           documentation = {
             auto_show = true,
-            auto_show_delay_ms = 50, -- 0
+            -- auto_show_delay_ms = 50, -- 0
             window = {
               -- border = "rounded",
               border = "single",
@@ -218,13 +225,14 @@ return {
               module = "blink-go-import",
               name = "Import",
             },
-            path = {
-              opts = {
-                get_cwd = function(_)
-                  return vim.fn.getcwd()
-                end,
-              },
-            },
+            path = {},
+            -- path = {
+            --   opts = {
+            --     get_cwd = function(_)
+            --       return vim.fn.getcwd()
+            --     end,
+            --   },
+            -- },
             avante = {
               module = "blink-cmp-avante",
               name = "Avante",

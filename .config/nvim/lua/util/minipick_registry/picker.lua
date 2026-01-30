@@ -34,6 +34,8 @@ function H.is_hidden_path(path)
   return path:find("/%.") ~= nil
 end
 
+local root = LazyVim.root
+
 -- Pickers ---------------------------------------------------------------------
 function M.pick_files(cwd, local_opts, opts)
   local_opts = local_opts or {}
@@ -42,7 +44,7 @@ function M.pick_files(cwd, local_opts, opts)
 
   opts = opts or {}
   opts.source = opts.source or {}
-  opts.source.cwd = opts.source.cwd or cwd or LazyVim.root()
+  opts.source.cwd = opts.source.cwd or cwd or root()
 
   require("mini.pick").registry.fuzzy_files(local_opts, opts)
 end
@@ -54,7 +56,7 @@ function M.pick_grep(pattern, local_opts, opts)
   local_opts = local_opts or {}
   opts = opts or {}
   opts.source = opts.source or {}
-  opts.source.cwd = opts.source.cwd or LazyVim.root()
+  opts.source.cwd = opts.source.cwd or root()
   local_opts.pattern = pattern
 
   local MiniPick = require("mini.pick")
@@ -78,7 +80,7 @@ function M.pick_grep_live(local_opts, opts)
     local gem_root = path:match(mise_gem_dir .. "/[^/]+")
     if gem_root then opts.source.cwd = gem_root end
   end
-  if not opts.source.cwd then opts.source.cwd = LazyVim.root() end
+  if not opts.source.cwd then opts.source.cwd = root() end
 
   local MiniPick = require("mini.pick")
   MiniPick.registry.rg_live_grep(local_opts, opts)
@@ -88,7 +90,7 @@ function M.pick_lsp2(local_opts, opts)
   opts = opts or {}
   local MiniPick = require("mini.pick")
   if not MiniPick.registry.lsp2 then require("util.minipick_registry.lsp2").setup(MiniPick) end
-  opts = vim.tbl_deep_extend("force", opts, { hinted = { enable = true, use_autosubmit = true } })
+  opts = vim.tbl_deep_extend("force", opts, { hinted = { enable = false, use_autosubmit = true } })
   return MiniPick.registry.lsp2(local_opts, opts)
 end
 

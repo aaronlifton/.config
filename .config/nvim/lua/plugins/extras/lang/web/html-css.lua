@@ -1,5 +1,3 @@
-local stylelint = "stylelint"
-
 return {
   {
     "nvim-treesitter/nvim-treesitter",
@@ -18,33 +16,20 @@ return {
     opts = {
       servers = {
         emmet_language_server = {
-          filetypes = {
-            "html",
-            "eruby",
-            -- "javascript",
+          init_options = {
+            html = {
+              options = {
+                -- For possible options, see: https://github.com/emmetio/emmet/blob/master/src/config.ts#L79-L267
+                ["bem.enabled"] = true,
+              },
+            },
           },
+          -- See ~/.local/share/nvim/lazy/nvim-lspconfig/lsp/emmet_language_server.lua
+          -- and ~/.local/share/nvim/lazy/mason-lspconfig.nvim/lua/mason-lspconfig/filetype_mappings.lua
         },
-        -- emmet_ls = {
-        --   filetypes = {
-        --     "html",
-        --     "javascriptreact",
-        --     "javascript.jsx",
-        --     "typescriptreact",
-        --     "typescript.tsx",
-        --     "eruby",
-        --     "svelte",
-        --     "vue",
-        --     "astro",
-        --   },
-        --   init_options = {
-        --     html = {
-        --       options = {
-        --         -- For possible options, see: https://github.com/emmetio/emmet/blob/master/src/config.ts#L79-L267
-        --         ["bem.enabled"] = true,
-        --       },
-        --     },
-        --   },
-        -- },
+        emmet_ls = {
+          enabled = false,
+        },
         html = {},
         cssmodules_ls = {},
         css_variables = {},
@@ -53,7 +38,7 @@ return {
             compatibleVendorPrefixes = "ignore",
             vendorPrefix = "ignore",
             unknownVendorSpecificProperties = "ignore",
-            -- unknownProperties = "ignore", -- duplicate with stylelint
+            -- unknownProperties = "ignore", -- duplicate with "stylelint"
             duplicateProperties = "warning",
             emptyRules = "warning",
             importStatement = "warning",
@@ -67,11 +52,6 @@ return {
           },
         },
       },
-      -- setup = {
-      --   emmet_ls = function(_, opts)
-      --     opts.capabilities.textDocument.completion.completionItem.snippetSupport = true
-      --   end,
-      -- },
     },
   },
   {
@@ -95,16 +75,16 @@ return {
     opts = {
       linters_by_ft = {
         html = { "htmlhint" },
-        css = { stylelint },
-        scss = { stylelint },
-        less = { stylelint },
-        sugarss = { stylelint },
-        vue = { stylelint },
-        wxss = { stylelint },
-        -- javascript = { stylelint },
-        -- javascriptreact = { stylelint },
-        -- typescript = { stylelint },
-        -- typescriptreact = { stylelint },
+        css = { "stylelint" },
+        scss = { "stylelint" },
+        less = { "stylelint" },
+        sugarss = { "stylelint" },
+        vue = { "stylelint" },
+        wxss = { "stylelint" },
+        -- javascript = { "stylelint" },
+        -- javascriptreact = { "stylelint" },
+        -- typescript = { "stylelint" },
+        -- typescriptreact = { "stylelint" },
       },
     },
   },
@@ -119,40 +99,4 @@ return {
       },
     },
   },
-  -- Replaced by emmet_language_server
-  -- {
-  --   "nvim-cmp",
-  --   optional = true,
-  --   dependencies = {
-  --     -- codeium
-  --     {
-  --       "dcampos/cmp-emmet-vim",
-  --       enabled = false,
-  --       keys = {
-  --         {
-  --           "<c-y>",
-  --           mode = "i",
-  --           desc = "Emmet expansion in insert mode (you probably need to type `<c-y>,`)",
-  --         },
-  --       },
-  --       dependencies = {
-  --         {
-  --           "mattn/emmet-vim",
-  --           -- config = function()
-  --           --   -- expand emmet snippet with <c-y>,
-  --           --   vim.g.user_emmet_leader_key = "<C-y>"
-  --           -- end,
-  --         },
-  --       },
-  --     },
-  --   },
-  --   ---@param opts cmp.ConfigSchema
-  --   opts = function(_, opts)
-  --     if LazyVim.has("cmp-emmet-vim") then
-  --       table.insert(opts.sources, 1, {
-  --         name = "emmet_vim",
-  --       })
-  --     end
-  --   end,
-  -- },
 }

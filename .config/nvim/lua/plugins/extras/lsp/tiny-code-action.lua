@@ -26,7 +26,7 @@ return {
     event = "LspAttach",
     keys = {
       {
-        "<space>ca",
+        "<leader>ca",
         function()
           require("tiny-code-action").code_action({})
         end,

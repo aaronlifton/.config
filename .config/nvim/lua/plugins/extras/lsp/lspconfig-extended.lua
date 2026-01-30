@@ -43,6 +43,7 @@ return {
     opts = function(_, opts)
       vim.list_extend(opts.servers["*"].keys, {
         -- stylua: ignore start
+        { "<leader>ca", false }, -- For tiny-code-action
         { "<leader>cil", function() Snacks.picker.lsp_config() end, desc = "Lsp" },
         { prefix .. "c", function() Snacks.picker.lsp_config() end, desc = "Lsp" },
         { prefix .. "r", "<cmd>LspRestart<cr>", desc = "Restart Lsp" },

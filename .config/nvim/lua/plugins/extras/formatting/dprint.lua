@@ -18,49 +18,10 @@ return {
       },
     },
   },
-  -- TODO: Check if lsp dprint can format instead of conform
-  -- {
-  --   "neovim/nvim-lspconfig",
-  --   optional = true,
-  --   ---@class PluginLspOpts
-  --   opts = {
-  --     servers = {
-  --       dprint = {
-  --         filetypes = {
-  --           -- "javascript",
-  --           -- "typescript",
-  --           "typescriptreact",
-  --           "javascriptreact",
-  --           "astro",
-  --           "svelte",
-  --           "vue",
-  --           -- 'json',
-  --           -- 'jsonc',
-  --           "markdown",
-  --           "toml",
-  --         },
-  --         on_new_config = function(new_config)
-  --           local buf = vim.api.nvim_get_current_buf()
-  --           new_config.enabled = require("conform").get_formatter_info("dprint", buf).available
-  --         end,
-  --       },
-  --     },
-  --   },
-  -- },
   {
     "stevearc/conform.nvim",
     ---@param opts conform.setupOpts
     opts = function(_, opts)
-      -- opts.formatters_by_ft = opts.formatters_by_ft or {}
-      -- for _, ft in ipairs({ "jsonc", "json" }) do
-      --   opts.formatters_by_ft[ft] = opts.formatters_by_ft[ft] or {}
-      --   vim.list_extend(opts.formatters_by_ft[ft], json_formatters)
-      -- end
-      -- for _, ft in ipairs({ "typescriptreact", "javascriptreact", "astro", "svelte", "vue" }) do
-      --   opts.formatters_by_ft[ft] = opts.formatters_by_ft[ft] or {}
-      --   -- vim.list_extend(opts.formatters_by_ft[ft], formatters)
-      --   table.insert(opts.formatters_by_ft[ft], "dprint")
-      -- end
       require("util.conform").add_formatters(opts, {
         jsonc = formatters,
         json = formatters,

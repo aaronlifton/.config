@@ -13,51 +13,31 @@ return {
       table.insert(opts.formatters_by_ft.rust, "rustfmt")
     end,
   },
-  {
-    "mrcjkb/rustaceanvim",
-    optional = true,
-    opts = {
-      server = {
-        default_settings = {
-          -- rust-analyzer language server configuration
-          ["rust-analyzer"] = {
-            cargo = {
-              allFeatures = false,
-              features = { "luajit" },
-              -- show clippy on save
-              checkOnSave = {
-                command = "clippy",
-              },
-            },
-          },
-        },
-      },
-    },
-    config = function()
-      ---@type rustaceanvim.Opts
-      vim.g.rustaceanvim = {
-        ---@type rustaceanvim.tools.Opts
-        tools = {
-          -- ...
-        },
-        ---@type rustaceanvim.lsp.ClientOpts
-        server = {
-          on_attach = function(client, bufnr)
-            -- Set keybindings, etc. here.
-          end,
-          default_settings = {
-            ["rust-analyzer"] = {},
-          },
-          cmd = nil, -- Use default command
-          -- ...
-        },
-        ---@type rustaceanvim.dap.Opts
-        dap = {
-          -- ...
-        },
-      }
-    end,
-  },
+  -- NOTE: LazyVim rustaceanvim settings are fine
+  -- {
+  --   "mrcjkb/rustaceanvim",
+  --   optional = true,
+  --   ---@type rustaceanvim.Opts
+  --   opts = {
+  --     ---@type rustaceanvim.lsp.ClientOpts
+  --     server = {
+  --       default_settings = {
+  --         -- rust-analyzer language server configuration
+  --         ["rust-analyzer"] = {
+  --           cargo = {
+  --             features = { "luajit" },
+  --             -- show clippy on save
+  --             -- `check` is handled by ~/.local/share/nvim/lazy/rustaceanvim/lua/rustaceanvim/config/server.lua:29
+  --           },
+  --         },
+  --       },
+  --     },
+  --     ---@type rustaceanvim.tools.Opts
+  --     tools = {},
+  --     ---@type rustaceanvim.dap.Opts
+  --     dap = {},
+  --   },
+  -- },
   {
     "Saecki/crates.nvim",
     optional = true,

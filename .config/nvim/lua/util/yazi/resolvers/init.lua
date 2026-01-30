@@ -7,7 +7,7 @@ setmetatable(M, {
     if ok then
       return module
     else
-      error("Module util.yazi.resolvers." .. key .. " not found")
+      return nil
     end
   end,
 })

@@ -71,9 +71,7 @@ function recur_children(child, file, extract_child)
   recur = function(node)
     vim.api.nvim_echo({ { (node:type() or "") .. "\n", "Title" }, { vim.inspect(node), "Normal" } }, true, {})
     local result = extract_child(node, file)
-    if result ~= nil then
-      table.insert(results, result)
-    end
+    if result ~= nil then table.insert(results, result) end
     for child_node in node:iter_noderen() do
       recur(child_node)
     end
@@ -99,10 +97,8 @@ function M.ts_extract_function(opts)
 end
 
 function ts_source.lang.ruby.functions(file)
-  vim.api.nvim_echo({ { "here", "Title" }, { vim.inspect(file), "Normal" } }, true, {})
   return ts_source.ts_extract(
     file,
-    -- ts_source.ts_extract_function({
     M.ts_extract_function({
       type = "function_declaration",
       get_name = function(child)
@@ -124,9 +120,7 @@ end
 
 local store = require("model.store")
 function store.add_ruby_functions(glob)
-  if glob == nil then
-    glob = vim.fn.expand("%")
-  end
+  if glob == nil then glob = vim.fn.expand("%") end
   -- Extracts lua functions as items
   local function to_ruby_functions(file)
     return vim.tbl_map(normalize_function_item_filepath_to_store, ts_source.lang.ruby.functions(file))
@@ -160,9 +154,7 @@ function M.extract2() end
 function M.extract()
   local filepath = "/Users/aaron/Code/rails/birddex/app/controllers/api/v1/birds_controller.rb"
   local file = io.open(filepath, "r")
-  if file == nil then
-    error("Unable to open file: " .. filepath)
-  end
+  if file == nil then error("Unable to open file: " .. filepath) end
 
   local content = file:read("*a")
   ts_source.ts_extract(

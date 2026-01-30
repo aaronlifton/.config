@@ -62,7 +62,7 @@ return {
       -- directory to the directory that yazi was in before it was closed. Defaults
       -- to being off (`false`)
       yazi_floating_window_border = "none",
-      change_neovim_cwd_on_close = true,
+      change_neovim_cwd_on_close = false,
       integrations = {
         grep_in_directory = "fzf-lua",
         grep_in_selected_files = "fzf-lua",
@@ -82,20 +82,13 @@ return {
             if vim.bo.filetype == "markdown" then
               mode = "markdown"
             else
-              mode = "plain"
+              return relative_from_cwd
             end
           end
 
           local resolvers = require("util.yazi.resolvers")
           local Resolver = resolvers[mode]
-          if Resolver == nil then
-            vim.notify(
-              string.format("Yazi resolver mode '%s' not found, falling back to plain", mode),
-              vim.log.levels.WARN,
-              { title = "Yazi" }
-            )
-            return relative_from_cwd
-          end
+          if Resolver == nil then return relative_from_cwd end
 
           return Resolver.resolve(selected_abs_path, relative_from_cwd)
         end,

@@ -34,7 +34,7 @@ local function create_my_buffers(MiniPick)
     local opts = {
       source = { name = "Buffers", items = items, show = show },
       mappings = buffer_mappings,
-      hinted = { enable = true, use_autosubmit = true },
+      -- hinted = { enable = true, use_autosubmit = true },
     }
     return MiniPick.start(opts)
   end

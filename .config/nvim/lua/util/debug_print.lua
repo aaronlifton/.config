@@ -8,7 +8,7 @@ M.log_cword = function()
   local new_row
   if filetype == "lua" then
     new_row = ('vim.api.nvim_echo({{ "%s\\n", "Title"}, { vim.inspect(%s), "Normal" } }, true, {})'):format(word, word)
-  elseif filetype == "javascript" then
+  elseif vim.list_contains({ "javascript", "javascriptreact", "typescript", "typescriptreact" }, filetype) then
     new_row = ("console.log('### %s: ', { %s })"):format(word, word)
   elseif filetype == "ruby" then
     new_row = ('Rails.logger.info("%s")'):format(word)
@@ -21,7 +21,6 @@ M.log_cword = function()
   local row = pos[1]
   local col = pos[2]
   local function cb(scope) end
-  vim.notify("here", vim.log.levels.INFO)
   Snacks.scope.get(cb, {
     buf = buf,
     pos = {

@@ -75,6 +75,10 @@ return {
         },
       }
 
+      for idx, _opts in ipairs(opts.right) do
+        if _opts.ft == "dbui" then table.remove(_opts, idx) end
+      end
+
       return opts
     end,
   },

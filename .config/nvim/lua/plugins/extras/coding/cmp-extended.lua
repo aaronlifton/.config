@@ -281,4 +281,22 @@ return {
       },
     },
   },
+  {
+    "zbirenbaum/copilot.lua",
+    optional = true,
+    -- event = "InsertEnter",
+    keys = keys,
+    config = function(_, opts)
+      if vim.g.ai_cmp then
+        local cmp = require("cmp")
+        cmp.event:on("menu_opened", function()
+          vim.b.copilot_suggestion_hidden = true
+        end)
+
+        cmp.event:on("menu_closed", function()
+          vim.b.copilot_suggestion_hidden = false
+        end)
+      end
+    end,
+  },
 }

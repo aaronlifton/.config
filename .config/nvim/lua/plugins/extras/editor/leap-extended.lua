@@ -346,7 +346,7 @@ return {
       {
         "<leader>ol",
         function()
-          require("leap.user").set_default_mappings()
+          require("leap.user").add_default_mappings()
           vim.notify("Leap mappings set to new defaults", vim.log.levels.INFO)
         end,
         desc = "Set leap mappings",
@@ -367,7 +367,7 @@ return {
       for k, v in pairs(opts) do
         leap.opts[k] = v
       end
-      require("leap.user").set_default_mappings()
+      -- require("leap.user").set_default_mappings()
       require("leap.user").set_repeat_keys("<enter>", "<backspace>")
       -- require("leap.user").set_repeat_keys(";", ".")
 
@@ -401,8 +401,8 @@ return {
             -- object: when entering `ar`/`ir`, consume the next character, and
             -- create the input from that character concatenated to `a`/`i`.
             local ok, ch = pcall(vim.fn.getcharstr) -- pcall for handling <C-c>
-            if not ok or ch == vim.keycode("<esc>") then return end
-            require("leap.remote").action({ input = ai .. ch, vim_opts = { ["wo.scrolloff"] = 0 } })
+            if not ok or (ch == vim.keycode("<esc>")) then return end
+            require("leap.remote").action({ input = ai .. ch })
           end)
         end
 

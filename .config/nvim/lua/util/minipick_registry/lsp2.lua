@@ -206,7 +206,6 @@ local function create_lsp_picker(MiniPick)
         -- local lang = vim.treesitter.language.get_lang(ft)
         -- local lang = Snacks.util.get_lang(ft)
         -- if vim.tbl_contains({ "latex" }, lang) then lang = nil end
-        -- vim.api.nvim_echo({ { vim.inspect({ buf = buf, lang = lang, ft = ft }), "Normal" } }, true, {})
         --
         -- if not (lang and pcall(vim.treesitter.start, buf, lang)) then vim.bo[buf].syntax = ft end
         if ft then vim.bo[buf_id].filetype = ft end

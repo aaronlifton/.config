@@ -1,24 +1,22 @@
+-- NOTE: now using biome lsp. need to `biome init` in a repo to active it.
+
 -- Adapted from lazyvim.extras.formatters.biome to support global prettier
 -- config (vim.g.lazyvim_prettier_needs_config = true)
-
-local biome_needs_config = false
 
 -- https://biomejs.dev/internals/language-support/
 local supported = {
   "astro",
   "css",
-  -- "graphql",
+  "graphql",
   -- "html",
   "javascript",
   "javascriptreact",
   "json",
   "jsonc",
-  -- "markdown",
   "svelte",
   "typescript",
   "typescriptreact",
   "vue",
-  -- "yaml",
 }
 
 return {
@@ -51,19 +49,9 @@ return {
 
       opts.formatters = opts.formatters or {}
       opts.formatters.biome = {
+        command = "mise which biome",
         require_cwd = true,
       }
-    end,
-  },
-
-  -- none-ls support
-  {
-    "nvimtools/none-ls.nvim",
-    optional = true,
-    opts = function(_, opts)
-      local nls = require("null-ls")
-      opts.sources = opts.sources or {}
-      table.insert(opts.sources, nls.builtins.formatting.biome)
     end,
   },
 }

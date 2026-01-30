@@ -831,11 +831,6 @@ map("n", "<leader>15", function()
   vim.notify("Changed directory to: " .. file_dir, vim.log.levels.INFO)
 end, { desc = "CD to current file directory" })
 
--- map("n", "<leader>ca", function()
---   require("tiny-code-action").code_action({})
--- end, { noremap = true, silent = true })
---
-
 map("n", "<leader>ayC", function()
   require("util.llm_context").codex.yank_line_with_diagnostics()
 end, { desc = "Yank line with diagnostics" })
