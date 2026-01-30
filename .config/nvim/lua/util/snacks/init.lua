@@ -1,8 +1,11 @@
 ---@class util.snacks
 ---@field pickers util.snacks.pickers
+---@field actions util.snacks.actions
 local M = {
   pickers = require("util.snacks.pickers"),
+  actions = require("util.snacks.actions"),
 }
+
 function M.nested_input()
   Snacks.input({ prompt = "From: ", icon = "" }, function(from)
     if from == "" then return end

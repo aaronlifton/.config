@@ -1,6 +1,27 @@
+---@class snacks.picker.Config
+---@field regex boolean
+---@field glob string[]
+
 return {
   {
     "folke/snacks.nvim",
+    init = function()
+      local Grep = require("snacks.picker.source.grep")
+      local orig_grep = Grep.grep
+
+      -- Ensure grep's opts.glob is set before building ripgrep args.
+      ---@diagnostic disable-next-line: duplicate-set-field
+      function Grep.grep(opts, ctx)
+        if ctx and ctx.picker and ctx.picker.opts then
+          vim.iter({ "glob", "regex" }):each(function(opt)
+            if ctx.picker.opts[opt] ~= nil then
+              opts = vim.tbl_deep_extend("force", {}, opts, { [opt] = ctx.picker.opts[opt] })
+            end
+          end)
+        end
+        return orig_grep(opts, ctx)
+      end
+    end,
     opts = {
       -- Already enabled by LazyVim
       -- scope = { enabled = true },
@@ -55,7 +76,21 @@ return {
                 mode = { "n", "i" },
               },
               ["<M-s>"] = { "leap", mode = { "n", "i" } },
-              ["s"] = { "leap" },
+              -- Flag bindings
+              -- ["<M-j>"] = { "toggle_js_ts", mode = { "n", "i" } },
+              ["<M-j>"] = { "toggle_js_no_tests", mode = { "n", "i" } },
+              ["<M-o>"] = { "toggle_js_tests", mode = { "n", "i" } },
+              ["<M-t>"] = { "toggle_tests", mode = { "n", "i" } },
+              ["<M-x>"] = { "toggle_no_tests", mode = { "n", "i" } },
+              ["<M-c>"] = { "toggle_type_conf", mode = { "n", "i" } },
+              ["<M-W>"] = { "toggle_type_web", mode = { "n", "i" } },
+              ["<M-f>"] = { "toggle_fixed_strings", mode = { "n", "i" } },
+              ["<M-u>"] = { "toggle_dotall", mode = { "n", "i" } },
+              ["<M-l>"] = { "toggle_type_lua", mode = { "n", "i" } },
+              ["<M-r>"] = { "toggle_type_ruby", mode = { "n", "i" } },
+              ["<M-P>"] = { "toggle_type_python", mode = { "n", "i" } },
+              ["<M-J>"] = { "toggle_type_js", mode = { "n", "i" } },
+              ["<M-m>"] = { "toggle_type_md", mode = { "n", "i" } },
               -- ["<c-u>"] = { "preview_scroll_up", mode = { "i", "n" } },
               -- ["<a-j>"] = { "list_scroll_down", mode = { "i", "n" } },
               -- ["<c-d>"] = { "preview_scroll_down", mode = { "i", "n" } },
@@ -70,14 +105,72 @@ return {
               return vim.bo[vim.api.nvim_win_get_buf(win)].filetype == "snacks_picker_list"
             end, all_wins)
 
+            -- TODO: use lower case keys as labels
             require("leap").leap({
-              -- pattern = "^",
               target_windows = wins,
               action = function(target)
                 local idx = picker.list:row2idx(target.pos[1])
                 picker.list:_move(idx, true, true)
               end,
+              pattern = "\\%>0v\\%<2v.",
+              inclusive = false,
             })
+          end,
+          ---@param p snacks.Picker
+          toggle_js_no_tests = function(p)
+            Util.snacks.actions.toggle_iglob("js_no_tests", p)
+          end,
+          toggle_js_tests = function(p)
+            Util.snacks.actions.toggle_iglob("js_tests", p)
+          end,
+          toggle_tests = function(p)
+            Util.snacks.actions.toggle_iglob("tests", p)
+          end,
+          toggle_no_tests = function(p)
+            Util.snacks.actions.toggle_iglob("no_tests", p)
+          end,
+          toggle_js_ts = function(p)
+            Util.snacks.actions.toggle_iglob("js_ts", p)
+          end,
+          toggle_no_bundle = function(p)
+            Util.snacks.actions.toggle_iglob("no_bundle", p)
+          end,
+          toggle_type_conf = function(p)
+            Util.snacks.actions.toggle_ft("type_conf", p)
+          end,
+          toggle_type_web = function(p)
+            Util.snacks.actions.toggle_ft("type_web", p)
+          end,
+          toggle_context = function(p)
+            Util.snacks.actions.toggle_flag("context", p)
+          end,
+          ---@param p snacks.Picker
+          toggle_fixed_strings = function(p)
+            ---@diagnostic disable-next-line: inject-field
+            if p.opts.regex then
+              p.opts.regex = false
+            else
+              p.opts.regex = true
+            end
+            p:refresh()
+          end,
+          toggle_dotall = function(p)
+            Util.snacks.actions.toggle_flag("dotall", p)
+          end,
+          toggle_type_lua = function(p)
+            Util.snacks.actions.toggle_ft("type_lua", p)
+          end,
+          toggle_type_ruby = function(p)
+            Util.snacks.actions.toggle_ft("type_ruby", p)
+          end,
+          toggle_type_python = function(p)
+            Util.snacks.actions.toggle_ft("type_python", p)
+          end,
+          toggle_type_js = function(p)
+            Util.snacks.actions.toggle_ft("type_js", p)
+          end,
+          toggle_type_md = function(p)
+            Util.snacks.actions.toggle_ft("type_md", p)
           end,
         },
         layouts = {
@@ -185,6 +278,9 @@ return {
       -- In addition to LazyVim's <leader>wm and <leader>uZ mappings:
       { "<leader>z", function() Snacks.zen.zoom() end, desc = "Zoom" },
       { "<leader>fP", function() Snacks.picker.projects() end, desc = "Projects" },
+      -- Override Snacks.picker.notifications keymap
+      -- { "<leader>n", function() Snacks.notifier.show_history() end, desc = "Notification History" },
+      { "<leader>n", function() Snacks.picker.notifications() end, desc = "Notification History" },
       -- { "<leader>Z", function() Snacks.zen.zen() end, desc = "Zen" },
       -- { "<leader>LS",  function() Snacks.scratch.select() end, desc = "Select Scratch Buffer" },
       -- { "<leader>S",  function() Snacks.scratch.select() end, desc = "Select Scratch Buffer" },
@@ -199,7 +295,7 @@ return {
       { "<leader>sD", function() Snacks.picker.diagnostics_buffer() end, desc = "Buffer Diagnostics" },
       { "<leader>sh", function() Snacks.picker.help() end, desc = "Help Pages" },
       { "<leader>sj", function() Snacks.picker.jumps() end, desc = "Jumps" },
-      { "<leader>s<C-k>", function() Snacks.picker.keymaps() end, desc = "Keymaps" },
+      { "<leader>sk", function() Snacks.picker.keymaps() end, desc = "Keymaps" },
       { "<leader>sm", function() Snacks.picker.marks() end, desc = "Marks" },
       -- { '<leader>s/', function() Snacks.picker.search_history() end, desc = "Search History" },
       -- { "<leader>sc", function() Snacks.picker.command_history() end, desc = "Command History" },
@@ -210,15 +306,10 @@ return {
       end, desc = "Grep" },
       { "<leader>s<C-u>", function() Snacks.picker.undo() end, desc = "Undotree" },
       { "<leader>sX", function() Snacks.picker() end, desc = "Choose snacks picker" },
+      { "<leader>si", function() Snacks.picker.icons() end, desc = "Icons" },
 
       -- Picker
       { "<leader>fi", function() Snacks.picker.lazy() end, desc = "Plugins (Installed)" },
-
-      -- Override Snacks.picker.notifications keymap
-      -- { "<leader>n", function() Snacks.notifier.show_history() end, desc = "Notification History" },
-      { "<leader>n", function() Snacks.picker.notifications() end, desc = "Notification History" },
-
-      { "<leader>si", function() Snacks.picker.icons() end, desc = "Icons" },
       -- Alternate keymaps for testing
       { "<leader>f<C-f>", function() Snacks.picker.files() end, desc = "Find Files (Root Dir)" },
       -- { "g<C-d>", function() Snacks.picker.lsp_definitions() end, desc = "Goto Definition" },
@@ -284,7 +375,11 @@ return {
       if LazyVim.has("trouble.nvim") then
         return vim.tbl_deep_extend("force", opts or {}, {
           picker = {
-            actions = require("trouble.sources.snacks").actions,
+            actions = {
+              trouble_open = function(...)
+                return require("trouble.sources.snacks").actions.trouble_open.action(...)
+              end,
+            },
             win = {
               input = {
                 keys = {
