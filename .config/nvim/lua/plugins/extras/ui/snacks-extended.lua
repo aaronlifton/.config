@@ -1,7 +1,24 @@
 ---@class snacks.picker.Config
 ---@field regex boolean
 ---@field glob string[]
-local scroll_count = 0
+
+local M = {}
+
+M.ctx = { globs = {} }
+function M.add_glob()
+  local ok, glob = pcall(vim.fn.input, "iglob pattern: ")
+  if ok then
+    table.insert(M.ctx.globs, glob)
+    return glob
+  end
+end
+
+function M.remove_glob()
+  if #M.ctx.globs > 0 then
+    local removed = table.remove(M.ctx.globs)
+    return removed
+  end
+end
 
 return {
   {
@@ -60,14 +77,6 @@ return {
           },
         },
       },
-      sources = {
-        keymaps = {
-          actions = {
-            ["<CR>"] = { "edit_vsplit", mode = { "i", "n" } },
-            ["<C-v>"] = { "edit_vsplit", mode = { "i", "n" } },
-          },
-        },
-      },
       picker = {
         previewers = {
           git = {
@@ -92,6 +101,8 @@ return {
               -- Check defaults ~/.local/share/nvim/lazy/snacks.nvim/lua/snacks/picker/config/defaults.lua:226
               ["<M-s>"] = { "leap", mode = { "n", "i" } },
               ["<C-x>"] = { "leap", mode = { "n", "i" } },
+              ["<C-o>"] = { "add_glob", mode = { "n", "i" } },
+              ["<C-O>"] = { "remove_glob", mode = { "n", "i" } },
               -- Make same as fzf keymap
               ["<C-e>"] = { "toggle_live", mode = { "i", "n" } },
               -- Flag bindings
@@ -215,6 +226,14 @@ return {
           toggle_type_md = function(p)
             Util.snacks.actions.toggle_ft("markdown", p)
           end,
+          add_glob = function(p)
+            local glob = M.add_glob()
+            if glob then Util.snacks.actions.toggle_iglob(glob, p) end
+          end,
+          remove_glob = function(p)
+            local glob = M.remove_glob()
+            if glob then Util.snacks.actions.toggle_iglob(glob, p) end
+          end,
         },
         layouts = {
           default = {
@@ -316,7 +335,7 @@ return {
       --   end,
       --   desc = "Explorer Snacks (cwd)",
       -- },
-
+      { "<leader>sk", false },
       -- stylua: ignore start
       { "<leader>\\", function() Snacks.scratch() end, desc = "Toggle Scratch Buffer" },
       -- In addition to LazyVim's <leader>wm and <leader>uZ mappings:
@@ -339,7 +358,8 @@ return {
       { "<leader>sD", function() Snacks.picker.diagnostics_buffer() end, desc = "Buffer Diagnostics" },
       { "<leader>sh", function() Snacks.picker.help() end, desc = "Help Pages" },
       { "<leader>sj", function() Snacks.picker.jumps() end, desc = "Jumps" },
-      { "<leader>sk", function() Snacks.picker.keymaps() end, desc = "Keymaps" },
+      -- Can't edit file
+      { "<leader>s<C-k>", function() Snacks.picker.keymaps() end, desc = "Keymaps" },
       { "<leader>sm", function() Snacks.picker.marks() end, desc = "Marks" },
       -- { '<leader>s/', function() Snacks.picker.search_history() end, desc = "Search History" },
       -- { "<leader>sc", function() Snacks.picker.command_history() end, desc = "Command History" },

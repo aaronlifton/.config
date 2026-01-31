@@ -97,7 +97,7 @@ local function toggle_fd_exclude_patterns(patterns)
   end
 end
 
-local use_lazyvim_picker = true
+local use_lazyvim_picker = false
 local pick = use_lazyvim_picker and function(name, opts)
   return LazyVim.pick(name, opts)()
 end or function(name, opts)
@@ -246,39 +246,41 @@ return {
     "ibhagwan/fzf-lua",
     optional = true,
     dependencies = {
-      {
-        "drop-stones/fzf-lua-normal-mode",
-        enabled = true,
-        opts = {
-          keys = {
-            -- repeatable keys
-            { key = "j", action = "<Down>" },
-            { key = "k", action = "<Up>" },
-            { key = "gg", action = "<A-g>" },
-            { key = "G", action = "<A-G>" },
-            { key = "<C-u>", action = "<C-u>" },
-            { key = "<C-d>", action = "<C-d>" },
-            { key = "<M-v>", action = "<C-r>0" },
-            { key = "<C-w>", action = ":" },
-            -- additional user input keys
-            { key = "s", action = function() end, wait_user_input = true },
-            -- exit keys
-            { key = "q", action = "<Esc>", repeatable = false },
-            { key = "<Enter>", action = "<CR>", repeatable = false },
-            -- custom function keys
-            {
-              key = "z",
-              action = function()
-                vim.cmd("echo 'custom action'")
-              end,
-            },
-            -- dotall (?s:.) ; Example: "(?s:.),\n  "in"
-            { key = "<M-m>", action = "(?s:.)" },
-            -- regular (?-s:.)
-            { key = "<M-n>", action = "(?-s:.)" },
-          },
-        },
-      },
+      -- {
+      --   "drop-stones/fzf-lua-normal-mode",
+      --   enabled = true,
+      --   opts = {
+      --     keys = {
+      --       -- repeatable keys
+      --       { key = "j", action = "<Down>" },
+      --       { key = "k", action = "<Up>" },
+      --       { key = "gg", action = "<A-g>" },
+      --       { key = "G", action = "<A-G>" },
+      --       { key = "<C-u>", action = "<C-u>" },
+      --       { key = "<C-d>", action = "<C-d>" },
+      --       { key = "J", action = "<C-d>" },
+      --       { key = "K", action = "<C-u>" },
+      --       { key = "<M-v>", action = "<C-r>0" },
+      --       { key = "<C-w>", action = ":" },
+      --       -- additional user input keys
+      --       { key = "s", action = function() end, wait_user_input = true },
+      --       -- exit keys
+      --       { key = "q", action = "<Esc>", repeatable = false },
+      --       { key = "<Enter>", action = "<CR>", repeatable = false },
+      --       -- custom function keys
+      --       {
+      --         key = "z",
+      --         action = function()
+      --           vim.cmd("echo 'custom action'")
+      --         end,
+      --       },
+      --       -- dotall (?s:.) ; Example: "(?s:.),\n  "in"
+      --       { key = "<M-m>", action = "(?s:.)" },
+      --       -- regular (?-s:.)
+      --       { key = "<M-n>", action = "(?-s:.)" },
+      --     },
+      --   },
+      -- },
       -- { "drop-stones/fzf-lua-grep-context" },
     },
     opts = function(_, opts)
@@ -346,9 +348,6 @@ return {
     keys = {
       -- This is handled by mini.pick instead
       { "<leader>,", false },
-      { "<leader>sk", false },
-      -- { "<leader>sd", false },
-      -- { "<leader>sD", false },
       { "<leader>gd", false },
       { '<leader>s"', false }, -- Prefer snacks.picker register picker
       -- Switch around LazyVim bindings
@@ -387,6 +386,7 @@ return {
       { "<leader>gr", "<cmd>FzfLua git_branches<cr>", desc = "Branches" },
       { "<leader>sA", "<cmd>FzfLua treesitter<cr>", desc = "Treesiter Symbols" },
       { "<leader>sh", "<cmd>FzfLua helptags<cr>", desc = "Help Tags" },
+      { "<leader>sk", "<cmd>FzfLua keymaps<cr>", desc = "Key Maps" },
       -- { "<leader>sA", "<cmd>FzfLua treesitter<cr>", desc = "Treesiter Symbols" },
       -- { "<leader><C-s>", "<cmd>FzfLua spell_suggest<cr>", desc = "Spelling" },
       -- Disabled in favor of Snacks.picker (syntax highlighting, etc.)
