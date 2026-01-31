@@ -1,3 +1,4 @@
+---@class util.llmContext
 local M = {}
 
 ---@param path string

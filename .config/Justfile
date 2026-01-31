@@ -3,7 +3,7 @@
 set shell := ["/bin/zsh", "-cu"]
 
 # Public entrypoint
-mac: move_config clone_config brew karabiner mise bob helix chrome mise_install nvim_bootstrap
+mac: move_config clone_config brew karabiner mise bob helix chrome mise_install nvim_bootstrap setup_nvim
 
 move_config:
 	if [ -d "$HOME/.config" ]; then \
@@ -58,6 +58,10 @@ mise_install: mise
 
 nvim_bootstrap:
 	nvim --headless -c "MasonInstall stylua" -c "qall"
+
+setup_nvim:
+	sed -i '' '0,/local default_extras/{s/^.*local default_extras.*$/local default_extras = {} ---@type table<string, LazyVimDefault>/;}' "$HOME/.local/share/nvim/lazy/LazyVim/lua/lazyvim/config/init.lua"
+	just nvim_bootstrap
 
 update_nvim:
 	bob update

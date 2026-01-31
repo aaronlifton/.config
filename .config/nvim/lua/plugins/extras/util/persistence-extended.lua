@@ -57,7 +57,7 @@ return {
   keys = {
     -- stylua: ignore start
     { "<leader>ql", function() require("persistence").load() end, desc = "Restore Session" },
-    { "<leader>qS", function() require("persistence").select() end,desc = "Select Session" },
+    { "<leader>qr", function() require("persistence").select() end,desc = "Restore Session..." },
     { "<leader>qL", function() require("persistence").load({ last = true }) end, desc = "Restore Last Session" },
     { "<leader>qd", function() require("persistence").stop() end, desc = "Don't Save Current Session" },
     -- stylua: ignore end

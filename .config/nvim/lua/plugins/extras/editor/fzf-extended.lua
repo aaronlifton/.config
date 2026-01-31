@@ -240,7 +240,8 @@ local live_grep_opts = {
 local live_grep_opts_with_reset = vim.tbl_extend("force", live_grep_opts, { search = "" })
 
 return {
-  { import = "lazyvim.plugins.extras.editor.fzf" },
+  -- { import = "lazyvim.plugins.extras.editor.fzf" },
+  { import = "plugins.extras.editor.fzf" },
   { import = "plugins.extras.editor.telescope.urlview" },
   {
     "ibhagwan/fzf-lua",
@@ -294,6 +295,12 @@ return {
       config.defaults.actions.files["alt-t"] = require("fzf-lua.actions").file_tabedit
       config.defaults.actions.files["ctrl-q"] = require("fzf-lua.actions").file_sel_to_qf
       config.defaults.actions.files["ctrl-t"] = require("util.fzf.actions").add_selected
+      config.defaults.keymap.fzf["ctrl-u"] = "half-page-up"
+      config.defaults.keymap.fzf["ctrl-d"] = "half-page-down"
+      config.defaults.keymap.fzf["ctrl-f"] = "preview-page-down"
+      config.defaults.keymap.fzf["ctrl-b"] = "preview-page-up"
+      config.defaults.keymap.builtin["<c-f>"] = "preview-page-down"
+      config.defaults.keymap.builtin["<c-b>"] = "preview-page-up"
 
       return vim.tbl_extend("force", opts, {
         -- fzf_bin = "sk",

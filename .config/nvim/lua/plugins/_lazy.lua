@@ -5,6 +5,9 @@ end
 local status, config_path = pcall(vim.api.nvim_get_var, "config_path")
 if status then add_to_runtimepath(config_path) end
 
+-- NOTE: must set `default_extras` to `{}` here:
+-- ~/.local/share/nvim/lazy/LazyVim/lua/lazyvim/config/init.lua:353
+
 return {
   {
     "LazyVim/LazyVim",

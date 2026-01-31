@@ -61,7 +61,6 @@ g.smooth_scroll_provider = "snacks" -- "cinnamon", mini.animate", "snacks"
 g.dprint_needs_config = true
 -- g.lazyvim_picker = "fzf" -- Already enabled by LazyVim fzf extra
 -- g.lazyvim_picker = "telescope" -- for testing plugins
-g.lazyvim_picker = "snacks"
 
 -------------------------------------------------
 

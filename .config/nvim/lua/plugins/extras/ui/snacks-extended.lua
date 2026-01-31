@@ -164,6 +164,7 @@ return {
               ["<M-r>"] = { "toggle_type_ruby", mode = { "n", "i" } },
               ["<M-P>"] = { "toggle_type_python", mode = { "n", "i" } },
               ["<M-J>"] = { "toggle_type_js", mode = { "n", "i" } },
+              ["<M-t>"] = { "cycle_timeframe", mode = { "i", "n" } },
               -- Overrides toggle_maximize
               ["<M-S-m>"] = { "toggle_type_md", mode = { "n", "i" } },
               ["<F7>"] = { "toggle_maximize", mode = { "i", "n" } },
@@ -174,8 +175,8 @@ return {
             },
           },
         },
+        --- @type table<string, string|fun(self: snacks.Picker, item?: snacks.picker.Item, action?: snacks.picker.Action)>
         actions = {
-          ---@param picker snacks.Picker
           leap = function(picker)
             local all_wins = vim.api.nvim_list_wins()
             local wins = vim.tbl_filter(function(win)
@@ -196,24 +197,21 @@ return {
               },
             })
           end,
-          ---@param p snacks.Picker
+          -- Make scrolling behave like fzf-lua
           list_scroll_down2 = function(p)
             local target = math.min(p.list.cursor + 24, p.list:count())
             p.list:move(target, true, true)
           end,
-          ---@param p snacks.Picker
           list_scroll_up2 = function(p)
             local target = math.max(p.list.cursor - 24, 1)
             p.list:move(target, true, true)
           end,
-          ---@param p snacks.Picker
           list_center = function(p)
             local height = p.list.state.height or p.list:height()
             local middle = math.floor((height + 1) / 2)
             local cursor = p.list.cursor
             p.list:view(cursor, cursor - middle + 1)
           end,
-          ---@param p snacks.Picker
           toggle_js_no_tests = function(p)
             Util.snacks.actions.toggle_lob("js_no_tests", p)
           end,
@@ -241,18 +239,25 @@ return {
           toggle_context = function(p)
             Util.snacks.actions.toggle_flag("context", p)
           end,
-          ---@param p snacks.Picker
-          -- toggle_fixed_strings = function(p)
-          --   ---@diagnostic disable-next-line: inject-field
-          --   if p.opts.regex then
-          --     p.opts.regex = false
-          --   else
-          --     p.opts.regex = true
-          --   end
-          --   p:refresh()
-          -- end,
           toggle_dotall = function(p)
-            Util.snacks.actions.toggle_flag("dotall", p)
+            local did_remove = Util.snacks.actions.toggle_flag("dotall", p)
+            local dotall_pattern = ".*\\n(?s:.).*"
+            local query = p.opts.pattern
+            if type(query) ~= "string" then
+              vim.notify(("opts.pattern is a `%s`"):format(type(query)))
+              Util.fs.debug_tmp(vim.inspect(p.opts))
+              return
+            end
+
+            if not did_remove then
+              -- Add (?s:.) after current query
+              if not query:find(vim.pesc(dotall_pattern), 1, true) then query = query .. dotall_pattern end
+            else
+              -- Remove (?s:.) from query
+              query = query:gsub(vim.pesc(dotall_pattern), "")
+            end
+            ---@diagnostic disable-next-line: param-type-mismatch
+            p.opts.search = query
           end,
           toggle_type_lua = function(p)
             Util.snacks.actions.toggle_ft("lua", p)
@@ -266,7 +271,6 @@ return {
           toggle_type_js = function(p)
             Util.snacks.actions.toggle_ft({ "js", "ts" }, p)
           end,
-          ---@param p snacks.Picker
           toggle_type_md = function(p)
             Util.snacks.actions.toggle_ft("markdown", p)
           end,
@@ -279,13 +283,15 @@ return {
             vim.api.nvim_echo({ { vim.inspect({ glob = glob }), "Normal" } }, true, {})
             if glob then Util.snacks.actions.toggle_glob(glob, p) end
           end,
-          ---@param p snacks.Picker
           toggle_regex2 = function(p)
             if p.opts.source == "files" then
               p:action("toggle_live")
             else
               p:action("toggle_regex")
             end
+          end,
+          cycle_timeframe = function(p)
+            Util.snacks.actions.cycle_flag({ "week", "two_days", "today" }, p, { "week", "two_days", "today" })
           end,
         },
         layouts = {
@@ -424,8 +430,6 @@ return {
       -- { "<leader>s<C-b>", function() Snacks.picker.lines() end, desc = "Lines" },
       { "<leader>sB", function() Snacks.picker.grep_buffers() end, desc = "Grep Buffers" },
       { '<leader>s"', function() Snacks.picker.registers() end, desc = "Registers" },
-      { "<leader>sd", function() Snacks.picker.diagnostics() end, desc = "Diagnostics" },
-      { "<leader>sD", function() Snacks.picker.diagnostics_buffer() end, desc = "Buffer Diagnostics" },
       { "<leader>sh", function() Snacks.picker.help() end, desc = "Help Pages" },
       { "<leader>sj", function() Snacks.picker.jumps() end, desc = "Jumps" },
       -- Can't edit file
@@ -445,7 +449,7 @@ return {
       -- Picker
       { "<leader>fi", function() Snacks.picker.lazy() end, desc = "Plugins (Installed)" },
       -- Alternate keymaps for testing
-      { "<leader>f<C-f>", function() Snacks.picker.files() end, desc = "Find Files (Root Dir)" },
+      -- { "<leader>f<C-f>", function() Snacks.picker.files() end, desc = "Find Files (Root Dir)" },
       -- { "g<C-d>", function() Snacks.picker.lsp_definitions() end, desc = "Goto Definition" },
 
       -- git

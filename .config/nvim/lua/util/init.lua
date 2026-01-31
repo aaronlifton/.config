@@ -7,12 +7,13 @@
 ---@field debug util.debug
 ---@field display util.display
 ---@field format util.format
+---@field fs util.fs
 ---@field fzf util.fzf
 ---@field git util.git
 ---@field lang util.lang
 ---@field leap util.leap
 ---@field lint util.lint
----@field llmContext util.llmContext
+---@field llm_context util.llmContext
 ---@field lsp util.lsp
 ---@field model util.model
 ---@field nui util.nui
