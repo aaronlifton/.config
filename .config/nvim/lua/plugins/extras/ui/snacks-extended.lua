@@ -20,12 +20,49 @@ function M.remove_glob()
   end
 end
 
+M.layouts = {
+  vscode = {
+    hidden = { "preview" },
+    layout = {
+      backdrop = false,
+      row = 1,
+      width = 0.4,
+      min_width = 80,
+      height = 0.4,
+      border = "none",
+      box = "vertical",
+      { win = "input", height = 1, border = true, title = "{title} {live} {flags}", title_pos = "center" },
+      { win = "list", border = "hpad" },
+      { win = "preview", title = "{preview}", border = true },
+    },
+  },
+  center = {
+    hidden = { "preview" },
+    layout = {
+      box = "horizontal",
+      width = 0.8,
+      min_width = 120,
+      height = 0.4,
+      {
+        box = "vertical",
+        border = true,
+        title = "{title} {live} {flags}",
+        { win = "input", height = 1, border = "bottom" },
+        { win = "list", border = "none" },
+      },
+      -- { win = "preview", title = "{preview}", border = true, width = 0.6 },
+    },
+  },
+}
+
 return {
   {
     "folke/snacks.nvim",
     init = function()
       local Grep = require("snacks.picker.source.grep")
+      -- local Files = require("snacks.picker.source.files")
       local orig_grep = Grep.grep
+      -- local orig_files = Files.files
 
       -- Ensure grep's opts.glob is set before building ripgrep args.
       ---@diagnostic disable-next-line: duplicate-set-field
@@ -39,13 +76,20 @@ return {
         end
         return orig_grep(opts, ctx)
       end
+
+      -- Ensure files's opts.regex flag adds the fd --regex flag before building args.
+      ---@diagnostic disable-next-line: duplicate-set-field
+      -- function Files.files(opts, ctx)
+      --   if ctx and ctx.picker and ctx.picker.opts then
+      --     if ctx.picker.opts.regex then
+      --       -- Need `live` to add the search pattern to the cmd
+      --       opts = vim.tbl_deep_extend("force", {}, opts, { live = true, args = { "--regex" } })
+      --     end
+      --   end
+      --   return orig_files(opts, ctx)
+      -- end
     end,
     opts = {
-      -- Already enabled by LazyVim
-      -- scope = { enabled = true },
-      -- indent = { enabled = true },
-      -- words = { enabled = true },
-      --
       zen = {
         enabled = true,
         toggles = {
@@ -102,7 +146,7 @@ return {
               ["<M-s>"] = { "leap", mode = { "n", "i" } },
               ["<C-x>"] = { "leap", mode = { "n", "i" } },
               ["<C-o>"] = { "add_glob", mode = { "n", "i" } },
-              ["<C-x>"] = { "remove_glob", mode = { "n", "i" } },
+              ["<C-BS>"] = { "remove_glob", mode = { "n", "i" } },
               -- Make same as fzf keymap
               ["<C-e>"] = { "toggle_live", mode = { "i", "n" } },
               -- Flag bindings
@@ -114,14 +158,14 @@ return {
               ["<M-c>"] = { "toggle_type_conf", mode = { "n", "i" } },
               ["<M-W>"] = { "toggle_type_web", mode = { "n", "i" } },
               -- Overrides toggle_follow
-              ["<M-f>"] = { "toggle_regex", mode = { "i", "n" } },
+              ["<M-f>"] = { "toggle_regex2", mode = { "i", "n" } },
               ["<M-u>"] = { "toggle_dotall", mode = { "n", "i" } },
               ["<M-l>"] = { "toggle_type_lua", mode = { "n", "i" } },
               ["<M-r>"] = { "toggle_type_ruby", mode = { "n", "i" } },
               ["<M-P>"] = { "toggle_type_python", mode = { "n", "i" } },
               ["<M-J>"] = { "toggle_type_js", mode = { "n", "i" } },
               -- Overrides toggle_maximize
-              ["<M-m>"] = { "toggle_type_md", mode = { "n", "i" } },
+              ["<M-S-m>"] = { "toggle_type_md", mode = { "n", "i" } },
               ["<F7>"] = { "toggle_maximize", mode = { "i", "n" } },
               -- ["<c-u>"] = { "preview_scroll_up", mode = { "i", "n" } },
               -- ["<a-j>"] = { "list_scroll_down", mode = { "i", "n" } },
@@ -171,22 +215,22 @@ return {
           end,
           ---@param p snacks.Picker
           toggle_js_no_tests = function(p)
-            Util.snacks.actions.toggle_iglob("js_no_tests", p)
+            Util.snacks.actions.toggle_lob("js_no_tests", p)
           end,
           toggle_js_tests = function(p)
-            Util.snacks.actions.toggle_iglob("js_tests", p)
+            Util.snacks.actions.toggle_lob("js_tests", p)
           end,
           toggle_tests = function(p)
-            Util.snacks.actions.toggle_iglob("tests", p)
+            Util.snacks.actions.toggle_lob("tests", p)
           end,
           toggle_no_tests = function(p)
-            Util.snacks.actions.toggle_iglob("no_tests", p)
+            Util.snacks.actions.toggle_lob("no_tests", p)
           end,
           toggle_js_ts = function(p)
-            Util.snacks.actions.toggle_iglob("js_ts", p)
+            Util.snacks.actions.toggle_lob("js_ts", p)
           end,
           toggle_no_bundle = function(p)
-            Util.snacks.actions.toggle_iglob("no_bundle", p)
+            Util.snacks.actions.toggle_lob("no_bundle", p)
           end,
           toggle_type_conf = function(p)
             Util.snacks.actions.toggle_flag("type_conf", p)
@@ -235,6 +279,14 @@ return {
             vim.api.nvim_echo({ { vim.inspect({ glob = glob }), "Normal" } }, true, {})
             if glob then Util.snacks.actions.toggle_glob(glob, p) end
           end,
+          ---@param p snacks.Picker
+          toggle_regex2 = function(p)
+            if p.opts.source == "files" then
+              p:action("toggle_live")
+            else
+              p:action("toggle_regex")
+            end
+          end,
         },
         layouts = {
           default = {
@@ -267,6 +319,23 @@ return {
                 { win = "list", border = "rounded" },
               },
               { win = "preview", title = "{preview}", border = "rounded", width = 0.65 },
+            },
+          },
+          center = {
+            hidden = { "preview" },
+            layout = {
+              box = "horizontal",
+              width = 0.4,
+              min_width = 120,
+              height = 0.6,
+              {
+                box = "vertical",
+                border = true,
+                title = "{title} {live} {flags}",
+                { win = "input", height = 1 }, --border = "bottom" },
+                { win = "list", border = "top" }, -- no border
+              },
+              -- { win = "preview", title = "{preview}", border = true, width = 0.6 },
             },
           },
         },
