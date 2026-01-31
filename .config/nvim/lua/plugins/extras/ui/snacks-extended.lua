@@ -102,14 +102,14 @@ return {
               ["<M-s>"] = { "leap", mode = { "n", "i" } },
               ["<C-x>"] = { "leap", mode = { "n", "i" } },
               ["<C-o>"] = { "add_glob", mode = { "n", "i" } },
-              ["<C-O>"] = { "remove_glob", mode = { "n", "i" } },
+              ["<C-x>"] = { "remove_glob", mode = { "n", "i" } },
               -- Make same as fzf keymap
               ["<C-e>"] = { "toggle_live", mode = { "i", "n" } },
               -- Flag bindings
               -- ["<M-j>"] = { "toggle_js_ts", mode = { "n", "i" } },
               ["<M-j>"] = { "toggle_js_no_tests", mode = { "n", "i" } },
               ["<M-o>"] = { "toggle_js_tests", mode = { "n", "i" } },
-              ["<M-t>"] = { "toggle_tests", mode = { "n", "i" } },
+              ["<M-S-t>"] = { "toggle_tests", mode = { "n", "i" } },
               ["<M-x>"] = { "toggle_no_tests", mode = { "n", "i" } },
               ["<M-c>"] = { "toggle_type_conf", mode = { "n", "i" } },
               ["<M-W>"] = { "toggle_type_web", mode = { "n", "i" } },
@@ -228,11 +228,12 @@ return {
           end,
           add_glob = function(p)
             local glob = M.add_glob()
-            if glob then Util.snacks.actions.toggle_iglob(glob, p) end
+            if glob then Util.snacks.actions.toggle_glob(glob, p) end
           end,
           remove_glob = function(p)
             local glob = M.remove_glob()
-            if glob then Util.snacks.actions.toggle_iglob(glob, p) end
+            vim.api.nvim_echo({ { vim.inspect({ glob = glob }), "Normal" } }, true, {})
+            if glob then Util.snacks.actions.toggle_glob(glob, p) end
           end,
         },
         layouts = {
