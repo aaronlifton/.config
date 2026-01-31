@@ -1,0 +1,24 @@
+[settings]
+experimental = true # enable experimental features
+env_file = '.env'
+
+[tools]
+"usage" = "latest"
+java = "latest"
+# java = "temurin-17"
+python = "latest"
+node = "24.10.0"
+bun = "latest"
+"npm:@anthropic-ai/claude-code" = "latest"
+"npm:@openai/codex" = "latest"
+"npm:@google/gemini-cli" = "latest"
+atuin = "latest"
+yarn = "latest"
+"npm:@mermaid-js/mermaid-cli" = "latest"
+vale = "latest"
+biome = "latest"
+pnpm = "latest"
+difftastic = "latest"
+ruby = "latest"                            # interferes with repo ruby versions
+"gem:bundler" = "latest"
+"gem:ruby-lsp" = "latest"

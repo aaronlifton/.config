@@ -1,0 +1,65 @@
+# Justfile for new mac setup
+
+set shell := ["/bin/zsh", "-cu"]
+
+# Public entrypoint
+mac: move_config clone_config brew karabiner mise bob helix chrome mise_install nvim_bootstrap
+
+move_config:
+	if [ -d "$HOME/.config" ]; then \
+		rm -rf "$HOME/.config2"; \
+		mv "$HOME/.config" "$HOME/.config2"; \
+	fi
+
+clone_config:
+	if [ ! -d "$HOME/.config" ]; then \
+		git clone git@github.com:aaronlifton/.config.git "$HOME/.config"; \
+	fi
+
+brew:
+	if ! command -v brew >/dev/null 2>&1; then \
+		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"; \
+	fi
+
+brew_update: brew
+	brew update
+
+karabiner: brew
+	brew install --cask karabiner-elements
+
+# Check ~/.config/mise/config.toml before running
+mise:
+	if ! command -v mise >/dev/null 2>&1; then \
+		curl -fsSL https://mise.run | sh; \
+		export PATH="$HOME/.local/bin:$PATH"; \
+	fi
+
+bob: brew
+	brew install bob
+	bob install nightly
+	bob use nightly
+
+helix: brew
+	brew install helix
+
+chrome: brew
+	brew install --cask google-chrome
+
+react_native_deps: brew
+	brew install watchman cocoapods
+	brew install --cask android-studio
+
+rails_deps: brew
+	brew install postgresql redis
+	# brew install libvips imagemagick ffmpeg
+
+mise_install: mise
+	mise install -y
+
+nvim_bootstrap:
+	nvim --headless -c "MasonInstall stylua" -c "qall"
+
+update_nvim:
+	bob update
+	bob install nightly
+	bob use nightly
