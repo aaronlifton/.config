@@ -3,6 +3,7 @@ abbr mv "mv -i"
 abbr mkdir "mkdir -p"
 abbr h history
 abbr which "type -a"
+abbr lsof --set-cursor "lsof -i :%"
 
 ### Builtin
 abbr -a g git

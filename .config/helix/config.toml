@@ -1,0 +1,295 @@
+#launch-mode theme = "onedark"
+theme = "catppuccin_macchiato"
+
+[editor]
+line-number = "relative"
+scroll-lines = 1
+auto-pairs = false
+mouse = false
+auto-format = true
+# bufferline = "multiple"
+color-modes = true
+cursorline = true
+auto-save = true
+bufferline = "always"
+completion-trigger-len = 1
+
+# [editor.cursor-shape]
+# insert = "bar"
+# normal = "block"
+# select = "underline"
+
+[editor.cursor-shape]
+insert = "underline"
+normal = "block"
+select = "block"
+
+[editor.file-picker]
+hidden = true
+
+[editor.lsp]
+display-messages = true
+
+# [editor.whitespace.render]
+# newline = "all"
+# nbsp = "all"
+# space = "none"
+# tab = "none"
+# en = false
+
+[editor.indent-guides]
+render = true
+
+[keys.insert]
+j = { k = "normal_mode" }                        # Maps `jk` to exit insert mode
+A-b = ["move_prev_word_start", "move_char_left"]
+A-f = ["move_next_word_end", "move_char_right"]
+C-b = "move_char_left"
+C-d = "delete_char_forward"
+C-f = "move_char_right"
+# modal editing hardmode
+# up = "no_op"
+# down = "no_op"
+# left = "no_op"
+# right = "no_op"
+# pageup = "no_op"
+# pagedown = "no_op"
+# home = "no_op"
+# end = "no_op"
+
+[keys.normal]
+# Quick iteration on config changes
+C-o = ":config-open"
+C-r = ":config-reload"
+"C-d" = ["half_page_down", "goto_window_center"]
+"C-u" = ["half_page_up", "goto_window_center"]
+
+C-left = "jump_view_left"
+C-down = "jump_view_down"
+C-up = "jump_view_up"
+C-right = "jump_view_right"
+C-g = [":new", ":insert-output lazygit", ":buffer-close!", ":redraw"]
+tab = "move_parent_node_end"
+S-tab = "move_parent_node_start"
+"C-t" = ":open lsp-ai-chat.md"
+
+g = { a = "code_action" } # Maps `ga` to show possible code actions
+"ret" = [
+  "move_line_down",
+  "goto_first_nonwhitespace",
+] # Maps the enter key to move to start of next line
+X = "extend_line_above"
+S-x = "delete_char_forward"
+
+# Buffers
+H = ":bp"
+L = ":bn"
+
+# Muscle memory
+"{" = ["goto_prev_paragraph", "collapse_selection"]
+"}" = ["goto_next_paragraph", "collapse_selection"]
+0 = "goto_line_start"
+"$" = "goto_line_end"
+"^" = "goto_first_nonwhitespace"
+G = "goto_file_end"
+"%" = "match_brackets"
+V = ["select_mode", "extend_to_line_bounds"]
+# C = [
+#   "extend_to_line_end",
+#   "yank_main_selection_to_clipboard",
+#   "delete_selection",
+#   "insert_mode",
+# ]
+D = [
+  "extend_to_line_end",
+  # "yank_main_selection_to_clipboard",
+  "yank",
+  "delete_selection",
+]
+S = "surround_add" # Would be nice to be able to do something after this but it isn't chainable
+
+# Clipboards over registers ye ye
+# x = "delete_selection"
+# p = ["paste_clipboard_after", "collapse_selection"]
+# P = ["paste_clipboard_before", "collapse_selection"]
+p = ["paste_after", "collapse_selection"]
+P = ["paste_before", "collapse_selection"]
+# Would be nice to add ya and yi, but the surround commands can't be chained
+
+u = ["undo", "collapse_selection"]
+
+# Escape the madness! No more fighting with the cursor! Or with multiple cursors!
+esc = ["collapse_selection", "keep_primary_selection"]
+
+# Search for word under cursor
+"*" = [
+  "move_char_right",
+  "move_prev_word_start",
+  "move_next_word_end",
+  "search_selection",
+  "search_next",
+]
+"#" = [
+  "move_char_right",
+  "move_prev_word_start",
+  "move_next_word_end",
+  "search_selection",
+  "search_prev",
+]
+
+# Make j and k behave as they do Vim when soft-wrap is enabled
+j = "move_line_down"
+k = "move_line_up"
+
+# Extend and select commands that expect a manual input can't be chained
+# I've kept d[X] commands here because it's better to at least have the stuff you want to delete
+# selected so that it's just a keystroke away to delete
+# [keys.normal.d]
+# # d = ["extend_to_line_bounds", "yank_main_selection_to_clipboard", "delete_selection"]
+# d = ["extend_to_line_bounds", "yank", "delete_selection"]
+# # t = ["extend_till_char"]
+# # s = ["surround_delete"]
+# i = ["select_textobject_inner"]
+# a = ["select_textobject_around"]
+# # j = ["select_mode", "extend_to_line_bounds", "extend_line_below", "yank_main_selection_to_clipboard", "delete_selection", "normal_mode"]
+# j = ["select_mode", "extend_to_line_bounds", "extend_line_below", "yank", "delete_selection", "normal_mode"]
+# # down = ["select_mode", "extend_to_line_bounds", "extend_line_below", "yank_main_selection_to_clipboard", "delete_selection", "normal_mode"]
+# # k = ["select_mode", "extend_to_line_bounds", "extend_line_above", "yank_main_selection_to_clipboard", "delete_selection", "normal_mode"]
+# k = ["select_mode", "extend_to_line_bounds", "extend_line_above", "yank", "delete_selection", "normal_mode"]
+# # up = ["select_mode", "extend_to_line_bounds", "extend_line_above", "yank_main_selection_to_clipboard", "delete_selection", "normal_mode"]
+# # G = ["select_mode", "extend_to_line_bounds", "goto_last_line", "extend_to_line_bounds", "yank_main_selection_to_clipboard", "delete_selection", "normal_mode"]
+# # w = ["move_next_word_start", "yank_main_selection_to_clipboard", "delete_selection"]
+# w = ["move_next_word_start", "yank", "delete_selection"]
+# # W = ["move_next_long_word_start", "yank_main_selection_to_clipboard", "delete_selection"]
+# W = ["move_next_long_word_start", "yank", "delete_selection"]
+# # g = { g = ["select_mode", "extend_to_line_bounds", "goto_file_start", "extend_to_line_bounds", "yank_main_selection_to_clipboard", "delete_selection", "normal_mode"] }
+# g = { g = ["select_mode", "extend_to_line_bounds", "goto_file_start", "extend_to_line_bounds", "yank", "delete_selection", "normal_mode"] }
+
+# Floating window
+# C-y = ":sh zellij run -n Yazi -c -f -x 10% -y 10% --width 80% --height 80% -- bash ~/.config/helix/yazi-picker.sh open"
+# Side-pane
+# C-y = ":sh zellij run -d right -- bash ~/.config/helix/yazi-side-pane.sh"
+
+[keys.normal."'"]
+y = ":sh zellij run --floating -n 'yazi picker' -- ~/.config/fish/scripts/open_in_helix_from_yazi.fish"
+
+[keys.normal.C-y]
+# Open the file(s) in the current window
+y = ":sh zellij run -n Yazi -c -f -x 10% -y 10% --width 80% --height 80% -- bash ~/.config/helix/yazi-picker.sh open"
+# Open the file(s) in a vertical split
+v = ":sh zellij run -n Yazi -c -f -x 10% -y 10% --width 80% --height 80% -- bash ~/.config/helix/yazi-picker.sh vsplit"
+# Open the file(s) in a horizontal split
+h = ":sh zellij run -n Yazi -c -f -x 10% -y 10% --width 80% --height 80% -- bash ~/.config/helix/yazi-picker.sh hsplit"
+
+[keys.normal.y]
+# y = ["extend_to_line_bounds", "yank_main_selection_to_clipboard", "normal_mode", "collapse_selection"]
+y = ["extend_to_line_bounds", "yank", "normal_mode", "collapse_selection"]
+# j = ["select_mode", "extend_to_line_bounds", "extend_line_below", "yank_main_selection_to_clipboard", "collapse_selection", "normal_mode"]
+j = [
+  "select_mode",
+  "extend_to_line_bounds",
+  "extend_line_below",
+  "yank",
+  "collapse_selection",
+  "normal_mode",
+]
+# down = ["select_mode", "extend_to_line_bounds", "extend_line_below", "yank_main_selection_to_clipboard", "collapse_selection", "normal_mode"]
+# k = ["select_mode", "extend_to_line_bounds", "extend_line_above", "yank_main_selection_to_clipboard", "collapse_selection", "normal_mode"]
+k = [
+  "select_mode",
+  "extend_to_line_bounds",
+  "extend_line_above",
+  "yank",
+  "collapse_selection",
+  "normal_mode",
+]
+# up = ["select_mode", "extend_to_line_bounds", "extend_line_above", "yank_main_selection_to_clipboard", "collapse_selection", "normal_mode"]
+# G = ["select_mode", "extend_to_line_bounds", "goto_last_line", "extend_to_line_bounds", "yank_main_selection_to_clipboard", "collapse_selection", "normal_mode"]
+# w = ["move_next_word_start", "yank_main_selection_to_clipboard", "collapse_selection", "normal_mode"]
+w = ["move_next_word_start", "yank", "collapse_selection", "normal_mode"]
+# W = ["move_next_long_word_start", "yank_main_selection_to_clipboard", "collapse_selection", "normal_mode"]
+W = ["move_next_long_word_start", "yank", "collapse_selection", "normal_mode"]
+# g = { g = ["select_mode", "extend_to_line_bounds", "goto_file_start", "extend_to_line_bounds", "yank_main_selection_to_clipboard", "collapse_selection", "normal_mode"] }
+g = { g = [
+  "select_mode",
+  "extend_to_line_bounds",
+  "goto_file_start",
+  "extend_to_line_bounds",
+  "yank",
+  "collapse_selection",
+  "normal_mode",
+] }
+d = ":yank-diagnostic"
+
+[keys.normal."]"]
+"]" = "goto_next_paragraph"
+
+[keys.normal."["]
+"[" = "goto_prev_paragraph"
+
+[keys.normal.space]
+F = "file_picker_in_current_buffer_directory"
+g = ":pipe-to wezterm cli split-pane -- helix-live-grep"
+l = ":pipe-to helix-debug-print"
+q = ":quit-all"
+w = ":write-all"
+x = ":buffer-close"
+
+[keys.select]
+U = "switch_to_uppercase"
+u = "switch_to_lowercase"
+# Visual-mode specific muscle memory
+i = "select_textobject_inner"
+a = "select_textobject_around"
+"A-k" = [
+  "goto_line_end",
+  "extend_line_below",
+  "delete_selection",
+  "move_line_up",
+  "paste_before",
+  "select_mode",
+]
+"A-j" = [
+  "goto_line_end",
+  "extend_line_below",
+  "delete_selection",
+  "paste_after",
+  "select_mode",
+]
+
+[keys.select.space]
+"p" = ":clipboard-paste-replace"
+
+[keys.select."]"]
+"]" = "goto_next_paragraph"
+
+[keys.select."["]
+"[" = "goto_prev_paragraph"
+
+[keys.normal.space.u]
+w = ":set-option soft-wrap.enable true"
+W = ":set-option soft-wrap.enable false"
+# shift+return will do the same as "o esc"
+S-ret = ["open_below", "normal_mode"]
+# I prefer using the clipboard over registers, so I override p
+p = ":clipboard-paste-before"
+n = ":toggle line-number"
+s = ":toggle search.smart-case"
+i = ":tree-sitter-scopes"
+
+[keys.normal.space.c]
+# r = ":config-reload"
+r = [":w", ":config-reload"]
+o = ":config-open"
+l = ":o ~/.config/helix/languages.toml"
+i = ":indent-style 2"
+
+# EMMET KEYBINDS
+# https://github.com/rajasegar/awesome-helix/blob/3b21361c8d72f4f885591873e86f1cc35c864112/configs/space-c-config.toml#L3
+[keys.normal.space.c.e]
+# "w" = "@:pipe emmet-wrap \"%{selection}\" "
+"w" = ":pipe emmet '%{selection}'"
+
+# emmet keybinds for select mode -- should be same as normal
+[keys.select.space.c.e]
+"w" = ":pipe emmet <C-r>."

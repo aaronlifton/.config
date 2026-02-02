@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+rg --files | xargs lsd -lt --color=always | head -100 | fzf --ansi --height '90%' --multi --preview 'bat {-1}' --preview-window 'bottom,80%' | awk '{print $NF}'

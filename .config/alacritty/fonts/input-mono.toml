@@ -1,0 +1,11 @@
+[font]
+normal = { family = "Input Mono Condensed", style = "Regular" }
+bold = { family = "Input Mono Condensed", style = "Medium" }
+italic = { family = "Input Mono Condensed", style = "Italic" }
+bold_italic = { family = "Input Mono Condensed", style = "Medium Italic" }
+size = 15
+
+offset = { x = 1, y = 4 }
+glyph_offset = { x = 0, y = 0 }
+
+

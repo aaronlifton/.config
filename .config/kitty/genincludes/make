@@ -1,0 +1,4 @@
+#!/bin/bash
+
+uv run gen_tab_style.py > ../config/tab-style-gen.conf
+echo "Generated tab style"
