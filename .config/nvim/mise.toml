@@ -1,0 +1,3 @@
+[tools]
+"gem:ruby-lsp" = "latest"
+"gem:ruby-lsp-rails" = "latest"

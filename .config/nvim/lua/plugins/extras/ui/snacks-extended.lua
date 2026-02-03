@@ -135,7 +135,7 @@ return {
             keys = {
               -- to close the picker on ESC instead of going to normal mode,
               -- add the following keymap to your config
-              -- ["<Esc>"] = { "close", mode = { "n", "i" } },
+              ["<Esc>"] = { "close", mode = { "n", "i" } },
               ["<C-d>"] = { "list_scroll_down2", mode = { "i", "n" } },
               ["<C-u>"] = { "list_scroll_up2", mode = { "i", "n" } },
               ["<a-c>"] = {
@@ -155,7 +155,7 @@ return {
               ["<M-o>"] = { "toggle_js_tests", mode = { "n", "i" } },
               ["<M-S-t>"] = { "toggle_tests", mode = { "n", "i" } },
               ["<M-x>"] = { "toggle_no_tests", mode = { "n", "i" } },
-              ["<M-c>"] = { "toggle_type_conf", mode = { "n", "i" } },
+              ["<M-C>"] = { "toggle_type_conf", mode = { "n", "i" } },
               ["<M-W>"] = { "toggle_type_web", mode = { "n", "i" } },
               -- Overrides toggle_follow
               ["<M-f>"] = { "toggle_regex2", mode = { "i", "n" } },
