@@ -6,9 +6,11 @@ LazyVim.on_very_lazy(function()
 end)
 
 local use_ruby_lsp_rubocop = true
+---@diagnostic disable-next-line: unused-local
 local add_ruby_deps_command = false
 local lsp = vim.g.lazyvim_ruby_lsp or "ruby_lsp"
 local formatter = vim.g.lazyvim_ruby_formatter or "rubocop"
+local ruby_lsp_cmd = vim.g.work and { "ruby-lsp" } or { "mise", "x", "--", "ruby-lsp" }
 
 return {
   {
@@ -84,7 +86,7 @@ return {
           mason = false,
           -- cmd = { "mise", "exec", "--", "bundle", "exec", "ruby-lsp" },
           -- cmd = { "mise", "exec", "--", "ruby-lsp" },
-          cmd = { "mise", "x", "--", "ruby-lsp" },
+          cmd = ruby_lsp_cmd,
           -- bundleGemfile = ".ruby-lsp/Gemfile",
           experimentalFeaturesEnabled = false,
           -- https://shopify.github.io/ruby-lsp/editors.html#all-initialization-options
@@ -121,14 +123,14 @@ return {
           enabled = formatter == "rubocop" and lsp ~= "solargraph",
           on_new_config = function(new_config)
             -- If rubocop is in the Gemfile, it will be used as the formatter for ruby-lsp
-            new_config.enabled = not require("util.ruby.gems").in_bundle("rubocop")
+            new_config.enabled = not vim.g.work and require("util.ruby.gems").in_bundle("rubocop")
           end,
         },
         standardrb = {
           enabled = formatter == "standardrb",
           on_new_config = function(new_config)
             -- If standard is in the Gemfile, it will be used as the formatter for ruby-lsp
-            new_config.enabled = not require("util.ruby.gems").in_bundle("standard")
+            new_config.enabled = not vim.g.work and require("util.ruby.gems").in_bundle("standard")
           end,
         },
         sorbet = {

@@ -1,4 +1,3 @@
----@class util.system
 local M = {}
 local _cache = {}
 
@@ -11,6 +10,9 @@ function M.user()
   return vim.fn.expand("$USER")
 end
 
+---@class util.system
+---@field hostname fun(): string
+---@field user fun(): string
 local Mcache = {}
 setmetatable(Mcache, {
   __index = function(_, key)
