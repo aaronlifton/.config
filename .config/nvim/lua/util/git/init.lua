@@ -30,7 +30,8 @@ local function is_yadm_root(dir)
 
   if yadm_cache[dir] == nil then
     local files = vim.fn.system({ "yadm", "ls-files", dir })
-    yadm_cache[dir] = files ~= ""
+    local start_idx = files:find("ERROR", nil, true)
+    yadm_cache[dir] = not start_idx
   end
   return yadm_cache[dir]
 end

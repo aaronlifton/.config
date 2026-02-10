@@ -46,10 +46,10 @@ gui:
   border: "rounded" # one of 'single' | 'double' | 'rounded' | 'hidden'
   statusPanelView: "dashboard"
 git:
-  paging:
-    colorArg: always
-    # useConfig: false
-    pager: delta --paging=never --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
+  pagers:
+    - colorArg: always
+      # useConfig: false
+      pager: delta --paging=never --hyperlinks-file-link-format="lazygit-edit://{path}:{line}"
   branchLogCmd: "git log --graph --color=always --abbrev-commit --decorate --date=relative --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)' {{branchName}} --"
   allBranchesLogCmds:
     - "git log --graph --all --color=always --abbrev-commit --date-relative --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'"
@@ -216,7 +216,7 @@ customCommands:
     description: "commit with commitizen"
     context: "files"
     loadingText: "opening commitizen commit tool"
-    subprocess: true
+    output: terminal
   - key: "<c-P>"
     description: "Push to a specific remote repository"
     context: "global"

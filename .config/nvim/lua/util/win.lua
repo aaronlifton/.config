@@ -192,7 +192,7 @@ function M.filetype()
   local current_win_id = vim.api.nvim_get_current_win()
   local current_buf_id = vim.api.nvim_win_get_buf(current_win_id)
   local filetype = vim.api.nvim_get_option_value("filetype", { buf = current_buf_id })
-  vim.api.nvim_echo({ { "Filetype:\n", "Title" }, { vim.inspect(filetype), "Normal" } }, true, {})
+  vim.api.nvim_echo({ { "Filetype:\n", "Title" }, { filetype or "Unknown", "Normal" } }, true, {})
 end
 
 return M

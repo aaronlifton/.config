@@ -126,8 +126,15 @@ return {
         "<leader>gdx",
         function()
           local buf_id = vim.api.nvim_get_current_buf()
-          local input = vim.fn.input("compare:")
-          set_mini_diff_ref_text(buf_id, input)
+          -- local input = vim.fn.input("compare:")
+          -- vim.api.nvim_command("DiffviewOpen " .. branch)
+          Snacks.input({
+            prompt = "Compare: ",
+            icon = "",
+            completion = "customlist,v:lua.require'neogit.lib.git'.refs.list_local_branches",
+          }, function(branch)
+            set_mini_diff_ref_text(buf_id, branch)
+          end)
         end,
         desc = "MiniDiff (pick)",
       },

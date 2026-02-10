@@ -67,3 +67,7 @@ update_nvim:
 	bob update
 	bob install nightly
 	bob use nightly
+
+fonts:
+  brew install font-symbols-only-nerd-font
+  brew search symbols-only

@@ -67,13 +67,13 @@ return {
       --   },
       -- }
 
-      opts.left[#opts.left + 1] = {
-        title = "Grapple",
-        ft = "grapple",
-        size = {
-          width = 0.13,
-        },
-      }
+      -- opts.left[#opts.left + 1] = {
+      --   title = "Grapple",
+      --   ft = "grapple",
+      --   size = {
+      --     width = 0.13,
+      --   },
+      -- }
 
       for idx, _opts in ipairs(opts.right) do
         if _opts.ft == "dbui" then table.remove(_opts, idx) end

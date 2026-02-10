@@ -105,11 +105,6 @@ return {
         end,
         desc = "Today",
       },
-      -- git
-      { "<leader>gd", function() Snacks.picker.git_diff() end, desc = "Git Diff (hunks)" },
-      -- { "<leader>gD", function() Snacks.picker.git_diff({ base = "origin", group = true }) end, desc = "Git Diff (origin)" },
-      { "<leader>gs", function() Snacks.picker.git_status() end, desc = "Git Status" },
-      { "<leader>gS", function() Snacks.picker.git_stash() end, desc = "Git Stash" },
       -- Grep
       { "<leader>sb", function() Snacks.picker.lines() end, desc = "Buffer Lines" },
       { "<leader>sg", LazyVim.pick("live_grep"), desc = "Grep (Root Dir)" },

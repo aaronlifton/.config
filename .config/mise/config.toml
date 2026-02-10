@@ -1,6 +1,7 @@
 [settings]
-experimental = true # enable experimental features
+experimental = true                                                     # enable experimental features
 env_file = '.env'
+ruby.ruby_build_opts = "--with-openssl-dir=/opt/homebrew/opt/openssl@3"
 
 [tools]
 "usage" = 'latest'
@@ -40,3 +41,13 @@ just = "latest"
 ruby = "latest"                                              # interferes with repo ruby versions
 "gem:bundler" = "latest"
 "gem:ruby-lsp" = "latest"
+go = "latest"
+fzf = "latest"
+rg = "latest"
+fd = "latest"
+yazi = "latest"
+delta = "latest"
+"gem:rubocop" = "latest"
+lazygit = "latest"
+github-cli = "latest"
+"npm:@github/copilot" = "latest"

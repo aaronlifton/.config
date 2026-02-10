@@ -53,7 +53,11 @@ return {
         function()
           return toggle_diffview_func(
             function()
-              Snacks.input({ prompt = "Compare: ", icon = "" }, function (branch)
+              Snacks.input({
+                prompt = "Compare: ",
+                icon = "",
+                completion = "customlist,v:lua.require'neogit.lib.git'.refs.list_branches",
+              }, function (branch)
                 vim.api.nvim_command("DiffviewOpen " .. branch)
               end)
             end

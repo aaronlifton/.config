@@ -196,7 +196,7 @@ local live_grep_opts = {
     ["alt-t"] = toggle_iglob(rg_iglob_patterns.tests),
     ["alt-x"] = toggle_iglob(rg_iglob_patterns.no_tests),
     ["alt-s"] = toggle_iglob(rg_iglob_patterns.js_ts),
-    ["alt-m"] = toggle_iglob(rg_iglob_patterns.no_bundle),
+    -- ["alt-m"] = toggle_iglob(rg_iglob_patterns.no_bundle),
     ["alt-c"] = toggle_flags({ "--type-add 'conf:*.{toml,yaml,yml,ini,json}'", "-t conf" }),
     ["alt-w"] = toggle_flags({ "--type-add 'web:*.{js,ts,tsx,css,scss,html,vue,svelte}'", "-t web" }),
     -- ["alt-g"] = toggle_flag("--glob-case-insensitive"),
@@ -301,6 +301,7 @@ return {
       config.defaults.keymap.fzf["ctrl-b"] = "preview-page-up"
       config.defaults.keymap.builtin["<c-f>"] = "preview-page-down"
       config.defaults.keymap.builtin["<c-b>"] = "preview-page-up"
+      config.defaults.keymap.builtin["alt-m"] = "toggle-fullscreen"
 
       return vim.tbl_extend("force", opts, {
         -- fzf_bin = "sk",
@@ -356,6 +357,8 @@ return {
       -- This is handled by mini.pick instead
       { "<leader>,", false },
       { "<leader>gd", false },
+      { "<leader>gl", false },
+      { "<leader>gl", false },
       { '<leader>s"', false }, -- Prefer snacks.picker register picker
       -- Switch around LazyVim bindings
       { "<leader>sd", "<cmd>FzfLua diagnostics_document<cr>", desc = "Buffer Diagnostics" },
@@ -366,14 +369,14 @@ return {
       -- { "<leader><S-space>", LazyVim.pick("files", vim.tbl_extend("force", file_opts, { git_icons = false, fd_opts = fd_opts, root = false })), desc = "Find Files (cwd)" },
       { "<leader>ff", function() pick("files", vim.tbl_extend("force", file_opts, { git_icons = false, fd_opts = fd_opts })) end, desc = "Find Files (Root Dir)" },
       { "<leader>fF", function() pick("files", vim.tbl_extend("force", file_opts, { git_icons = false, fd_opts = fd_opts, root = false })) end, desc = "Find Files (cwd)" },
-      { "<leader>su", function() pick("grep_cword", live_grep_opts) end, desc = "Word (Root Dir)", mode = "n" },
-      { "<leader>su", function() pick("grep_visual", live_grep_opts) end, desc = "Selection (Root Dir)", mode = "v" },
+      -- { "<leader>su", function() pick("grep_cword", live_grep_opts) end, desc = "Word (Root Dir)", mode = "n" },
+      -- { "<leader>su", function() pick("grep_visual", live_grep_opts) end, desc = "Selection (Root Dir)", mode = "v" },
       { "<leader>s<C-w>", "<cmd>FzfLua grep_cWORD<CR>", desc = "WORD (Root Dir)", mode = "n" },
       { "<leader>sx", function() pick("live_grep_native", live_grep_opts) end, desc = "Grep (Native)", mode = "n" },
-      { "<leader>sw", function() pick("grep_cword", vim.tbl_extend("force", live_grep_opts, { rg_glob = false, git_icons = true })) end, desc = "Word (Root Dir)", mode = "n" },
-      { "<leader>sW", function() pick("grep_cword", vim.tbl_extend("force", live_grep_opts, { rg_glob = false, git_icons = true, root = false })) end, desc = "Word (cwd)", mode = "n" },
-      { "<leader>sw", function() pick("grep_visual", vim.tbl_extend("force", live_grep_opts, { rg_glob = false })) end, desc = "Selection (Root Dir)", mode = "v" },
-      { "<leader>sW", function() pick("grep_visual", vim.tbl_extend("force", live_grep_opts, { rg_glob = false, root = false })) end, desc = "Selection (cwd)", mode = "v" },
+      -- { "<leader>sw", function() pick("grep_cword", vim.tbl_extend("force", live_grep_opts, { rg_glob = false, git_icons = true })) end, desc = "Word (Root Dir)", mode = "n" },
+      -- { "<leader>sW", function() pick("grep_cword", vim.tbl_extend("force", live_grep_opts, { rg_glob = false, git_icons = true, root = false })) end, desc = "Word (cwd)", mode = "n" },
+      -- { "<leader>sw", function() pick("grep_visual", vim.tbl_extend("force", live_grep_opts, { rg_glob = false })) end, desc = "Selection (Root Dir)", mode = "v" },
+      -- { "<leader>sW", function() pick("grep_visual", vim.tbl_extend("force", live_grep_opts, { rg_glob = false, root = false })) end, desc = "Selection (cwd)", mode = "v" },
       -- Switch around LazyVim bindings
       { "<leader>sb", "<cmd>FzfLua lgrep_curbuf<CR>", desc = "Buffer (Live Grep)", mode = "n" },
       { "<leader>sB", "<cmd>FzfLua lines rg_glob=true git_icons=true<cr>", desc = "Buffer Lines" },
@@ -388,9 +391,8 @@ return {
       -- { "<leader>fz", function() require("util.fzf.zoxide").fzf_zoxide() end, desc = "Zoxide"},
       { "<leader>fz", function() require("util.fzf.zoxide").fzf_zoxide_async() end, desc = "Zoxide"},
       { "<leader>sL", "<cmd>FzfLua lsp_finder<cr>", desc = "LSP Finder" },
-      { "<leader>ga", "<cmd>FzfLua git_branches<cr>", desc = "Git Branches" },
-      { "<leader>gc", "<cmd>FzfLua git_commits<cr>", desc = "Git Branches" },
-      { "<leader>gr", "<cmd>FzfLua git_branches<cr>", desc = "Branches" },
+      -- { "<leader>g<C-b>", "<cmd>FzfLua git_branches<cr>", desc = "Git Branches" },
+      -- { "<leader>gc", "<cmd>FzfLua git_commits<cr>", desc = "Git Branches" },
       { "<leader>sA", "<cmd>FzfLua treesitter<cr>", desc = "Treesiter Symbols" },
       { "<leader>sh", "<cmd>FzfLua helptags<cr>", desc = "Help Tags" },
       { "<leader>sk", "<cmd>FzfLua keymaps<cr>", desc = "Key Maps" },

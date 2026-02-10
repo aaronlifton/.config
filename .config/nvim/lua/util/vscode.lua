@@ -1,4 +1,5 @@
 if not vim.g.vscode then return {} end
+vim.notify("VSCode settings loaded", vim.log.levels.INFO)
 
 local enabled = {
   "LazyVim",

@@ -1,6 +1,6 @@
 ---@class snacks.picker.Config
----@field regex boolean
----@field glob string[]
+---@field regex boolean?
+---@field glob string[]?
 
 local M = {}
 
@@ -34,23 +34,6 @@ M.layouts = {
       { win = "input", height = 1, border = true, title = "{title} {live} {flags}", title_pos = "center" },
       { win = "list", border = "hpad" },
       { win = "preview", title = "{preview}", border = true },
-    },
-  },
-  center = {
-    hidden = { "preview" },
-    layout = {
-      box = "horizontal",
-      width = 0.8,
-      min_width = 120,
-      height = 0.4,
-      {
-        box = "vertical",
-        border = true,
-        title = "{title} {live} {flags}",
-        { win = "input", height = 1, border = "bottom" },
-        { win = "list", border = "none" },
-      },
-      -- { win = "preview", title = "{preview}", border = true, width = 0.6 },
     },
   },
 }
@@ -112,9 +95,20 @@ return {
           -- { "^https://[^@]+@(.+)$", "https://%1" },
           -- { "^https://[^@]+@git%.synack%.com/(.+)%.git$", "https://git.synack.com/%1" },
           { "^https://git%.synack%.com/(.+)%.git$", "https://git.synack.com/%1" },
+          { "^https://git%@github%.com:(.+)%.git$", "https://github.com/%1" },
+          { "^https://git%@github%.com:(.+)%.git(/.+)$", "https://github.com/%1%2" },
+          { "^git@(.+):(.+)%.git$", "https://%1/%2" },
+          { "^git@(.+):(.+)$", "https://%1/%2" },
+          { "^git@(.+)/(.+)$", "https://%1/%2" },
+          { "^git@(.*)", "https://%1" },
         },
         url_patterns = {
           ["git%.synack%.com"] = {
+            branch = "/tree/{branch}",
+            file = "/blob/{branch}/{file}#L{line_start}-L{line_end}",
+            commit = "/commit/{commit}",
+          },
+          ["github%.com"] = {
             branch = "/tree/{branch}",
             file = "/blob/{branch}/{file}#L{line_start}-L{line_end}",
             commit = "/commit/{commit}",
@@ -293,6 +287,13 @@ return {
           cycle_timeframe = function(p)
             Util.snacks.actions.cycle_flag({ "week", "two_days", "today" }, p, { "week", "two_days", "today" })
           end,
+          confirm2 = function()
+            local bufname = vim.api.nvim_buf_get_name(0)
+            vim.api.nvim_echo({ { vim.inspect(bufname), "Normal" } }, true, {})
+
+            -- Focus on the explorer window and close it
+            vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-w>p<C-w>q", true, false, true), "n", true)
+          end,
         },
         layouts = {
           default = {
@@ -340,8 +341,8 @@ return {
                 title = "{title} {live} {flags}",
                 { win = "input", height = 1 }, --border = "bottom" },
                 { win = "list", border = "top" }, -- no border
+                { win = "preview", title = "{preview}", border = true },
               },
-              -- { win = "preview", title = "{preview}", border = true, width = 0.6 },
             },
           },
         },
@@ -381,6 +382,14 @@ return {
             { icon = " ", key = "q", desc = "Quit", action = ":qa" },
           },
         },
+      },
+      toggle = {
+        notify = function(state, opts)
+          Snacks.notify(
+            "**" .. (state and "Enabled" or "Disabled") .. "**",
+            { title = opts.name, level = state and vim.log.levels.INFO or vim.log.levels.WARN }
+          )
+        end,
       },
     },
     keys = {
@@ -454,9 +463,22 @@ return {
 
       -- git
       { "<leader>gd", function() Snacks.picker.git_diff() end, desc = "Git Diff (hunks)" },
+      { "<leader>gf", function() Snacks.picker.git_log_file() end,  desc = "Git Current File History"  },
+      { "<leader>gs", function() Snacks.picker.git_status() end, desc = "Git Status" },
+      { "<leader>gl", function() Snacks.picker.git_log() end, desc = "Git Log (cwd)" },
+      { "<leader>gL", function() Snacks.picker.git_log({ cwd = LazyVim.root.git() }) end, desc = "Git Log" },
+      { "<leader>gS", function() Snacks.picker.git_stash() end, desc = "Git Stash" },
+      { "<leader>g<C-b>", function() Snacks.picker.git_branches() end, desc = "Git Branches" },
       { "<leader>g<C-d>", function() Snacks.picker.git_diff({ base = "origin", group = true }) end, desc = "Git Diff (origin)" },
+      { "<leader>gx", function()
+        Snacks.input({ prompt = "Compare: ", icon = "" }, function (branch)
+          Snacks.picker.git_diff({ base = branch, group = true })
+        end)
+      end, desc = "Git Diff (origin)" },
       -- { "<leader>gL", function() Snacks.picker.git_log_line() end, desc = "Git Log Line" },
-      {"<leader>g<C-l>", function() Snacks.picker.git_log_line() end,  desc = "Git Log Line" },
+      { "<leader>g<C-l>", function() Snacks.picker.git_log_line() end,  desc = "Git Log Line" },
+      { "<leader>g<M-g>", function() Snacks.gitbrowse() end, desc = "Git Browse (open)", mode = { "n", "x" } },
+      { "<leader>g<M-y>", function() Snacks.gitbrowse({ open = function(url) vim.fn.setreg("+", url) end, notify = false }) end, desc = "Git Browse (copy)", mode = { "n", "x" } },
       -- Already <leader>gf
       -- {"<leader>g<C-f>", function() Snacks.picker.git_log_file() end,  desc = "Git Log File" },
       { "<leader>gi", function() Snacks.picker.gh_issue() end, desc = "GitHub Issues (open)" },

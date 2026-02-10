@@ -22,30 +22,40 @@ local function keys()
     { { "n",   "v" },           "<leader><down>",                       "<cmd>lua require('multicursor-nvim').lineSkipCursor(1)<cr>",   { desc = "Skip cursor below" } },
 
     -- Add or skip matching word/selection
-    { { "n",   "v" },           "<leader>n",                            "<cmd>lua require('multicursor-nvim').matchAddCursor(1)<cr>",   { desc = "Add next matching cursor" } },
-    { { "n",   "v" },           "<leader>s",                            "<cmd>lua require('multicursor-nvim').matchSkipCursor(1)<cr>",  { desc = "Skip next matching cursor" } },
-    { { "n",   "v" },           "<leader>N",                            "<cmd>lua require('multicursor-nvim').matchAddCursor(-1)<cr>",  { desc = "Add previous matching cursor" } },
-    { { "n",   "v" },           "<leader>S",                            "<cmd>lua require('multicursor-nvim').matchSkipCursor(-1)<cr>", { desc = "Skip previous matching cursor" } },
+    -- { { "n",   "v" },           "<leader>n",                            "<cmd>lua require('multicursor-nvim').matchAddCursor(1)<cr>",   { desc = "Add next matching cursor" } },
+    { { "n",   "v" },           "<M-d>",                                "<cmd>lua require('multicursor-nvim').matchAddCursor(1)<cr>",   { desc = "Add next matching cursor" } },
+    -- { { "n",   "v" },           "<leader>s",                            "<cmd>lua require('multicursor-nvim').matchSkipCursor(1)<cr>",  { desc = "Skip next matching cursor" } },
+    { { "n",   "v" },           "<M-s>",                                "<cmd>lua require('multicursor-nvim').matchSkipCursor(1)<cr>",  { desc = "Skip next matching cursor" } },
+    -- { { "n",   "v" },           "<leader>N",                            "<cmd>lua require('multicursor-nvim').matchAddCursor(-1)<cr>",  { desc = "Add previous matching cursor" } },
+    { { "n",   "v" },           "<M-D>",                            "<cmd>lua require('multicursor-nvim').matchAddCursor(-1)<cr>",  { desc = "Add previous matching cursor" } },
+    -- { { "n",   "v" },           "<leader>S",                            "<cmd>lua require('multicursor-nvim').matchSkipCursor(-1)<cr>", { desc = "Skip previous matching cursor" } },
+    { { "n",   "v" },           "<M-S>",                            "<cmd>lua require('multicursor-nvim').matchSkipCursor(-1)<cr>", { desc = "Skip previous matching cursor" } },
 
     -- Add all matches
-    { { "n",   "v" },           "<leader>A",                            "<cmd>lua require('multicursor-nvim').matchAllAddCursors()<cr>",   { desc = "Add all matching cursors" } },
+    -- { { "n",   "v" },           "<leader>A",                            "<cmd>lua require('multicursor-nvim').matchAllAddCursors()<cr>",   { desc = "Add all matching cursors" } },
+    { { "n",   "v" },           "R",                                    "<cmd>lua require('multicursor-nvim').matchAllAddCursors()<cr>",   { desc = "Add all matching cursors" } },
 
     -- Rotate main cursor
-    { { "n",   "v" },           "<left>",                               "<cmd>lua require('multicursor-nvim').nextCursor()<cr>",           { desc = "Next cursor" } },
-    { { "n",   "v" },           "<right>",                              "<cmd>lua require('multicursor-nvim').prevCursor()<cr>",           { desc = "Previous cursor" } },
+    -- { { "n",   "v" },           "<left>",                               "<cmd>lua require('multicursor-nvim').nextCursor()<cr>",           { desc = "Next cursor" } },
+    { { "n",   "v" },           "<C-n>",                                "<cmd>lua require('multicursor-nvim').nextCursor()<cr>",           { desc = "Next cursor" } },
+    -- { { "n",   "v" },           "<right>",                              "<cmd>lua require('multicursor-nvim').prevCursor()<cr>",           { desc = "Previous cursor" } },
+    { { "n",   "v" },           "<C-p>",                                "<cmd>lua require('multicursor-nvim').prevCursor()<cr>",           { desc = "Previous cursor" } },
 
     -- Cursor management
     { { "n",   "v" },           "<leader>x",                            "<cmd>lua require('multicursor-nvim').deleteCursor()<cr>",         { desc = "Delete cursor" } },
     { { "n" }, "<c-leftmouse>", "<cmd>lua require('multicursor-nvim').handleMouse()<cr>",                     { desc = "Toggle cursor at mouse" } },
-    { { "n",   "v" },           "<c-q>",                                "<cmd>lua require('multicursor-nvim').toggleCursor()<cr>",         { desc = "Toggle cursor" } },
+    -- { { "n",   "v" },           "<c-q>",                                "<cmd>lua require('multicursor-nvim').toggleCursor()<cr>",         { desc = "Toggle cursor" } },
+    { { "n",   "v" },           "gzz",                                "<cmd>lua require('multicursor-nvim').toggleCursor()<cr>",         { desc = "Toggle cursor" } },
     { { "n",   "v" },           "<leader><c-q>",                        "<cmd>lua require('multicursor-nvim').duplicateCursors()<cr>",     { desc = "Duplicate cursors" } },
     { {"n"},   "<leader>gv",                                            "<cmd>lua require('multicursor-nvim').restoreCursors()<cr>",       { desc = "Restore cursors" } },
     { {"n"},   "<leader>a",                                             "<cmd>lua require('multicursor-nvim').alignCursors()<cr>",         { desc = "Align cursors" } },
 
     -- Visual mode operations
     { {"v"},   "S",                                                     "<cmd>lua require('multicursor-nvim').splitCursors()<cr>",         { desc = "Split cursors by regex" } },
-    { {"v"},   "I",                                                     "<cmd>lua require('multicursor-nvim').insertVisual()<cr>",         { desc = "Insert at cursors" } },
-    { {"v"},   "A",                                                     "<cmd>lua require('multicursor-nvim').appendVisual()<cr>",         { desc = "Append at cursors" } },
+    -- { {"v"},   "I",                                                     "<cmd>lua require('multicursor-nvim').insertVisual()<cr>",         { desc = "Insert at cursors" } },
+    { {"v"},   "gzi",                                                     "<cmd>lua require('multicursor-nvim').insertVisual()<cr>",         { desc = "Insert at cursors" } },
+    -- { {"v"},   "A",                                                     "<cmd>lua require('multicursor-nvim').appendVisual()<cr>",         { desc = "Append at cursors" } },
+    { {"v"},   "gza",                                                     "<cmd>lua require('multicursor-nvim').appendVisual()<cr>",         { desc = "Append at cursors" } },
     { {"v"},   "M",                                                     "<cmd>lua require('multicursor-nvim').matchCursors()<cr>",         { desc = "Match cursors by regex" } },
     { {"v"},   "<leader>t",                                             "<cmd>lua require('multicursor-nvim').transposeCursors(1)<cr>",    { desc = "Transpose cursors forward" } },
     { {"v"},   "<leader>T",                                             "<cmd>lua require('multicursor-nvim').transposeCursors(-1)<cr>",   { desc = "Transpose cursors backward" } },
@@ -127,6 +137,8 @@ return {
         Snacks.notifier.hide()
         vim.g.multicursor_mode_disable = not state
         local buf = vim.api.nvim_get_current_buf()
+        if vim.bo[buf].buftype ~= "" then return end
+
         if state then
           require("util.keys").buf_set_keymap(buf, keys())
           -- set_keymaps(buf)
@@ -135,6 +147,6 @@ return {
           -- clear_keymaps(buf)
         end
       end,
-    }):map("<leader><cr>")
+    }):map("<M-m>") -- "<leader><cr>"
   end,
 }

@@ -73,9 +73,9 @@ function M.read_entry(entry)
 end
 
 local latest_docs = {
-  ruby = "ruby-3.4.8",
-  rails = "rails-8.1.2",
-  python = "python-3.14.0",
+  ruby = "ruby-3.4",
+  rails = "rails-8.0",
+  python = "python-3.14",
   lua = "lua-5.4",
 }
 local function language_lookup(languages)
@@ -275,6 +275,7 @@ end
 function M.open_async(opts)
   opts = opts or {}
   local languages = parse_languages(opts.languages)
+  vim.api.nvim_echo({ { vim.inspect(languages), "Normal" } }, true, {})
 
   local contents = function(cb)
     local function add_entry(x, co, _)

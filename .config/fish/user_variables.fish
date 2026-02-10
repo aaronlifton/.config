@@ -5,7 +5,7 @@ set -lx fish_config_path /Users/$USER/.config/fish
 # Setting PATH for node
 # fish_add_path /Users/$USER/.local/share/nvm/v19.7.0/bin
 fish_add_path -m /Users/$USER/.asdf/shims
-fish_add_path -m Users/aaron/.local/share/bob/nvim-bin
+fish_add_path -m /Users/$USER/.local/share/bob/nvim-bin
 fish_add_path -m /opt/homebrew/bin
 fish_add_path -m /usr/local/bin/
 fish_add_path -m /Users/$USER/Code/venv/bin
@@ -68,7 +68,6 @@ set -gx CC clang
 set -gx CXX clang++
 # set -U fish_history always
 
-
 # Nvim
 set -gx EDITOR nvim
 set -gx VISUAL nvim
@@ -125,7 +124,7 @@ if type -q vivid
     # set -xg LS_COLORS (vivid generate catppuccin-macchiato)
     set -xg LS_COLORS (vivid generate tokyonight-moon)
 end
-set -xg BAT_THEME tokyonight_moon #Catppuccin-macchiato
+# set -xg BAT_THEME tokyonight_moon #Catppuccin-macchiato
 
 ## Starship
 set -xg STARSHIP_LOG error

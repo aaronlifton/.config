@@ -371,17 +371,17 @@ ac({ "BufRead" }, {
 })
 
 -- Re-add <leader>gl keymap deleted by lazyvim gitui extra
-ac("User", {
-  pattern = "LazyVimKeymaps",
-  once = true,
-  callback = function()
-    -- Override gitui/snacks.picker keymap with lazygit, as this mapping gets
-    -- deleted here: LazyVim/lua/lazyvim/plugins/extras/util/gitui.lua:30
-    vim.keymap.set("n", "<leader>gl", function()
-      Snacks.lazygit.log({ cwd = LazyVim.root.git() })
-    end, { desc = "Lazygit Log" })
-  end,
-})
+-- ac("User", {
+--   pattern = "LazyVimKeymaps",
+--   once = true,
+--   callback = function()
+--     -- Override gitui/snacks.picker keymap with lazygit, as this mapping gets
+--     -- deleted here: LazyVim/lua/lazyvim/plugins/extras/util/gitui.lua:30
+--     vim.keymap.set("n", "<leader>gl", function()
+--       Snacks.lazygit.log({ cwd = LazyVim.root.git() })
+--     end, { desc = "Lazygit Log" })
+--   end,
+-- })
 
 vim.api.nvim_create_autocmd("User", {
   pattern = "LazyLoad",
