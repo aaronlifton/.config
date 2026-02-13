@@ -6,11 +6,12 @@ end
 
 if status is-interactive
     if type -q atuin
-        set -l atuin_cache $fish_cache_dir/atuin_init.fish
         set -l atuin_bin (command -v atuin)
-        if not test -f $atuin_cache; or test $atuin_cache -ot $atuin_bin
+        set -l atuin_cache $fish_cache_dir/atuin_init.fish
+        if not test -e $atuin_cache
             command atuin init fish >$atuin_cache
         end
+        echo "Sourcing $atuin_cache"
         source $atuin_cache
     end
     if type -q starship
@@ -62,8 +63,17 @@ if status is-interactive
     end
 
     # eval (zellij setup --generate-auto-start fish | string collect)
-end
 
+    # NOTE: this interferes with Warp (https://docs.warp.dev/support-and-billing/known-issues#list-of-incompatible-tools)
+    set -l rbenv_cache $fish_cache_dir/rbenv_init.fish
+    if not test -f $rbenv_cache
+        echo Setting up rbenv
+        if test -z $( echo $PATH | grep "$(rbenv root)/shims")
+            /opt/homebrew/bin/rbenv init fish | source
+            echo '' >$rbenv_cache
+        end
+    end
+end
 
 # Custom fisher path
 set -Ux fisher_path ~/.config/fish/fisher
@@ -108,11 +118,10 @@ alias pwdcopy=cppwd
 # . $HOME/.config/fish/prompt.fish
 # . $HOME/.config/fish/kubectl.fish
 
-# NOTE: this interferes with Warp (https://docs.warp.dev/support-and-billing/known-issues#list-of-incompatible-tools)
-# status --is-interactive; and /opt/homebrew/bin/rbenv init - fish | source
-
 # Cargo
-source "$HOME/.cargo/env.fish"
+if test -f "$HOME/.cargo/env.fish"
+    source "$HOME/.cargo/env.fish"
+end
 # source $"($nu.home-path)/.cargo/env.nu"  # For nushell
 
 # usage: help eza
@@ -168,5 +177,6 @@ string match -q "$TERM_PROGRAM" vscode
 and . (code --locate-shell-integration-path fish)
 
 ~/.local/bin/mise activate fish | source
+command atuin init fish | source
 
-string match -q "$TERM_PROGRAM" "kiro" and . (kiro --locate-shell-integration-path fish)
+# string match -q "$TERM_PROGRAM" kiro and . (kiro --locate-shell-integration-path fish)

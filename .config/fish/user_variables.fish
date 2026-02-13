@@ -7,6 +7,7 @@ set -lx fish_config_path /Users/$USER/.config/fish
 fish_add_path -m /Users/$USER/.asdf/shims
 fish_add_path -m /Users/$USER/.local/share/bob/nvim-bin
 fish_add_path -m /opt/homebrew/bin
+fish_add_path -m /Users/$USER/.rbenv/shims
 fish_add_path -m /usr/local/bin/
 fish_add_path -m /Users/$USER/Code/venv/bin
 # fish_add_path /opt/homebrew/opt/asdf/lib/exec/bin
