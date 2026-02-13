@@ -155,6 +155,10 @@
          ;  :rules [; [:!Scaps_lock :caps_lock] ; gets pressed too often
          ;          [:##caps_lock :!CTOleft_shift :!terminals {:alone [:escape]}]]}
 
+         ;; Change caps_lock key to command+control+option+shift. (Use shift+caps_lock as caps_lock)
+         {:des "Change caps_lock key to control when held, escape when pressed"
+          :rules [[:##caps_lock :left_control nil {:to_if_alone :escape :condi :terminals}]]}
+
          ;; Change caps_lock to control if pressed with other keys, to escape if pressed alone.
          ; {:des "Change caps_lock to control if pressed with other keys, to escape if pressed alone."
          ;  :rules [[]] ;; Disabled rule
@@ -177,9 +181,9 @@
          ;  :rules [[:##caps_lock :right_control :terminals
          ;           {:to_if_alone :escape}]]}
 
-         {:des "Caps Lock as Hyper outside of Terminals"
-          :rules [; [:##caps_lock [:!CTOleft_shift ["hyper-mode" 2]] nil {:to_if_alone :escape}]]}
-                  [:##caps_lock :!CTOleft_shift nil {:alone :escape}]]}
+         ; {:des "Caps Lock as Hyper outside of Terminals"
+         ;  :rules [; [:##caps_lock [:!CTOleft_shift ["hyper-mode" 2]] nil {:to_if_alone :escape}]]}
+         ;         [:##caps_lock :!CTOleft_shift nil {:alone :escape}]]}
 
          {:des "Hyper apps"
           :rules [[:!!k [:open "/Applications/Kitty.app"]]
@@ -295,4 +299,3 @@
           ;         [[:f :hyphen] :f11]
           ;         [[:f :equal_sign] :f12]
           ;         ]}]}
-
