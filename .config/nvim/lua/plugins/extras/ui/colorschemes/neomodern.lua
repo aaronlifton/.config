@@ -6,7 +6,7 @@ return {
     -----MAIN OPTIONS-----
     --
     -- Can be one of: 'iceclimber' | 'gyokuro' | 'hojicha' | 'roseprime'
-    theme = "iceclimber",
+    theme = "roseprime",
     -- Can be one of: 'light' | 'dark', or set via vim.o.background
     variant = "dark",
     -- Use an alternate, darker bg
@@ -17,9 +17,9 @@ return {
     -- If true, highlights the {sign,fold} column the same as cursorline
     cursorline_gutter = true,
     -- If true, highlights the gutter darker than the bg
-    dark_gutter = false,
+    dark_gutter = true,
     -- if true favor treesitter highlights over semantic highlights
-    favor_treesitter_hl = false,
+    favor_treesitter_hl = true,
     -- Don't set background of floating windows. Recommended for when using floating
     -- windows with borders.
     plain_float = false,
@@ -81,6 +81,11 @@ return {
       -- MiniPickMatchCurrent = { link = "Visual" },
     },
   },
+  -- keys = {
+  --   -- stylua: ignore start
+  --   { "<leader>u<C-b>", function() require("neomodern").load() end, "Toggle Neomodern" },
+  --   -- stylua: ignore end
+  -- },
   config = function(_, opts)
     local theme = opts.theme
     local C = require("neomodern.palette").get(theme, "dark")
@@ -154,6 +159,21 @@ return {
     --     bg = C.alt_bg,
     --   },
     -- })
+
+    ---@type neomodern.Overrides
+    local overrides = {
+      default = {
+        string = "#44676C",
+      },
+      hlgroups = {
+        Delimiter = {
+          fg = "#27282A",
+        },
+        -- WinSeparator = {
+        --   fg = "#766D76",
+        -- },
+      },
+    }
     require("neomodern").setup(opts)
     -- Convenience function that simply calls `:colorscheme <theme>` with the theme
     -- specified in your config.

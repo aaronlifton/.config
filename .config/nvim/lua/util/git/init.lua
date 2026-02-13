@@ -1,5 +1,6 @@
 ---@class util.git
 ---@field github util.git.github
+---@field conflict util.git.conflict
 local M = {}
 
 function M.mru_branches(count)
@@ -118,5 +119,81 @@ function M.get_github_codeview_url_for_line()
   local github_url = string.format("%s/blob/%s/%s#L%d", remote_url, branch, relative_path, line)
   return github_url
 end
+
+---@param file1? string
+---@param file2? string
+function M.difft(file1, file2)
+  if vim.fn.executable("difft") ~= 1 then
+    vim.notify("`difft` is not installed or not on PATH", vim.log.levels.ERROR)
+    return
+  end
+
+  file1 = file1 or vim.trim(vim.fn.getreg("1"))
+  file2 = file2 or vim.trim(vim.fn.getreg("2"))
+  if file1 == "" or file2 == "" then
+    vim.notify("Registers 1 and 2 must contain file paths", vim.log.levels.WARN)
+    return
+  end
+
+  file1 = vim.fn.expand(file1)
+  file2 = vim.fn.expand(file2)
+  if vim.fn.filereadable(file1) ~= 1 then
+    vim.notify("File from register 1 is not readable: " .. file1, vim.log.levels.ERROR)
+    return
+  end
+  if vim.fn.filereadable(file2) ~= 1 then
+    vim.notify("File from register 2 is not readable: " .. file2, vim.log.levels.ERROR)
+    return
+  end
+
+  vim.cmd("tabnew")
+  local cmd = "difft --color=always " .. vim.fn.shellescape(file1) .. " " .. vim.fn.shellescape(file2)
+  local job_id = vim.fn.jobstart(vim.o.shell, { term = true })
+  if job_id <= 0 then
+    vim.notify("Failed to open terminal for difft", vim.log.levels.ERROR)
+    return
+  end
+  local file1_name = vim.fn.fnamemodify(file1, ":h")
+  local file2_name = vim.fn.fnamemodify(file2, ":h")
+  vim.api.nvim_buf_set_name(0, ("difft://Diff-%s-vs-%s"):format(file1_name, file2_name))
+  vim.api.nvim_chan_send(job_id, cmd .. "\n")
+  vim.api.nvim_chan_send(job_id, "\n")
+  vim.cmd("stopinsert")
+  -- Scroll below shell intro text
+  vim.api.nvim_input("6<C-e>")
+end
+
+-- pcall(vim.api.nvim_del_user_command, "Difft")
+vim.api.nvim_create_user_command("Difft", function(opts)
+  local args = vim.fn.split(opts.args, "")
+  if #args > 0 then
+    if #args == 2 then
+      M.difft(args[1], args[2])
+    else
+      local current_file = vim.api.nvim_buf_get_name(0)
+      if current_file == "" then
+        vim.notify("Current buffer has no file path", vim.log.levels.ERROR)
+        return
+      end
+      if #args == 1 then
+        M.difft(args[1], current_file)
+      else
+        local system_register_file = vim.trim(vim.fn.getreg("+"))
+        if system_register_file == "" then
+          vim.notify("System register (+) is empty", vim.log.levels.ERROR)
+          return
+        end
+        M.difft(system_register_file, current_file)
+      end
+    end
+    return
+  end
+  M.difft()
+end, {
+  nargs = "?",
+  desc = "Run difft on files from registers 1/2, or current file vs system register (+) when argument is provided",
+})
+
+require("util.git.conflict").setup()
 
 return M

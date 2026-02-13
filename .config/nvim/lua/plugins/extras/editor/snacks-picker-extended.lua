@@ -90,8 +90,8 @@ return {
       { "<leader>fj", LazyVim.pick("jumps"), desc = "Jumps" },
       { "<leader>fg", function() Snacks.picker.git_files() end, desc = "Find Files (git-files)" },
       -- { "<leader>fr", LazyVim.pick("oldfiles"), desc = "Recent" },
-      { "<leader>fr", LazyVim.pick("oldfiles", { filter  = { paths = { [vim.fn.stdpath("data")] = true } } }), desc = "Recent" },
-      { "<leader>fR", function() Snacks.picker.recent({ filter = { cwd = true }}) end, desc = "Recent (cwd)" },
+      { "<leader>fr", function() Snacks.picker.recent({ filter = { cwd = true }}) end, desc = "Recent (cwd)" },
+      { "<leader>fR", LazyVim.pick("oldfiles", { filter  = { paths = { [vim.fn.stdpath("data")] = true } } }), desc = "Recent" },
       { "<leader>fp", function() Snacks.picker.files({ title = "Plugins", dirs = { get_lazyvim_plugins_dir() }}) end, desc = "Find Config Files" },
       { "<leader>fl", function() Snacks.picker.files({ title = "LazyVim", dirs = { get_lazyvim_base_dir() }}) end, desc = "Find LazyVim Files" },
       {

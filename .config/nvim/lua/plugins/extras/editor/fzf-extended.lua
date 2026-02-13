@@ -378,7 +378,8 @@ return {
       -- { "<leader>sw", function() pick("grep_visual", vim.tbl_extend("force", live_grep_opts, { rg_glob = false })) end, desc = "Selection (Root Dir)", mode = "v" },
       -- { "<leader>sW", function() pick("grep_visual", vim.tbl_extend("force", live_grep_opts, { rg_glob = false, root = false })) end, desc = "Selection (cwd)", mode = "v" },
       -- Switch around LazyVim bindings
-      { "<leader>sb", "<cmd>FzfLua lgrep_curbuf<CR>", desc = "Buffer (Live Grep)", mode = "n" },
+      -- { "<leader>sb", "<cmd>FzfLua lgrep_curbuf<CR>", desc = "Buffer (Live Grep)", mode = "n" },
+      { "<leader>sb", "<cmd>FzfLua blines<CR>", desc = "Buffer (Live Grep)", mode = "n" },
       { "<leader>sB", "<cmd>FzfLua lines rg_glob=true git_icons=true<cr>", desc = "Buffer Lines" },
       -- { "<leader>sB", function() pick("lines", { rg_glob = true, git_icons = true }) end, desc = "Buffer (Live Grep)", mode = "n" },
       { "<leader>sg", function() pick("live_grep_glob", live_grep_opts_with_reset) end, desc = "Grep (Root Dir)" },

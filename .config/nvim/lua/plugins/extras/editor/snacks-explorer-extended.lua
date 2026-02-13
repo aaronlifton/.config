@@ -1,6 +1,5 @@
-local function reveal_or_open(opts)
-  opts = opts or {}
-  local ft = "snacks_picker_list"
+local ft = "snacks_picker_list"
+local function find_explorer_win()
   local wins = vim.api.nvim_list_wins()
   local explorer_win
 
@@ -13,10 +12,24 @@ local function reveal_or_open(opts)
     end
   end
 
+  return explorer_win
+end
+
+local function focus_explorer_win(win)
+  win = win or find_explorer_win()
+  if not win then return end
+
+  vim.api.nvim_set_current_win(win)
+end
+
+local function reveal_or_open(opts)
+  opts = opts or {}
+  local explorer_win = find_explorer_win()
+
   if explorer_win then
     vim.api.nvim_set_current_win(explorer_win)
-    local buf = vim.api.nvim_get_current_buf()
-    Snacks.explorer.reveal(vim.tbl_extend("force", { buf = buf }, opts))
+    -- local buf = vim.api.nvim_get_current_buf()
+    -- Snacks.explorer.reveal(vim.tbl_extend("force", { buf = buf }, opts))
   else
     Snacks.explorer(opts)
   end
@@ -44,6 +57,17 @@ return {
         desc = "Explorer Snacks (cwd)",
       },
       { "<leader>fe", "<leader>e", desc = "Explorer Snacks (root dir)", remap = true },
+      {
+        "<M-e>",
+        function()
+          if vim.bo.filetype == ft then
+            vim.api.nvim_input("<C-w><C-p>")
+          else
+            focus_explorer_win()
+          end
+        end,
+        desc = "Focus Explorer",
+      },
       -- {
       --   "<leader>fe",
       --   function()

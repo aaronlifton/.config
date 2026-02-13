@@ -1,8 +1,8 @@
 local prefix = "<leader>gC"
 -- stylua: ignore start
 local keys = {
-  { "co", "<Plug>(git-conflict-ours)",          { desc = "Choose Their Changes" } },
-  { "ct", "<Plug>(git-conflict-theirs)",        { desc = "Choose Our Changes" } },
+  { "co", "<Plug>(git-conflict-ours)",          { desc = "Choose Our Changes" } },
+  { "ct", "<Plug>(git-conflict-theirs)",        { desc = "Choose Their Changes" } },
   { "cb", "<Plug>(git-conflict-both)",          { desc = "Choose Both changes" } },
   { "c0", "<Plug>(git-conflict-none)",          { desc = "Choose None" } },
   { "cx", "<Plug>(git-conflict-refresh)",       { desc = "Git Conflict Refresh" } },
@@ -41,10 +41,10 @@ return {
       default_mappings = false,
       -- default_commands = true, -- disable commands created by this plugin
       -- disable_diagnostics = false, -- This will disable the diagnostics in a buffer whilst it is conflicted
-      -- list_opener = "copen", -- command or function to open the conflicts list
-      list_opener = function()
-        require("trouble").open({ mode = "quickfix", focus = false })
-      end,
+      list_opener = "copen", -- command or function to open the conflicts list
+      -- list_opener = function()
+      --   require("trouble").open({ mode = "quickfix", focus = false })
+      -- end,
       -- highlights = { -- They must have background color, otherwise the default color will be used
       --   incoming = "DiffAdd",
       --   current = "DiffText",

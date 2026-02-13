@@ -275,7 +275,6 @@ end
 function M.open_async(opts)
   opts = opts or {}
   local languages = parse_languages(opts.languages)
-  vim.api.nvim_echo({ { vim.inspect(languages), "Normal" } }, true, {})
 
   local contents = function(cb)
     local function add_entry(x, co, _)

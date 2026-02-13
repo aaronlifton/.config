@@ -79,6 +79,10 @@ return {
         if _opts.ft == "dbui" then table.remove(_opts, idx) end
       end
 
+      for idx, _opts in ipairs(opts.bottom) do
+        if _opts.ft == "snacks_terminal" then opts.bottom[idx].size.height = 0.3 end
+      end
+
       return opts
     end,
   },

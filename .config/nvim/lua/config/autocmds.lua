@@ -344,7 +344,7 @@ ac({ "FileType" }, {
 
 -- NOTE: Modified from snacks.bigfile
 -- TODO: see if it's worth to copy and extend snacks.bigfile instead of keeping a filename list.
-local bigfiles = { "common.json" }
+local bigfiles = { "common.json", "server/db/schema.rb" }
 ac({ "BufRead" }, {
   callback = function(ctx)
     local filepath = vim.api.nvim_buf_get_name(ctx.buf)
@@ -439,6 +439,29 @@ ac("FileChangedShell", {
         vim.log.levels.WARN
       )
     end
+  end,
+})
+
+ac({ "BufNewFile", "BufRead" }, {
+  pattern = { "*.md" },
+  callback = function(ctx)
+    if vim.bo[ctx.buf].buftype ~= "" then return end
+
+    local line_count = vim.api.nvim_buf_line_count(ctx.buf)
+    local first_line = vim.api.nvim_buf_get_lines(ctx.buf, 0, 1, false)[1] or ""
+    if line_count > 1 or first_line ~= "" then return end
+
+    local filename = vim.fn.fnamemodify(ctx.file or "", ":t:r")
+    if filename == "" then return end
+
+    local title = filename:gsub("[-_]+", " "):gsub("%s+", " "):gsub("^%s+", ""):gsub("%s+$", "")
+    if title == "" then return end
+
+    title = title:lower()
+    title = title:sub(1, 1):upper() .. title:sub(2)
+
+    vim.api.nvim_buf_set_lines(ctx.buf, 0, 1, false, { "# " .. title, "" })
+    vim.api.nvim_win_set_cursor(0, { 2, 0 })
   end,
 })
 

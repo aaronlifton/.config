@@ -31,6 +31,19 @@ table.insert(keys, {
   end,
   desc = "Prune (select)",
 })
+table.insert(keys, { prefix .. "g", function()
+  local scopes = {"git_branch", "git", "global"}
+  local curr = require("grapple").app().settings.scope
+  local curr_idx --- @type integer
+  for i, s in ipairs(scopes) do
+    if s == curr then curr_idx = i end
+  end
+  local next_idx = curr_idx + 1
+  if next_idx > 3 then next_idx = 1 end
+
+  local next_scope = scopes[next_idx]
+  require("grapple").use_scope(next_scope, { notify = true })
+end, desc = "Toggle Scope"})
 
 -- Harpoon style
 table.insert(keys, { "<D-H>", "<cmd>Grapple select index=1<cr>", desc = "File 1" })

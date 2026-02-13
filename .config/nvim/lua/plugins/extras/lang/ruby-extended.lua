@@ -93,6 +93,10 @@ return {
           init_options = {
             -- formatter = "rubyfmt",
             -- https://github.com/search?q=path%3A**%2Fnvim%2F**%2F*.lua+excludedGems&type=code
+            excludedPatterns = {
+              "**/db/*",
+              "**/server/app/models/utilities/schema.rb",
+            },
             addonSettings = {
               ["Ruby LSP Rails"] = {
                 enablePendingMigrationsPrompt = false,

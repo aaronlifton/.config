@@ -86,3 +86,26 @@ end
 
 -- Mark buffer as configured
 vim.b.ruby_rspec_configured = true
+
+if LazyVim.has("mini.surround") then
+  vim.b.minisurround_config = {
+    custom_surroundings = {
+      i = {
+        output = { left = "#{", right = "}" },
+      },
+      w = {
+        output = { left = "%w(", right = ")" },
+      },
+      I = {
+        output = { left = "%i(", right = ")" },
+      },
+      d = {
+        output = { left = "do\n", right = "\nend" },
+      },
+      -- Begin/rescue wrapper
+      r = {
+        output = { left = "begin\n", right = "\nrescue => e\n  # handle error\nend" },
+      },
+    },
+  }
+end

@@ -42,7 +42,8 @@ return {
 
       hl.LeapMatch = { bg = c.magenta2, fg = c.fg, bold = true }
       hl.LeapLabel = { fg = c.magenta2, bold = true }
-      hl.LeapBackdrop = { fg = c.dark3 } -- #737aa2
+      -- hl.LeapBackdrop = { fg = c.dark3 } -- #737aa2
+      hl.LeapBackdrop = nil
     end,
   },
 }

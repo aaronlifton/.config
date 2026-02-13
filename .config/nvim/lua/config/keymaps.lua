@@ -858,3 +858,32 @@ local bind = require("util.keys.bind")
 map("n", "<leader>aJ", function()
   Util.sidekick.leap_to_tui_window("codex")
 end, { desc = "Jump to a TUI window" })
+
+-- map("n", "<M-b>", "<Cmd>e #<CR>", { desc = "Other Buffer" })
+-- map("n", "<M-b>", "<C-6>", { desc = "Other Buffer" })
+map("n", "<C-x>b", "<C-6>", { desc = "Other Buffer" }) -- Emacs keybinding
+-- map("n", "<M-b>", function()
+--   vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("C-6", true, false, true), "n", false)
+-- end, { desc = "Other Buffer" })
+
+-- map("n", "<leader>fe", function()
+--   local ft = "snacks_picker_list"
+--   local wins = vim.api.nvim_list_wins()
+--   local explorer_win
+--   for _, w in ipairs(wins) do
+--     local buf = vim.api.nvim_win_get_buf(w)
+--     local buf_ft = vim.bo[buf].filetype
+--     if buf_ft == ft then
+--       explorer_win = w
+--       break
+--     end
+--   end
+--
+--   if explorer_win then
+--     vim.api.nvim_set_current_win(explorer_win)
+--     local buf = vim.api.nvim_get_current_buf()
+--     Snacks.explorer.reveal({ buf = buf })
+--   else
+--     Snacks.explorer()
+--   end
+-- end, { desc = "Explorer Snacks (cwd)" })

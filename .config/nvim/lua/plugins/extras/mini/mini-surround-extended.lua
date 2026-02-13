@@ -3,8 +3,13 @@ return {
   optional = true,
   opts = {
     custom_surroundings = {
+      -- Markdown Code block
       M = {
         output = { left = "```\n", right = "\n```" },
+      },
+      -- Markdown Inline code
+      m = {
+        output = { left = "`", right = "`" },
       },
       -- Markdown URL surround
       L = {
@@ -15,6 +20,11 @@ return {
         output = function()
           local opts = { left = "\r", right = "\r" }
           return opts
+        end,
+      },
+      n = {
+        output = function()
+          return { left = "\n", right = "\n" }
         end,
       },
       -- L = {

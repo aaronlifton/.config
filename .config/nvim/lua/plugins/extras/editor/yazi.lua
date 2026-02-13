@@ -163,11 +163,6 @@ return {
         end,
       }
       table.insert(opts.left, yazi_view)
-      for _, pos in ipairs({ "top", "bottom", "left", "right" }) do
-        for _, opts in ipairs(opts[pos]) do
-          if opts.ft == "snacks_terminal" then opts.size.height = 0.3 end
-        end
-      end
     end,
   },
   {

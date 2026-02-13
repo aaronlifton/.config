@@ -38,9 +38,13 @@ local function preview_location(location, context)
     range["end"].line = math.max(range["end"].line, range.start.line + context)
   end
 
-  local opts = {}
-
   local contents = vim.api.nvim_buf_get_lines(bufnr, range.start.line, range["end"].line + 1, false)
+  local opts = {
+    border = "rounded",
+    -- offset_x = 2,
+    -- height = math.min(math.abs(range["end"].line - range.start.line), 80),
+    -- title = contents[1],
+  }
   -- local path = uri:gsub("^file://", "")
   -- table.insert(contents, 1, Util.display.truncate_path(path, 120, "smart"))
   local filetype = vim.bo[bufnr].filetype
