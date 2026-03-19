@@ -308,7 +308,7 @@ else
 					IS_FLOAT and {} or { type = "string", custom = false, name = "date", params = { "%X" } },
 				},
 				section_c = {
-					{ type = "coloreds", custom = false, name = "tab_path" },
+					{ type = "string", custom = false, name = "tab_path" },
 				},
 			},
 		},

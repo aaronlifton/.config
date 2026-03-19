@@ -1,32 +1,27 @@
 [[plugin.deps]]
 use = "yazi-rs/plugins:full-border"
-rev = "63f9650"
-hash = "3996fc74044bc44144b323686f887e1"
-
-[[plugin.deps]]
-use = "imsi32/yatline"
-rev = "4872af0"
-hash = "d32742ded0e73146a8ca590fdc4fb404"
+rev = "25918dc"
+hash = "6fa6a05a81c98dd000fbca3cca6e9682"
 
 [[plugin.deps]]
 use = "imsi32/yatline-githead"
-rev = "f8f969e"
-hash = "4d441b38138ce6492a4e10fa349fd65"
+rev = "929e52c"
+hash = "8282baf02fcd6aac00ccad2276775358"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:git"
-rev = "63f9650"
-hash = "bf6f074cd41ee33c3360341d168f9733"
+rev = "25918dc"
+hash = "270915fa8282a19908449530ff66f7e2"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:jump-to-char"
-rev = "63f9650"
-hash = "30fc0b37f03a597b92d387268319450f"
+rev = "25918dc"
+hash = "ce67445ebb1bf3d97b8e44f50904b2c5"
 
 [[plugin.deps]]
 use = "lpnh/fr"
-rev = "6d5e469"
-hash = "d8455f929580ec602b4d0bbd8e96711"
+rev = "aa88cd4"
+hash = "8b0e87c3176e0d44f79a8656f79f0fa"
 
 [[plugin.deps]]
 use = "blackdaemon/yatline-tab-path"
@@ -35,38 +30,38 @@ hash = "b58a6786383df06dc16fc6dbd1876d31"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:toggle-pane"
-rev = "3d1efb7"
-hash = "d6f60c24d8c0cf57a855bf46115b2502"
+rev = "25918dc"
+hash = "8a7c58225816a163a6e8730c0adafbc8"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:smart-enter"
-rev = "42f64c0"
+rev = "25918dc"
 hash = "56fdabc96fc1f4d53c96eb884b02a5be"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:smart-paste"
-rev = "42f64c0"
-hash = "a8050052e59f3952abe0b3e27a5843de"
+rev = "25918dc"
+hash = "75fd60b2df7115e0a6ca31a6a804d320"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:types"
-rev = "d7588f6"
-hash = "1e047e1b13b5e3fc6ab1f5d0d04a14e2"
+rev = "25918dc"
+hash = "83b5b82b595c39a660bf2b170987e5e7"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:chmod"
-rev = "d7588f6"
-hash = "1adc12c2b2b025411ab61eb8f0879574"
+rev = "25918dc"
+hash = "8da0b15a97b5dfd13941d1ecc617ac7c"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:vcs-files"
-rev = "9a52857"
-hash = "4ee57085277d616acfa0ef1fef37dc00"
+rev = "25918dc"
+hash = "f69e4737c2fb8ceec58a2950faf13c46"
 
 [[plugin.deps]]
 use = "ndtoan96/ouch"
-rev = "0742fff"
-hash = "2bd799b42b8e42b8ef100310be71f8d1"
+rev = "594b8a2"
+hash = "c9e628fc0312d198db22ae2fa74883b"
 
 [[plugin.deps]]
 use = "wekauwau/yatline-modified-time"
@@ -75,7 +70,7 @@ hash = "8fa6028ef832b34cf32f4ee43cb0ae35"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:no-status"
-rev = "9a52857"
+rev = "25918dc"
 hash = "3e023d31f29201efdac2a6ae35fedb78"
 
 [[plugin.deps]]
@@ -85,18 +80,23 @@ hash = "215729a555fe5286f1eb35520963d08"
 
 [[plugin.deps]]
 use = "h-hg/yamb"
-rev = "22af003"
-hash = "7cc42012a7c2099f80064d228feb8d44"
+rev = "5f2e22e"
+hash = "699fe07e0d2d1b4af8dafb84168eeb04"
 
 [[plugin.deps]]
 use = "yazi-rs/plugins:smart-filter"
-rev = "8f1d971"
-hash = "bcda8eeb3f4013bae156aecabfc745e8"
+rev = "25918dc"
+hash = "407d19bc4fb46eff5fa8ff8337644847"
 
 [[plugin.deps]]
 use = "ktunprasert/git-files"
 rev = "c7289ad"
 hash = "cdb1a69bed63211c75b72521bbab875d"
+
+[[plugin.deps]]
+use = "imsi32/yatline"
+rev = "c5d4b48"
+hash = "e6e98d12b1648d1894c2b560d85eeaa7"
 
 [flavor]
 deps = []

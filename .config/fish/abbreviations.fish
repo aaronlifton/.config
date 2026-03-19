@@ -11,7 +11,8 @@ abbr -a t gtrash
 abbr -a grep rg
 abbr -a find fd
 abbr -a cat bat --style grid
-abbr -a b brew
+abbr -a b bundle
+abbr -a br brew
 abbr -a bi brew install
 
 abbr --add tar 'tar -zxvf'
@@ -68,7 +69,6 @@ abbr --add chat-pplx nvim -o1 -c \"Mchat pplx\"
 abbr --add llm-gemini --set-cursor "llm -m gemini-2.5-pro --system \"You are a helpful assistant. You will receive questions from a user who is asking you questions via his Kitty terminal on OSX, and he is a software engineer.\" \"%\""
 abbr --add llm-gemini-flash --set-cursor "llm -m gemini-2.5 --system \"You are a helpful assistant. You will receive questions from a user who is asking you questions via his Kitty terminal on OSX, and he is a software engineer.\" \"%\""
 abbr --add aiask --set-cursor "llm -m gpt-4o-mini \"%\""
-
 
 #### Development
 abbr --add be bundle exec
