@@ -338,6 +338,19 @@ return {
       -- { "<leader>gS", function() require("mini.extra").pickers.git_hunks({scope = "staged"}) end, desc = "Git Diff (Staged)" },
       -- stylua: ignore end
     },
+    init = function()
+      -- NOTE: There doesn't seem to be a current way to remove the
+      -- vim.ui.select override in ~/.local/share/nvim/lazy/LazyVim/lua/lazyvim/plugins/extras/editor/fzf.lua:199
+      -- so we set it again here to ensure `mini.pick` is the default `vim.ui.select`
+      LazyVim.on_very_lazy(function()
+        ---@diagnostic disable-next-line: duplicate-set-field
+        vim.ui.select = function(...)
+          require("lazy").load({ plugins = { "mini.pick" } })
+          vim.ui.select = MiniPick.ui_select
+          return vim.ui.select(...)
+        end
+      end)
+    end,
   },
   {
     "neovim/nvim-lspconfig",

@@ -30,6 +30,21 @@ return {
     ft = "ruby",
     config = function()
       vim.g.rails_projections = {
+        ["app/handlers/*.rb"] = {
+          test = {
+            "spec/handlers/{}_unit_spec.rb",
+          },
+          alternate = {
+            "spec/handlers/{}_unit_spec.rb",
+          },
+        },
+
+        ["spec/handlers/*_unit_spec.rb"] = {
+          alternate = {
+            "app/handlers/{}.rb",
+          },
+        },
+        --
         ["app/controllers/*_controller.rb"] = {
           test = {
             "spec/requests/{}_controller_spec.rb",

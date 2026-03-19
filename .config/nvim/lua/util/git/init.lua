@@ -56,6 +56,81 @@ function M.blame_line(opts)
   return Snacks.terminal(cmd, opts)
 end
 
+--- Show the commit for the current line and render it with difftastic.
+---@param opts? snacks.terminal.Opts | {count?: number}
+function M.blame_line_difft(opts)
+  opts = vim.tbl_deep_extend("force", {
+    count = 1,
+    interactive = false,
+    auto_close = false,
+    win = {
+      width = 0.75,
+      height = 0.75,
+      wo = {
+        wrap = false,
+      },
+      border = true,
+      title = " Git Blame ",
+      title_pos = "center",
+      ft = "git",
+    },
+  }, opts or {})
+
+  if vim.fn.executable("difft") ~= 1 then
+    vim.notify("`difft` is not installed or not on PATH", vim.log.levels.ERROR)
+    return
+  end
+
+  local cursor = vim.api.nvim_win_get_cursor(0)
+  local line = cursor[1]
+  local file = vim.api.nvim_buf_get_name(0)
+  local root = Snacks.git.get_root()
+  local git = "git"
+  if is_yadm_root(root) then git = "yadm" end
+
+  local relative_path = file
+  if vim.startswith(file, root .. "/") then relative_path = file:sub(#root + 2) end
+  local commit = vim.trim(vim.fn.system({
+    git,
+    "-C",
+    root,
+    "log",
+    "--no-patch",
+    "--format=%H",
+    "-n",
+    tostring(opts.count),
+    "-L",
+    line .. ",+1:" .. relative_path,
+  }))
+
+  if commit == "" then
+    vim.notify("No commit found for current line", vim.log.levels.WARN)
+    return
+  end
+
+  local first_commit = vim.split(commit, "\n", { trimempty = true })[1]
+  if not first_commit or first_commit == "" then
+    vim.notify("Failed to resolve commit for current line", vim.log.levels.ERROR)
+    return
+  end
+
+  local cmd = {
+    git,
+    "-C",
+    root,
+    "-c",
+    "core.pager=cat",
+    "-c",
+    "diff.external=difft",
+    "show",
+    "--ext-diff",
+    first_commit,
+    "--",
+    relative_path,
+  }
+  return Snacks.terminal(cmd, opts)
+end
+
 -- Gets the github URL via remote.
 -- https://github.com/spider-rs/spider/blob/main/spider_cli/src/main.rs#L13
 function M.get_github_url_via_remote()

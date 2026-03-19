@@ -133,5 +133,12 @@
       "end"
     ],
     "description": "Add test context"
+  },
+  "described_class": {
+    "prefix": "described",
+    "body": [
+      "described_class"
+    ],
+    "description": "Use described_class"
   }
 }

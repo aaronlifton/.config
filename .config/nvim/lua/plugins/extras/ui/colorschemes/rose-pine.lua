@@ -10,7 +10,8 @@ return {
       italic = false,
     },
   },
-  config = function()
-    vim.cmd("colorscheme rose-pine")
+  config = function(opts)
+    require("rose-pine").setup(opts)
+    -- vim.cmd("colorscheme rose-pine")
   end,
 }

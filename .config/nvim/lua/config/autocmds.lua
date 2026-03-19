@@ -313,9 +313,12 @@ ac({ "FileType" }, {
 --   end,
 -- })
 
+-- TODO: if we don't use mchat anymore, remove it
 ac({ "FileType" }, {
   pattern = { "markdown", "mchat" },
   callback = function(args)
+    vim.opt_local.spell = false
+
     vim.keymap.set("n", "]n", function()
       require("util.movement").find_next_ordered_list_item()
     end, { desc = "Next in ordered list", remap = true, buffer = true })

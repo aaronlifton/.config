@@ -20,6 +20,7 @@ return {
   { import = "lazyvim.plugins.extras.ai.sidekick" },
   {
     "folke/sidekick.nvim",
+    ---@type sidekick.Config
     config = {
       nes = {
         enabled = false,
@@ -28,6 +29,11 @@ return {
       copilot = {
         status = {
           enabled = false,
+        },
+      },
+      cli = {
+        tools = {
+          codex = { cmd = { "codex", "--search" } },
         },
       },
     },
@@ -83,17 +89,7 @@ return {
       -- stylua: ignore end
     },
     init = function()
-      -- NOTE: There doesn't seem to be a current way to remove the
-      -- vim.ui.select override in ~/.local/share/nvim/lazy/LazyVim/lua/lazyvim/plugins/extras/editor/fzf.lua:199
-      -- so we set it again here to ensure `mini.pick` is the default `vim.ui.select`
       LazyVim.on_very_lazy(function()
-        ---@diagnostic disable-next-line: duplicate-set-field
-        vim.ui.select = function(...)
-          require("lazy").load({ plugins = { "mini.pick" } })
-          vim.ui.select = MiniPick.ui_select
-          return vim.ui.select(...)
-        end
-
         local Context = require("sidekick.cli.context")
         setmetatable(Context, {
           __index = Context.context,

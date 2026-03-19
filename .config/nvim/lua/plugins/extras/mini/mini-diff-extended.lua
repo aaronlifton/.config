@@ -118,7 +118,7 @@ return {
         "<leader>gdd",
         function()
           local buf_id = vim.api.nvim_get_current_buf()
-          set_mini_diff_ref_text(buf_id, "development")
+          set_mini_diff_ref_text(buf_id, "dev")
         end,
         desc = "MiniDiff (development)",
       },
@@ -131,7 +131,8 @@ return {
           Snacks.input({
             prompt = "Compare: ",
             icon = "",
-            completion = "customlist,v:lua.require'neogit.lib.git'.refs.list_local_branches",
+            -- completion = "customlist,v:lua.require'neogit.lib.git'.refs.list_local_branches",
+            completion = "customlist,v:lua.require'neogit.lib.git'.refs.list_branches",
           }, function(branch)
             set_mini_diff_ref_text(buf_id, branch)
           end)

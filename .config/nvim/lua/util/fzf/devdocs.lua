@@ -84,7 +84,7 @@ local function language_lookup(languages)
   for _, lang in ipairs(languages) do
     if lang == "lua" then return { latest_docs.lua } end
     if lang == "javascriptreact" then return { "javascript", "react" } end
-    if lang == "typescriptreact" then return { "typescript", "react" } end
+    if lang == "typescriptreact" then return { "javascript", "react", "typescript" } end
     if lang == "javascript" then return { "javascript", "jest" } end
     if lang == "ruby" or lang == "eruby" then return { latest_docs.ruby, latest_docs.rails } end
     if lang == "python" then return { latest_docs.python } end

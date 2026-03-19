@@ -58,9 +58,7 @@ end
 ---@param item table LSP location item
 function M.jump_to_location(item)
   local path = item.path or item.filename
-  if path then
-    vim.cmd("edit " .. vim.fn.fnameescape(path))
-  end
+  if path then vim.cmd("edit " .. vim.fn.fnameescape(path)) end
   local lnum = item.lnum or 1
   local col = item.col or 1
   pcall(vim.api.nvim_win_set_cursor, 0, { lnum, col - 1 })
@@ -85,9 +83,7 @@ function M.make_on_list(opts)
     end
 
     -- Dedupe by location
-    if opts.dedupe then
-      items = M.dedupe_by_location(items)
-    end
+    if opts.dedupe then items = M.dedupe_by_location(items) end
 
     -- Auto-jump for single result
     if opts.auto_jump and #items == 1 then
@@ -132,6 +128,50 @@ function M.is_client_running(client_name, bufnr)
     { title = "LSP Client Status" }
   )
   return client_attached, client
+end
+
+function M.stop_duplicate_lsp()
+  local clients = vim.lsp.get_active_clients()
+  if #clients == 0 then
+    vim.notify("No active LSP clients", vim.log.levels.INFO)
+    return
+  end
+
+  -- group by name
+  local groups = {}
+  for _, c in ipairs(clients) do
+    groups[c.name] = groups[c.name] or {}
+    table.insert(groups[c.name], c)
+  end
+
+  -- build pick list only for duplicates
+  local items = {}
+  for name, list in pairs(groups) do
+    if #list > 1 then
+      for _, c in ipairs(list) do
+        table.insert(items, {
+          label = string.format("%s (id=%d, root=%s)", name, c.id, c.config.root_dir or "?"),
+          id = c.id,
+        })
+      end
+    end
+  end
+
+  if #items == 0 then
+    vim.notify("No duplicate LSP clients found", vim.log.levels.INFO)
+    return
+  end
+
+  vim.ui.select(items, {
+    prompt = "Stop duplicate LSP client:",
+    format_item = function(item)
+      return item.label
+    end,
+  }, function(choice)
+    if not choice then return end
+    vim.lsp.stop_client(choice.id)
+    vim.notify("Stopped LSP client id=" .. choice.id, vim.log.levels.INFO)
+  end)
 end
 
 return M

@@ -10,11 +10,9 @@ local config = {
       require("leap").opts.labels = ""
     end,
   },
-  preview_filter = {
+  preview = {
     disable = function()
-      require("leap").opts.preview_filter = function()
-        return false
-      end
+      return false
     end,
     exclude_whitespace_and_middle_alphanumeric_words = function(ch0, ch1, ch2)
       -- Skip the pair if it begins with whitespace or mid-word alphanumeric
@@ -25,17 +23,10 @@ local config = {
       --   or (ch0:match("%w") and ch1:match("%w") and ch2:match("%w")) -- skip middle of alphanumerics
       -- )
 
-      -- Exclude whitespace and the middle of alphabetic words from preview:
+      -- Skip preview if the first character of the match is whitespace or is in the middle of an alphabetic word:
       --   foobar[baaz] = quux
       --   ^----^^^--^^-^-^--^
-      require("leap").opts.preview_filter = function(ch0, ch1, ch2)
-          -- stylua: ignore start
-            return not (
-              ch1:match('%s') or
-              ch0:match('%a') and ch1:match('%a') and ch2:match('%a')
-            )
-        -- stylua: ignore end
-      end
+      return not (ch1:match("%s") or ch0:match("%a") and ch1:match("%a") and ch2:match("%a"))
     end,
   },
   always_show_labels_at_beginning_of_match = function()
@@ -108,30 +99,22 @@ local experimental_features = {
         if vim.fn.searchcount().total < 1 then return end
         -- Activate again if `:nohlsearch` has been used (Normal/Visual mode).
         vim.go.hlsearch = vim.go.hlsearch
-
         -- Allow the search command to complete its chores before
         -- invoking Leap (Command-line mode).
         vim.schedule(function()
-          local leap = require("leap")
-          -- Allow traversing with the trigger key.
-          local next_target = vim.deepcopy(leap.opts.keys.next_target)
-          if type(next_target) == "string" then next_target = { next_target } end
-          table.insert(next_target, key)
-
-          leap.leap({
+          require("leap").leap({
             pattern = vim.fn.getreg("/"),
             -- If you always want to go forward/backward with the given key,
             -- regardless of the previous search direction, just set this to
             -- `is_reverse`.
             backward = (is_reverse and vim.v.searchforward == 1) or (not is_reverse and vim.v.searchforward == 0),
-            opts = {
-              keys = { next_target = next_target },
+            opts = require("leap.user").with_traversal_keys(key, nil, {
               -- Auto-jumping to the second match would be confusing without
               -- 'incsearch'.
               safe_labels = (cmdline_mode and not vim.o.incsearch) and ""
                 -- Keep n/N usable in any case.
-                or leap.opts.safe_labels:gsub("[nN]", ""),
-            },
+                or require("leap").opts.safe_labels:gsub("[nN]", ""),
+            }),
           })
           -- You might want to switch off the highlights after leaping.
           -- vim.cmd('nohlsearch')
@@ -149,37 +132,38 @@ local experimental_features = {
   end,
   one_char_search = function()
     do
-      -- Return an argument table for `leap()`, tailored for f/t-motions.
-      local function as_ft(key_specific_args)
-        local common_args = {
+      local function ft(key_specific_args)
+        require("leap").leap(vim.tbl_deep_extend("keep", key_specific_args, {
+          -- Uncomment to limit search scope to the current line:
+          -- pattern = function(pat) return '\\%.l' .. pat end,
           inputlen = 1,
           inclusive = true,
-          -- To limit search scope to the current line:
-          -- pattern = function (pat) return '\\%.l'..pat end,
           opts = {
-            labels = "", -- force autojump
-            safe_labels = vim.fn.mode(1):match("[no]") and "" or nil, -- [1]
-            -- NOTE: Skipping the safe_labels key is the same as this:
-            -- safe_labels = require("leap.opts").safe_labels, -- "sfnut/SFNLHMUGTZ?"
+            -- Force autojump.
+            labels = "",
+            -- Match the modes where you don't need labels (`:h mode()`).
+            safe_labels = vim.fn.mode(1):match("o") and "" or nil,
           },
-        }
-        return vim.tbl_deep_extend("keep", common_args, key_specific_args)
+        }))
       end
 
-      local clever = require("leap.user").with_traversal_keys -- [2]
-      local clever_f = clever("f", "F")
-      local clever_t = clever("t", "T")
+      -- A helper function making it easier to set "clever-f" behavior
+      -- (use f/F or t/T instead of ;/, - see the plugin clever-f.vim).
+      local clever = require("leap.user").with_traversal_keys
+      local clever_f, clever_t = clever("f", "F"), clever("t", "T")
 
-      for key, key_specific_args in pairs({
-        f = { opts = clever_f },
-        F = { backward = true, opts = clever_f },
-        t = { offset = -1, opts = clever_t },
-        T = { backward = true, offset = 1, opts = clever_t },
-      }) do
-        vim.keymap.set({ "n", "x", "o" }, key, function()
-          require("leap").leap(as_ft(key_specific_args))
-        end)
-      end
+      vim.keymap.set({ "n", "x", "o" }, "f", function()
+        ft({ opts = clever_f })
+      end)
+      vim.keymap.set({ "n", "x", "o" }, "F", function()
+        ft({ backward = true, opts = clever_f })
+      end)
+      vim.keymap.set({ "n", "x", "o" }, "t", function()
+        ft({ offset = -1, opts = clever_t })
+      end)
+      vim.keymap.set({ "n", "x", "o" }, "T", function()
+        ft({ backward = true, offset = 1, opts = clever_t })
+      end)
     end
 
     -- [1] Match the modes here for which you don't want to use labels
@@ -188,54 +172,6 @@ local experimental_features = {
     --     functionality (https://github.com/rhysd/clever-f.vim), returning
     --     an `opts` table derived from the defaults, where the given keys
     --     are added to `keys.next_target` and `keys.prev_target`
-  end,
-  -- flit (enhanced f/t motions)
-  one_char_search_bak = function()
-    do
-      -- Returns an argument table for `leap()`, tailored for f/t-motions.
-      local function as_ft(key_specific_args)
-        local common_args = {
-          inputlen = 1,
-          inclusive = true,
-          -- To limit search scope to the current line:
-          -- pattern = function (pat) return '\\%.l'..pat end,
-          opts = {
-            labels = "", -- force autojump
-            safe_labels = vim.fn.mode(1):match("o") and "" or nil, -- [1]
-            case_sensitive = true, -- [2]
-          },
-        }
-        return vim.tbl_deep_extend("keep", common_args, key_specific_args)
-      end
-
-      local clever = require("leap.user").with_traversal_keys -- [3]
-      local clever_f = clever("f", "F")
-      local clever_t = clever("t", "T")
-
-      for key, args in pairs({
-        f = { opts = clever_f },
-        F = { backward = true, opts = clever_f },
-        t = { offset = -1, opts = clever_t },
-        T = { backward = true, offset = 1, opts = clever_t },
-      }) do
-        vim.keymap.set({ "n", "x", "o" }, key, function()
-          require("leap").leap(as_ft(args))
-        end)
-      end
-    end
-
-    ------------------------------------------------------------------------
-    -- [1] Match the modes here for which you don't want to use labels
-    --     (`:h mode()`, `:h lua-pattern`).
-    -- [2] For 1-char search, you might want to aim for precision instead of
-    --     typing comfort, to get as many direct jumps as possible.
-    -- [3] This helper function makes it easier to set "clever-f"-like
-    --     functionality (https://github.com/rhysd/clever-f.vim), returning
-    --     an `opts` table derived from the defaults, where:
-    --     * the given keys are added to `keys.next_target` and
-    --       `keys.prev_target`
-    --     * the forward key is used as the first label in `safe_labels`
-    --     * the backward (reverse) key is removed from `safe_labels`
   end,
   jump_to_lines = function()
     vim.keymap.set({ "n", "x", "o" }, "|", function()
@@ -252,6 +188,7 @@ local experimental_features = {
   clever_s = function()
     do
       local clever_s = require("leap.user").with_traversal_keys("s", "S")
+
       vim.keymap.set({ "n", "x", "o" }, "s", function()
         require("leap").leap({ opts = clever_s })
       end)
@@ -281,11 +218,10 @@ return {
   -- disable flash
   { "folke/flash.nvim", enabled = false, optional = true },
   {
-    "ggandor/leap.nvim",
     url = "https://codeberg.org/andyg/leap.nvim.git",
     keys = {
       -- stylua: ignore start
-      -- 2025 reccomended keybindings (instead of s/S for different directions on same page)
+      -- 2025 recommended keybindings (instead of s/S for different directions on same page)
       { "s", "<Plug>(leap)", { "n", "x", "o" } },
       { "S", "<Plug>(leap-from-window)", "n" },
       -- evil-snipe
@@ -301,7 +237,7 @@ return {
             opts = require("leap.user").with_traversal_keys("R", "r"),
           })
         end,
-        mode = { "o", "x" },
+        mode = { "x", "o" },
         desc = "Treesitter Select (Leap)",
       },
       {
@@ -309,15 +245,21 @@ return {
         -- paragraph at the position specified by `{leap}`.
         "gs",
         function()
-          if trigger_remote_v_immediately then
-            -- Trigger visual selection right away, so that you can `gs{leap}apy`:
-            -- NOTE: has a bug with scrolling when leaping to a different window.
-            require("leap.remote").action({ input = "v" })
-          else
-            require("leap.remote").action()
-          end
+          -- Automatically enter Visual mode when coming from Normal.
+          require('leap.remote').action({
+            -- Automatically enter Visual mode when coming from Normal.
+            input = vim.fn.mode(true):match('o') and '' or 'v'
+          })
+
+          -- if trigger_remote_v_immediately then
+          --   -- Trigger visual selection right away, so that you can `gs{leap}apy`:
+          --   -- NOTE: has a bug with scrolling when leaping to a different window.
+          --   require("leap.remote").action({ input = "v" })
+          -- else
+          --   require("leap.remote").action()
+          -- end
         end,
-        mode = { "n", "x", "o" },
+        mode = { "n", "o" },
         desc = "Leap Remote",
       },
       {
@@ -355,26 +297,23 @@ return {
     },
     opts = {
       equivalence_classes = { " \t\r\n", "([{", ")]}", "'\"`" },
-      -- equivalence_classes = { " \t\r\n", "([", ")]", "'\"`" },
       substitute_chars = { ["\r"] = "¬" },
       -- Three characters as arguments:
       --  - the character preceding the match (might be an empty string)
       --  - the matched pair itself
-      preview_filter = config.preview_filter.exclude_whitespace_and_middle_alphanumeric_words,
+      preview = config.preview.exclude_whitespace_and_middle_alphanumeric_words,
     },
     config = function(_, opts)
       local leap = require("leap")
       for k, v in pairs(opts) do
         leap.opts[k] = v
       end
-      -- require("leap.user").set_default_mappings()
+      -- require("leap.user").add_default_mappings()
       require("leap.user").set_repeat_keys("<enter>", "<backspace>")
       -- require("leap.user").set_repeat_keys(";", ".")
 
       config.always_show_labels_at_beginning_of_match()
       config.restore_default_hl("astrodark")
-
-      experimental_features.one_char_search()
 
       if paste_on_remote_yank then
         vim.api.nvim_create_autocmd("User", {
@@ -427,6 +366,10 @@ return {
         -- automatically (we need -1 here, see above).
         require("leap.remote").action({ input = V .. input, count = false })
       end)
+    end,
+    init = function()
+      experimental_features.one_char_search()
+      -- experimental_features.clever_s()
     end,
   },
   -- rename surround mappings from gs to gz to prevent conflict with leap

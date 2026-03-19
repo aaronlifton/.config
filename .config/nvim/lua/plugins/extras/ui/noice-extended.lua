@@ -3,6 +3,7 @@ local skip = {
     "No information available",
     "textDocument/codeLens",
     "Query error",
+    "nil",
     -- https://github.com/yioneko/vtsls/issues/159
     "Request textDocument/inlayHint failed",
     "Unable to init vim.regex",
@@ -56,6 +57,7 @@ return {
     vim.list_extend(opts.routes, routes)
 
     opts.presets.lsp_doc_border = true
+    opts.presets.inc_rename = false
     -- opts.presets.bottom_search = false
     if LazyVim.has_extra("coding.nvim-cmp") then opts.popupmenu = { backend = "cmp" } end
 

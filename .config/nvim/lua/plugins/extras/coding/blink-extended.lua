@@ -27,11 +27,35 @@ local function deprioritize_lsp(name)
   end
 end
 
+local function deprioritize_source(name)
+  return function(a, b)
+    if (a.source_name == nil or b.source_name == nil) or (a.source_name == b.source_name) then return end
+    return b.source_name == name
+  end
+end
+
+local endwise_descriptions = {
+  ["Insert do … end block"] = true,
+  ["Insert do |variable| … end block"] = true,
+}
+local function prioritize_endwise()
+  return function(a, b)
+    if a.description == nil or b.description == nil then return end
+
+    local a_is_preferred = endwise_descriptions[a.description]
+    local b_is_preferred = endwise_descriptions[b.description]
+
+    if a_is_preferred == b_is_preferred then return end
+    return a_is_preferred
+  end
+end
+
 return {
   { import = "hrsh7th/nvim-cmp", optional = true, enabled = false },
   { import = "lazyvim.plugins.extras.coding.blink" },
   {
     "saghen/blink.cmp",
+    commit = "b19413d214068f316c78978b08264ed1c41830ec",
     dependencies = {
       "giuxtaposition/blink-cmp-copilot",
       "Kaiser-Yang/blink-cmp-avante",
@@ -43,6 +67,7 @@ return {
         end,
       },
       { "marcoSven/blink-cmp-yanky" },
+      -- { "mikavilpas/blink-ripgrep.nvim", version = "*" },
     },
     optional = true,
     event = { "InsertEnter", "CmdlineEnter" },
@@ -58,7 +83,12 @@ return {
           -- Testing
           ["<C-u>"] = { "scroll_signature_up", "fallback" },
           ["<C-d>"] = { "scroll_signature_down", "fallback" },
-          ["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
+          -- ["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
+          ["<C-space>"] = {
+            function(cmp)
+              cmp.show({ providers = { "snippets" } })
+            end,
+          },
           -- LazyVim implements this:
           -- ["<Tab>"] = {
           --   -- Ref to: `if cmp.snippet_active() then return cmp.accept() else return cmp.select_and_accept() end`
@@ -119,8 +149,8 @@ return {
           -- implementation = 'lua',
           implementation = "prefer_rust_with_warning",
           sorts = {
-            -- deprioritize_lsp("emmet_language_server"),
             "exact", -- Added "exact"
+            deprioritize_source("yank"),
             "score",
             "kind", -- Moved kind below score to help match variables since functions come first
             -- defaults
@@ -203,8 +233,12 @@ return {
           },
         },
         sources = {
+          -- From LazyVim
+          default = { "lsp", "path", "snippets", "buffer", "yank" },
           -- default = function(ctx)
           --   if vim.bo.filetype == "AvantePromptInput" then
+          --     return { "buffer" }
+          --   else if vim.bo.filetype = "SnacksInputPrompt"
           --     return { "buffer" }
           --   else
           --     return { "copilot", "avante", "yank", "lsp", "path", "snippets", "buffer", "go_pkgs" }
@@ -247,6 +281,14 @@ return {
                 kind_icon = "󰅍",
               },
             },
+            -- ripgrep = {
+            --   module = "blink-ripgrep",
+            --   name = "Ripgrep",
+            --   -- see the full configuration below for all available options
+            --   ---@module "blink-ripgrep"
+            --   ---@type blink-ripgrep.Options
+            --   opts = {},
+            -- },
             -- copilot = {
             --   score_offset = 100
             -- }

@@ -239,7 +239,7 @@ return {
             local query = p.opts.pattern
             if type(query) ~= "string" then
               vim.notify(("opts.pattern is a `%s`"):format(type(query)))
-              Util.fs.debug_tmp(vim.inspect(p.opts))
+              -- Util.fs.debug_tmp(vim.inspect(p.opts))
               return
             end
 

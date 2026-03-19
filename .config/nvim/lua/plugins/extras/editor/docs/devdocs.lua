@@ -17,9 +17,7 @@ return {
       "DevdocsUpdateAll",
     },
     -- Needed when installing docs -- via `nvim --headless +"DevdocsInstall"`
-    dependencies = {
-      "nvim-telescope/telescope.nvim",
-    },
+    dependencies = { "nvim-telescope/telescope.nvim" },
     keys = {
       { "<leader>sE", "<cmd>DevdocsOpen<cr>", desc = "Devdocs" },
       { "<leader>se", "<cmd>DevdocsOpenCurrent<cr>", desc = "Devdocs Current" },
@@ -56,8 +54,10 @@ return {
         "python-3.14.0",
         "rails-7.2",
         "rails-8.1.2",
+        "rails-8.0.3",
         "react",
         "ruby-3.3",
+        "ruby-3.4.3",
         "ruby-3.4.8",
         "typescript",
       },

@@ -1,8 +1,9 @@
+# See https://developers.openai.com/codex/config-reference
 # See https://github.com/openai/codex/blob/main/docs/config.md
 # Also https://github.com/openai/codex/blob/main/docs/config.md#feature-flags
 sandbox_mode = "workspace-write"
 approval_policy = "on-request"
+web_search = "live"
 
 [features]
 shell_snapshot = true
-web_search_request = true

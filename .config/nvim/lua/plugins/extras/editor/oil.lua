@@ -1,9 +1,10 @@
 return {
   "stevearc/oil.nvim",
   dependencies = {
-    "nvim-tree/nvim-web-devicons",
-    optional = true,
+    { "nvim-mini/mini.icons", opts = {} },
   },
+  ---@module 'oil'
+  ---@type oil.SetupOpts
   opts = {
     delete_to_trash = true,
     float = {
@@ -16,6 +17,6 @@ return {
   },
   -- stylua: ignore
   keys = {
-    { "<leader>;", function() require("oil").toggle_float() end, desc = "Toggle Oil" },
+    { "<leader>fO", function() require("oil").toggle_float() end, desc = "Toggle Oil" },
   },
 }

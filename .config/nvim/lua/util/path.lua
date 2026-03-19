@@ -4,8 +4,8 @@
 ---@field file_line fun():string
 ---@field echo fun(string)
 ---@field set_clipboard fun(string)
----@field copy_abs_file_line fun()
----@field copy_rel_file_line fun()
+-- ---@field copy_abs_file_line fun()
+-- ---@field copy_rel_file_line fun()
 local M = {}
 
 -- Sets the system clipboard to the given string
@@ -103,6 +103,7 @@ M.relative_file_line = function()
 end
 
 M.absolute_file_line = function()
+  local root = LazyVim.root.get("lsp")
   local abs_path = M.absolute()
   local current_line = vim.fn.line(".")
   return abs_path .. ":" .. tostring(current_line)

@@ -341,6 +341,10 @@ map("n", "<leader>gb", function()
   Util.git.blame_line()
 end, { desc = "Git Blame Line" })
 
+map("n", "<leader>g<M-b>", function()
+  Util.git.blame_line_difft()
+end, { desc = "Git Blame Line (Difft)" })
+
 local gitbrowse_prefix = "<leader>gY"
 local gitbrowse_mappings = {
   c = { desc = "file:line (current branch)" },
@@ -887,3 +891,13 @@ map("n", "<C-x>b", "<C-6>", { desc = "Other Buffer" }) -- Emacs keybinding
 --     Snacks.explorer()
 --   end
 -- end, { desc = "Explorer Snacks (cwd)" })
+
+local show_whitespace = false
+map("n", "<leader>uW", function()
+  show_whitespace = not show_whitespace
+  if show_whitespace then
+    vim.cmd("setlocal listchars=tab:»·,trail:·,nbsp:␣,space:·")
+  else
+    vim.cmd("setlocal listchars=")
+  end
+end, { desc = "Toggle Whitespace" })
