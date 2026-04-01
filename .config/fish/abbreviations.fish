@@ -45,6 +45,8 @@ abbr --add fd-dirs fd -t d --max-depth 1
 ### Git
 abbr --add glp git log --pretty="format:%h %G? %aN %s"
 abbr --add gdiffhead git diff HEAD^ -- . '!:node_modules'
+abbr --add rev-parse git rev-parse --abbrev-ref HEAD
+abbr --add rpc "git rev-parse --abbrev-ref HEAD | pbcopy"
 
 abbr --add nvp nvimpager
 
