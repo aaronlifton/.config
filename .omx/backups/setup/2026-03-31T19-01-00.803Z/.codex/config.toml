@@ -1,0 +1,32 @@
+# See https://developers.openai.com/codex/config-reference/
+approval_policy = "never"
+sandbox_mode = "danger-full-access"
+# sandbox_mode = "workspace-write"
+model = "gpt-5.4"
+model_reasoning_effort = "medium" # minimal, low, medium, high, xhigh
+
+[projects."/Users/aarron/Code/repconnex"]
+trust_level = "trusted"
+web_search = "cached"
+
+[projects."/Users/aarron/.config"]
+trust_level = "trusted"
+
+[projects."/Users/aarron/.config/nvim"]
+trust_level = "trusted"
+
+[projects."/Users/aarron/Code/predicata2"]
+trust_level = "trusted"
+
+[projects."/Users/aarron/Code/skills"]
+trust_level = "trusted"
+
+[projects."/Users/aarron/.config/fish"]
+trust_level = "trusted"
+
+[features]
+multi_agent = true
+# apps = true
+
+[notice.model_migrations]
+"gpt-5.3-codex" = "gpt-5.4"

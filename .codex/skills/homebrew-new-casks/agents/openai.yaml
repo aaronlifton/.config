@@ -1,0 +1,4 @@
+interface:
+  display_name: "Homebrew New Casks"
+  short_description: "Append new Homebrew casks to a doc"
+  default_prompt: "Use $homebrew-new-casks to capture the latest Homebrew new casks and append a Markdown digest to my running notes file."

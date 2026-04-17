@@ -1,0 +1,44 @@
+# macOS / editor noise
+.DS_Store
+
+# local secrets / machine-specific files
+auth.json
+installation_id
+.personality_migration
+
+# session history, caches, and runtime state
+.codex-global-state.json
+history.jsonl
+session_index.jsonl
+models_cache.json
+version.json
+cache/
+log/
+memories/
+sessions/
+shell_snapshots/
+sqlite/
+tmp/
+.tmp/
+
+# sqlite databases and journals
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+
+# backup files
+*.bk
+
+# oh-my-codex generated runtime artifacts
+.omx/artifacts/
+.omx/logs/
+.omx/plans/
+.omx/state/
+.omx/metrics.json
+.omx/notepad.md
+.omx/project-memory.json
+.omx/setup-scope.json
+
+# vendored repo metadata / caches
+vendor_imports/skills/.git/
+vendor_imports/skills-curated-cache.json

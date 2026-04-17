@@ -1,0 +1,4 @@
+interface:
+  display_name: "GitHub Fetch Comments"
+  short_description: "Fetch GitHub PR comments for context"
+  default_prompt: "Use $gh-fetch-comments to fetch and number GitHub PR comments on this branch so I can choose which ones to review."

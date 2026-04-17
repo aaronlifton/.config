@@ -1,0 +1,7 @@
+prefix_rule(pattern=["python"], decision="allow")
+prefix_rule(pattern=["cd", "/Users/aarron/Code/repconnex"], decision="allow")
+prefix_rule(pattern=["rg", "--", "items_per_page\\s*==\\s*-1|items_per_page\\s*=\\s*-1|itemsPerPage\\s*==\\s*-1|itemsPerPage\\s*=\\s*-1|per_page\\s*==\\s*-1|per_page\\s*=\\s*-1|-1", "server/app/react", "server/app/assets/javascripts", "web-mobile-client", "-n"], decision="allow")
+prefix_rule(pattern=["/Users/aarron/Code/util/update_nvim.sh", "--help"], decision="allow")
+prefix_rule(pattern=["/Users/aarron/Code/util/update_nvim.sh", "--dry-run"], decision="allow")
+prefix_rule(pattern=["nvim", "--headless", "-l", "./tests/busted.lua"], decision="allow")
+prefix_rule(pattern=["nvim", "--headless"], decision="allow")
