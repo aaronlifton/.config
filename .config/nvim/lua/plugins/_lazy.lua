@@ -5,8 +5,9 @@ end
 local status, config_path = pcall(vim.api.nvim_get_var, "config_path")
 if status then add_to_runtimepath(config_path) end
 
--- NOTE: must set `default_extras` to `{}` here:
--- ~/.local/share/nvim/lazy/LazyVim/lua/lazyvim/config/init.lua:353
+-- NOTE: LazyVim now initializes `default_extras` inside
+-- `LazyVim.config.get_defaults()`, so we should not patch the upstream local
+-- here anymore. Keep using the public extras/import APIs instead.
 
 return {
   {
@@ -23,7 +24,7 @@ return {
   { import = "lazyvim.plugins.extras.editor.mini-move" },
   { import = "lazyvim.plugins.extras.editor.dial" },
   { import = "lazyvim.plugins.extras.editor.inc-rename" },
-  { import = "lazyvim.plugins.extras.formatting.biome" },
+  { import = "lazyvim.plugins.extras.lang.typescript.biome" },
   { import = "lazyvim.plugins.extras.dap.core" },
   { import = "lazyvim.plugins.extras.test.core" },
   { import = "lazyvim.plugins.extras.ui.edgy" },

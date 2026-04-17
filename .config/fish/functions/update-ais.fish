@@ -1,7 +1,8 @@
 function update-ais
     set_color green
     echo Updating claude code...
-    mise upgrade npm:@anthropic-ai/claude-code@latest
+    # mise upgrade npm:@anthropic-ai/claude-code@latest
+    claude install # Claude upgraded to a native installer
 
     set_color green
     echo Updating codex...

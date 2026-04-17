@@ -59,9 +59,10 @@ g.highlight_provider = "mini.hipatterns" -- "nvim-highlight-colors", "mini.hipat
 g.markdown_previewer = "markdown-preview" -- "markdown-preview", "peek"
 g.smooth_scroll_provider = "snacks" -- "cinnamon", mini.animate", "snacks"
 g.dprint_needs_config = true
--- g.lazyvim_picker = "fzf" -- Already enabled by LazyVim fzf extra
+g.lazyvim_picker = "snacks"
+-- g.lazyvim_picker = "fzf"
 -- g.lazyvim_picker = "telescope" -- for testing plugins
-g.work = false
+g.work = true
 
 -------------------------------------------------
 
@@ -71,6 +72,7 @@ g.lazyvim_cmp = "blink.cmp"
 g.cmp_widths = { abbr = 80, menu = 30 }
 g.lazyvim_ruby_lsp = "ruby_lsp" -- "ruby_lsp", "solargraph"
 g.lazyvim_ruby_formatter = g.work and "rubocop" or "standardrb"
+g.lazyvim_ts_lsp = "tsgo"
 g.lazyvim_eslint_auto_format = true
 g.lazyvim_prettier_needs_config = true
 g.ai_cmp = true

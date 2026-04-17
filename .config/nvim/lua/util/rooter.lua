@@ -5,6 +5,7 @@ local root_names = { ".git", "Makefile", "package.json", "Cargo.toml", "pyprojec
 local root_cache = {}
 
 local set_root = function()
+  vim.api.nvim_echo({ { "Rooter:\n", "Title" }, { "setting root", "Normal" } }, true, {})
   -- Get directory path to start search from
   local path = vim.api.nvim_buf_get_name(0)
   if path == "" then return end

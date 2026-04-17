@@ -26,7 +26,7 @@ return {
     -- stylua: ignore start
     { "<leader>gn", "<cmd>Neogit<cr>", desc = "Neogit" },
     { "<leader>gN", function() require("neogit").open({ kind = "split" }) end, desc = "Neogit (Split)" },
-    { "<leader>g<cr>", function() require("neogit").open({ kind = "floating" }) end, desc = "Neogit (Popup)" },
+    { "<leader>g<C-n>", function() require("neogit").open({ kind = "floating" }) end, desc = "Neogit (Popup)" },
     -- { "<leader>gP", function() require("neogit").action("stash", "push", { "-u" })() end, desc = "Stash file" },
     { "<leader>gwn", function() require("neogit").action("worktree", "create_worktree")() end, desc = "Create worktree" },
     { "<leader>gwc", function() require("neogit").action("worktree", "checkout_worktree")() end, desc = "Checkout worktree" },

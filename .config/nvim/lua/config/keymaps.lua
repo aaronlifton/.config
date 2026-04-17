@@ -66,6 +66,7 @@ end, { desc = "Toggle formatexpr (width=120)" })
 
 -- End of the word backwards
 map("n", "E", "ge")
+map({ "n", "x" }, "<C-z>", "<Nop>", { desc = "Disable suspend" })
 
 -- Increment/decrement
 -- map("n", "+", "<C-a>")
@@ -362,62 +363,69 @@ local gitbrowse_mappings = {
     desc = "file:line (master)",
     branch = "master",
   },
+  x = {
+    desc = "pick",
+    wrapper = function(callback)
+      Util.git.choose_branch(callback)
+    end,
+  },
 }
+
+local gitbrowse = function(opts)
+  ---@diagnostic disable-next-line: missing-fields
+  Snacks.gitbrowse({
+    open = function(url)
+      if opts.open then
+        opts.open(url)
+      else
+        vim.fn.setreg("+", url)
+      end
+    end,
+    branch = opts.branch,
+    notify = false,
+  })
+end
 
 for key, opts in pairs(gitbrowse_mappings) do
   map({ "n", "x" }, gitbrowse_prefix .. key, function()
-    ---@diagnostic disable-next-line: missing-fields
-    Snacks.gitbrowse({
-      open = function(url)
-        if opts.open then
-          opts.open(url)
-        else
-          vim.fn.setreg("+", url)
-        end
-      end,
-      branch = opts.branch,
-      notify = false,
-    })
+    if opts.wrapper then
+      opts.wrapper(function(branch)
+        gitbrowse(vim.tbl_extend("force", opts, { branch = branch }))
+      end)
+    else
+      gitbrowse(opts)
+    end
   end, { desc = opts.desc })
 end
 
 vim.api.nvim_create_user_command("LazygitYadm", function()
   Snacks.terminal({ "yadm", "enter", "lazygit" })
 end, { desc = "Lazygit (YADM)" })
-map("n", "<leader>g<M-y>", ":LazygitYadm<CR>", { desc = "Lazygit (YADM)" })
 
 map("n", "<leader>s<M-m>", function()
   Util.ai.mgrep()
 end, { desc = "Mgrep" })
 
--- map({"n", "x" }, "<leader>g<M-f>", function()
---   vim.ui.select(require("util.git").mru_branches(), { prompt = "Branch: " }, function(branch)
---     Snacks.gitbrowse({
---       open = function(url) vim.fn.setreg("+", url) end,
---       branch = branch,
---       notify = false,
---     })
---   end)
--- end, { desc = "Git Browse (copy - pick)" })
--- stylua: ignore end
-
 -- Terminals
+local function open_floating_terminal(cwd, cmd)
+  Snacks.terminal(cmd, {
+    cwd = cwd,
+    win = { position = "float", border = "rounded", backdrop = 60, width = 0.5, height = 0.5 },
+  })
+end
+
 map("n", "<leader>fT", function()
   local bufpath = Util.path.bufpath()
   if not bufpath then return end
 
-  Snacks.terminal(nil, {
-    cwd = vim.fn.fnamemodify(bufpath, ":h"),
-    win = { position = "float", border = "rounded", backdrop = 60, width = 0.5, height = 0.5 },
-  })
+  open_floating_terminal(vim.fn.fnamemodify(bufpath, ":h"))
 end, { desc = "Terminal (float)" })
-map("n", "<C-S-/>", "<leader>fT", { desc = "Terminal (float)", remap = true })
+
+-- Interferes with kitty default keymap
+-- map("n", "<C-S-/>", "<leader>fT", { desc = "Terminal (float)", remap = true })
 
 map("n", "<leader>ft", function()
-  Snacks.terminal(
-    nil,
-    { cwd = LazyVim.root(), win = { position = "float", border = "rounded", backdrop = 60, width = 0.5, height = 0.5 } }
-  )
+  open_floating_terminal(LazyVim.root())
 end, { desc = "Terminal (float, Root Dir)" })
 
 -- map("n", "<M-S-Bslash>", function()

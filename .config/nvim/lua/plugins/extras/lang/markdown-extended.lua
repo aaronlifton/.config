@@ -15,7 +15,16 @@ local fts = {
 return {
   { import = "lazyvim.plugins.extras.lang.markdown" },
   {
+    "yousefhadder/markdown-plus.nvim",
+    ft = "markdown",
+    opts = {},
+    keys = {
+      { "<S-CR>", "<Plug>(MarkdownPlusToggleCheckbox)", mode = { "n" }, ft = fts },
+    },
+  },
+  {
     "gaoDean/autolist.nvim",
+    enabled = false,
     ft = fts,
     opts = {},
     keys = {

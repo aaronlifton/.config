@@ -3,6 +3,13 @@ LazyVim.on_very_lazy(function()
     yml = "yaml",
   })
   vim.treesitter.language.register("yaml", "yml")
+
+  vim.filetype.add({
+    pattern = {
+      ["Procfile"] = "sh",
+      ["Procfile%..*"] = "sh",
+    },
+  })
 end)
 
 local use_ruby_lsp_rubocop = true

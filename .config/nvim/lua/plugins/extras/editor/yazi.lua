@@ -1,3 +1,24 @@
+local function yazi_float_config()
+  local original_cwd = vim.fn.getcwd()
+
+  return {
+    no_edgy = true,
+    env = { NVIM_FLOAT_WINDOW = true },
+    change_neovim_cwd_on_close = false,
+    hooks = {
+      yazi_closed_successfully = function(chosen_file)
+        if chosen_file ~= nil or vim.fn.getcwd() == original_cwd then return end
+        vim.cmd({ cmd = "cd", args = { original_cwd } })
+      end,
+    },
+  }
+end
+
+local function open_yazi_float(input_path)
+  require("util.yazi.patches.env").patch_yazi()
+  require("yazi").yazi(yazi_float_config(), input_path)
+end
+
 return {
   { "nvim-neo-tree/neo-tree.nvim", enabled = false },
   {
@@ -31,9 +52,12 @@ return {
           if vim.fn.buflisted(buf) == 0 then return end
 
           local dir = Util.path.bufdir(buf)
-          if dir and dir ~= "" and vim.fn.isdirectory(dir) == 1 then vim.cmd((":cd %s"):format(dir)) end
-          require("util.yazi.patches.env").patch_yazi()
-          require("yazi").yazi({ no_edgy = true, env = { NVIM_FLOAT_WINDOW = true } })
+          if dir and dir ~= "" and vim.fn.isdirectory(dir) == 1 then
+            open_yazi_float(dir)
+            return
+          end
+
+          open_yazi_float()
         end,
         desc = "Yazi Float (CWD)",
       },
@@ -42,8 +66,7 @@ return {
         function()
           -- local cwd = LazyVim.root.cwd()
           -- vim.cmd((":cd %s"):format(cwd))
-          require("util.yazi.patches.env").patch_yazi()
-          require("yazi").yazi({ no_edgy = true, env = { NVIM_FLOAT_WINDOW = true } })
+          open_yazi_float()
         end,
         desc = "Yazi Float (Root Dir)",
       },

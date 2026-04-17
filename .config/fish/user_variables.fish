@@ -5,8 +5,8 @@ set -lx fish_config_path /Users/$USER/.config/fish
 # Setting PATH for node
 # fish_add_path /Users/$USER/.local/share/nvm/v19.7.0/bin
 fish_add_path -m /Users/$USER/.asdf/shims
-fish_add_path -m /Users/$USER/.local/share/bob/nvim-bin
 fish_add_path -m /opt/homebrew/bin
+fish_add_path -m /Users/$USER/.local/share/bob/nvim-bin
 fish_add_path -m /Users/$USER/.rbenv/shims
 fish_add_path -m /usr/local/bin/
 fish_add_path -m /Users/$USER/Code/venv/bin

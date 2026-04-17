@@ -353,6 +353,8 @@ return {
         -- },
       })
     end,
+    -- Don't set UI select to FZF (LazyVim/lua/lazyvim/plugins/extras/editor/fzf.lua:199)
+    init = function() end,
     keys = {
       -- This is handled by mini.pick instead
       { "<leader>,", false },
@@ -373,6 +375,7 @@ return {
       -- { "<leader>su", function() pick("grep_visual", live_grep_opts) end, desc = "Selection (Root Dir)", mode = "v" },
       { "<leader>s<C-w>", "<cmd>FzfLua grep_cWORD<CR>", desc = "WORD (Root Dir)", mode = "n" },
       { "<leader>sx", function() pick("live_grep_native", live_grep_opts) end, desc = "Grep (Native)", mode = "n" },
+      { "<leader>s<C-x>", function() pick("live_grep_native", { regex = [[^<<<<<<<|^=======|^>>>>>>>|^\|\|\|\|\|\|\|]], no_esc = 2 }) end, desc = "Grep (Conflicts)", mode = "n" },
       -- { "<leader>sw", function() pick("grep_cword", vim.tbl_extend("force", live_grep_opts, { rg_glob = false, git_icons = true })) end, desc = "Word (Root Dir)", mode = "n" },
       -- { "<leader>sW", function() pick("grep_cword", vim.tbl_extend("force", live_grep_opts, { rg_glob = false, git_icons = true, root = false })) end, desc = "Word (cwd)", mode = "n" },
       -- { "<leader>sw", function() pick("grep_visual", vim.tbl_extend("force", live_grep_opts, { rg_glob = false })) end, desc = "Selection (Root Dir)", mode = "v" },
@@ -388,6 +391,7 @@ return {
       { "<leader>sG", function() pick("live_grep_glob", vim.tbl_extend("force", live_grep_opts_with_reset, { root = false })) end, desc = "Grep (cwd)" },
       { "<leader>sP", function() pick("live_grep_glob", { rg_opts = rg_opts_pcre2, silent = true }) end, desc = "Grep (--pcre2)" },
       { "<leader>sN", function() pick("live_grep_glob", { cwd = "node_modules", rg_opts = "-uu" }) end, desc = "Grep (node_modules)" },
+      { "<leader>s<C-r>", "<cmd>FzfLua resume<cr>", desc = "FzfLua Resume" },
       { "<leader>fN", function() pick("files", { cwd = "node_modules", fd_opts = fd_opts .. " -u" }) end, desc = "Find Files (node_modules)" },
       -- { "<leader><space>", pick("files", { winopts = { height = 0.33, width = 0.33, preview = { hidden = "hidden" } } }), desc = "Find Files (Root Dir)" },
       -- { "<leader>fz", function() require("util.fzf.zoxide").fzf_zoxide() end, desc = "Zoxide"},

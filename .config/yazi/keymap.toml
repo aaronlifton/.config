@@ -6,17 +6,17 @@ run = "plugin fr rg"
 desc = "Search file by content (rg)"
 
 [[mgr.prepend_keymap]]
+on = ["f", "a"]
+run = "plugin fr rga"
+desc = "Search file by content (rga)"
+
+[[mgr.prepend_keymap]]
 on = ["f"]
 run = "plugin jump-to-char"
 desc = "Jump to char"
 
 [[mgr.prepend_keymap]]
-on = ["e"]
-run = "shell --block --confirm \"nvim $@\""
-desc = "Open in Neovim"
-
-[[mgr.prepend_keymap]]
-on = ["O"]
+on = "<C-o>"
 run = "shell \"open -a Finder ./\""
 desc = "Open in Finder"
 
@@ -89,11 +89,6 @@ desc = "Move cursor down half page"
 on = "<A-b>"
 run = "shell --confirm --block -- for path in \"$@\"; do cp -n \"$path\" \"$path.bak\"; done"
 desc = "Copy to .bak in same folder"
-
-[[mgr.prepend_keymap]]
-on = ["f", "r"]
-run = "plugin fr"
-desc = "find file by content (fuzzy match)"
 
 [[mgr.prepend_keymap]]
 on = ["f", "f"]
@@ -186,10 +181,12 @@ on = "<A-p>"
 run = "plugin smart-paste"
 desc = "Paste into the hovered directory or CWD"
 
-[[mgr.append_keymap]]
+[[mgr.prepend_keymap]]
 on = ["e"]
-run = "open"
-desc = "Open the selected files"
+run = '''
+shell --block -- path="%h"; [ -z "$path" ] && exit 0; mime="$(file --mime-type -Lb -- "$path")"; case "$mime" in text/*|application/json|application/ndjson|application/x-ndjson|*/javascript|inode/empty|inode/x-empty) "${EDITOR:-nvim}" "$path" ;; *) ya emit open --hovered ;; esac
+'''
+desc = "Edit text-like files, otherwise open"
 
 [[mgr.append_keymap]]
 on = ["E"]

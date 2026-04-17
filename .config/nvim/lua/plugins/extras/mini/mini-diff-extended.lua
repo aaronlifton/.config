@@ -86,7 +86,7 @@ return {
         "<leader>gdh",
         function()
           local buf_id = vim.api.nvim_get_current_buf()
-          set_mini_diff_ref_text(buf_id, ":0")
+          set_mini_diff_ref_text(buf_id, "HEAD")
         end,
         desc = "MiniDiff (HEAD)",
       },
@@ -94,9 +94,17 @@ return {
         "<leader>gdH",
         function()
           local buf_id = vim.api.nvim_get_current_buf()
-          set_mini_diff_ref_text(buf_id, "@{1}")
+          set_mini_diff_ref_text(buf_id, "HEAD@{1}")
         end,
         desc = "MiniDiff (HEAD~1)",
+      },
+      {
+        "<leader>gdu",
+        function()
+          local buf_id = vim.api.nvim_get_current_buf()
+          set_mini_diff_ref_text(buf_id, "")
+        end,
+        desc = "MiniDiff (unstaged)",
       },
       {
         "<leader>gdM",
@@ -120,7 +128,7 @@ return {
           local buf_id = vim.api.nvim_get_current_buf()
           set_mini_diff_ref_text(buf_id, "dev")
         end,
-        desc = "MiniDiff (development)",
+        desc = "MiniDiff (dev)",
       },
       {
         "<leader>gdx",

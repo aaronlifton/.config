@@ -37,6 +37,30 @@ local function is_yadm_root(dir)
   return yadm_cache[dir]
 end
 
+---@param cmd string[]|string
+---@param buf_name? string
+---@param failure_message? string
+local function open_terminal_in_tab(cmd, buf_name, failure_message)
+  vim.cmd("tabnew")
+
+  local term_cmd = cmd
+  if type(cmd) == "table" then term_cmd = table.concat(vim.tbl_map(vim.fn.shellescape, cmd), " ") end
+
+  local job_id = vim.fn.jobstart(vim.o.shell, { term = true })
+  if job_id <= 0 then
+    vim.notify(failure_message or "Failed to open terminal", vim.log.levels.ERROR)
+    return
+  end
+
+  if buf_name and buf_name ~= "" then vim.api.nvim_buf_set_name(0, buf_name) end
+
+  vim.api.nvim_chan_send(job_id, term_cmd .. "\n")
+  vim.api.nvim_chan_send(job_id, "\n")
+  vim.cmd("stopinsert")
+  -- Scroll below shell intro text
+  vim.api.nvim_input("6<C-e>")
+end
+
 --- Adapted from lazy/snacks.nvim/lua/snacks/git.lua to support YADM
 --- Show git log for the current line.
 ---@param opts? snacks.terminal.Opts | {count?: number}
@@ -128,6 +152,79 @@ function M.blame_line_difft(opts)
     "--",
     relative_path,
   }
+  vim.api.nvim_echo({ { vim.inspect(table.concat(cmd, " ")), "Normal" } }, true, {})
+  return Snacks.terminal(cmd, opts)
+end
+
+--- Show a commit diff (`<commit>^..<commit>`) and render it with difftastic.
+---@param commit string
+---@param opts? snacks.terminal.Opts | { tab?: boolean }
+function M.commit_difft(commit, opts)
+  opts = vim.tbl_deep_extend("force", {
+    interactive = false,
+    auto_close = false,
+    win = {
+      width = 0.75,
+      height = 0.75,
+      wo = {
+        wrap = false,
+      },
+      border = true,
+      title = " Git Commit Diff ",
+      title_pos = "center",
+      ft = "git",
+    },
+  }, opts or {})
+
+  if vim.fn.executable("difft") ~= 1 then
+    vim.notify("`difft` is not installed or not on PATH", vim.log.levels.ERROR)
+    return
+  end
+
+  commit = vim.trim(commit or "")
+  if commit == "" then
+    vim.notify("Commit hash is required", vim.log.levels.ERROR)
+    return
+  end
+
+  local root = Snacks.git.get_root()
+  local git = "git"
+  if is_yadm_root(root) then git = "yadm" end
+
+  local resolved_commit = vim.trim(vim.fn.system({
+    git,
+    "-C",
+    root,
+    "rev-parse",
+    "--verify",
+    commit .. "^{commit}",
+  }))
+
+  if vim.v.shell_error ~= 0 or resolved_commit == "" then
+    vim.notify("Failed to resolve commit: " .. commit, vim.log.levels.ERROR)
+    return
+  end
+
+  local cmd = {
+    git,
+    "-C",
+    root,
+    "-c",
+    "core.pager=cat",
+    "-c",
+    "diff.external=difft",
+    "diff",
+    "--ext-diff",
+    resolved_commit .. "^.." .. resolved_commit,
+  }
+  vim.api.nvim_echo({ { vim.inspect(table.concat(cmd, " ")), "Normal" } }, true, {})
+  if opts.tab then
+    return open_terminal_in_tab(
+      cmd,
+      ("difft://commit-%s"):format(resolved_commit),
+      "Failed to open terminal for commit diff"
+    )
+  end
   return Snacks.terminal(cmd, opts)
 end
 
@@ -221,21 +318,27 @@ function M.difft(file1, file2)
     return
   end
 
-  vim.cmd("tabnew")
   local cmd = "difft --color=always " .. vim.fn.shellescape(file1) .. " " .. vim.fn.shellescape(file2)
-  local job_id = vim.fn.jobstart(vim.o.shell, { term = true })
-  if job_id <= 0 then
-    vim.notify("Failed to open terminal for difft", vim.log.levels.ERROR)
-    return
-  end
   local file1_name = vim.fn.fnamemodify(file1, ":h")
   local file2_name = vim.fn.fnamemodify(file2, ":h")
-  vim.api.nvim_buf_set_name(0, ("difft://Diff-%s-vs-%s"):format(file1_name, file2_name))
-  vim.api.nvim_chan_send(job_id, cmd .. "\n")
-  vim.api.nvim_chan_send(job_id, "\n")
-  vim.cmd("stopinsert")
-  -- Scroll below shell intro text
-  vim.api.nvim_input("6<C-e>")
+  open_terminal_in_tab(
+    cmd,
+    ("difft://Diff-%s-vs-%s"):format(file1_name, file2_name),
+    "Failed to open terminal for difft"
+  )
+end
+
+-- TODO: replace all git branch inputs with this
+function M.choose_branch(callback, prompt)
+  prompt = prompt or "Branch: "
+  Snacks.input({
+    prompt = "Branch: ",
+    icon = "",
+    -- completion = "customlist,v:lua.require'neogit.lib.git'.refs.list_local_branches",
+    completion = "customlist,v:lua.require'neogit.lib.git'.refs.list_branches",
+  }, function(branch)
+    callback(branch)
+  end)
 end
 
 -- pcall(vim.api.nvim_del_user_command, "Difft")
@@ -267,6 +370,14 @@ vim.api.nvim_create_user_command("Difft", function(opts)
 end, {
   nargs = "?",
   desc = "Run difft on files from registers 1/2, or current file vs system register (+) when argument is provided",
+})
+
+vim.api.nvim_create_user_command("GitCommitDifft", function(opts)
+  M.commit_difft(opts.args, { tab = opts.bang })
+end, {
+  bang = true,
+  nargs = 1,
+  desc = "Run `git diff <commit>^..<commit>` with difftastic (`!` opens in a new tab)",
 })
 
 require("util.git.conflict").setup()

@@ -21,7 +21,7 @@ return {
   {
     "folke/sidekick.nvim",
     ---@type sidekick.Config
-    config = {
+    opts = {
       nes = {
         enabled = false,
         trigger = { events = {} },

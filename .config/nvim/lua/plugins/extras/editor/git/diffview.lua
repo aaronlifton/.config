@@ -47,7 +47,7 @@ return {
       -- { diffview_prefix .. "M", "<cmd>DiffviewOpen main<CR>", desc = "Diff View (main)" },
       { diffview_prefix .. "m", function() toggle_diffview("DiffviewOpen main") end, desc = "Diff View (main)" },
       -- { diffview_prefix .. "d", "<cmd>DiffviewOpen development<CR>", desc = "Diff View (development)" },
-      { diffview_prefix .. "d", function() toggle_diffview("DiffviewOpen development") end, desc = "Diff View (development)" },
+      { diffview_prefix .. "d", function() toggle_diffview("DiffviewOpen dev") end, desc = "Diff View (dev)" },
       {
         diffview_prefix .. "x",
         function()

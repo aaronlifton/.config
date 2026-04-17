@@ -1,4 +1,5 @@
 local ft = "snacks_picker_list"
+
 local function find_explorer_win()
   local wins = vim.api.nvim_list_wins()
   local explorer_win
@@ -17,21 +18,52 @@ end
 
 local function focus_explorer_win(win)
   win = win or find_explorer_win()
-  if not win then return end
+  if not win then return false end
 
   vim.api.nvim_set_current_win(win)
+  return true
 end
 
-local function reveal_or_open(opts)
+local function config_subdir_root(file)
+  local home = vim.uv.os_homedir()
+  if not home then return nil end
+
+  local config_dir = LazyVim.root.realpath(home .. "/.config")
+  if not config_dir then return nil end
+
+  local prefix = config_dir .. "/"
+  if file:find(prefix, 1, true) ~= 1 then return nil end
+
+  local subdir = file:sub(#prefix + 1):match("([^/]+)")
+  return subdir and (config_dir .. "/" .. subdir) or nil
+end
+
+local function root_for_buf(buf)
+  local file = LazyVim.root.bufpath(buf)
+  if not file then return LazyVim.root.cwd() end
+
+  local root = LazyVim.root.get({ buf = buf, normalize = true })
+  if root and (file == root or file:find(root .. "/", 1, true) == 1) then return root end
+
+  return config_subdir_root(file) or vim.fs.dirname(file) or root or LazyVim.root.cwd()
+end
+
+local function reveal_or_open(buf, opts)
   opts = opts or {}
+  buf = buf or vim.api.nvim_get_current_buf()
+  local root = root_for_buf(buf)
   local explorer_win = find_explorer_win()
 
   if explorer_win then
-    vim.api.nvim_set_current_win(explorer_win)
-    -- local buf = vim.api.nvim_get_current_buf()
-    -- Snacks.explorer.reveal(vim.tbl_extend("force", { buf = buf }, opts))
+    focus_explorer_win(explorer_win)
+    local picker = Snacks.picker.get({ source = "explorer" })[1]
+    if picker then
+      picker:set_cwd(root)
+      Snacks.explorer.reveal(vim.tbl_extend("force", { buf = buf }, opts))
+    end
   else
-    Snacks.explorer(opts)
+    Snacks.explorer(vim.tbl_extend("force", { cwd = root }, opts))
+    -- Snacks.explorer.reveal(vim.tbl_extend("force", { buf = buf }, opts))
   end
 end
 
@@ -45,7 +77,7 @@ return {
       {
         "<leader>e",
         function()
-          reveal_or_open({ cwd = LazyVim.root() })
+          reveal_or_open(vim.api.nvim_get_current_buf())
         end,
         desc = "Explorer Snacks (root dir)",
       },
@@ -63,7 +95,8 @@ return {
           if vim.bo.filetype == ft then
             vim.api.nvim_input("<C-w><C-p>")
           else
-            focus_explorer_win()
+            local buf = vim.api.nvim_get_current_buf()
+            reveal_or_open(buf)
           end
         end,
         desc = "Focus Explorer",

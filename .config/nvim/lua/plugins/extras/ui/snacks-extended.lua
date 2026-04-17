@@ -138,7 +138,7 @@ return {
               },
               -- Check defaults ~/.local/share/nvim/lazy/snacks.nvim/lua/snacks/picker/config/defaults.lua:226
               ["<M-s>"] = { "leap", mode = { "n", "i" } },
-              ["<C-x>"] = { "leap", mode = { "n", "i" } },
+              -- ["<C-x>"] = { "leap", mode = { "n", "i" } }, -- Conflicts with <C-x> delete
               ["<C-o>"] = { "add_glob", mode = { "n", "i" } },
               ["<C-BS>"] = { "remove_glob", mode = { "n", "i" } },
               -- Make same as fzf keymap
@@ -346,6 +346,12 @@ return {
             },
           },
         },
+        sources = {
+          -- Sort command history by recency when searching
+          command_history = {
+            sort = { fields = { "idx" } },
+          },
+        },
       },
       image = {
         enabled = true,
@@ -465,8 +471,11 @@ return {
       { "<leader>gd", function() Snacks.picker.git_diff() end, desc = "Git Diff (hunks)" },
       { "<leader>gf", function() Snacks.picker.git_log_file() end,  desc = "Git Current File History"  },
       { "<leader>gs", function() Snacks.picker.git_status() end, desc = "Git Status" },
-      { "<leader>g<C-l>", function() Snacks.picker.git_log() end, desc = "Git Log (cwd)" },
-      { "<leader>gL", function() Snacks.picker.git_log({ cwd = LazyVim.root.git() }) end, desc = "Git Log" },
+      { "<leader>gl", function() Snacks.picker.git_log() end, desc = "Git Log (cwd)" },
+      -- { "<leader>gL", function() Snacks.picker.git_log({ cwd = LazyVim.root.git() }) end, desc = "Git Log" },
+      { "<leader>g<C-l>", function() Snacks.picker.git_log_line() end,  desc = "Git Log Line" },
+      -- Deciding which is better, <C> or <M>
+      { "<leader>g<M-l>", function() Snacks.picker.git_log_line() end,  desc = "Git Log Line" },
       { "<leader>gS", function() Snacks.picker.git_stash() end, desc = "Git Stash" },
       { "<leader>g<C-b>", function() Snacks.picker.git_branches() end, desc = "Git Branches" },
       { "<leader>g<C-d>", function() Snacks.picker.git_diff({ base = "origin", group = true }) end, desc = "Git Diff (origin)" },
@@ -475,8 +484,6 @@ return {
           Snacks.picker.git_diff({ base = branch, group = true })
         end)
       end, desc = "Git Diff (origin)" },
-      -- { "<leader>gL", function() Snacks.picker.git_log_line() end, desc = "Git Log Line" },
-      { "<leader>gl", function() Snacks.picker.git_log_line() end,  desc = "Git Log Line" },
       { "<leader>g<M-g>", function() Snacks.gitbrowse() end, desc = "Git Browse (open)", mode = { "n", "x" } },
       { "<leader>g<M-y>", function() Snacks.gitbrowse({ open = function(url) vim.fn.setreg("+", url) end, notify = false }) end, desc = "Git Browse (copy)", mode = { "n", "x" } },
       -- Already <leader>gf
@@ -535,11 +542,7 @@ return {
       if LazyVim.has("trouble.nvim") then
         return vim.tbl_deep_extend("force", opts or {}, {
           picker = {
-            actions = {
-              trouble_open = function(...)
-                return require("trouble.sources.snacks").actions.trouble_open.action(...)
-              end,
-            },
+            actions = require("util.snacks.trouble").actions,
             win = {
               input = {
                 keys = {
