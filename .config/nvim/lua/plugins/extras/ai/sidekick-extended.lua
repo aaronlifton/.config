@@ -35,6 +35,16 @@ return {
         tools = {
           codex = { cmd = { "codex", "--search" } },
         },
+        win = {
+          keys = {
+            nav_right = {
+              "<c-l>",
+              function() end,
+              mode = "t",
+              desc = "Noop <C-l> in Sidekick CLI",
+            },
+          },
+        },
       },
     },
     keys = {

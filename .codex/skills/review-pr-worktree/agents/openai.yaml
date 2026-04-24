@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review PR Worktree"
+  short_description: "Review PR in temp worktree"
+  default_prompt: "Use $review-pr-worktree to review PR 1234 in a temporary worktree and report only findings."

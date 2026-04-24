@@ -11,7 +11,7 @@ model_auto_compact_token_limit = 900000
 approval_policy = "never"
 sandbox_mode = "danger-full-access"
 # sandbox_mode = "workspace-write"
-model = "gpt-5.4"
+model = "gpt-5.5"
 approvals_reviewer = "user"
 personality = "friendly"
 
@@ -44,6 +44,9 @@ trust_level = "trusted"
 trust_level = "trusted"
 
 [projects."/Users/aarron/Downloads/GSSD-6643 badge firmware"]
+trust_level = "trusted"
+
+[projects."/Users/aarron/Code"]
 trust_level = "trusted"
 
 [features]
@@ -93,6 +96,9 @@ command = "node"
 args = ["/Users/aarron/.local/share/mise/installs/node/24.10.0/lib/node_modules/oh-my-codex/dist/mcp/trace-server.js"]
 enabled = true
 startup_timeout_sec = 5
+
+[tui.model_availability_nux]
+"gpt-5.5" = 4
 
 # ============================================================
 # End oh-my-codex
